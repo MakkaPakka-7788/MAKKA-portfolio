@@ -8,6 +8,7 @@
 <title>Flappy Bird</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -16,8 +17,8 @@ body {
     margin: 0;
     background: #222;
     overflow: hidden;
-    font-family: Arial, sans-serif;
     user-select: none;
+    font-family: Arial, sans-serif;
 }
 
 #game {
@@ -42,50 +43,50 @@ body {
 
 .cloud {
     position: absolute;
-    width: 100px;
-    height: 28px;
-    background: white;
-    border-radius: 30px;
-    opacity: .8;
+    width: 95px;
+    height: 25px;
+    background: #fff;
+    border-radius: 20px;
+    opacity: .85;
 }
 
 .cloud::before,
 .cloud::after {
     content: "";
     position: absolute;
-    background: white;
+    background: #fff;
     border-radius: 50%;
 }
 
 .cloud::before {
-    width: 45px;
-    height: 45px;
-    left: 15px;
-    bottom: 5px;
+    width: 40px;
+    height: 40px;
+    left: 12px;
+    bottom: 3px;
 }
 
 .cloud::after {
-    width: 35px;
-    height: 35px;
-    right: 15px;
-    bottom: 5px;
+    width: 32px;
+    height: 32px;
+    right: 12px;
+    bottom: 3px;
 }
 
 .cloud1 {
     top: 90px;
-    left: 40px;
+    left: 25px;
 }
 
 .cloud2 {
-    top: 190px;
-    left: 330px;
+    top: 180px;
+    left: 320px;
     transform: scale(.8);
 }
 
 .cloud3 {
     top: 310px;
     left: 160px;
-    transform: scale(.65);
+    transform: scale(.7);
 }
 
 /* BACKGROUND HILLS */
@@ -93,89 +94,100 @@ body {
 .hill {
     position: absolute;
     bottom: 75px;
-    width: 180px;
-    height: 90px;
+    width: 200px;
+    height: 100px;
     background: #9bd45b;
     border-radius: 100% 100% 0 0;
 }
 
 .hill1 {
-    left: -30px;
+    left: -60px;
 }
 
 .hill2 {
-    left: 150px;
-    height: 120px;
+    left: 120px;
+    height: 130px;
 }
 
 .hill3 {
     left: 330px;
-    height: 80px;
+    height: 90px;
 }
 
 /* BIRD */
 
 #bird {
     position: absolute;
-    width: 42px;
-    height: 32px;
+    width: 48px;
+    height: 40px;
     left: 105px;
     top: 300px;
     z-index: 10;
+    image-rendering: pixelated;
     transform-origin: center;
 }
 
-.bird-body {
+/*
+   ORIGINAL PIXEL-ART STYLE BIRD
+*/
+
+.bird-pixel {
     position: absolute;
-    width: 38px;
-    height: 30px;
-    background: #f4c542;
-    border: 3px solid #9b7115;
-    border-radius: 55%;
+    width: 8px;
+    height: 8px;
+    box-shadow:
+        8px 0 #f4c542,
+        16px 0 #f4c542,
+        24px 0 #f4c542,
+
+        0 8px #f4c542,
+        8px 8px #f4c542,
+        16px 8px #f4c542,
+        24px 8px #f4c542,
+        32px 8px #f4c542,
+
+        0 16px #f4c542,
+        8px 16px #f4c542,
+        16px 16px #f4c542,
+        24px 16px #f4c542,
+        32px 16px #f4c542,
+
+        8px 24px #e8ad28,
+        16px 24px #e8ad28,
+        24px 24px #e8ad28,
+
+        16px 32px #9b7115,
+        24px 32px #9b7115;
 }
 
-.bird-wing {
+.bird-eye-pixel {
     position: absolute;
-    width: 20px;
-    height: 13px;
-    left: 4px;
-    top: 13px;
-    background: #e8ad28;
-    border: 2px solid #9b7115;
-    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    left: 25px;
+    top: 8px;
+    background: #fff;
 }
 
-.bird-eye {
-    position: absolute;
-    width: 9px;
-    height: 9px;
-    background: white;
-    border: 2px solid #333;
-    border-radius: 50%;
-    right: 7px;
-    top: 5px;
-}
-
-.bird-eye::after {
+.bird-eye-pixel::after {
     content: "";
     position: absolute;
     width: 4px;
     height: 4px;
-    background: #111;
-    border-radius: 50%;
     right: 0;
-    top: 1px;
+    top: 2px;
+    background: #111;
 }
 
-.bird-beak {
+.bird-beak-pixel {
     position: absolute;
-    width: 14px;
-    height: 9px;
+    width: 16px;
+    height: 8px;
+    left: 32px;
+    top: 16px;
     background: #e87527;
-    border: 2px solid #8e4315;
-    right: -9px;
-    top: 15px;
-    clip-path: polygon(0 0, 100% 35%, 0 100%);
+    box-shadow:
+        8px 8px #a94e18;
 }
 
 /* PIPES */
@@ -218,35 +230,41 @@ body {
 
 #ground {
     position: absolute;
-    bottom: 0;
     left: 0;
+    bottom: 0;
     width: 200%;
     height: 75px;
+    z-index: 15;
+
     background:
         repeating-linear-gradient(
             135deg,
-            #d9cf83 0px,
-            #d9cf83 18px,
-            #c7bd70 18px,
-            #c7bd70 36px
+            #d8ce82 0px,
+            #d8ce82 18px,
+            #c2b76b 18px,
+            #c2b76b 36px
         );
+
     border-top: 8px solid #8fbd42;
-    z-index: 15;
 }
 
 /* SCORE */
 
 #score {
     position: absolute;
-    top: 25px;
+    top: 22px;
     left: 0;
     width: 100%;
+    z-index: 20;
+
     text-align: center;
+
     color: white;
     font-size: 48px;
     font-weight: bold;
-    text-shadow: 3px 3px #555;
-    z-index: 20;
+
+    text-shadow:
+        3px 3px #555;
 }
 
 /* MENU */
@@ -254,21 +272,31 @@ body {
 #message {
     position: absolute;
     z-index: 30;
+
     top: 50%;
     left: 50%;
+
     transform: translate(-50%, -50%);
+
     width: 85%;
+
     padding: 25px;
-    background: #fff;
+
+    background: white;
+
     border: 4px solid #555;
-    border-radius: 12px;
+    border-radius: 10px;
+
     text-align: center;
-    box-shadow: 0 5px #777;
+
+    box-shadow:
+        0 5px #777;
 }
 
 #message h1 {
     margin: 0 0 15px;
     color: #333;
+    font-size: 30px;
 }
 
 #message p {
@@ -278,64 +306,83 @@ body {
 
 #message button {
     border: none;
+
     background: #e9b52f;
     color: #333;
+
     padding: 13px 25px;
+
     border-radius: 7px;
+
     font-size: 16px;
     font-weight: bold;
+
     cursor: pointer;
+
     border-bottom: 4px solid #a87c13;
 }
 
-/* MEDAL */
+#message button:hover {
+    background: #f4c542;
+}
+
+/* MEDALS */
 
 #medal {
     width: 75px;
     height: 75px;
+
     margin: 10px auto 15px;
+
     border-radius: 50%;
-    border: 6px solid #555;
+
+    border: 5px solid #555;
+
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 30px;
-    background: #ddd;
+    justify-content: center;
+
+    font-size: 32px;
 }
 
 .bronze {
-    background: #b87333 !important;
+    background: #b87333;
 }
 
 .silver {
-    background: #c0c0c0 !important;
+    background: #c0c0c0;
 }
 
 .gold {
-    background: #ffd700 !important;
+    background: #ffd700;
 }
 
 .platinum {
-    background: #dff8ff !important;
-}
-
-.hidden {
-    display: none;
+    background: #dff8ff;
 }
 
 /* MENU BUTTON */
 
 #back {
     position: absolute;
+
     top: 15px;
     left: 15px;
+
     z-index: 50;
+
     background: rgba(255,255,255,.85);
+
     border: 2px solid #555;
+
     border-radius: 6px;
+
     padding: 8px 12px;
+
     color: #333;
+
     text-decoration: none;
+
     font-size: 13px;
     font-weight: bold;
 }
@@ -365,12 +412,15 @@ body {
 
 <div id="score">0</div>
 
+<!-- PIXEL BIRD -->
+
 <div id="bird">
 
-    <div class="bird-body"></div>
-    <div class="bird-wing"></div>
-    <div class="bird-eye"></div>
-    <div class="bird-beak"></div>
+    <div class="bird-pixel"></div>
+
+    <div class="bird-eye-pixel"></div>
+
+    <div class="bird-beak-pixel"></div>
 
 </div>
 
@@ -386,7 +436,7 @@ body {
     </p>
 
     <button onclick="startGame()">
-        START GAME
+        START
     </button>
 
 </div>
@@ -396,28 +446,51 @@ body {
 
 <script>
 
-const game = document.getElementById("game");
-const bird = document.getElementById("bird");
-const scoreDisplay = document.getElementById("score");
-const message = document.getElementById("message");
-const ground = document.getElementById("ground");
+const game =
+    document.getElementById("game");
+
+const bird =
+    document.getElementById("bird");
+
+const scoreDisplay =
+    document.getElementById("score");
+
+const message =
+    document.getElementById("message");
+
+const ground =
+    document.getElementById("ground");
+
 
 let birdY = 300;
+
 let velocity = 0;
 
 const gravity = 0.45;
+
 const flapPower = -7.5;
 
+
 let pipes = [];
+
 let score = 0;
-let highScore = Number(localStorage.getItem("flappyHighScore")) || 0;
+
+let highScore =
+    Number(
+        localStorage.getItem("flappyHighScore")
+    ) || 0;
+
 
 let gameRunning = false;
+
 let gameOver = false;
 
 let lastTime = 0;
+
 let pipeTimer = 0;
+
 let groundX = 0;
+
 
 const groundHeight = 75;
 
@@ -427,32 +500,43 @@ const groundHeight = 75;
 function startGame() {
 
     pipes.forEach(pipe => {
+
         pipe.top.remove();
         pipe.bottom.remove();
+
     });
 
     pipes = [];
 
     birdY = 300;
+
     velocity = 0;
+
     score = 0;
+
     pipeTimer = 0;
 
     gameRunning = true;
+
     gameOver = false;
 
     scoreDisplay.textContent = "0";
 
     message.classList.add("hidden");
 
-    bird.style.top = birdY + "px";
-    bird.style.transform = "rotate(0deg)";
+    bird.style.top =
+        birdY + "px";
 
-    lastTime = performance.now();
+    bird.style.transform =
+        "rotate(0deg)";
+
+    lastTime =
+        performance.now();
 
     requestAnimationFrame(gameLoop);
 
     flap();
+
 }
 
 
@@ -465,10 +549,11 @@ function flap() {
     }
 
     velocity = flapPower;
+
 }
 
 
-/* CREATE PIPE */
+/* PIPE */
 
 function createPipe() {
 
@@ -488,16 +573,19 @@ function createPipe() {
             (maxTop - minTop)
         ) + minTop;
 
+
     const bottomHeight =
         game.clientHeight -
         groundHeight -
         topHeight -
         gap;
 
+
     const topPipe =
         document.createElement("div");
 
-    topPipe.className = "pipe top";
+    topPipe.className =
+        "pipe top";
 
     topPipe.style.height =
         topHeight + "px";
@@ -505,10 +593,12 @@ function createPipe() {
     topPipe.style.left =
         game.clientWidth + "px";
 
+
     const bottomPipe =
         document.createElement("div");
 
-    bottomPipe.className = "pipe bottom";
+    bottomPipe.className =
+        "pipe bottom";
 
     bottomPipe.style.height =
         bottomHeight + "px";
@@ -516,8 +606,11 @@ function createPipe() {
     bottomPipe.style.left =
         game.clientWidth + "px";
 
+
     game.appendChild(topPipe);
+
     game.appendChild(bottomPipe);
+
 
     pipes.push({
 
@@ -532,6 +625,7 @@ function createPipe() {
         passed: false
 
     });
+
 }
 
 
@@ -543,20 +637,29 @@ function gameLoop(time) {
         return;
     }
 
+
     const delta =
         Math.min(
             (time - lastTime) / 16.67,
             2
         );
 
+
     lastTime = time;
 
-    velocity += gravity * delta;
 
-    birdY += velocity * delta;
+    /* BIRD */
+
+    velocity +=
+        gravity * delta;
+
+    birdY +=
+        velocity * delta;
+
 
     bird.style.top =
         birdY + "px";
+
 
     const rotation =
         Math.max(
@@ -567,17 +670,23 @@ function gameLoop(time) {
             )
         );
 
+
     bird.style.transform =
-        "rotate(" + rotation + "deg)";
+        "rotate(" +
+        rotation +
+        "deg)";
 
 
-    /* MOVING GROUND */
+    /* GROUND */
 
-    groundX -= 1.5 * delta;
+    groundX -=
+        1.5 * delta;
+
 
     if (groundX <= -36) {
         groundX = 0;
     }
+
 
     ground.style.backgroundPosition =
         groundX + "px 0";
@@ -587,6 +696,7 @@ function gameLoop(time) {
 
     pipeTimer += delta;
 
+
     if (pipeTimer > 95) {
 
         createPipe();
@@ -595,11 +705,15 @@ function gameLoop(time) {
 
     }
 
+
     const speed = 2.6;
+
 
     pipes.forEach(pipe => {
 
-        pipe.x -= speed * delta;
+        pipe.x -=
+            speed * delta;
+
 
         pipe.top.style.left =
             pipe.x + "px";
@@ -625,30 +739,33 @@ function gameLoop(time) {
     });
 
 
-    /* REMOVE OLD PIPES */
+    /* DELETE OLD PIPES */
 
-    pipes = pipes.filter(pipe => {
+    pipes =
+        pipes.filter(pipe => {
 
-        if (pipe.x < -80) {
+            if (pipe.x < -80) {
 
-            pipe.top.remove();
-            pipe.bottom.remove();
+                pipe.top.remove();
 
-            return false;
+                pipe.bottom.remove();
 
-        }
+                return false;
 
-        return true;
+            }
 
-    });
+            return true;
+
+        });
 
 
-    /* GROUND / CEILING */
+    /* CEILING / GROUND */
 
     if (
         birdY < 0 ||
-        birdY + 32 >
-        game.clientHeight - groundHeight
+        birdY + 40 >
+        game.clientHeight -
+        groundHeight
     ) {
 
         endGame();
@@ -661,15 +778,23 @@ function gameLoop(time) {
     /* COLLISION */
 
     const birdLeft = 105;
-    const birdRight = 147;
+
+    const birdRight = 153;
+
     const birdTop = birdY;
-    const birdBottom = birdY + 32;
+
+    const birdBottom =
+        birdY + 40;
 
 
     for (const pipe of pipes) {
 
-        const pipeLeft = pipe.x;
-        const pipeRight = pipe.x + 62;
+        const pipeLeft =
+            pipe.x;
+
+        const pipeRight =
+            pipe.x + 62;
+
 
         if (
             birdRight > pipeLeft &&
@@ -681,6 +806,7 @@ function gameLoop(time) {
 
             const gapBottom =
                 pipe.topHeight + 155;
+
 
             if (
                 birdTop < gapTop ||
@@ -708,47 +834,62 @@ function gameLoop(time) {
 function getMedal(score) {
 
     if (score >= 40) {
+
         return {
             name: "PLATINUM",
             className: "platinum",
             icon: "💎"
         };
+
     }
 
+
     if (score >= 30) {
+
         return {
             name: "GOLD",
             className: "gold",
             icon: "🥇"
         };
+
     }
 
+
     if (score >= 20) {
+
         return {
             name: "SILVER",
             className: "silver",
             icon: "🥈"
         };
+
     }
 
+
     if (score >= 10) {
+
         return {
             name: "BRONZE",
             className: "bronze",
             icon: "🥉"
         };
+
     }
 
+
     return null;
+
 }
 
 
-/* GAME OVER */
+/* RETRY SCREEN */
 
 function endGame() {
 
     gameRunning = false;
+
     gameOver = true;
+
 
     if (score > highScore) {
 
@@ -761,28 +902,42 @@ function endGame() {
 
     }
 
+
     const medal =
         getMedal(score);
 
+
     let medalHTML = "";
+
 
     if (medal) {
 
         medalHTML = `
-            <div id="medal" class="${medal.className}">
+
+            <div id="medal"
+                 class="${medal.className}">
+
                 ${medal.icon}
+
             </div>
 
-            <strong>${medal.name} MEDAL!</strong>
+            <strong>
+                ${medal.name} MEDAL
+            </strong>
+
         `;
 
     }
 
-    message.classList.remove("hidden");
+
+    message.classList.remove(
+        "hidden"
+    );
+
 
     message.innerHTML = `
 
-        <h1>GAME OVER</h1>
+        <h1>TRY AGAIN</h1>
 
         ${medalHTML}
 
@@ -796,6 +951,7 @@ function endGame() {
         </button>
 
     `;
+
 }
 
 
@@ -812,7 +968,11 @@ document.addEventListener(
 
             event.preventDefault();
 
-            if (!gameRunning && !gameOver) {
+
+            if (
+                !gameRunning &&
+                !gameOver
+            ) {
 
                 startGame();
 
@@ -838,10 +998,16 @@ game.addEventListener(
             event.target.tagName === "BUTTON" ||
             event.target.id === "back"
         ) {
+
             return;
+
         }
 
-        if (!gameRunning && !gameOver) {
+
+        if (
+            !gameRunning &&
+            !gameOver
+        ) {
 
             startGame();
 
@@ -865,12 +1031,19 @@ game.addEventListener(
             event.target.tagName === "BUTTON" ||
             event.target.id === "back"
         ) {
+
             return;
+
         }
+
 
         event.preventDefault();
 
-        if (!gameRunning && !gameOver) {
+
+        if (
+            !gameRunning &&
+            !gameOver
+        ) {
 
             startGame();
 
@@ -881,33 +1054,62 @@ game.addEventListener(
         }
 
     },
-    { passive: false }
+    {
+        passive: false
+    }
+);
+
+
+/* SECRET RRR */
+
+let rPresses = 0;
+
+let rTimer;
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key.toLowerCase() !== "r"
+        ) {
+
+            return;
+
+        }
+
+
+        rPresses++;
+
+
+        clearTimeout(rTimer);
+
+
+        rTimer =
+            setTimeout(
+                function() {
+
+                    rPresses = 0;
+
+                },
+                700
+            );
+
+
+        if (rPresses === 3) {
+
+            window.location.href =
+                "flashcards.html";
+
+            rPresses = 0;
+
+        }
+
+    }
 );
 
 </script>
-let rPresses = 0;
-let rTimer;
 
-document.addEventListener("keydown", function(event) {
-
-    if (event.key.toLowerCase() !== "r") {
-        return;
-    }
-
-    rPresses++;
-
-    clearTimeout(rTimer);
-
-    rTimer = setTimeout(function() {
-        rPresses = 0;
-    }, 700);
-
-    if (rPresses === 3) {
-        window.location.href = "flashcards.html";
-        rPresses = 0;
-    }
-
-});
 </body>
 </html>
-
