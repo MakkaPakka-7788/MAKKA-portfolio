@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard.com - Pong</title>
+
+<style>
+body {
+    margin: 0;
+    background: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    margin: 25px 0 10px;
+}
+
+#difficulty {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 16px;
+    margin: 4px;
+    border: 1px solid white;
+    background: #111;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #333;
+}
+
+button.selected {
+    background: white;
+    color: black;
+}
+
+#score {
+    font-size: 28px;
+    margin: 12px;
+}
+
+canvas {
+    background: #111;
+    border: 3px solid white;
+    max-width: 95%;
+}
+
+.controls {
+    margin-top: 15px;
+    color: #bbb;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Pong</h1>
+
+<div id="difficulty">
+    <button onclick="setDifficulty('easy')" id="easy">
+        Easy
+    </button>
+
+    <button onclick="setDifficulty('medium')" id="medium">
+        Medium
+    </button>
+
+    <button onclick="setDifficulty('hard')" id="hard">
+        Hard
+    </button>
+
+    <button onclick="setDifficulty('impossible')" id="impossible">
+        Impossible
+    </button>
+</div>
+
+<div id="score">
+    <span id="playerScore">0</span>
+    -
+    <span id="computerScore">0</span>
+</div>
+
+<canvas id="game" width="800" height="500"></canvas>
+
+<div class="controls">
+    W / S to move
+    <br>
+    First to 10 wins
+    <br><br>
+
+    <button onclick="resetGame()">
+        Reset
+    </button>
+
+    <button onclick="window.location.href='index.html'">
+        Back to Games
+    </button>
+</div>
+
+<script>
+
+const canvas =
+    document.getElementById("game");
+
+const ctx =
+    canvas.getContext("2d");
+
+const playerScoreElement =
+    document.getElementById("playerScore");
+
+const computerScoreElement =
+    document.getElementById("computerScore");
+
+const paddleWidth = 12;
+const paddleHeight = 90;
+
+let player = {
+    x: 25,
+    y: canvas.height / 2 - paddleHeight / 2,
+    speed: 7
+};
+
+let computer = {
+    x: canvas.width - 37,
+    y: canvas.height / 2 - paddleHeight / 2
+};
+
+let ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    size: 10,
+    speedX: 5,
+    speedY: 4
+};
+
+let playerScore = 0;
+let computerScore = 0;
+
+let difficulty = "medium";
+
+let aiSpeed = 5;
+
+let keys = {};
+
+document.addEventListener("keydown", function(event) {
+
+    keys[event.key.toLowerCase()] = true;
+
+});
+
+document.addEventListener("keyup", function(event) {
+
+    keys[event.key.toLowerCase()] = false;
+
+});
+
+
+function setDifficulty(level) {
+
+    difficulty = level;
+
+    document
+        .querySelectorAll("#difficulty button")
+        .forEach(button => {
+            button.classList.remove("selected");
+        });
+
+    document
+        .getElementById(level)
+        .classList.add("selected");
+
+    if (level === "easy") {
+        aiSpeed = 3;
+    }
+
+    if (level === "medium") {
+        aiSpeed = 5;
+    }
+
+    if (level === "hard") {
+        aiSpeed = 7;
+    }
+
+    if (level === "impossible") {
+        aiSpeed = 10;
+    }
+
+}
+
+
+function resetBall(direction) {
+
+    ball.x =
+        canvas.width / 2;
+
+    ball.y =
+        canvas.height / 2;
+
+    ball.speedX =
+        5 * direction;
+
+    ball.speedY =
+        Math.random() * 6 - 3;
+
+}
+
+
+function resetGame() {
+
+    playerScore = 0;
+    computerScore = 0;
+
+    playerScoreElement.textContent = 0;
+    computerScoreElement.textContent = 0;
+
+    player.y =
+        canvas.height / 2 -
+        paddleHeight / 2;
+
+    computer.y =
+        canvas.height / 2 -
+        paddleHeight / 2;
+
+    resetBall(
+        Math.random() < 0.5
+            ? 1
+            : -1
+    );
+
+}
+
+
+function update() {
+
+    if (keys["w"]) {
+        player.y -= player.speed;
+    }
+
+    if (keys["s"]) {
+        player.y += player.speed;
+    }
+
+    if (player.y < 0) {
+        player.y = 0;
+    }
+
+    if (
+        player.y >
+        canvas.height - paddleHeight
+    ) {
+        player.y =
+            canvas.height - paddleHeight;
+    }
+
+
+    const computerCenter =
+        computer.y +
+        paddleHeight / 2;
+
+
+    let targetY =
+        ball.y;
+
+
+    if (difficulty === "easy") {
+
+        targetY =
+            ball.y +
+            Math.sin(Date.now() / 300) * 60;
+
+    }
+
+
+    if (difficulty === "medium") {
+
+        targetY =
+            ball.y +
+            Math.sin(Date.now() / 500) * 25;
+
+    }
+
+
+    if (difficulty === "hard") {
+
+        targetY =
+            ball.y;
+
+    }
+
+
+    if (difficulty === "impossible") {
+
+        targetY =
+            ball.y;
+
+    }
+
+
+    if (computerCenter < targetY) {
+
+        computer.y += aiSpeed;
+
+    }
+
+    else if (computerCenter > targetY) {
+
+        computer.y -= aiSpeed;
+
+    }
+
+
+    if (computer.y < 0) {
+        computer.y = 0;
+    }
+
+    if (
+        computer.y >
+        canvas.height - paddleHeight
+    ) {
+        computer.y =
+            canvas.height - paddleHeight;
+    }
+
+
+    ball.x += ball.speedX;
+    ball.y += ball.speedY;
+
+
+    if (
+        ball.y <= 0 ||
+        ball.y >=
+        canvas.height - ball.size
+    ) {
+
+        ball.speedY *= -1;
+
+    }
+
+
+    if (
+        ball.x <=
+        player.x + paddleWidth &&
+        ball.x >= player.x &&
+        ball.y + ball.size >= player.y &&
+        ball.y <=
+        player.y + paddleHeight
+    ) {
+
+        ball.speedX =
+            Math.abs(ball.speedX) + 0.15;
+
+        ball.speedY +=
+            (
+                ball.y -
+                (
+                    player.y +
+                    paddleHeight / 2
+                )
+            ) * 0.05;
+
+    }
+
+
+    if (
+        ball.x + ball.size >= computer.x &&
+        ball.x <=
+        computer.x + paddleWidth &&
+        ball.y + ball.size >= computer.y &&
+        ball.y <=
+        computer.y + paddleHeight
+    ) {
+
+        ball.speedX =
+            -Math.abs(ball.speedX) - 0.15;
+
+        ball.speedY +=
+            (
+                ball.y -
+                (
+                    computer.y +
+                    paddleHeight / 2
+                )
+            ) * 0.05;
+
+    }
+
+
+    if (ball.x < 0) {
+
+        computerScore++;
+
+        computerScoreElement.textContent =
+            computerScore;
+
+        if (computerScore >= 10) {
+
+            endGame("The AI wins!");
+
+            return;
+
+        }
+
+        resetBall(1);
+
+    }
+
+
+    if (
+        ball.x >
+        canvas.width
+    ) {
+
+        playerScore++;
+
+        playerScoreElement.textContent =
+            playerScore;
+
+        if (playerScore >= 10) {
+
+            endGame("You beat the AI!");
+
+            return;
+
+        }
+
+        resetBall(-1);
+
+    }
+
+}
+
+
+function draw() {
+
+    ctx.fillStyle = "#111";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.strokeStyle = "#444";
+
+    ctx.setLineDash([10, 10]);
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        canvas.width / 2,
+        0
+    );
+
+    ctx.lineTo(
+        canvas.width / 2,
+        canvas.height
+    );
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+
+    ctx.fillStyle = "white";
+
+
+    ctx.fillRect(
+        player.x,
+        player.y,
+        paddleWidth,
+        paddleHeight
+    );
+
+
+    ctx.fillRect(
+        computer.x,
+        computer.y,
+        paddleWidth,
+        paddleHeight
+    );
+
+
+    ctx.fillRect(
+        ball.x,
+        ball.y,
+        ball.size,
+        ball.size
+    );
+
+}
+
+
+function endGame(message) {
+
+    setTimeout(function() {
+
+        alert(message);
+
+        resetGame();
+
+    }, 100);
+
+}
+
+
+function gameLoop() {
+
+    update();
+
+    draw();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+setDifficulty("medium");
+
+resetBall(1);
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
