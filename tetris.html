@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -250,23 +249,42 @@
     </div>
 
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
 
-        const scoreElement = document.getElementById("score");
-        const levelElement = document.getElementById("level");
-        const highScoreElement = document.getElementById("high-score");
+        const canvas =
+            document.getElementById("gameCanvas");
 
-        const finalScore = document.getElementById("final-score");
-        const finalLevel = document.getElementById("final-level");
-        const finalHigh = document.getElementById("final-high");
+        const ctx =
+            canvas.getContext("2d");
 
-        const gameOverScreen = document.getElementById("game-over");
-        const retryButton = document.getElementById("retry-button");
+        const scoreElement =
+            document.getElementById("score");
+
+        const levelElement =
+            document.getElementById("level");
+
+        const highScoreElement =
+            document.getElementById("high-score");
+
+        const finalScore =
+            document.getElementById("final-score");
+
+        const finalLevel =
+            document.getElementById("final-level");
+
+        const finalHigh =
+            document.getElementById("final-high");
+
+        const gameOverScreen =
+            document.getElementById("game-over");
+
+        const retryButton =
+            document.getElementById("retry-button");
+
 
         const rows = 20;
         const columns = 10;
         const blockSize = 30;
+
 
         const colors = [
             null,
@@ -279,6 +297,7 @@
             "#ff1744"
         ];
 
+
         const shapes = [
             [],
             [[1,1,1,1]],
@@ -289,6 +308,7 @@
             [[0,1,0],[1,1,1]],
             [[1,1,0],[0,1,1]]
         ];
+
 
         let board;
         let currentPiece;
@@ -303,19 +323,25 @@
         let gameOver = false;
         let animationId;
 
+
         let highScore =
             Number(localStorage.getItem("tetrisHighScore")) || 0;
 
         highScoreElement.textContent = highScore;
 
+
         function createBoard() {
+
             return Array.from(
                 { length: rows },
                 () => Array(columns).fill(0)
             );
+
         }
 
+
         function randomPiece() {
+
             const type =
                 Math.floor(Math.random() * 7) + 1;
 
@@ -325,9 +351,12 @@
                 x: 0,
                 y: 0
             };
+
         }
 
+
         function startGame() {
+
             cancelAnimationFrame(animationId);
 
             board = createBoard();
@@ -357,16 +386,22 @@
 
             animationId =
                 requestAnimationFrame(update);
+
         }
 
+
         function spawnPiece() {
-            currentPiece = nextPieces.shift();
+
+            currentPiece =
+                nextPieces.shift();
 
             nextPieces.push(randomPiece());
 
             currentPiece.x =
                 Math.floor(columns / 2) -
-                Math.ceil(currentPiece.matrix[0].length / 2);
+                Math.ceil(
+                    currentPiece.matrix[0].length / 2
+                );
 
             currentPiece.y = 0;
 
@@ -375,19 +410,24 @@
             if (collision(currentPiece, 0, 0)) {
                 endGame();
             }
+
         }
 
+
         function collision(piece, offsetX, offsetY) {
+
             for (
                 let y = 0;
                 y < piece.matrix.length;
                 y++
             ) {
+
                 for (
                     let x = 0;
                     x < piece.matrix[y].length;
                     x++
                 ) {
+
                     if (!piece.matrix[y][x]) {
                         continue;
                     }
@@ -398,6 +438,7 @@
                     const newY =
                         piece.y + y + offsetY;
 
+
                     if (
                         newX < 0 ||
                         newX >= columns ||
@@ -406,55 +447,75 @@
                         return true;
                     }
 
+
                     if (
                         newY >= 0 &&
                         board[newY][newX]
                     ) {
                         return true;
                     }
+
                 }
+
             }
 
             return false;
+
         }
 
+
         function merge() {
+
             currentPiece.matrix.forEach(
                 (row, y) => {
+
                     row.forEach(
                         (value, x) => {
+
                             if (value) {
+
                                 board[
                                     currentPiece.y + y
                                 ][
                                     currentPiece.x + x
                                 ] =
                                     currentPiece.type;
+
                             }
+
                         }
                     );
+
                 }
             );
+
         }
 
+
         function clearLines() {
+
             let lines = 0;
 
             outer:
+
             for (
                 let y = rows - 1;
                 y >= 0;
                 y--
             ) {
+
                 for (
                     let x = 0;
                     x < columns;
                     x++
                 ) {
+
                     if (!board[y][x]) {
                         continue outer;
                     }
+
                 }
+
 
                 board.splice(y, 1);
 
@@ -465,9 +526,12 @@
                 y++;
 
                 lines++;
+
             }
 
+
             if (lines > 0) {
+
                 const points = [
                     0,
                     100,
@@ -485,7 +549,9 @@
                 scoreElement.textContent = score;
                 levelElement.textContent = level;
 
+
                 if (score > highScore) {
+
                     highScore = score;
 
                     highScoreElement.textContent =
@@ -495,11 +561,16 @@
                         "tetrisHighScore",
                         highScore
                     );
+
                 }
+
             }
+
         }
 
+
         function drop() {
+
             if (
                 !collision(
                     currentPiece,
@@ -507,17 +578,26 @@
                     1
                 )
             ) {
+
                 currentPiece.y++;
+
             } else {
+
                 merge();
+
                 clearLines();
+
                 spawnPiece();
+
             }
 
             dropCounter = 0;
+
         }
 
+
         function hardDrop() {
+
             while (
                 !collision(
                     currentPiece,
@@ -525,15 +605,20 @@
                     1
                 )
             ) {
+
                 currentPiece.y++;
+
             }
 
             drop();
 
             dropCounter = 0;
+
         }
 
+
         function move(direction) {
+
             if (
                 !collision(
                     currentPiece,
@@ -541,13 +626,19 @@
                     0
                 )
             ) {
+
                 currentPiece.x += direction;
+
             }
+
         }
 
+
         function rotate() {
+
             const oldMatrix =
                 currentPiece.matrix;
+
 
             const rotated =
                 oldMatrix[0].map(
@@ -557,7 +648,9 @@
                         ).reverse()
                 );
 
+
             currentPiece.matrix = rotated;
+
 
             if (
                 collision(
@@ -566,15 +659,21 @@
                     0
                 )
             ) {
+
                 currentPiece.matrix =
                     oldMatrix;
+
             }
+
         }
 
+
         function update(time = 0) {
+
             if (gameOver) {
                 return;
             }
+
 
             const delta =
                 time - lastTime;
@@ -583,23 +682,30 @@
 
             dropCounter += delta;
 
+
             const speed =
                 Math.max(
                     70,
                     800 - (level - 1) * 70
                 );
 
+
             if (dropCounter > speed) {
                 drop();
             }
 
+
             draw();
+
 
             animationId =
                 requestAnimationFrame(update);
+
         }
 
+
         function draw() {
+
             ctx.fillStyle = "#000";
 
             ctx.fillRect(
@@ -609,61 +715,91 @@
                 canvas.height
             );
 
+
             drawGrid();
+
             drawBoard();
 
+
             if (currentPiece) {
+
+                // Faint landing position
+                drawGhostPiece(currentPiece);
+
+                // Normal falling piece
                 drawPiece(currentPiece);
+
             }
+
         }
 
+
         function drawGrid() {
+
             ctx.strokeStyle =
                 "rgba(0,229,255,0.06)";
 
             ctx.lineWidth = 1;
+
 
             for (
                 let x = 0;
                 x <= canvas.width;
                 x += blockSize
             ) {
+
                 ctx.beginPath();
+
                 ctx.moveTo(x, 0);
+
                 ctx.lineTo(
                     x,
                     canvas.height
                 );
+
                 ctx.stroke();
+
             }
+
 
             for (
                 let y = 0;
                 y <= canvas.height;
                 y += blockSize
             ) {
+
                 ctx.beginPath();
+
                 ctx.moveTo(0, y);
+
                 ctx.lineTo(
                     canvas.width,
                     y
                 );
+
                 ctx.stroke();
+
             }
+
         }
 
+
         function drawBoard() {
+
             for (
                 let y = 0;
                 y < rows;
                 y++
             ) {
+
                 for (
                     let x = 0;
                     x < columns;
                     x++
                 ) {
+
                     if (board[y][x]) {
+
                         drawBlock(
                             ctx,
                             x,
@@ -671,17 +807,26 @@
                             board[y][x],
                             blockSize
                         );
+
                     }
+
                 }
+
             }
+
         }
 
+
         function drawPiece(piece) {
+
             piece.matrix.forEach(
                 (row, y) => {
+
                     row.forEach(
                         (value, x) => {
+
                             if (value) {
+
                                 drawBlock(
                                     ctx,
                                     piece.x + x,
@@ -689,12 +834,107 @@
                                     piece.type,
                                     blockSize
                                 );
+
                             }
+
                         }
                     );
+
                 }
             );
+
         }
+
+
+        // NEW: finds where the current piece will land
+        function getGhostY(piece) {
+
+            let ghostY = piece.y;
+
+            while (
+                !collision(
+                    {
+                        matrix: piece.matrix,
+                        x: piece.x,
+                        y: ghostY
+                    },
+                    0,
+                    1
+                )
+            ) {
+
+                ghostY++;
+
+            }
+
+            return ghostY;
+
+        }
+
+
+        // NEW: draws the faint landing piece
+        function drawGhostPiece(piece) {
+
+            const ghostY =
+                getGhostY(piece);
+
+
+            piece.matrix.forEach(
+                (row, y) => {
+
+                    row.forEach(
+                        (value, x) => {
+
+                            if (!value) {
+                                return;
+                            }
+
+
+                            const px =
+                                (piece.x + x) *
+                                blockSize + 2;
+
+                            const py =
+                                (ghostY + y) *
+                                blockSize + 2;
+
+
+                            ctx.fillStyle =
+                                "rgba(255,255,255,0.08)";
+
+                            ctx.strokeStyle =
+                                "rgba(255,255,255,0.35)";
+
+                            ctx.lineWidth = 2;
+
+
+                            ctx.fillRect(
+                                px,
+                                py,
+                                blockSize - 4,
+                                blockSize - 4
+                            );
+
+
+                            ctx.strokeRect(
+                                px,
+                                py,
+                                blockSize - 4,
+                                blockSize - 4
+                            );
+
+                        }
+
+                    );
+
+                }
+            );
+
+
+            ctx.shadowBlur = 0;
+
+        }
+
 
         function drawBlock(
             context,
@@ -703,12 +943,15 @@
             type,
             size
         ) {
+
             const color = colors[type];
 
             context.fillStyle = color;
 
             context.shadowColor = color;
+
             context.shadowBlur = 15;
+
 
             context.fillRect(
                 x * size + 2,
@@ -717,10 +960,13 @@
                 size - 4
             );
 
+
             context.shadowBlur = 0;
+
 
             context.strokeStyle =
                 "rgba(255,255,255,0.35)";
+
 
             context.strokeRect(
                 x * size + 3,
@@ -728,22 +974,28 @@
                 size - 6,
                 size - 6
             );
+
         }
 
+
         function drawPreviews() {
+
             const canvases = [
                 document.getElementById("next1"),
                 document.getElementById("next2"),
                 document.getElementById("next3")
             ];
 
+
             nextPieces.forEach(
                 (piece, index) => {
+
                     const preview =
                         canvases[index];
 
                     const previewCtx =
                         preview.getContext("2d");
+
 
                     previewCtx.fillStyle = "#000";
 
@@ -754,13 +1006,18 @@
                         preview.height
                     );
 
+
                     const size = 17;
 
+
                     const width =
-                        piece.matrix[0].length * size;
+                        piece.matrix[0].length *
+                        size;
 
                     const height =
-                        piece.matrix.length * size;
+                        piece.matrix.length *
+                        size;
+
 
                     const startX =
                         (preview.width - width) / 2;
@@ -768,11 +1025,15 @@
                     const startY =
                         (preview.height - height) / 2;
 
+
                     piece.matrix.forEach(
                         (row, y) => {
+
                             row.forEach(
                                 (value, x) => {
+
                                     if (value) {
+
                                         previewCtx.fillStyle =
                                             colors[piece.type];
 
@@ -781,6 +1042,7 @@
 
                                         previewCtx.shadowBlur = 10;
 
+
                                         previewCtx.fillRect(
                                             startX + x * size,
                                             startY + y * size,
@@ -788,78 +1050,113 @@
                                             size - 2
                                         );
 
+
                                         previewCtx.shadowBlur = 0;
+
                                     }
+
                                 }
                             );
+
                         }
                     );
+
                 }
             );
+
         }
 
+
         function endGame() {
+
             gameOver = true;
 
             cancelAnimationFrame(animationId);
 
-            finalScore.textContent = score;
-            finalLevel.textContent = level;
-            finalHigh.textContent = highScore;
 
-            gameOverScreen.style.display = "flex";
+            finalScore.textContent =
+                score;
+
+            finalLevel.textContent =
+                level;
+
+            finalHigh.textContent =
+                highScore;
+
+
+            gameOverScreen.style.display =
+                "flex";
+
         }
+
 
         retryButton.addEventListener(
             "click",
             startGame
         );
 
+
         document.addEventListener(
             "keydown",
             event => {
+
                 if (gameOver) {
                     return;
                 }
+
 
                 if (event.key === "ArrowLeft") {
                     move(-1);
                 }
 
+
                 if (event.key === "ArrowRight") {
                     move(1);
                 }
+
 
                 if (event.key === "ArrowDown") {
                     drop();
                 }
 
+
                 if (event.key === "ArrowUp") {
                     rotate();
                 }
 
+
                 if (event.code === "Space") {
+
                     event.preventDefault();
+
                     hardDrop();
+
                 }
+
             }
         );
 
+
+        // RRR shortcut
         let rPresses = 0;
         let rTimer;
+
 
         document.addEventListener(
             "keydown",
             event => {
+
                 if (
                     event.key.toLowerCase() !== "r"
                 ) {
                     return;
                 }
 
+
                 rPresses++;
 
                 clearTimeout(rTimer);
+
 
                 rTimer =
                     setTimeout(
@@ -869,16 +1166,23 @@
                         700
                     );
 
+
                 if (rPresses === 3) {
+
+                    rPresses = 0;
+
                     window.location.href =
                         "flashcards.html";
+
                 }
+
             }
         );
 
+
         startGame();
+
     </script>
 
 </body>
 </html>
-```
