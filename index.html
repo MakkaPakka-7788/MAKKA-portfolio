@@ -1,5 +1,3 @@
-
-
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard Creator</title>
+
     <style>
         body {
             background-color: #2E7D32;
@@ -92,18 +91,12 @@
             Number(localStorage.getItem("snakeHighScore")) || 0;
 
         let gameInterval;
-        let portalMoveInterval;
-
-        const portalMoveTime = 2500;
 
         highScoreElement.innerText = highScore;
 
         function startGame() {
             clearInterval(gameInterval);
-            clearInterval(portalMoveInterval);
-
             gameInterval = setInterval(update, 140);
-            portalMoveInterval = setInterval(movePortals, portalMoveTime);
         }
 
         function update() {
@@ -111,7 +104,6 @@
 
             if (checkGameOver()) {
                 clearInterval(gameInterval);
-                clearInterval(portalMoveInterval);
 
                 setTimeout(() => {
                     alert("Game Over!\nFinal Score: " + score);
@@ -246,13 +238,9 @@
 
             snake[0].x = destination.x;
             snake[0].y = destination.y;
-
-            generateObstacles();
         }
 
         function movePortals() {
-            if (portals.length === 0) return;
-
             for (let i = 0; i < portals.length; i++) {
                 let newPortal;
                 let valid = false;
@@ -302,8 +290,6 @@
 
                 portals[i] = newPortal;
             }
-
-            draw();
         }
 
         function checkFoodCollision() {
@@ -333,8 +319,10 @@
                     });
 
                     fruits.splice(i, 1);
-                    generateSingleFruit();
+
                     generateObstacles();
+                    movePortals();
+                    generateSingleFruit();
 
                     break;
                 }
@@ -510,7 +498,6 @@
 
         function resetGame() {
             clearInterval(gameInterval);
-            clearInterval(portalMoveInterval);
 
             snake = [{ x: 15, y: 15 }];
 
