@@ -16,7 +16,9 @@
             height: 100vh;
             margin: 0;
         }
-        #score-board {
+        #score-container {
+            display: flex;
+            gap: 30px;
             font-size: 24px;
             margin-bottom: 15px;
             font-weight: bold;
@@ -36,7 +38,11 @@
 </head>
 <body>
 
-    <div id="score-board">Score: <span id="score">0</span></div>
+    <!-- Scoreboards for current score and saved high score -->
+    <div id="score-container">
+        <div>Score: <span id="score">0</span></div>
+        <div>High Score: <span id="high-score">0</span></div>
+    </div>
     
     <div id="game-wrapper">
         <canvas id="gameCanvas" width="600" height="600"></canvas>
@@ -46,17 +52,24 @@
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const scoreElement = document.getElementById("score");
+        const highScoreElement = document.getElementById("high-score");
 
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
         let snake = [{ x: 15, y: 15 }];
         let fruits = []; 
+        let obstacles = []; // Array to hold fixed danger blocks
         const maxFruits = 3; 
+        const maxObstacles = 3; // Number of danger blocks on screen
         let dx = 1; 
         let dy = 0; 
         let score = 0;
+        let highScore = localStorage.getItem("snakeHighScore") || 0; // Loads saved high score
         let gameInterval;
+
+        // Display the loaded high score immediately
+        highScoreElement.innerText = highScore;
 
         function startGame() {
             gameInterval = setInterval(update, 140);
@@ -66,7 +79,7 @@
             moveSnake();
             if (checkGameOver()) {
                 clearInterval(gameInterval);
-                alert("Game Over! Final Score: " + score);
+                alert("Game Over! You hit an obstacle. Final Score: " + score);
                 resetGame();
                 return;
             }
@@ -78,19 +91,23 @@
             ctx.fillStyle = "#111";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw the Snake parts
+            // Draw Obstacles (Danger blocks)
+            ctx.fillStyle = "#777777"; // Solid grey blocks
+            obstacles.forEach(obs => {
+                ctx.fillRect(obs.x * gridSize, obs.y * gridSize, gridSize - 2, gridSize - 2);
+            });
+
+            // Draw Snake
             snake.forEach((part, index) => {
                 if (index === 0) {
-                    // NEW: The head (index 0) is drawn in a distinct Dark Forest Green
-                    ctx.fillStyle = "#1B5E20"; 
+                    ctx.fillStyle = "#1B5E20"; // Dark Forest Green Head
                 } else {
-                    // The rest of the body stays the standard lighter Green
-                    ctx.fillStyle = "#4CAF50"; 
+                    ctx.fillStyle = "#4CAF50"; // Light Green Body
                 }
                 ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
             });
 
-            // Draw all active fruits
+            // Draw Fruits
             ctx.fillStyle = "#FF5252"; 
             fruits.forEach(fruit => {
                 ctx.fillRect(fruit.x * gridSize, fruit.y * gridSize, gridSize - 2, gridSize - 2);
@@ -98,7 +115,16 @@
         }
 
         function moveSnake() {
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            let nextX = snake[0].x + dx;
+            let nextY = snake[0].y + dy;
+
+            // Screen Wrapping Logic (Teleporting walls)
+            if (nextX < 0) nextX = tileCount - 1;       
+            if (nextX >= tileCount) nextX = 0;          
+            if (nextY < 0) nextY = tileCount - 1;       
+            if (nextY >= tileCount) nextY = 0;          
+
+            const head = { x: nextX, y: nextY };
             snake.unshift(head); 
             snake.pop(); 
         }
@@ -108,6 +134,14 @@
                 if (snake[0].x === fruits[i].x && snake[0].y === fruits[i].y) {
                     score++;
                     scoreElement.innerText = score;
+                    
+                    // Update High Score if current score beats it
+                    if (score > highScore) {
+                        highScore = score;
+                        highScoreElement.innerText = highScore;
+                        localStorage.setItem("snakeHighScore", highScore); // Saves to browser memory
+                    }
+
                     snake.push({}); 
                     fruits.splice(i, 1); 
                     generateSingleFruit(); 
@@ -118,16 +152,41 @@
 
         function generateSingleFruit() {
             let newFruit;
-            let onSnake = true;
+            let invalidPos = true;
 
-            while (onSnake) {
+            while (invalidPos) {
                 newFruit = {
                     x: Math.floor(Math.random() * tileCount),
                     y: Math.floor(Math.random() * tileCount)
                 };
-                onSnake = snake.some(part => part.x === newFruit.x && part.y === newFruit.y);
+                
+                // Ensure fruit doesn't land on snake OR an obstacle
+                let onSnake = snake.some(part => part.x === newFruit.x && part.y === newFruit.y);
+                let onObstacle = obstacles.some(obs => obs.x === newFruit.x && obs.y === newFruit.y);
+                invalidPos = onSnake || onObstacle;
             }
             fruits.push(newFruit);
+        }
+
+        function generateObstacles() {
+            obstacles = [];
+            for (let i = 0; i < maxObstacles; i++) {
+                let newObs;
+                let invalidPos = true;
+
+                while (invalidPos) {
+                    newObs = {
+                        x: Math.floor(Math.random() * tileCount),
+                        y: Math.floor(Math.random() * tileCount)
+                    };
+                    
+                    // Don't place obstacle right on top of starting position (center) or other obstacles
+                    let nearCenter = (Math.abs(newObs.x - 15) < 3 && Math.abs(newObs.y - 15) < 3);
+                    let onObstacle = obstacles.some(obs => obs.x === newObs.x && obs.y === newObs.y);
+                    invalidPos = nearCenter || onObstacle;
+                }
+                obstacles.push(newObs);
+            }
         }
 
         function populateAllFruits() {
@@ -138,12 +197,8 @@
         }
 
         function checkGameOver() {
-            // Wall borders are now the ONLY way to die
-            if (snake[0].x < 0 || snake[0].x >= tileCount || snake[0].y < 0 || snake[0].y >= tileCount) {
-                return true;
-            }
-            // REMOVED: The code that checked for tail crashes has been completely taken out!
-            return false;
+            // Hit an obstacle -> Game Over
+            return obstacles.some(obs => obs.x === snake[0].x && obs.y === snake[0].y);
         }
 
         function resetGame() {
@@ -152,6 +207,7 @@
             dy = 0;
             score = 0;
             scoreElement.innerText = score;
+            generateObstacles(); // Randomise obstacle positions for the next round
             populateAllFruits();
             startGame();
         }
@@ -173,9 +229,9 @@
             }
         });
 
+        generateObstacles();
         populateAllFruits();
         startGame();
     </script>
 </body>
 </html>
-Use code with caution.
