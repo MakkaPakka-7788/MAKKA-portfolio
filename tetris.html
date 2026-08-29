@@ -279,6 +279,8 @@
         let dropCounter;
         let lastTime;
         let gameRunning;
+        let particles = [];
+
         let highScore =
             Number(localStorage.getItem("tetrisHighScore")) || 0;
 
@@ -312,6 +314,7 @@
             dropInterval = 800;
             dropCounter = 0;
             lastTime = 0;
+            particles = [];
 
             nextPieces = [
                 randomPiece(),
@@ -320,7 +323,6 @@
             ];
 
             current = nextPieces.shift();
-
             nextPieces.push(randomPiece());
 
             gameOverScreen.style.display = "none";
@@ -332,26 +334,45 @@
             requestAnimationFrame(gameLoop);
         }
 
-        function drawBlock(x, y, color, context = ctx, size = blockSize) {
+        function drawBlock(
+            x,
+            y,
+            color,
+            context = ctx,
+            size = blockSize
+        ) {
+            context.save();
+
+            context.shadowColor = color;
+            context.shadowBlur = 15;
+
             context.fillStyle = color;
+
             context.fillRect(
                 x * size,
                 y * size,
-                size - 1,
-                size - 1
+                size - 2,
+                size - 2
             );
 
-            context.strokeStyle = "rgba(255,255,255,0.25)";
+            context.shadowBlur = 5;
+
+            context.strokeStyle = "#ffffff";
+            context.lineWidth = 1;
+
             context.strokeRect(
                 x * size,
                 y * size,
-                size - 1,
-                size - 1
+                size - 2,
+                size - 2
             );
+
+            context.restore();
         }
 
         function drawBoard() {
             ctx.fillStyle = "#050505";
+
             ctx.fillRect(
                 0,
                 0,
@@ -371,7 +392,9 @@
                 }
             }
 
-            drawPiece(current);
+            if (current) {
+                drawPiece(current);
+            }
         }
 
         function drawPiece(piece) {
@@ -379,7 +402,7 @@
                 (row, y) => {
                     row.forEach(
                         (value, x) => {
-                            if (value) {
+                            if (value && piece.y + y >= 0) {
                                 drawBlock(
                                     piece.x + x,
                                     piece.y + y,
@@ -402,14 +425,22 @@
 
             const size = 20;
 
-            const width = piece.shape[0].length * size;
-            const height = piece.shape.length * size;
+            const width =
+                piece.shape[0].length * size;
+
+            const height =
+                piece.shape.length * size;
 
             const offsetX =
                 (context.canvas.width - width) / 2;
 
             const offsetY =
                 (context.canvas.height - height) / 2;
+
+            context.save();
+
+            context.shadowColor = piece.color;
+            context.shadowBlur = 12;
 
             piece.shape.forEach(
                 (row, y) => {
@@ -430,6 +461,8 @@
                     );
                 }
             );
+
+            context.restore();
         }
 
         function updateNextPieces() {
@@ -479,7 +512,7 @@
                 (row, y) => {
                     row.forEach(
                         (value, x) => {
-                            if (value) {
+                            if (value && current.y + y >= 0) {
                                 board[
                                     current.y + y
                                 ][
@@ -494,13 +527,14 @@
 
         function rotatePiece() {
             const oldShape = current.shape;
+            const oldX = current.x;
 
             current.shape =
                 current.shape[0].map(
                     (_, index) =>
-                        current.shape.map(
-                            row => row[index]
-                        ).reverse()
+                        current.shape
+                            .map(row => row[index])
+                            .reverse()
                 );
 
             let offset = 1;
@@ -511,14 +545,12 @@
                 offset =
                     -(offset + (offset > 0 ? 1 : -1));
 
-                if (offset > current.shape[0].length) {
+                if (
+                    Math.abs(offset) >
+                    current.shape[0].length + 1
+                ) {
                     current.shape = oldShape;
-                    current.x = Math.floor(
-                        cols / 2
-                    ) -
-                    Math.ceil(
-                        current.shape[0].length / 2
-                    );
+                    current.x = oldX;
                     return;
                 }
             }
@@ -538,27 +570,7 @@
             if (collide(current)) {
                 current.y--;
 
-                merge();
-
-                clearLines();
-
-                current = nextPieces.shift();
-
-                current.x =
-                    Math.floor(cols / 2) -
-                    Math.ceil(
-                        current.shape[0].length / 2
-                    );
-
-                current.y = 0;
-
-                nextPieces.push(randomPiece());
-
-                updateNextPieces();
-
-                if (collide(current)) {
-                    endGame();
-                }
+                lockPiece();
             }
 
             dropCounter = 0;
@@ -571,6 +583,13 @@
 
             current.y--;
 
+            lockPiece();
+
+            dropCounter = 0;
+            lastTime = performance.now();
+        }
+
+        function lockPiece() {
             merge();
 
             clearLines();
@@ -592,30 +611,42 @@
             if (collide(current)) {
                 endGame();
             }
-
-            dropCounter = 0;
         }
 
         function clearLines() {
             let cleared = 0;
 
-            outer:
-            for (let y = rows - 1; y >= 0; y--) {
-                for (let x = 0; x < cols; x++) {
+            for (
+                let y = rows - 1;
+                y >= 0;
+                y--
+            ) {
+                let full = true;
+
+                for (
+                    let x = 0;
+                    x < cols;
+                    x++
+                ) {
                     if (!board[y][x]) {
-                        continue outer;
+                        full = false;
+                        break;
                     }
                 }
 
-                board.splice(y, 1);
+                if (full) {
+                    createParticles(y);
 
-                board.unshift(
-                    Array(cols).fill(0)
-                );
+                    board.splice(y, 1);
 
-                y++;
+                    board.unshift(
+                        Array(cols).fill(0)
+                    );
 
-                cleared++;
+                    y++;
+
+                    cleared++;
+                }
             }
 
             if (cleared > 0) {
@@ -643,6 +674,60 @@
 
                 updateStats();
             }
+        }
+
+        function createParticles(y) {
+            for (let i = 0; i < 45; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: y * blockSize +
+                        Math.random() * blockSize,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    life: 1,
+                    size: Math.random() * 4 + 2,
+                    color:
+                        colors[
+                            Math.floor(
+                                Math.random() *
+                                colors.length
+                            )
+                        ]
+                });
+            }
+        }
+
+        function updateParticles() {
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15;
+                p.life -= 0.025;
+            });
+
+            particles = particles.filter(
+                p => p.life > 0
+            );
+        }
+
+        function drawParticles() {
+            particles.forEach(p => {
+                ctx.save();
+
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 15;
+
+                ctx.fillRect(
+                    p.x,
+                    p.y,
+                    p.size,
+                    p.size
+                );
+
+                ctx.restore();
+            });
         }
 
         function updateStats() {
@@ -680,11 +765,15 @@
 
             dropCounter += deltaTime;
 
-            if (dropCounter > dropInterval) {
+            if (dropCounter >= dropInterval) {
                 playerDrop();
             }
 
+            updateParticles();
+
             drawBoard();
+
+            drawParticles();
 
             requestAnimationFrame(gameLoop);
         }
