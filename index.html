@@ -6,8 +6,7 @@
     <title>Computing Homework Task 2</title>
     <style>
         body {
-            /* NEW: Changed the whole monitor/screen background to Green */
-            background-color: #2E7D32; 
+            background-color: #2E7D32; /* Green outer screen background */
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
@@ -23,7 +22,6 @@
             font-size: 24px;
             margin-bottom: 15px;
             font-weight: bold;
-            /* Added text shadow so numbers stay readable if they overlap bright areas */
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5); 
         }
         #game-wrapper {
@@ -34,8 +32,7 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.6);
         }
         canvas {
-            /* NEW: Reverted the actual play zone grid back to solid Black */
-            background-color: #111;
+            background-color: #111; /* Classic black game board grid */
             display: block;
         }
     </style>
@@ -95,7 +92,6 @@
         }
 
         function draw() {
-            // NEW: Clears play board area to black box layout
             ctx.fillStyle = "#111";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -119,7 +115,7 @@
                 if (index === 0) {
                     ctx.fillStyle = "#1B5E20"; // Dark Forest Green Head
                 } else {
-                    ctx.fillStyle = "#4CAF50"; // Reverted body blocks back to bright classic green
+                    ctx.fillStyle = "#4CAF50"; // Light Green Body
                 }
                 ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
             });
@@ -146,7 +142,7 @@
         }
 
         function checkPortalCollision() {
-            let head = snake;
+            let head = snake[0];
             let hitPortal = portals.some(p => p.x === head.x && p.y === head.y);
 
             if (hitPortal) {
@@ -165,7 +161,7 @@
         }
 
         function checkFoodCollision() {
-            let head = snake;
+            let head = snake[0];
             for (let i = 0; i < fruits.length; i++) {
                 if (head.x === fruits[i].x && head.y === fruits[i].y) {
                     score++;
@@ -207,7 +203,7 @@
 
         function generateObstacles() {
             obstacles = [];
-            let head = snake;
+            let head = snake[0];
 
             let front1 = { x: head.x + dx, y: head.y + dy };
             let front2 = { x: head.x + (dx * 2), y: head.y + (dy * 2) };
@@ -266,7 +262,7 @@
         }
 
         function checkGameOver() {
-            let head = snake;
+            let head = snake[0];
             return obstacles.some(obs => obs.x === head.x && obs.y === head.y);
         }
 
@@ -281,3 +277,18 @@
             startGame();
         }
 
+        window.addEventListener("keydown", e => {
+            switch (e.key) {
+                case "ArrowUp":
+                    if (dy === 0) { dx = 0; dy = -1; }
+                    break;
+                case "ArrowDown":
+if (dy === 0) { dx = 0; dy = 1; }
+                    break;case "ArrowLeft":
+                    if (dx === 0) { dx = -1; dy = 0; }
+                    break;case "ArrowRight":
+                    if (dx === 0) { dx = 1; dy = 0; }break;}})
+            ;generateObstacles();
+        generatePortals();
+        populateAllFruits();
+        startGame();
