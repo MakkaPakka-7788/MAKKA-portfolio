@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -192,13 +191,13 @@ const retryButton = document.getElementById("retry-button");
 const gridSize = 20;
 const tileCount = canvas.width / gridSize;
 
-let snake;
-let fruits;
-let obstacles;
-let portals;
+let snake = [];
+let fruits = [];
+let obstacles = [];
+let portals = [];
 
-let dx;
-let dy;
+let dx = 1;
+let dy = 0;
 
 let score = 0;
 
@@ -211,7 +210,7 @@ let portalMoveCounter = 0;
 
 let maxFruits = 3;
 let maxObstacles = 6;
-let maxPortals = 4;
+let maxPortals = 8;
 
 highScoreElement.textContent = highScore;
 
@@ -219,9 +218,9 @@ function startGame() {
     clearInterval(gameInterval);
 
     snake = [
-        {x: 15, y: 15},
-        {x: 14, y: 15},
-        {x: 13, y: 15}
+        { x: 15, y: 15 },
+        { x: 14, y: 15 },
+        { x: 13, y: 15 }
     ];
 
     dx = 1;
@@ -232,7 +231,7 @@ function startGame() {
     portalMoveCounter = 0;
 
     maxObstacles = 6;
-    maxPortals = 4;
+    maxPortals = 8;
 
     scoreElement.textContent = score;
 
@@ -248,8 +247,7 @@ function startGame() {
 
     draw();
 
-    gameInterval =
-        setInterval(update, 110);
+    gameInterval = setInterval(update, 110);
 }
 
 function update() {
@@ -304,6 +302,7 @@ function moveSnake() {
 
 function draw() {
     ctx.fillStyle = "#000";
+
     ctx.fillRect(
         0,
         0,
@@ -319,8 +318,7 @@ function draw() {
 }
 
 function drawGrid() {
-    ctx.strokeStyle =
-        "rgba(0,255,102,0.04)";
+    ctx.strokeStyle = "rgba(0,255,102,0.04)";
 
     for (
         let x = 0;
@@ -458,11 +456,9 @@ function checkFoodCollision() {
 
             score++;
 
-            scoreElement.textContent =
-                score;
+            scoreElement.textContent = score;
 
             if (score > highScore) {
-
                 highScore = score;
 
                 highScoreElement.textContent =
@@ -485,14 +481,14 @@ function checkFoodCollision() {
 
             maxObstacles =
                 Math.min(
-                    18,
+                    20,
                     6 + Math.floor(score / 2)
                 );
 
             maxPortals =
                 Math.min(
-                    10,
-                    4 + Math.floor(score / 3)
+                    16,
+                    8 + Math.floor(score / 2)
                 );
 
             generateObstacles();
@@ -539,10 +535,6 @@ function checkPortalCollision() {
 
     snake[0].y =
         portals[destination].y;
-
-    if (portals.length > 2) {
-        movePortals();
-    }
 }
 
 function movePortals() {
@@ -825,14 +817,10 @@ function endGame() {
 
     clearInterval(gameInterval);
 
-    finalScore.textContent =
-        score;
+    finalScore.textContent = score;
+    finalHigh.textContent = highScore;
 
-    finalHigh.textContent =
-        highScore;
-
-    gameOverScreen.style.display =
-        "flex";
+    gameOverScreen.style.display = "flex";
 }
 
 retryButton.addEventListener(
@@ -918,4 +906,3 @@ startGame();
 
 </body>
 </html>
-```
