@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple JavaScript Snake Game</title>
+    <title>Computing Homework Task 2</title>
     <style>
         body {
             background-color: #222;
@@ -18,41 +18,53 @@
         }
         #score-board {
             font-size: 24px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        /* This wrapper creates the grace line border around the entire game */
+        #game-wrapper {
+            border: 4px solid #555;
+            padding: 15px; /* The grace gap space */
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.6);
         }
         canvas {
             background-color: #111;
-            border: 4px solid #555;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: block;
         }
     </style>
 </head>
 <body>
 
     <div id="score-board">Score: <span id="score">0</span></div>
-    <!-- The game grid is drawn inside this canvas -->
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    
+    <!-- Wrapper creates the visual separation grace line -->
+    <div id="game-wrapper">
+        <!-- Expanded map size to 600x600 pixels -->
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+    </div>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const scoreElement = document.getElementById("score");
 
-        // Grid and block size
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        // Game variables
-        let snake = [{ x: 10, y: 10 }];
-        let food = { x: 5, y: 5 };
-        let dx = 1; // Horizontal speed (starts moving right)
-        let dy = 0; // Vertical speed
+        // Game state variables
+        let snake = [{ x: 15, y: 15 }];
+        let fruits = []; // Array to hold multiple fruits
+        const maxFruits = 3; // Number of fruits on screen at once
+        let dx = 1; 
+        let dy = 0; 
         let score = 0;
         let gameInterval;
 
-        // Main game loop running every 100 milliseconds
+        // Slowed down the speed: changed from 100ms to 140ms per frame
         function startGame() {
-            gameInterval = setInterval(update, 100);
+            gameInterval = setInterval(update, 140);
         }
 
         function update() {
@@ -68,56 +80,73 @@
         }
 
         function draw() {
-            // Clear the board
             ctx.fillStyle = "#111";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Snake
-            ctx.fillStyle = "#4CAF50"; // Green snake
+            // Draw the Snake
+            ctx.fillStyle = "#4CAF50"; 
             snake.forEach(part => {
                 ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
             });
 
-            // Draw Food
-            ctx.fillStyle = "#FF5252"; // Red food
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
-        }
-
-        function moveSnake() {
-            // Create a new head based on direction
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-            snake.unshift(head); // Add new head to front
-            snake.pop(); // Remove tail to maintain length
-        }
-
-        function checkFoodCollision() {
-            if (snake[0].x === food.x && snake[0].y === food.y) {
-                score++;
-                scoreElement.innerText = score;
-                // Grow snake by keeping the tail during this frame
-                snake.push({}); 
-                generateFood();
-            }
-        }
-
-        function generateFood() {
-            food.x = Math.floor(Math.random() * tileCount);
-            food.y = Math.floor(Math.random() * tileCount);
-            
-            // Ensure food doesn't spawn on top of the snake
-            snake.forEach(part => {
-                if (part.x === food.x && part.y === food.y) {
-                    generateFood();
-                }
+            // Draw all active fruits
+            ctx.fillStyle = "#FF5252"; 
+            fruits.forEach(fruit => {
+                ctx.fillRect(fruit.x * gridSize, fruit.y * gridSize, gridSize - 2, gridSize - 2);
             });
         }
 
+        function moveSnake() {
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            snake.unshift(head); 
+            snake.pop(); 
+        }
+
+        function checkFoodCollision() {
+            // Check if head hits any of the fruits in our list
+            for (let i = 0; i < fruits.length; i++) {
+                if (snake[0].x === fruits[i].x && snake[0].y === fruits[i].y) {
+                    score++;
+                    scoreElement.innerText = score;
+                    snake.push({}); // Grow the snake tail
+                    fruits.splice(i, 1); // Remove the eaten fruit
+                    generateSingleFruit(); // Replace it with a new one
+                    break;
+                }
+            }
+        }
+
+        // Spawn a brand new fruit at a random open spot
+        function generateSingleFruit() {
+            let newFruit;
+            let onSnake = true;
+
+            while (onSnake) {
+                newFruit = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount)
+                };
+
+                // Double check it didn't land directly on the snake body
+                onSnake = snake.some(part => part.x === newFruit.x && part.y === newFruit.y);
+            }
+            fruits.push(newFruit);
+        }
+
+        // Fill up the map with fruits at the start
+        function populateAllFruits() {
+            fruits = [];
+            for (let i = 0; i < maxFruits; i++) {
+                generateSingleFruit();
+            }
+        }
+
         function checkGameOver() {
-            // Wall collisions
+            // Check wall borders
             if (snake[0].x < 0 || snake[0].x >= tileCount || snake[0].y < 0 || snake[0].y >= tileCount) {
                 return true;
             }
-            // Self collisions (skip the head index 0)
+            // Check tail collision
             for (let i = 1; i < snake.length; i++) {
                 if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
                     return true;
@@ -127,20 +156,19 @@
         }
 
         function resetGame() {
-            snake = [{ x: 10, y: 10 }];
+            snake = [{ x: 15, y: 15 }];
             dx = 1;
             dy = 0;
             score = 0;
             scoreElement.innerText = score;
-            generateFood();
+            populateAllFruits();
             startGame();
         }
 
-        // Handle keyboard arrow presses
         window.addEventListener("keydown", e => {
             switch (e.key) {
                 case "ArrowUp":
-                    if (dy === 0) { dx = 0; dy = -1; } // Prevent moving down into yourself
+                    if (dy === 0) { dx = 0; dy = -1; }
                     break;
                 case "ArrowDown":
                     if (dy === 0) { dx = 0; dy = 1; }
@@ -154,8 +182,7 @@
             }
         });
 
-        // Start the engine
-        generateFood();
+        populateAllFruits();
         startGame();
     </script>
 </body>
