@@ -3,81 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hee Hee Games</title>
+
+<title>Hee Hee</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     background: #000;
-    color: white;
-    font-family: "Courier New", monospace;
+    color: #fff;
+    font-family: "Press Start 2P", monospace;
 }
 
 header {
     text-align: center;
-    padding: 35px 20px;
-    border-bottom: 3px solid white;
+    padding: 55px 20px 40px;
+    border-bottom: 3px solid #fff;
 }
 
 header h1 {
     margin: 0;
     font-size: 42px;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
 }
 
 header p {
-    margin-top: 10px;
+    margin: 22px 0 0;
+    font-size: 12px;
     color: #aaa;
 }
 
 .container {
     width: 90%;
-    max-width: 1000px;
-    margin: 35px auto;
+    max-width: 1050px;
+    margin: 45px auto;
 }
 
 h2 {
     text-align: center;
-    font-size: 26px;
-    margin-bottom: 25px;
+    font-size: 18px;
+    margin-bottom: 35px;
 }
 
 .game-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
+    grid-template-columns:
+        repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
 }
 
 .game-card {
     display: block;
     background: #111;
-    border: 3px solid white;
-    color: white;
+    border: 3px solid #fff;
+    color: #fff;
     text-decoration: none;
-    padding: 25px;
+    padding: 30px 22px;
     text-align: center;
     transition: 0.15s;
 }
 
 .game-card:hover {
-    background: white;
-    color: black;
-    transform: translateY(-4px);
+    background: #fff;
+    color: #000;
+    transform: translateY(-5px);
 }
 
 .game-icon {
-    font-size: 55px;
-    margin-bottom: 15px;
+    font-size: 52px;
+    margin-bottom: 22px;
 }
 
 .game-card h3 {
-    font-size: 24px;
-    margin: 10px 0;
+    font-size: 17px;
+    margin: 10px 0 20px;
 }
 
 .game-card p {
-    color: #aaa;
+    color: #999;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
     line-height: 1.5;
+    margin: 0;
 }
 
 .game-card:hover p {
@@ -86,13 +100,18 @@ h2 {
 
 footer {
     text-align: center;
-    padding: 35px;
-    color: #666;
+    padding: 40px 20px;
+    color: #555;
+    font-size: 9px;
 }
 
 @media (max-width: 600px) {
     header h1 {
-        font-size: 30px;
+        font-size: 28px;
+    }
+
+    header p {
+        font-size: 9px;
     }
 
     .game-grid {
@@ -105,32 +124,41 @@ footer {
 <body>
 
 <header>
-    <h1>HEE HEE GAMES</h1>
-    <p>RETRO GAME COLLECTION</p>
+    <h1>HEE HEE</h1>
+    <p>SELECT YOUR CHALLENGE</p>
 </header>
 
 <div class="container">
 
-    <h2>SELECT A GAME</h2>
+    <h2>SELECT</h2>
 
     <div class="game-grid">
 
         <a href="snake.html" class="game-card">
             <div class="game-icon">🐍</div>
             <h3>SNAKE</h3>
-            <p>Eat the fruit. Avoid the obstacles. Use the portals.</p>
+            <p>
+                Eat the fruit, avoid the obstacles
+                and survive the portals.
+            </p>
         </a>
 
         <a href="tetris.html" class="game-card">
             <div class="game-icon">🧱</div>
             <h3>TETRIS</h3>
-            <p>Stack the blocks and clear as many lines as possible.</p>
+            <p>
+                Stack the blocks and clear
+                as many lines as possible.
+            </p>
         </a>
 
         <a href="pong.html" class="game-card">
             <div class="game-icon">🏓</div>
             <h3>PONG</h3>
-            <p>Battle the AI and choose your difficulty.</p>
+            <p>
+                Challenge the AI and choose
+                your difficulty.
+            </p>
         </a>
 
     </div>
@@ -138,7 +166,7 @@ footer {
 </div>
 
 <footer>
-    HEE HEE GAMES
+    HEE HEE
 </footer>
 
 <script>
@@ -146,6 +174,7 @@ let rPresses = 0;
 let rTimer;
 
 document.addEventListener("keydown", function(event) {
+
     if (event.key.toLowerCase() !== "r") {
         return;
     }
@@ -162,6 +191,7 @@ document.addEventListener("keydown", function(event) {
         window.location.href = "flashcards.html";
         rPresses = 0;
     }
+
 });
 </script>
 
