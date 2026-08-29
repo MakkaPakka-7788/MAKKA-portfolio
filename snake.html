@@ -111,9 +111,7 @@
             background: white;
             color: black;
         }
-    </style>
-</head>
-<script>
+    <script>
 let rPresses = 0;
 let rTimer;
 
@@ -131,7 +129,8 @@ document.addEventListener("keydown", event => {
     }, 700);
 
     if (rPresses === 3) {
-        window.location.href = "index.html";
+        window.location.href = "flashcards.html";
+        rPresses = 0;
     }
 });
 </script>
