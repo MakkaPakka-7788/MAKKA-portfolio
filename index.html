@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -11,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -106,6 +108,7 @@ footer {
 }
 
 @media (max-width: 600px) {
+
     header h1 {
         font-size: 28px;
     }
@@ -117,59 +120,104 @@ footer {
     .game-grid {
         grid-template-columns: 1fr;
     }
+
 }
+
 </style>
+
 </head>
 
 <body>
 
 <header>
-    <h1>HEE HEE</h1>
-    <p>SELECT YOUR CHALLENGE</p>
+
+```
+<h1>HEE HEE</h1>
+
+<p>SELECT YOUR CHALLENGE</p>
+```
+
 </header>
 
 <div class="container">
 
-    <h2>SELECT</h2>
+```
+<h2>SELECT</h2>
 
-    <div class="game-grid">
+<div class="game-grid">
 
-        <a href="snake.html" class="game-card">
-            <div class="game-icon">🐍</div>
-            <h3>SNAKE</h3>
-            <p>
-                Eat the fruit, avoid the obstacles
-                and survive the portals.
-            </p>
-        </a>
 
-        <a href="tetris.html" class="game-card">
-            <div class="game-icon">🧱</div>
-            <h3>TETRIS</h3>
-            <p>
-                Stack the blocks and clear
-                as many lines as possible.
-            </p>
-        </a>
+    <a href="snake.html" class="game-card">
 
-        <a href="pong.html" class="game-card">
-            <div class="game-icon">🏓</div>
-            <h3>PONG</h3>
-            <p>
-                Challenge the AI and choose
-                your difficulty.
-            </p>
-        </a>
+        <div class="game-icon">🐍</div>
 
-    </div>
+        <h3>SNAKE</h3>
+
+        <p>
+            Eat the fruit, avoid the obstacles
+            and survive the portals.
+        </p>
+
+    </a>
+
+
+    <a href="tetris.html" class="game-card">
+
+        <div class="game-icon">🧱</div>
+
+        <h3>TETRIS</h3>
+
+        <p>
+            Stack the blocks and clear
+            as many lines as possible.
+        </p>
+
+    </a>
+
+
+    <a href="pong.html" class="game-card">
+
+        <div class="game-icon">🏓</div>
+
+        <h3>PONG</h3>
+
+        <p>
+            Challenge the AI and choose
+            your difficulty.
+        </p>
+
+    </a>
+
+
+    <a href="flappybird.html" class="game-card">
+
+        <div class="game-icon">🐦</div>
+
+        <h3>FLAPPY BIRD</h3>
+
+        <p>
+            Fly through the pipes and see
+            how high you can score.
+        </p>
+
+    </a>
+
+
+</div>
+```
 
 </div>
 
 <footer>
-    HEE HEE
+
+```
+HEE HEE
+```
+
 </footer>
 
 <script>
+
 let rPresses = 0;
 let rTimer;
 
@@ -188,11 +236,15 @@ document.addEventListener("keydown", function(event) {
     }, 700);
 
     if (rPresses === 3) {
+
         window.location.href = "flashcards.html";
+
         rPresses = 0;
+
     }
 
 });
+
 </script>
 
 </body>
