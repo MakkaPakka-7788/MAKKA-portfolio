@@ -68,7 +68,6 @@ canvas {
     color: #aaa;
     line-height: 1.8;
 }
-
 </style>
 </head>
 
@@ -105,14 +104,10 @@ canvas {
 <canvas id="game" width="800" height="500"></canvas>
 
 <div class="controls">
-
-    W / S TO MOVE
-
+    ↑ / ↓ TO MOVE
     <br>
-
     FIRST TO 10 WINS
-
-    <br>
+    <br><br>
 
     <button onclick="resetGame()">
         RESET
@@ -121,7 +116,6 @@ canvas {
     <button onclick="window.location.href='index.html'">
         BACK
     </button>
-
 </div>
 
 <script>
@@ -167,7 +161,16 @@ let keys = {};
 
 document.addEventListener("keydown", function(event) {
 
-    keys[event.key.toLowerCase()] = true;
+    const key = event.key.toLowerCase();
+
+    if (
+        key === "arrowup" ||
+        key === "arrowdown"
+    ) {
+        event.preventDefault();
+    }
+
+    keys[key] = true;
 
 });
 
@@ -185,15 +188,12 @@ function setDifficulty(level) {
     document
         .querySelectorAll("#difficulty button")
         .forEach(function(button) {
-
             button.classList.remove("selected");
-
         });
 
     document
         .getElementById(level)
         .classList.add("selected");
-
 
     if (level === "easy") {
         aiSpeed = 3;
@@ -221,8 +221,7 @@ function resetBall(direction) {
 
     ball.speedX = 5 * direction;
 
-    ball.speedY =
-        Math.random() * 6 - 3;
+    ball.speedY = Math.random() * 6 - 3;
 
 }
 
@@ -252,14 +251,13 @@ function resetGame() {
 
 function update() {
 
-    if (keys["w"]) {
+    if (keys["arrowup"]) {
         player.y -= player.speed;
     }
 
-    if (keys["s"]) {
+    if (keys["arrowdown"]) {
         player.y += player.speed;
     }
-
 
     if (player.y < 0) {
         player.y = 0;
@@ -276,55 +274,37 @@ function update() {
 
     let targetY = ball.y;
 
-
     if (difficulty === "easy") {
-
         targetY =
             ball.y +
             Math.sin(Date.now() / 300) * 70;
-
     }
 
-
     if (difficulty === "medium") {
-
         targetY =
             ball.y +
             Math.sin(Date.now() / 500) * 25;
-
     }
-
 
     if (difficulty === "hard") {
-
         targetY = ball.y;
-
     }
 
-
     if (difficulty === "impossible") {
-
         targetY = ball.y;
-
     }
 
 
     let computerCenter =
         computer.y + paddleHeight / 2;
 
-
     if (computerCenter < targetY) {
-
         computer.y += aiSpeed;
-
     }
 
     if (computerCenter > targetY) {
-
         computer.y -= aiSpeed;
-
     }
-
 
     if (computer.y < 0) {
         computer.y = 0;
@@ -347,9 +327,7 @@ function update() {
         ball.y <= 0 ||
         ball.y >= canvas.height - ball.size
     ) {
-
         ball.speedY *= -1;
-
     }
 
 
@@ -371,7 +349,6 @@ function update() {
                     paddleHeight / 2
                 )
             ) * 0.05;
-
     }
 
 
@@ -393,7 +370,6 @@ function update() {
                     paddleHeight / 2
                 )
             ) * 0.05;
-
     }
 
 
@@ -405,15 +381,11 @@ function update() {
             computerScore;
 
         if (computerScore >= 10) {
-
             endGame("AI WINS!");
-
             return;
-
         }
 
         resetBall(1);
-
     }
 
 
@@ -425,15 +397,11 @@ function update() {
             playerScore;
 
         if (playerScore >= 10) {
-
             endGame("YOU WIN!");
-
             return;
-
         }
 
         resetBall(-1);
-
     }
 
 }
@@ -474,7 +442,6 @@ function draw() {
 
     ctx.fillStyle = "#fff";
 
-
     ctx.fillRect(
         player.x,
         player.y,
@@ -482,14 +449,12 @@ function draw() {
         paddleHeight
     );
 
-
     ctx.fillRect(
         computer.x,
         computer.y,
         paddleWidth,
         paddleHeight
     );
-
 
     ctx.fillRect(
         ball.x,
@@ -526,7 +491,7 @@ function gameLoop() {
 
 
 let rPresses = 0;
-let rTimer;
+let rTimer = null;
 
 document.addEventListener("keydown", function(event) {
 
@@ -539,19 +504,17 @@ document.addEventListener("keydown", function(event) {
     clearTimeout(rTimer);
 
     rTimer = setTimeout(function() {
+        rPresses = 0;
+    }, 700);
+
+    if (rPresses >= 3) {
 
         rPresses = 0;
 
-    }, 700);
-
-
-    if (rPresses === 3) {
+        clearTimeout(rTimer);
 
         window.location.href =
             "flashcards.html";
-
-        rPresses = 0;
-
     }
 
 });
