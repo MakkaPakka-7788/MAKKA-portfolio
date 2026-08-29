@@ -6,7 +6,29 @@
     <title>flashcard.com</title>
     <link rel="stylesheet" href="style.css">
 </head>
+<script>
+let rPresses = 0;
+let rTimer;
 
+document.addEventListener("keydown", event => {
+    if (event.key.toLowerCase() !== "r") {
+        return;
+    }
+
+    rPresses++;
+
+    clearTimeout(rTimer);
+
+    rTimer = setTimeout(() => {
+        rPresses = 0;
+    }, 700);
+
+    if (rPresses === 3) {
+        window.location.href = "flashcards.html";
+        rPresses = 0;
+    }
+});
+</script>
 <body>
 
     <div class="home">
