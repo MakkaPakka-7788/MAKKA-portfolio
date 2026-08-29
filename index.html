@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcard Creator</title>
+    <title>Computing Homework Task 2</title>
     <style>
         body {
-            /* Changed body background to dark charcoal to keep text readable */
-            background-color: #222;
+            /* NEW: Changed the whole monitor/screen background to Green */
+            background-color: #2E7D32; 
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
@@ -23,6 +23,8 @@
             font-size: 24px;
             margin-bottom: 15px;
             font-weight: bold;
+            /* Added text shadow so numbers stay readable if they overlap bright areas */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); 
         }
         #game-wrapper {
             border: 4px solid #555;
@@ -32,8 +34,8 @@
             box-shadow: 0 0 25px rgba(0,0,0,0.6);
         }
         canvas {
-            /* NEW: Changed game board background to solid green */
-            background-color: #2E7D32;
+            /* NEW: Reverted the actual play zone grid back to solid Black */
+            background-color: #111;
             display: block;
         }
     </style>
@@ -61,11 +63,11 @@
         let snake = [{ x: 15, y: 15 }];
         let fruits = []; 
         let obstacles = []; 
-        let portals = []; // NEW: Array to track random outcome portal blocks
+        let portals = []; 
         
         const maxFruits = 3; 
         const maxObstacles = 3; 
-        const maxPortals = 3; // NEW: Spawns 3 randomized portals
+        const maxPortals = 3; 
 
         let dx = 1; 
         let dy = 0; 
@@ -87,14 +89,14 @@
                 resetGame();
                 return;
             }
-            checkPortalCollision(); // NEW: Processes random teleportation loops
+            checkPortalCollision(); 
             checkFoodCollision();
             draw();
         }
 
         function draw() {
-            // Clears board to green canvas colour instead of black
-            ctx.fillStyle = "#2E7D32";
+            // NEW: Clears play board area to black box layout
+            ctx.fillStyle = "#111";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw Obstacles (Grey)
@@ -103,12 +105,11 @@
                 ctx.fillRect(obs.x * gridSize, obs.y * gridSize, gridSize - 2, gridSize - 2);
             });
 
-            // NEW: Draw Portals (Black body with clean Blue Outline)
+            // Draw Portals (Black body with Blue Outline)
             portals.forEach(portal => {
-                ctx.fillStyle = "#000000"; // Black center box
+                ctx.fillStyle = "#000000"; 
                 ctx.fillRect(portal.x * gridSize, portal.y * gridSize, gridSize - 2, gridSize - 2);
-                
-                ctx.strokeStyle = "#00E5FF"; // Bright blue outline frame
+                ctx.strokeStyle = "#00E5FF"; 
                 ctx.lineWidth = 2;
                 ctx.strokeRect(portal.x * gridSize + 1, portal.y * gridSize + 1, gridSize - 4, gridSize - 4);
             });
@@ -118,7 +119,7 @@
                 if (index === 0) {
                     ctx.fillStyle = "#1B5E20"; // Dark Forest Green Head
                 } else {
-                    ctx.fillStyle = "#81C784"; // Shifted body to lighter green to stand out against background
+                    ctx.fillStyle = "#4CAF50"; // Reverted body blocks back to bright classic green
                 }
                 ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
             });
@@ -134,7 +135,6 @@
             let nextX = snake.x + dx;
             let nextY = snake.y + dy;
 
-            // Screen Wrapping Logic
             if (nextX < 0) nextX = tileCount - 1;       
             if (nextX >= tileCount) nextX = 0;          
             if (nextY < 0) nextY = tileCount - 1;       
@@ -145,41 +145,29 @@
             snake.pop(); 
         }
 
-        // NEW: Handles portal touches with exactly 5 unique destination choices
         function checkPortalCollision() {
-            let head = snake[0];
+            let head = snake;
             let hitPortal = portals.some(p => p.x === head.x && p.y === head.y);
 
             if (hitPortal) {
-                // Random integer 1 through 5 controls the destination rule
                 let outcome = Math.floor(Math.random() * 5) + 1;
-                
                 switch(outcome) {
-                    case 1: // Outcome 1: Drops you at the top-left sector
-                        head.x = 4; head.y = 4;
-                        break;
-                    case 2: // Outcome 2: Drops you at the bottom-right sector
-                        head.x = tileCount - 5; head.y = tileCount - 5;
-                        break;
-                    case 3: // Outcome 3: Centred right in the middle of the board
-                        head.x = 15; head.y = 15;
-                        break;
-                    case 4: // Outcome 4: Safe drop spot near top edge
-                        head.x = 15; head.y = 5;
-                        break;
-                    case 5: // Outcome 5: Safe drop spot near bottom edge
-                        head.x = 15; head.y = tileCount - 6;
-                        break;
+                    case 1: head.x = 4; head.y = 4; break;
+                    case 2: head.x = tileCount - 5; head.y = tileCount - 5; break;
+                    case 3: head.x = 15; head.y = 15; break;
+                    case 4: head.x = 15; head.y = 5; break;
+                    case 5: head.x = 15; head.y = tileCount - 6; break;
                 }
-                // Clears snake's movement directions to prevent running straight into walls instantly
                 dx = 0;
                 dy = 0;
+                generateObstacles();
             }
         }
 
         function checkFoodCollision() {
+            let head = snake;
             for (let i = 0; i < fruits.length; i++) {
-                if (snake[0].x === fruits[i].x && snake[0].y === fruits[i].y) {
+                if (head.x === fruits[i].x && head.y === fruits[i].y) {
                     score++;
                     scoreElement.innerText = score;
                     
@@ -191,6 +179,8 @@
 
                     snake.push({}); 
                     fruits.splice(i, 1); 
+                    
+                    generateObstacles();
                     generateSingleFruit(); 
                     break;
                 }
@@ -215,32 +205,45 @@
             fruits.push(newFruit);
         }
 
-        function generateObstaclesAndPortals() {
+        function generateObstacles() {
             obstacles = [];
-            portals = [];
+            let head = snake;
 
-            // Spawn Obstacles
+            let front1 = { x: head.x + dx, y: head.y + dy };
+            let front2 = { x: head.x + (dx * 2), y: head.y + (dy * 2) };
+
             for (let i = 0; i < maxObstacles; i++) {
                 let newObs;
                 let invalidPos = true;
+
                 while (invalidPos) {
                     newObs = {
                         x: Math.floor(Math.random() * tileCount),
                         y: Math.floor(Math.random() * tileCount)
                     };
-                    let nearCenter = (Math.abs(newObs.x - 15) < 3 && Math.abs(newObs.y - 15) < 3);
+
+                    let nearSnakeBody = snake.some(part => {
+                        return Math.abs(newObs.x - part.x) <= 1 && Math.abs(newObs.y - part.y) <= 1;
+                    });
+
+                    let inFrontPath = (newObs.x === front1.x && newObs.y === front1.y) || 
+                                      (newObs.x === front2.x && newObs.y === front2.y);
+
+                    let onFruit = fruits.some(f => f.x === newObs.x && f.y === newObs.y);
                     let onObstacle = obstacles.some(obs => obs.x === newObs.x && obs.y === newObs.y);
-                    invalidPos = nearCenter || onObstacle;
+
+                    invalidPos = nearSnakeBody || inFrontPath || onFruit || onObstacle;
                 }
                 obstacles.push(newObs);
             }
+        }
 
-            // NEW: Spawn Portals strictly kept at least 3 tiles away from all outer edges
+        function generatePortals() {
+            portals = [];
             for (let i = 0; i < maxPortals; i++) {
                 let newPortal;
                 let invalidPos = true;
                 while (invalidPos) {
-                    // Limits map generation strictly between grid lines index 3 and index 26
                     newPortal = {
                         x: Math.floor(Math.random() * (tileCount - 6)) + 3,
                         y: Math.floor(Math.random() * (tileCount - 6)) + 3
@@ -263,3 +266,18 @@
         }
 
         function checkGameOver() {
+            let head = snake;
+            return obstacles.some(obs => obs.x === head.x && obs.y === head.y);
+        }
+
+        function resetGame() {
+            snake = [{ x: 15, y: 15 }];
+            dx = 1;
+            dy = 0;
+            score = 0;
+            scoreElement.innerText = score;
+            generateObstacles(); 
+            populateAllFruits();
+            startGame();
+        }
+
