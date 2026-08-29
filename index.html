@@ -3,389 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Flashcard.com</title>
+<title>Hee Hee Games</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
-}
-
 body {
     margin: 0;
-    background: #f5f7fa;
-    color: #1f2937;
-    font-family: Arial, Helvetica, sans-serif;
+    background: #000;
+    color: white;
+    font-family: "Courier New", monospace;
 }
 
 header {
-    background: white;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 22px 0;
+    text-align: center;
+    padding: 35px 20px;
+    border-bottom: 3px solid white;
 }
 
-.header-inner {
-    width: 92%;
-    max-width: 1100px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+header h1 {
+    margin: 0;
+    font-size: 42px;
+    letter-spacing: 4px;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #2563eb;
-    font-size: 25px;
-    font-weight: bold;
-}
-
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: #2563eb;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-}
-
-.nav {
-    display: flex;
-    gap: 10px;
-}
-
-.nav a {
-    text-decoration: none;
-    color: #475569;
-    padding: 9px 13px;
-    border-radius: 6px;
-}
-
-.nav a:hover {
-    background: #f1f5f9;
+header p {
+    margin-top: 10px;
+    color: #aaa;
 }
 
 .container {
-    width: 92%;
-    max-width: 1100px;
-    margin: 45px auto;
+    width: 90%;
+    max-width: 1000px;
+    margin: 35px auto;
 }
 
-.hero {
+h2 {
     text-align: center;
-    margin-bottom: 40px;
-}
-
-.hero h1 {
-    font-size: 38px;
-    margin: 0 0 10px;
-}
-
-.hero p {
-    color: #64748b;
-    font-size: 17px;
-    margin: 0;
-}
-
-.section-title {
-    font-size: 21px;
-    margin-bottom: 18px;
+    font-size: 26px;
+    margin-bottom: 25px;
 }
 
 .game-grid {
     display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 20px;
 }
 
 .game-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 25px;
-    text-decoration: none;
-    color: #1f2937;
     display: block;
-    transition: border-color 0.2s,
-                transform 0.2s;
+    background: #111;
+    border: 3px solid white;
+    color: white;
+    text-decoration: none;
+    padding: 25px;
+    text-align: center;
+    transition: 0.15s;
 }
 
 .game-card:hover {
-    border-color: #2563eb;
-    transform: translateY(-2px);
+    background: white;
+    color: black;
+    transform: translateY(-4px);
 }
 
 .game-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 10px;
-    background: #eff6ff;
-    color: #2563eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 25px;
-    margin-bottom: 18px;
+    font-size: 55px;
+    margin-bottom: 15px;
 }
 
-.game-card h2 {
-    margin: 0 0 8px;
-    font-size: 21px;
+.game-card h3 {
+    font-size: 24px;
+    margin: 10px 0;
 }
 
 .game-card p {
-    margin: 0;
-    color: #64748b;
+    color: #aaa;
     line-height: 1.5;
 }
 
-.flashcards {
-    margin-top: 35px;
-}
-
-.flashcards .game-icon {
-    background: #eff6ff;
+.game-card:hover p {
+    color: #333;
 }
 
 footer {
-    margin-top: 60px;
-    padding: 25px;
     text-align: center;
-    color: #94a3b8;
-    font-size: 13px;
-    border-top: 1px solid #e2e8f0;
-    background: white;
+    padding: 35px;
+    color: #666;
 }
 
 @media (max-width: 600px) {
-
-    .header-inner {
-        justify-content: center;
-    }
-
-    .nav {
-        display: none;
-    }
-
-    .hero h1 {
+    header h1 {
         font-size: 30px;
     }
 
+    .game-grid {
+        grid-template-columns: 1fr;
+    }
 }
-
 </style>
 </head>
 
 <body>
 
 <header>
-
-    <div class="header-inner">
-
-        <div class="logo">
-
-            <div class="logo-icon">
-                ✓
-            </div>
-
-            Flashcard.com
-
-        </div>
-
-        <nav class="nav">
-
-            <a href="index.html">
-                Home
-            </a>
-
-            <a href="flashcards.html">
-                Flashcards
-            </a>
-
-        </nav>
-
-    </div>
-
+    <h1>HEE HEE GAMES</h1>
+    <p>RETRO GAME COLLECTION</p>
 </header>
-
 
 <div class="container">
 
-    <div class="hero">
-
-        <h1>
-            Welcome to Flashcard.com
-        </h1>
-
-        <p>
-            Play games, study, and have fun.
-        </p>
-
-    </div>
-
-
-    <h2 class="section-title">
-        Games
-    </h2>
-
+    <h2>SELECT A GAME</h2>
 
     <div class="game-grid">
 
-
-        <a
-            href="snake.html"
-            class="game-card"
-        >
-
-            <div class="game-icon">
-                🐍
-            </div>
-
-            <h2>
-                Snake
-            </h2>
-
-            <p>
-                Eat the food, avoid obstacles,
-                and use portals to survive.
-            </p>
-
+        <a href="snake.html" class="game-card">
+            <div class="game-icon">🐍</div>
+            <h3>SNAKE</h3>
+            <p>Eat the fruit. Avoid the obstacles. Use the portals.</p>
         </a>
 
-
-        <a
-            href="tetris.html"
-            class="game-card"
-        >
-
-            <div class="game-icon">
-                ▦
-            </div>
-
-            <h2>
-                Tetris
-            </h2>
-
-            <p>
-                Stack blocks, clear lines,
-                and survive as the levels get harder.
-            </p>
-
+        <a href="tetris.html" class="game-card">
+            <div class="game-icon">🧱</div>
+            <h3>TETRIS</h3>
+            <p>Stack the blocks and clear as many lines as possible.</p>
         </a>
 
-
-        <a
-            href="pong.html"
-            class="game-card"
-        >
-
-            <div class="game-icon">
-                🏓
-            </div>
-
-            <h2>
-                Pong
-            </h2>
-
-            <p>
-                Face the AI and choose your
-                difficulty.
-            </p>
-
+        <a href="pong.html" class="game-card">
+            <div class="game-icon">🏓</div>
+            <h3>PONG</h3>
+            <p>Battle the AI and choose your difficulty.</p>
         </a>
-
-
-    </div>
-
-
-    <div class="flashcards">
-
-        <h2 class="section-title">
-            Study
-        </h2>
-
-
-        <div class="game-grid">
-
-            <a
-                href="flashcards.html"
-                class="game-card"
-            >
-
-                <div class="game-icon">
-                    📚
-                </div>
-
-                <h2>
-                    Flashcards
-                </h2>
-
-                <p>
-                    Create your own sets,
-                    add cards, and study them.
-                </p>
-
-            </a>
-
-        </div>
 
     </div>
 
 </div>
 
-
 <footer>
-
-    Flashcard.com
-
+    HEE HEE GAMES
 </footer>
 
-
 <script>
-
 let rPresses = 0;
 let rTimer;
 
-document.addEventListener(
-    "keydown",
-    function(event) {
-
-        if (
-            event.key.toLowerCase() !== "r"
-        ) {
-            return;
-        }
-
-        rPresses++;
-
-        clearTimeout(rTimer);
-
-        rTimer = setTimeout(
-            function() {
-                rPresses = 0;
-            },
-            700
-        );
-
-        if (rPresses === 3) {
-
-            window.location.href =
-                "flashcards.html";
-
-            rPresses = 0;
-
-        }
-
+document.addEventListener("keydown", function(event) {
+    if (event.key.toLowerCase() !== "r") {
+        return;
     }
-);
 
+    rPresses++;
+
+    clearTimeout(rTimer);
+
+    rTimer = setTimeout(function() {
+        rPresses = 0;
+    }, 700);
+
+    if (rPresses === 3) {
+        window.location.href = "flashcards.html";
+        rPresses = 0;
+    }
+});
 </script>
 
 </body>
