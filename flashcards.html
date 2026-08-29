@@ -1,370 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcard.com</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard.com</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+body {
+    margin: 0;
+    background: #ffffff;
+    color: #222;
+    font-family: Arial, sans-serif;
+}
 
-        body {
-            margin: 0;
-            background-color: white;
-            color: #222;
-            font-family: Arial, sans-serif;
-        }
+header {
+    background: #1976d2;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
 
-        header {
-            background-color: #2E7D32;
-            color: white;
-            text-align: center;
-            padding: 25px;
-        }
+header h1 {
+    margin: 0;
+    font-size: 34px;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 36px;
-        }
+header p {
+    margin: 7px 0 0;
+}
 
-        header p {
-            margin: 8px 0 0;
-        }
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+}
 
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 30px auto;
-        }
+.section {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 22px;
+    margin-bottom: 22px;
+}
 
-        .section {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 25px;
-            margin-bottom: 25px;
-            background-color: #f8f8f8;
-        }
+h2 {
+    color: #1976d2;
+    margin-top: 0;
+}
 
-        h2 {
-            margin-top: 0;
-            color: #2E7D32;
-        }
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
 
-        input,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #bbb;
-            border-radius: 5px;
-            font-size: 16px;
-            background-color: white;
-            color: #222;
-        }
+textarea {
+    height: 100px;
+    resize: vertical;
+}
 
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
+button {
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 16px;
+    font-size: 15px;
+    cursor: pointer;
+}
 
-        button {
-            padding: 10px 18px;
-            border: 1px solid #2E7D32;
-            border-radius: 5px;
-            background-color: #2E7D32;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
+button:hover {
+    background: #1565c0;
+}
 
-        button:hover {
-            background-color: #256628;
-        }
+.set-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
 
-        .set-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
+.set-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 18px;
+    background: #fafafa;
+    min-width: 0;
+}
 
-        .set-card {
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 18px;
-            min-width: 0;
-        }
+.set-card h3 {
+    color: #1976d2;
+    margin-top: 0;
+    overflow-wrap: anywhere;
+}
 
-        .set-card h3 {
-            margin-top: 0;
-            color: #2E7D32;
-            overflow-wrap: anywhere;
-        }
+.set-card p {
+    color: #666;
+}
 
-        .set-card p {
-            color: #666;
-        }
+.set-buttons {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
 
-        .set-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+.set-buttons button {
+    flex: 1;
+    min-width: 65px;
+}
 
-        .set-buttons button {
-            flex: 1;
-            min-width: 65px;
-        }
+.delete-button {
+    background: #e53935;
+}
 
-        .delete-button {
-            background-color: #d32f2f;
-            border-color: #d32f2f;
-        }
+.delete-button:hover {
+    background: #c62828;
+}
 
-        .delete-button:hover {
-            background-color: #b71c1c;
-        }
+#editor,
+#study {
+    display: none;
+}
 
-        #editor,
-        #study {
-            display: none;
-        }
+.card-item {
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #fafafa;
+    overflow: hidden;
+}
 
-        .card-item {
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 7px;
-            padding: 15px;
-            margin-bottom: 12px;
-            width: 100%;
-            overflow: hidden;
-        }
+.card-item strong {
+    color: #1976d2;
+}
 
-        .card-item strong {
-            color: #2E7D32;
-        }
+.card-item p {
+    overflow-wrap: anywhere;
+}
 
-        .card-item p {
-            overflow-wrap: anywhere;
-        }
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
 
-        .card-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
+.flashcard {
+    max-width: 650px;
+    height: 330px;
+    margin: 25px auto;
+    perspective: 1000px;
+    cursor: pointer;
+}
 
-        .flashcard {
-            width: 100%;
-            max-width: 650px;
-            height: 350px;
-            margin: 30px auto;
-            cursor: pointer;
-            perspective: 1000px;
-        }
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
 
-        .flashcard-inner {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transition: transform 0.5s;
-            transform-style: preserve-3d;
-        }
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
 
-        .flashcard.flipped .flashcard-inner {
-            transform: rotateY(180deg);
-        }
+.flashcard-side {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    backface-visibility: hidden;
+    border: 2px solid #1976d2;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    text-align: center;
+}
 
-        .flashcard-side {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            background-color: white;
-            border: 2px solid #2E7D32;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-        }
+.flashcard-side p {
+    font-size: 26px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
 
-        .flashcard-side p {
-            font-size: 26px;
-            line-height: 1.4;
-            overflow-wrap: anywhere;
-        }
+.flashcard-back {
+    transform: rotateY(180deg);
+    border-color: #555;
+}
 
-        .flashcard-back {
-            transform: rotateY(180deg);
-            border-color: #555;
-        }
+.study-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-        .study-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+#study-info {
+    text-align: center;
+    color: #666;
+}
 
-        #study-info {
-            color: #666;
-        }
+#empty-message {
+    text-align: center;
+    color: #777;
+}
 
-        #empty-message {
-            color: #777;
-            text-align: center;
-        }
+@media (max-width: 600px) {
+    .set-buttons {
+        flex-direction: column;
+    }
 
-        @media (max-width: 600px) {
-            .set-buttons {
-                flex-direction: column;
-            }
+    .set-buttons button {
+        width: 100%;
+    }
 
-            .set-buttons button {
-                width: 100%;
-            }
+    .flashcard {
+        height: 270px;
+    }
 
-            .flashcard {
-                height: 280px;
-            }
-
-            .flashcard-side p {
-                font-size: 21px;
-            }
-        }
-    </style>
+    .flashcard-side p {
+        font-size: 21px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <header>
-        <h1>Flashcard.com</h1>
-        <p>Create and study your own flashcards</p>
-    </header>
+<header>
+    <h1>Flashcard.com</h1>
+    <p>Create and study your flashcards</p>
+</header>
 
-    <div class="container">
+<div class="container">
 
-        <div id="home">
+    <div id="home">
 
-            <div class="section">
+        <div class="section">
+            <h2>Create a Set</h2>
 
-                <h2>Create a Flashcard Set</h2>
+            <input
+                id="set-name"
+                type="text"
+                placeholder="Set name"
+            >
 
-                <input
-                    id="set-name"
-                    type="text"
-                    placeholder="Set name"
-                >
+            <button onclick="createSet()">
+                Create Set
+            </button>
+        </div>
 
-                <button onclick="createSet()">
-                    Create Set
-                </button>
+        <div class="section">
+            <h2>Your Sets</h2>
 
+            <div id="set-grid" class="set-grid"></div>
+
+            <div id="empty-message">
+                No sets created yet.
             </div>
+        </div>
 
-            <div class="section">
+    </div>
 
-                <h2>Your Sets</h2>
+    <div id="editor">
 
-                <div id="set-grid" class="set-grid"></div>
+        <div class="section">
 
-                <div id="empty-message">
-                    You haven't created any sets yet.
-                </div>
+            <h2 id="editor-title">
+                Flashcard Set
+            </h2>
 
-            </div>
+            <input
+                id="question"
+                type="text"
+                placeholder="Question"
+            >
+
+            <textarea
+                id="answer"
+                placeholder="Answer"
+            ></textarea>
+
+            <button onclick="addCard()">
+                Add Card
+            </button>
 
         </div>
 
-        <div id="editor">
+        <div class="section">
 
-            <div class="section">
+            <h2>Your Cards</h2>
 
-                <h2 id="editor-title">
-                    Flashcard Set
-                </h2>
+            <div id="card-list"></div>
 
-                <input
-                    id="question"
-                    type="text"
-                    placeholder="Question"
-                >
-
-                <textarea
-                    id="answer"
-                    placeholder="Answer"
-                ></textarea>
-
-                <button onclick="addCard()">
-                    Add Card
-                </button>
-
-            </div>
-
-            <div class="section">
-
-                <h2>Your Cards</h2>
-
-                <div id="card-list"></div>
-
-                <button onclick="startStudy()">
-                    Study Set
-                </button>
-
-            </div>
+            <button onclick="startStudy()">
+                Study Set
+            </button>
 
         </div>
 
-        <div id="study">
+    </div>
 
-            <div class="section">
+    <div id="study">
 
-                <h2 id="study-title">
-                    Study
-                </h2>
+        <div class="section">
 
-                <p id="study-info">
-                    Card 1 of 1
-                </p>
+            <h2 id="study-title">
+                Study
+            </h2>
 
-                <div
-                    id="flashcard"
-                    class="flashcard"
-                    onclick="flipCard()"
-                >
-                    <div class="flashcard-inner">
+            <div id="study-info">
+                Card 1 of 1
+            </div>
 
-                        <div class="flashcard-side">
-                            <p id="card-question"></p>
-                        </div>
+            <div
+                id="flashcard"
+                class="flashcard"
+                onclick="flipCard()"
+            >
+                <div class="flashcard-inner">
 
-                        <div class="flashcard-side flashcard-back">
-                            <p id="card-answer"></p>
-                        </div>
-
+                    <div class="flashcard-side">
+                        <p id="card-question"></p>
                     </div>
-                </div>
 
-                <p>Click the card to flip it.</p>
-
-                <div class="study-controls">
-
-                    <button onclick="previousCard()">
-                        Previous
-                    </button>
-
-                    <button onclick="flipCard()">
-                        Flip
-                    </button>
-
-                    <button onclick="nextCard()">
-                        Next
-                    </button>
+                    <div class="flashcard-side flashcard-back">
+                        <p id="card-answer"></p>
+                    </div>
 
                 </div>
+            </div>
+
+            <div class="study-controls">
+
+                <button onclick="previousCard()">
+                    Previous
+                </button>
+
+                <button onclick="flipCard()">
+                    Flip
+                </button>
+
+                <button onclick="nextCard()">
+                    Next
+                </button>
 
             </div>
 
@@ -372,383 +359,365 @@
 
     </div>
 
-    <script>
+</div>
 
-        let sets =
-            JSON.parse(
-                localStorage.getItem("flashcardSets")
-            ) || [];
+<script>
 
-        let currentSetIndex = null;
-        let currentStudyCard = 0;
+let sets =
+    JSON.parse(
+        localStorage.getItem("flashcardSets")
+    ) || [];
 
-        function saveSets() {
-            localStorage.setItem(
-                "flashcardSets",
-                JSON.stringify(sets)
-            );
-        }
+let currentSetIndex = null;
+let currentStudyCard = 0;
 
-        function createSet() {
+function saveSets() {
+    localStorage.setItem(
+        "flashcardSets",
+        JSON.stringify(sets)
+    );
+}
 
-            const input =
-                document.getElementById("set-name");
+function createSet() {
 
-            const name =
-                input.value.trim();
+    const input =
+        document.getElementById("set-name");
 
-            if (!name) {
-                alert("Please enter a set name.");
-                return;
-            }
+    const name =
+        input.value.trim();
 
-            sets.push({
-                name: name,
-                cards: []
-            });
+    if (!name) {
+        alert("Enter a set name.");
+        return;
+    }
 
-            saveSets();
+    sets.push({
+        name: name,
+        cards: []
+    });
 
-            input.value = "";
+    saveSets();
 
-            renderSets();
-        }
+    input.value = "";
 
-        function renderSets() {
+    renderSets();
+}
 
-            const grid =
-                document.getElementById("set-grid");
+function renderSets() {
 
-            const empty =
-                document.getElementById("empty-message");
+    const grid =
+        document.getElementById("set-grid");
 
-            grid.innerHTML = "";
+    const empty =
+        document.getElementById("empty-message");
 
-            if (sets.length === 0) {
-                empty.style.display = "block";
-                return;
-            }
+    grid.innerHTML = "";
 
-            empty.style.display = "none";
+    if (sets.length === 0) {
+        empty.style.display = "block";
+        return;
+    }
 
-            sets.forEach((set, index) => {
+    empty.style.display = "none";
 
-                const card =
-                    document.createElement("div");
+    sets.forEach((set, index) => {
 
-                card.className = "set-card";
+        const card =
+            document.createElement("div");
 
-                card.innerHTML = `
-                    <h3>${escapeHTML(set.name)}</h3>
+        card.className = "set-card";
 
-                    <p>
-                        ${set.cards.length}
-                        card${set.cards.length === 1 ? "" : "s"}
-                    </p>
+        card.innerHTML = `
+            <h3>${escapeHTML(set.name)}</h3>
 
-                    <div class="set-buttons">
+            <p>
+                ${set.cards.length}
+                card${set.cards.length === 1 ? "" : "s"}
+            </p>
 
-                        <button onclick="openSet(${index})">
-                            Edit
-                        </button>
+            <div class="set-buttons">
 
-                        <button onclick="startStudyFromSet(${index})">
-                            Study
-                        </button>
+                <button onclick="openSet(${index})">
+                    Edit
+                </button>
 
-                        <button
-                            class="delete-button"
-                            onclick="deleteSet(${index})"
-                        >
-                            Delete
-                        </button>
+                <button onclick="startStudyFromSet(${index})">
+                    Study
+                </button>
 
-                    </div>
-                `;
+                <button
+                    class="delete-button"
+                    onclick="deleteSet(${index})"
+                >
+                    Delete
+                </button>
 
-                grid.appendChild(card);
-            });
-        }
+            </div>
+        `;
 
-        function openSet(index) {
+        grid.appendChild(card);
+    });
+}
 
-            currentSetIndex = index;
+function openSet(index) {
 
-            document.getElementById("home")
-                .style.display = "none";
+    currentSetIndex = index;
 
-            document.getElementById("study")
-                .style.display = "none";
+    document.getElementById("home")
+        .style.display = "none";
 
-            document.getElementById("editor")
-                .style.display = "block";
+    document.getElementById("study")
+        .style.display = "none";
 
-            document.getElementById("editor-title")
-                .textContent =
-                sets[index].name;
+    document.getElementById("editor")
+        .style.display = "block";
 
-            renderCards();
-        }
+    document.getElementById("editor-title")
+        .textContent = sets[index].name;
 
-        function renderCards() {
+    renderCards();
+}
 
-            const list =
-                document.getElementById("card-list");
+function renderCards() {
 
-            list.innerHTML = "";
+    const list =
+        document.getElementById("card-list");
 
-            const cards =
-                sets[currentSetIndex].cards;
+    list.innerHTML = "";
 
-            if (cards.length === 0) {
+    const cards =
+        sets[currentSetIndex].cards;
 
-                list.innerHTML =
-                    "<p>No cards yet.</p>";
+    if (cards.length === 0) {
 
-                return;
-            }
+        list.innerHTML =
+            "<p>No cards yet.</p>";
 
-            cards.forEach((card, index) => {
+        return;
+    }
 
-                const item =
-                    document.createElement("div");
+    cards.forEach((card, index) => {
 
-                item.className = "card-item";
+        const item =
+            document.createElement("div");
 
-                item.innerHTML = `
-                    <strong>Question</strong>
+        item.className = "card-item";
 
-                    <p>
-                        ${escapeHTML(card.question)}
-                    </p>
+        item.innerHTML = `
+            <strong>Question</strong>
 
-                    <strong>Answer</strong>
+            <p>
+                ${escapeHTML(card.question)}
+            </p>
 
-                    <p>
-                        ${escapeHTML(card.answer)}
-                    </p>
+            <strong>Answer</strong>
 
-                    <div class="card-actions">
+            <p>
+                ${escapeHTML(card.answer)}
+            </p>
 
-                        <button
-                            class="delete-button"
-                            onclick="deleteCard(${index})"
-                        >
-                            Delete
-                        </button>
+            <div class="card-actions">
 
-                    </div>
-                `;
+                <button
+                    class="delete-button"
+                    onclick="deleteCard(${index})"
+                >
+                    Delete
+                </button>
 
-                list.appendChild(item);
-            });
-        }
+            </div>
+        `;
 
-        function addCard() {
+        list.appendChild(item);
+    });
+}
 
-            const question =
-                document.getElementById("question")
-                    .value.trim();
+function addCard() {
 
-            const answer =
-                document.getElementById("answer")
-                    .value.trim();
+    const question =
+        document.getElementById("question")
+            .value.trim();
 
-            if (!question || !answer) {
-                alert(
-                    "Please enter both a question and answer."
-                );
-                return;
-            }
+    const answer =
+        document.getElementById("answer")
+            .value.trim();
 
-            sets[currentSetIndex].cards.push({
-                question: question,
-                answer: answer
-            });
+    if (!question || !answer) {
+        alert("Enter both a question and an answer.");
+        return;
+    }
 
-            saveSets();
+    sets[currentSetIndex].cards.push({
+        question: question,
+        answer: answer
+    });
 
-            document.getElementById("question").value = "";
-            document.getElementById("answer").value = "";
+    saveSets();
 
-            renderCards();
-            renderSets();
-        }
+    document.getElementById("question").value = "";
+    document.getElementById("answer").value = "";
 
-        function deleteCard(index) {
+    renderCards();
+    renderSets();
+}
 
-            sets[currentSetIndex].cards.splice(
-                index,
-                1
-            );
+function deleteCard(index) {
 
-            saveSets();
+    sets[currentSetIndex].cards.splice(
+        index,
+        1
+    );
 
-            renderCards();
-            renderSets();
-        }
+    saveSets();
 
-        function deleteSet(index) {
+    renderCards();
+    renderSets();
+}
 
-            if (
-                !confirm(
-                    "Delete this flashcard set?"
-                )
-            ) {
-                return;
-            }
+function deleteSet(index) {
 
-            sets.splice(index, 1);
+    if (!confirm("Delete this set?")) {
+        return;
+    }
 
-            saveSets();
+    sets.splice(index, 1);
 
-            renderSets();
-        }
+    saveSets();
 
-        function startStudy() {
+    renderSets();
+}
 
-            const cards =
-                sets[currentSetIndex].cards;
+function startStudyFromSet(index) {
 
-            if (cards.length === 0) {
-                alert("Add some cards first.");
-                return;
-            }
+    currentSetIndex = index;
 
-            currentStudyCard = 0;
+    startStudy();
+}
 
-            document.getElementById("home")
-                .style.display = "none";
+function startStudy() {
 
-            document.getElementById("editor")
-                .style.display = "none";
+    const cards =
+        sets[currentSetIndex].cards;
 
-            document.getElementById("study")
-                .style.display = "block";
+    if (cards.length === 0) {
+        alert("Add cards before studying.");
+        return;
+    }
 
-            document.getElementById("study-title")
-                .textContent =
-                sets[currentSetIndex].name;
+    currentStudyCard = 0;
 
-            updateStudyCard();
-        }
+    document.getElementById("home")
+        .style.display = "none";
 
-        function startStudyFromSet(index) {
+    document.getElementById("editor")
+        .style.display = "none";
 
-            currentSetIndex = index;
+    document.getElementById("study")
+        .style.display = "block";
 
-            startStudy();
-        }
+    document.getElementById("study-title")
+        .textContent =
+        sets[currentSetIndex].name;
 
-        function updateStudyCard() {
+    updateStudyCard();
+}
 
-            const cards =
-                sets[currentSetIndex].cards;
+function updateStudyCard() {
 
-            const card =
-                cards[currentStudyCard];
+    const cards =
+        sets[currentSetIndex].cards;
 
-            document.getElementById("card-question")
-                .textContent =
-                card.question;
+    const card =
+        cards[currentStudyCard];
 
-            document.getElementById("card-answer")
-                .textContent =
-                card.answer;
+    document.getElementById("card-question")
+        .textContent =
+        card.question;
 
-            document.getElementById("study-info")
-                .textContent =
-                `Card ${currentStudyCard + 1} of ${cards.length}`;
+    document.getElementById("card-answer")
+        .textContent =
+        card.answer;
 
-            document.getElementById("flashcard")
-                .classList.remove("flipped");
-        }
+    document.getElementById("study-info")
+        .textContent =
+        `Card ${currentStudyCard + 1} of ${cards.length}`;
 
-        function flipCard() {
+    document.getElementById("flashcard")
+        .classList.remove("flipped");
+}
 
-            document.getElementById("flashcard")
-                .classList.toggle("flipped");
-        }
+function flipCard() {
 
-        function nextCard() {
+    document.getElementById("flashcard")
+        .classList.toggle("flipped");
+}
 
-            const cards =
-                sets[currentSetIndex].cards;
+function nextCard() {
 
-            currentStudyCard++;
+    const cards =
+        sets[currentSetIndex].cards;
 
-            if (
-                currentStudyCard >= cards.length
-            ) {
-                currentStudyCard = 0;
-            }
+    currentStudyCard++;
 
-            updateStudyCard();
-        }
+    if (currentStudyCard >= cards.length) {
+        currentStudyCard = 0;
+    }
 
-        function previousCard() {
+    updateStudyCard();
+}
 
-            const cards =
-                sets[currentSetIndex].cards;
+function previousCard() {
 
-            currentStudyCard--;
+    const cards =
+        sets[currentSetIndex].cards;
 
-            if (currentStudyCard < 0) {
-                currentStudyCard =
-                    cards.length - 1;
-            }
+    currentStudyCard--;
 
-            updateStudyCard();
-        }
+    if (currentStudyCard < 0) {
+        currentStudyCard = cards.length - 1;
+    }
 
-        function escapeHTML(text) {
+    updateStudyCard();
+}
 
-            const div =
-                document.createElement("div");
+function escapeHTML(text) {
 
-            div.textContent = text;
+    const div =
+        document.createElement("div");
 
-            return div.innerHTML;
-        }
+    div.textContent = text;
 
-        let rPresses = 0;
-        let rTimer;
+    return div.innerHTML;
+}
 
-        document.addEventListener(
-            "keydown",
-            event => {
+let rPresses = 0;
+let rTimer;
 
-                if (
-                    event.key.toLowerCase() !== "r"
-                ) {
-                    return;
-                }
+document.addEventListener("keydown", event => {
 
-                rPresses++;
+    if (event.key.toLowerCase() !== "r") {
+        return;
+    }
 
-                clearTimeout(rTimer);
+    rPresses++;
 
-                rTimer =
-                    setTimeout(
-                        () => {
-                            rPresses = 0;
-                        },
-                        700
-                    );
+    clearTimeout(rTimer);
 
-                if (rPresses === 3) {
+    rTimer = setTimeout(() => {
+        rPresses = 0;
+    }, 700);
 
-                    window.location.href =
-                        "index.html";
+    if (rPresses === 3) {
 
-                    rPresses = 0;
-                }
-            }
-        );
+        window.location.href = "index.html";
 
-        renderSets();
+        rPresses = 0;
+    }
+});
 
-    </script>
+renderSets();
+
+</script>
 
 </body>
 </html>
