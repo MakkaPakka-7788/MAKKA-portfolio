@@ -21,10 +21,9 @@
             margin-bottom: 15px;
             font-weight: bold;
         }
-        /* This wrapper creates the grace line border around the entire game */
         #game-wrapper {
             border: 4px solid #555;
-            padding: 15px; /* The grace gap space */
+            padding: 15px; 
             background-color: #333;
             border-radius: 8px;
             box-shadow: 0 0 25px rgba(0,0,0,0.6);
@@ -39,9 +38,7 @@
 
     <div id="score-board">Score: <span id="score">0</span></div>
     
-    <!-- Wrapper creates the visual separation grace line -->
     <div id="game-wrapper">
-        <!-- Expanded map size to 600x600 pixels -->
         <canvas id="gameCanvas" width="600" height="600"></canvas>
     </div>
 
@@ -53,16 +50,14 @@
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        // Game state variables
         let snake = [{ x: 15, y: 15 }];
-        let fruits = []; // Array to hold multiple fruits
-        const maxFruits = 3; // Number of fruits on screen at once
+        let fruits = []; 
+        const maxFruits = 3; 
         let dx = 1; 
         let dy = 0; 
         let score = 0;
         let gameInterval;
 
-        // Slowed down the speed: changed from 100ms to 140ms per frame
         function startGame() {
             gameInterval = setInterval(update, 140);
         }
@@ -83,9 +78,15 @@
             ctx.fillStyle = "#111";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw the Snake
-            ctx.fillStyle = "#4CAF50"; 
-            snake.forEach(part => {
+            // Draw the Snake parts
+            snake.forEach((part, index) => {
+                if (index === 0) {
+                    // NEW: The head (index 0) is drawn in a distinct Dark Forest Green
+                    ctx.fillStyle = "#1B5E20"; 
+                } else {
+                    // The rest of the body stays the standard lighter Green
+                    ctx.fillStyle = "#4CAF50"; 
+                }
                 ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
             });
 
@@ -103,20 +104,18 @@
         }
 
         function checkFoodCollision() {
-            // Check if head hits any of the fruits in our list
             for (let i = 0; i < fruits.length; i++) {
                 if (snake[0].x === fruits[i].x && snake[0].y === fruits[i].y) {
                     score++;
                     scoreElement.innerText = score;
-                    snake.push({}); // Grow the snake tail
-                    fruits.splice(i, 1); // Remove the eaten fruit
-                    generateSingleFruit(); // Replace it with a new one
+                    snake.push({}); 
+                    fruits.splice(i, 1); 
+                    generateSingleFruit(); 
                     break;
                 }
             }
         }
 
-        // Spawn a brand new fruit at a random open spot
         function generateSingleFruit() {
             let newFruit;
             let onSnake = true;
@@ -126,14 +125,11 @@
                     x: Math.floor(Math.random() * tileCount),
                     y: Math.floor(Math.random() * tileCount)
                 };
-
-                // Double check it didn't land directly on the snake body
                 onSnake = snake.some(part => part.x === newFruit.x && part.y === newFruit.y);
             }
             fruits.push(newFruit);
         }
 
-        // Fill up the map with fruits at the start
         function populateAllFruits() {
             fruits = [];
             for (let i = 0; i < maxFruits; i++) {
@@ -142,16 +138,11 @@
         }
 
         function checkGameOver() {
-            // Check wall borders
+            // Wall borders are now the ONLY way to die
             if (snake[0].x < 0 || snake[0].x >= tileCount || snake[0].y < 0 || snake[0].y >= tileCount) {
                 return true;
             }
-            // Check tail collision
-            for (let i = 1; i < snake.length; i++) {
-                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-                    return true;
-                }
-            }
+            // REMOVED: The code that checked for tail crashes has been completely taken out!
             return false;
         }
 
