@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hee Hee - Tetris</title>
+    <title>Flashcard.com</title>
 
     <style>
         * {
@@ -33,8 +33,8 @@
 
         h1 {
             margin: 0 0 10px;
-            font-size: 48px;
-            letter-spacing: 8px;
+            font-size: 42px;
+            letter-spacing: 5px;
             text-shadow:
                 0 0 5px white,
                 0 0 15px #00e5ff,
@@ -59,7 +59,7 @@
                 0 0 30px rgba(0,229,255,0.2);
         }
 
-        canvas {
+        #gameCanvas {
             display: block;
             background: #050505;
         }
@@ -100,21 +100,37 @@
             background: #000;
         }
 
-        #home-button {
+        #home-button,
+        #panic-button {
             display: block;
-            margin-top: 15px;
+            margin-top: 8px;
             padding: 9px;
             text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #home-button {
             background: #050505;
             color: white;
             border: 2px solid #00e5ff;
-            text-decoration: none;
-            font-weight: bold;
             box-shadow: 0 0 8px rgba(0,229,255,0.3);
         }
 
         #home-button:hover {
             background: #00e5ff;
+            color: black;
+        }
+
+        #panic-button {
+            background: #050505;
+            color: #00ff66;
+            border: 2px solid #00ff66;
+            box-shadow: 0 0 8px rgba(0,255,102,0.4);
+        }
+
+        #panic-button:hover {
+            background: #00ff66;
             color: black;
         }
 
@@ -167,7 +183,7 @@
 
         <div id="game-area">
 
-            <h1>TETRIS</h1>
+            <h1>Flashcard.com</h1>
 
             <div id="stats">
                 <div>Score: <span id="score">0</span></div>
@@ -180,14 +196,17 @@
             </div>
 
             <div id="controls">
-                ← → Move &nbsp; ↑ Rotate &nbsp; ↓ Drop &nbsp; Space Hard Drop
+                Study your flashcards
             </div>
 
             <a href="index.html" id="home-button">HOME</a>
 
+            <a href="flashcards.html" id="panic-button">PANIC</a>
+
         </div>
 
         <div id="side">
+
             <h2>NEXT 3</h2>
 
             <div class="next-box">
@@ -201,16 +220,23 @@
             <div class="next-box">
                 <canvas id="next3" width="120" height="80"></canvas>
             </div>
+
         </div>
 
     </div>
 
     <div id="game-over">
+
         <h2>GAME OVER</h2>
+
         <p>Score: <span id="final-score">0</span></p>
+
         <p>Level: <span id="final-level">1</span></p>
+
         <p>High Score: <span id="final-high">0</span></p>
+
         <button id="retry-button">RETRY</button>
+
     </div>
 
     <script>
@@ -227,11 +253,20 @@
             document.getElementById("next3")
         ];
 
-        const gameOverScreen = document.getElementById("game-over");
-        const finalScore = document.getElementById("final-score");
-        const finalLevel = document.getElementById("final-level");
-        const finalHigh = document.getElementById("final-high");
-        const retryButton = document.getElementById("retry-button");
+        const gameOverScreen =
+            document.getElementById("game-over");
+
+        const finalScore =
+            document.getElementById("final-score");
+
+        const finalLevel =
+            document.getElementById("final-level");
+
+        const finalHigh =
+            document.getElementById("final-high");
+
+        const retryButton =
+            document.getElementById("retry-button");
 
         const rows = 20;
         const cols = 10;
@@ -298,7 +333,8 @@
             return {
                 shape: pieces[type].map(row => [...row]),
                 color: colors[type],
-                x: Math.floor(cols / 2) -
+                x:
+                    Math.floor(cols / 2) -
                     Math.ceil(pieces[type][0].length / 2),
                 y: 0
             };
@@ -323,6 +359,7 @@
             ];
 
             current = nextPieces.shift();
+
             nextPieces.push(randomPiece());
 
             gameOverScreen.style.display = "none";
@@ -402,7 +439,10 @@
                 (row, y) => {
                     row.forEach(
                         (value, x) => {
-                            if (value && piece.y + y >= 0) {
+                            if (
+                                value &&
+                                piece.y + y >= 0
+                            ) {
                                 drawBlock(
                                     piece.x + x,
                                     piece.y + y,
@@ -470,7 +510,8 @@
                 (piece, index) => {
                     drawNextPiece(
                         piece,
-                        nextCanvases[index].getContext("2d")
+                        nextCanvases[index]
+                            .getContext("2d")
                     );
                 }
             );
@@ -495,7 +536,11 @@
                             piece.y + y >= rows ||
                             (
                                 piece.y + y >= 0 &&
-                                board[piece.y + y][piece.x + x]
+                                board[
+                                    piece.y + y
+                                ][
+                                    piece.x + x
+                                ]
                             )
                         )
                     ) {
@@ -512,7 +557,10 @@
                 (row, y) => {
                     row.forEach(
                         (value, x) => {
-                            if (value && current.y + y >= 0) {
+                            if (
+                                value &&
+                                current.y + y >= 0
+                            ) {
                                 board[
                                     current.y + y
                                 ][
@@ -569,7 +617,6 @@
 
             if (collide(current)) {
                 current.y--;
-
                 lockPiece();
             }
 
@@ -679,13 +726,26 @@
         function createParticles(y) {
             for (let i = 0; i < 45; i++) {
                 particles.push({
-                    x: Math.random() * canvas.width,
-                    y: y * blockSize +
-                        Math.random() * blockSize,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6,
+                    x:
+                        Math.random() *
+                        canvas.width,
+
+                    y:
+                        y * blockSize +
+                        Math.random() *
+                        blockSize,
+
+                    vx:
+                        (Math.random() - 0.5) * 6,
+
+                    vy:
+                        (Math.random() - 0.5) * 6,
+
                     life: 1,
-                    size: Math.random() * 4 + 2,
+
+                    size:
+                        Math.random() * 4 + 2,
+
                     color:
                         colors[
                             Math.floor(
@@ -705,9 +765,10 @@
                 p.life -= 0.025;
             });
 
-            particles = particles.filter(
-                p => p.life > 0
-            );
+            particles =
+                particles.filter(
+                    p => p.life > 0
+                );
         }
 
         function drawParticles() {
@@ -756,7 +817,9 @@
         }
 
         function gameLoop(time = 0) {
-            if (!gameRunning) return;
+            if (!gameRunning) {
+                return;
+            }
 
             const deltaTime =
                 time - lastTime;
@@ -781,7 +844,9 @@
         document.addEventListener(
             "keydown",
             event => {
-                if (!gameRunning) return;
+                if (!gameRunning) {
+                    return;
+                }
 
                 if (event.key === "ArrowLeft") {
                     playerMove(-1);
