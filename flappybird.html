@@ -885,7 +885,29 @@ game.addEventListener(
 );
 
 </script>
+let rPresses = 0;
+let rTimer;
 
+document.addEventListener("keydown", function(event) {
+
+    if (event.key.toLowerCase() !== "r") {
+        return;
+    }
+
+    rPresses++;
+
+    clearTimeout(rTimer);
+
+    rTimer = setTimeout(function() {
+        rPresses = 0;
+    }, 700);
+
+    if (rPresses === 3) {
+        window.location.href = "flashcards.html";
+        rPresses = 0;
+    }
+
+});
 </body>
 </html>
 
