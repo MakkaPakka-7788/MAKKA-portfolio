@@ -3,82 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flashcard.com - Pong</title>
+<title>Hee Hee - Pong</title>
 
 <style>
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     background: #000;
-    color: white;
-    font-family: Arial, sans-serif;
+    color: #fff;
+    font-family: "Courier New", monospace;
     text-align: center;
 }
 
 h1 {
-    margin: 25px 0 10px;
+    margin: 25px 0 15px;
+    font-size: 38px;
+    letter-spacing: 3px;
 }
 
 #difficulty {
     margin-bottom: 15px;
 }
 
-button {
+#difficulty button,
+.controls button {
     padding: 10px 16px;
     margin: 4px;
-    border: 1px solid white;
+    border: 2px solid #fff;
     background: #111;
-    color: white;
-    border-radius: 5px;
+    color: #fff;
+    font-family: inherit;
     cursor: pointer;
 }
 
-button:hover {
-    background: #333;
+#difficulty button:hover,
+.controls button:hover {
+    background: #fff;
+    color: #000;
 }
 
-button.selected {
-    background: white;
-    color: black;
+#difficulty button.selected {
+    background: #fff;
+    color: #000;
 }
 
 #score {
     font-size: 28px;
-    margin: 12px;
+    margin: 15px;
 }
 
 canvas {
+    display: block;
+    margin: auto;
     background: #111;
-    border: 3px solid white;
+    border: 3px solid #fff;
     max-width: 95%;
 }
 
 .controls {
-    margin-top: 15px;
-    color: #bbb;
+    margin-top: 18px;
+    color: #aaa;
+    line-height: 1.8;
 }
+
 </style>
 </head>
 
 <body>
 
-<h1>Pong</h1>
+<h1>PONG</h1>
 
 <div id="difficulty">
-    <button onclick="setDifficulty('easy')" id="easy">
-        Easy
+
+    <button id="easy" onclick="setDifficulty('easy')">
+        EASY
     </button>
 
-    <button onclick="setDifficulty('medium')" id="medium">
-        Medium
+    <button id="medium" onclick="setDifficulty('medium')">
+        MEDIUM
     </button>
 
-    <button onclick="setDifficulty('hard')" id="hard">
-        Hard
+    <button id="hard" onclick="setDifficulty('hard')">
+        HARD
     </button>
 
-    <button onclick="setDifficulty('impossible')" id="impossible">
-        Impossible
+    <button id="impossible" onclick="setDifficulty('impossible')">
+        IMPOSSIBLE
     </button>
+
 </div>
 
 <div id="score">
@@ -90,27 +105,29 @@ canvas {
 <canvas id="game" width="800" height="500"></canvas>
 
 <div class="controls">
-    W / S to move
+
+    W / S TO MOVE
+
     <br>
-    First to 10 wins
-    <br><br>
+
+    FIRST TO 10 WINS
+
+    <br>
 
     <button onclick="resetGame()">
-        Reset
+        RESET
     </button>
 
     <button onclick="window.location.href='index.html'">
-        Back to Games
+        BACK
     </button>
+
 </div>
 
 <script>
 
-const canvas =
-    document.getElementById("game");
-
-const ctx =
-    canvas.getContext("2d");
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
 const playerScoreElement =
     document.getElementById("playerScore");
@@ -137,14 +154,13 @@ let ball = {
     y: canvas.height / 2,
     size: 10,
     speedX: 5,
-    speedY: 4
+    speedY: 3
 };
 
 let playerScore = 0;
 let computerScore = 0;
 
 let difficulty = "medium";
-
 let aiSpeed = 5;
 
 let keys = {};
@@ -168,13 +184,16 @@ function setDifficulty(level) {
 
     document
         .querySelectorAll("#difficulty button")
-        .forEach(button => {
+        .forEach(function(button) {
+
             button.classList.remove("selected");
+
         });
 
     document
         .getElementById(level)
         .classList.add("selected");
+
 
     if (level === "easy") {
         aiSpeed = 3;
@@ -197,14 +216,10 @@ function setDifficulty(level) {
 
 function resetBall(direction) {
 
-    ball.x =
-        canvas.width / 2;
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
 
-    ball.y =
-        canvas.height / 2;
-
-    ball.speedX =
-        5 * direction;
+    ball.speedX = 5 * direction;
 
     ball.speedY =
         Math.random() * 6 - 3;
@@ -217,8 +232,8 @@ function resetGame() {
     playerScore = 0;
     computerScore = 0;
 
-    playerScoreElement.textContent = 0;
-    computerScoreElement.textContent = 0;
+    playerScoreElement.textContent = "0";
+    computerScoreElement.textContent = "0";
 
     player.y =
         canvas.height / 2 -
@@ -229,9 +244,7 @@ function resetGame() {
         paddleHeight / 2;
 
     resetBall(
-        Math.random() < 0.5
-            ? 1
-            : -1
+        Math.random() < 0.5 ? 1 : -1
     );
 
 }
@@ -247,6 +260,7 @@ function update() {
         player.y += player.speed;
     }
 
+
     if (player.y < 0) {
         player.y = 0;
     }
@@ -260,20 +274,14 @@ function update() {
     }
 
 
-    const computerCenter =
-        computer.y +
-        paddleHeight / 2;
-
-
-    let targetY =
-        ball.y;
+    let targetY = ball.y;
 
 
     if (difficulty === "easy") {
 
         targetY =
             ball.y +
-            Math.sin(Date.now() / 300) * 60;
+            Math.sin(Date.now() / 300) * 70;
 
     }
 
@@ -289,18 +297,20 @@ function update() {
 
     if (difficulty === "hard") {
 
-        targetY =
-            ball.y;
+        targetY = ball.y;
 
     }
 
 
     if (difficulty === "impossible") {
 
-        targetY =
-            ball.y;
+        targetY = ball.y;
 
     }
+
+
+    let computerCenter =
+        computer.y + paddleHeight / 2;
 
 
     if (computerCenter < targetY) {
@@ -309,7 +319,7 @@ function update() {
 
     }
 
-    else if (computerCenter > targetY) {
+    if (computerCenter > targetY) {
 
         computer.y -= aiSpeed;
 
@@ -335,8 +345,7 @@ function update() {
 
     if (
         ball.y <= 0 ||
-        ball.y >=
-        canvas.height - ball.size
+        ball.y >= canvas.height - ball.size
     ) {
 
         ball.speedY *= -1;
@@ -345,12 +354,10 @@ function update() {
 
 
     if (
-        ball.x <=
-        player.x + paddleWidth &&
+        ball.x <= player.x + paddleWidth &&
         ball.x >= player.x &&
         ball.y + ball.size >= player.y &&
-        ball.y <=
-        player.y + paddleHeight
+        ball.y <= player.y + paddleHeight
     ) {
 
         ball.speedX =
@@ -370,11 +377,9 @@ function update() {
 
     if (
         ball.x + ball.size >= computer.x &&
-        ball.x <=
-        computer.x + paddleWidth &&
+        ball.x <= computer.x + paddleWidth &&
         ball.y + ball.size >= computer.y &&
-        ball.y <=
-        computer.y + paddleHeight
+        ball.y <= computer.y + paddleHeight
     ) {
 
         ball.speedX =
@@ -401,7 +406,7 @@ function update() {
 
         if (computerScore >= 10) {
 
-            endGame("The AI wins!");
+            endGame("AI WINS!");
 
             return;
 
@@ -412,10 +417,7 @@ function update() {
     }
 
 
-    if (
-        ball.x >
-        canvas.width
-    ) {
+    if (ball.x > canvas.width) {
 
         playerScore++;
 
@@ -424,7 +426,7 @@ function update() {
 
         if (playerScore >= 10) {
 
-            endGame("You beat the AI!");
+            endGame("YOU WIN!");
 
             return;
 
@@ -470,7 +472,7 @@ function draw() {
     ctx.setLineDash([]);
 
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "#fff";
 
 
     ctx.fillRect(
@@ -521,6 +523,38 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 
 }
+
+
+let rPresses = 0;
+let rTimer;
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key.toLowerCase() !== "r") {
+        return;
+    }
+
+    rPresses++;
+
+    clearTimeout(rTimer);
+
+    rTimer = setTimeout(function() {
+
+        rPresses = 0;
+
+    }, 700);
+
+
+    if (rPresses === 3) {
+
+        window.location.href =
+            "flashcards.html";
+
+        rPresses = 0;
+
+    }
+
+});
 
 
 setDifficulty("medium");
