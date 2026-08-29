@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>flashcard.com</title>
+    <title>Flashcard.com</title>
 
     <style>
         * {
@@ -11,71 +12,99 @@
         }
 
         body {
+            margin: 0;
+            min-height: 100vh;
             background: #000;
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            margin: 0;
+            align-items: center;
+        }
+
+        #game-area {
+            text-align: center;
         }
 
         h1 {
-            font-size: 45px;
-            margin: 0 0 15px;
-            letter-spacing: 6px;
-            text-shadow: 0 0 15px white;
+            margin: 0 0 12px;
+            font-size: 46px;
+            letter-spacing: 5px;
+            text-shadow:
+                0 0 8px #00ff66,
+                0 0 20px #00ff66,
+                0 0 40px #00e5ff;
         }
 
         #score-container {
             display: flex;
-            gap: 40px;
-            font-size: 22px;
+            justify-content: center;
+            gap: 35px;
             margin-bottom: 15px;
+            font-size: 19px;
             font-weight: bold;
         }
 
         #game-wrapper {
-            border: 4px solid #333;
-            padding: 12px;
-            background: #111;
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(255,255,255,0.15);
+            border: 3px solid #00ff66;
+            padding: 8px;
+            background: #050505;
+            box-shadow:
+                0 0 10px #00ff66,
+                0 0 30px rgba(0,255,102,0.25);
         }
 
         canvas {
-            background: #050505;
             display: block;
+            background: #000;
         }
 
-        #instructions {
+        #controls {
+            margin-top: 12px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        #panic-button,
+        #home-button {
+            display: inline-block;
             margin-top: 15px;
-            color: #888;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+
+        #panic-button {
+            background: #050505;
+            color: #00ff66;
+            border: 2px solid #00ff66;
+            box-shadow: 0 0 10px rgba(0,255,102,0.3);
+        }
+
+        #panic-button:hover {
+            background: #00ff66;
+            color: #000;
         }
 
         #home-button {
-            margin-top: 15px;
-            padding: 10px 25px;
-            background: #111;
-            color: white;
-            border: 2px solid #555;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
+            background: #050505;
+            color: #00e5ff;
+            border: 2px solid #00e5ff;
+            box-shadow: 0 0 10px rgba(0,229,255,0.3);
+            margin-left: 8px;
         }
 
         #home-button:hover {
-            background: white;
-            color: black;
+            background: #00e5ff;
+            color: #000;
         }
 
         #game-over {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.97);
             align-items: center;
             justify-content: center;
             flex-direction: column;
@@ -83,226 +112,234 @@
         }
 
         #game-over h2 {
-            font-size: 60px;
-            margin: 0 0 25px;
-            color: #ff3030;
-            text-shadow: 0 0 20px #ff0000;
+            margin: 0 0 20px;
+            font-size: 58px;
+            color: #ff1744;
+            text-shadow:
+                0 0 10px #ff1744,
+                0 0 30px #ff1744;
         }
 
-        #final-score,
-        #final-high-score {
-            font-size: 25px;
-            margin: 6px;
+        #game-over p {
+            font-size: 22px;
+            margin: 7px;
         }
 
         #retry-button {
             margin-top: 25px;
-            padding: 14px 40px;
-            font-size: 22px;
+            padding: 13px 35px;
+            font-size: 20px;
             font-weight: bold;
+            background: #050505;
             color: white;
-            background: #222;
-            border: 2px solid white;
-            border-radius: 6px;
+            border: 2px solid #00ff66;
             cursor: pointer;
+            box-shadow: 0 0 12px rgba(0,255,102,0.4);
         }
 
         #retry-button:hover {
-            background: white;
+            background: #00ff66;
             color: black;
         }
-    <script>
-let rPresses = 0;
-let rTimer;
+    </style>
+</head>
 
-document.addEventListener("keydown", event => {
-    if (event.key.toLowerCase() !== "r") {
-        return;
-    }
-
-    rPresses++;
-
-    clearTimeout(rTimer);
-
-    rTimer = setTimeout(() => {
-        rPresses = 0;
-    }, 700);
-
-    if (rPresses === 3) {
-        window.location.href = "flashcards.html";
-        rPresses = 0;
-    }
-});
-</script>
 <body>
 
-    <h1>HEE HEE</h1>
+    <div id="game-area">
 
-    <div id="score-container">
-        <div>Score: <span id="score">0</span></div>
-        <div>High Score: <span id="high-score">0</span></div>
+        <h1>Flashcard.com</h1>
+
+        <div id="score-container">
+            <div>Score: <span id="score">0</span></div>
+            <div>High Score: <span id="high-score">0</span></div>
+        </div>
+
+        <div id="game-wrapper">
+            <canvas id="gameCanvas" width="600" height="600"></canvas>
+        </div>
+
+        <div id="controls">
+            Arrow Keys or WASD to move
+        </div>
+
+        <a href="flashcards.html" id="panic-button">
+            PANIC
+        </a>
+
+        <a href="index.html" id="home-button">
+            HOME
+        </a>
+
     </div>
-
-    <div id="game-wrapper">
-        <canvas id="gameCanvas" width="600" height="600"></canvas>
-    </div>
-
-    <div id="instructions">
-        Use the arrow keys to move
-    </div>
-
-    <a href="index.html" id="home-button">HOME</a>
 
     <div id="game-over">
+
         <h2>GAME OVER</h2>
 
-        <div id="final-score">
-            Score: 0
-        </div>
+        <p>
+            Score:
+            <span id="final-score">0</span>
+        </p>
 
-        <div id="final-high-score">
-            High Score: 0
-        </div>
+        <p>
+            High Score:
+            <span id="final-high">0</span>
+        </p>
 
-        <button id="retry-button">RETRY</button>
+        <button id="retry-button">
+            RETRY
+        </button>
+
     </div>
 
     <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+        const canvas =
+            document.getElementById("gameCanvas");
 
-        const scoreElement = document.getElementById("score");
-        const highScoreElement = document.getElementById("high-score");
+        const ctx =
+            canvas.getContext("2d");
 
-        const gameOverScreen = document.getElementById("game-over");
-        const finalScoreElement = document.getElementById("final-score");
-        const finalHighScoreElement = document.getElementById("final-high-score");
-        const retryButton = document.getElementById("retry-button");
+        const scoreElement =
+            document.getElementById("score");
+
+        const highScoreElement =
+            document.getElementById("high-score");
+
+        const gameOverScreen =
+            document.getElementById("game-over");
+
+        const finalScore =
+            document.getElementById("final-score");
+
+        const finalHigh =
+            document.getElementById("final-high");
+
+        const retryButton =
+            document.getElementById("retry-button");
 
         const gridSize = 20;
-        const tileCount = canvas.width / gridSize;
 
-        const maxFruits = 3;
-        const maxPortals = 6;
+        const tileCount =
+            canvas.width / gridSize;
 
-        let maxObstacles = 12;
+        const maxObstacles = 6;
+        const maxPortals = 4;
 
-        let snake = [{ x: 15, y: 15 }];
-        let fruits = [];
-        let obstacles = [];
-        let portals = [];
+        let snake;
+        let fruits;
+        let obstacles;
+        let portals;
 
-        let dx = 1;
-        let dy = 0;
+        let dx;
+        let dy;
 
-        let score = 0;
-        let gameInterval;
-        let gameRunning = false;
-
+        let score;
         let highScore =
-            Number(localStorage.getItem("snakeHighScore")) || 0;
+            Number(
+                localStorage.getItem(
+                    "snakeHighScore"
+                )
+            ) || 0;
 
-        highScoreElement.innerText = highScore;
+        let gameInterval;
+        let rPresses = 0;
+        let rTimer;
+
+        highScoreElement.innerText =
+            highScore;
 
         function startGame() {
+
             clearInterval(gameInterval);
-            gameRunning = true;
-            gameInterval = setInterval(update, 140);
+
+            gameInterval =
+                setInterval(
+                    update,
+                    Math.max(
+                        65,
+                        140 - score * 3
+                    )
+                );
+        }
+
+        function resetGame() {
+
+            snake = [
+                { x: 15, y: 15 },
+                { x: 14, y: 15 },
+                { x: 13, y: 15 }
+            ];
+
+            fruits = [];
+            obstacles = [];
+            portals = [];
+
+            dx = 1;
+            dy = 0;
+
+            score = 0;
+
+            scoreElement.innerText =
+                score;
+
+            gameOverScreen.style.display =
+                "none";
+
+            generatePortals();
+
+            populateFruits();
+
+            generateObstacles();
+
+            draw();
+
+            startGame();
         }
 
         function update() {
-            if (!gameRunning) return;
 
             moveSnake();
 
-            if (checkGameOver()) {
+            if (
+                checkObstacleCollision()
+            ) {
                 endGame();
                 return;
             }
 
             checkPortalCollision();
+
             checkFoodCollision();
 
             draw();
         }
 
-        function draw() {
-            ctx.fillStyle = "#050505";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = "#666";
-
-            obstacles.forEach(obs => {
-                ctx.fillRect(
-                    obs.x * gridSize,
-                    obs.y * gridSize,
-                    gridSize - 2,
-                    gridSize - 2
-                );
-            });
-
-            portals.forEach((portal, index) => {
-                ctx.fillStyle = "#000";
-
-                ctx.fillRect(
-                    portal.x * gridSize,
-                    portal.y * gridSize,
-                    gridSize - 2,
-                    gridSize - 2
-                );
-
-                ctx.strokeStyle = "#00E5FF";
-                ctx.lineWidth = 3;
-
-                ctx.strokeRect(
-                    portal.x * gridSize + 1,
-                    portal.y * gridSize + 1,
-                    gridSize - 4,
-                    gridSize - 4
-                );
-
-                ctx.fillStyle = "#00E5FF";
-                ctx.font = "12px Arial";
-
-                ctx.fillText(
-                    index + 1,
-                    portal.x * gridSize + 6,
-                    portal.y * gridSize + 14
-                );
-            });
-
-            snake.forEach((part, index) => {
-                ctx.fillStyle =
-                    index === 0 ? "#1B5E20" : "#4CAF50";
-
-                ctx.fillRect(
-                    part.x * gridSize,
-                    part.y * gridSize,
-                    gridSize - 2,
-                    gridSize - 2
-                );
-            });
-
-            fruits.forEach(fruit => {
-                ctx.fillStyle = "#FF3030";
-
-                ctx.fillRect(
-                    fruit.x * gridSize,
-                    fruit.y * gridSize,
-                    gridSize - 2,
-                    gridSize - 2
-                );
-            });
-        }
-
         function moveSnake() {
-            let nextX = snake[0].x + dx;
-            let nextY = snake[0].y + dy;
 
-            if (nextX < 0) nextX = tileCount - 1;
-            if (nextX >= tileCount) nextX = 0;
-            if (nextY < 0) nextY = tileCount - 1;
-            if (nextY >= tileCount) nextY = 0;
+            let nextX =
+                snake[0].x + dx;
+
+            let nextY =
+                snake[0].y + dy;
+
+            if (nextX < 0) {
+                nextX =
+                    tileCount - 1;
+            }
+
+            if (nextX >= tileCount) {
+                nextX = 0;
+            }
+
+            if (nextY < 0) {
+                nextY =
+                    tileCount - 1;
+            }
+
+            if (nextY >= tileCount) {
+                nextY = 0;
+            }
 
             snake.unshift({
                 x: nextX,
@@ -312,98 +349,261 @@ document.addEventListener("keydown", event => {
             snake.pop();
         }
 
-        function checkPortalCollision() {
-            const head = snake[0];
+        function draw() {
 
-            const portalIndex = portals.findIndex(
-                portal =>
-                    portal.x === head.x &&
-                    portal.y === head.y
+            ctx.fillStyle = "#000";
+
+            ctx.fillRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
             );
 
-            if (portalIndex === -1) return;
+            drawGrid();
 
-            const otherPortals = portals.filter(
-                (_, index) => index !== portalIndex
+            obstacles.forEach(obs => {
+
+                ctx.fillStyle =
+                    "#777";
+
+                ctx.shadowColor =
+                    "#777";
+
+                ctx.shadowBlur = 12;
+
+                ctx.fillRect(
+                    obs.x * gridSize,
+                    obs.y * gridSize,
+                    gridSize - 2,
+                    gridSize - 2
+                );
+            });
+
+            ctx.shadowBlur = 0;
+
+            portals.forEach(portal => {
+
+                ctx.fillStyle =
+                    "#050505";
+
+                ctx.fillRect(
+                    portal.x * gridSize,
+                    portal.y * gridSize,
+                    gridSize - 2,
+                    gridSize - 2
+                );
+
+                ctx.strokeStyle =
+                    "#00e5ff";
+
+                ctx.lineWidth = 3;
+
+                ctx.shadowColor =
+                    "#00e5ff";
+
+                ctx.shadowBlur = 15;
+
+                ctx.strokeRect(
+                    portal.x * gridSize + 2,
+                    portal.y * gridSize + 2,
+                    gridSize - 6,
+                    gridSize - 6
+                );
+            });
+
+            ctx.shadowBlur = 0;
+
+            fruits.forEach(fruit => {
+
+                ctx.fillStyle =
+                    "#ff1744";
+
+                ctx.shadowColor =
+                    "#ff1744";
+
+                ctx.shadowBlur = 15;
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    fruit.x * gridSize + 9,
+                    fruit.y * gridSize + 9,
+                    7,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fill();
+            });
+
+            ctx.shadowBlur = 0;
+
+            snake.forEach(
+                (part, index) => {
+
+                    if (index === 0) {
+                        ctx.fillStyle =
+                            "#00ff66";
+
+                        ctx.shadowColor =
+                            "#00ff66";
+
+                        ctx.shadowBlur = 15;
+                    } else {
+                        ctx.fillStyle =
+                            "#00b84f";
+
+                        ctx.shadowColor =
+                            "#00ff66";
+
+                        ctx.shadowBlur = 8;
+                    }
+
+                    ctx.fillRect(
+                        part.x * gridSize,
+                        part.y * gridSize,
+                        gridSize - 2,
+                        gridSize - 2
+                    );
+                }
             );
 
-            if (otherPortals.length === 0) return;
-
-            const destination =
-                otherPortals[
-                    Math.floor(
-                        Math.random() * otherPortals.length
-                    )
-                ];
-
-            snake[0].x = destination.x;
-            snake[0].y = destination.y;
+            ctx.shadowBlur = 0;
         }
 
-        function movePortals() {
-            for (let i = 0; i < portals.length; i++) {
-                let newPortal;
-                let valid = false;
+        function drawGrid() {
 
-                while (!valid) {
-                    newPortal = {
-                        x: Math.floor(
-                            Math.random() * (tileCount - 6)
-                        ) + 3,
-                        y: Math.floor(
-                            Math.random() * (tileCount - 6)
-                        ) + 3
-                    };
+            ctx.strokeStyle =
+                "rgba(0,229,255,0.05)";
 
-                    const onSnake = snake.some(
-                        part =>
-                            part.x === newPortal.x &&
-                            part.y === newPortal.y
+            ctx.lineWidth = 1;
+
+            for (
+                let x = 0;
+                x <= canvas.width;
+                x += gridSize
+            ) {
+
+                ctx.beginPath();
+
+                ctx.moveTo(x, 0);
+                ctx.lineTo(
+                    x,
+                    canvas.height
+                );
+
+                ctx.stroke();
+            }
+
+            for (
+                let y = 0;
+                y <= canvas.height;
+                y += gridSize
+            ) {
+
+                ctx.beginPath();
+
+                ctx.moveTo(0, y);
+                ctx.lineTo(
+                    canvas.width,
+                    y
+                );
+
+                ctx.stroke();
+            }
+        }
+
+        function checkObstacleCollision() {
+
+            const head =
+                snake[0];
+
+            return obstacles.some(
+                obstacle =>
+                    obstacle.x === head.x &&
+                    obstacle.y === head.y
+            );
+        }
+
+        function checkPortalCollision() {
+
+            const head =
+                snake[0];
+
+            const portalIndex =
+                portals.findIndex(
+                    portal =>
+                        portal.x === head.x &&
+                        portal.y === head.y
+                );
+
+            if (
+                portalIndex === -1 ||
+                portals.length < 2
+            ) {
+                return;
+            }
+
+            let destinationIndex;
+
+            do {
+                destinationIndex =
+                    Math.floor(
+                        Math.random() *
+                        portals.length
                     );
+            } while (
+                destinationIndex ===
+                portalIndex
+            );
 
-                    const onFruit = fruits.some(
-                        fruit =>
-                            fruit.x === newPortal.x &&
-                            fruit.y === newPortal.y
-                    );
+            const destination =
+                portals[destinationIndex];
 
-                    const onObstacle = obstacles.some(
-                        obs =>
-                            obs.x === newPortal.x &&
-                            obs.y === newPortal.y
-                    );
+            snake[0] = {
+                x: destination.x,
+                y: destination.y
+            };
 
-                    const onOtherPortal = portals.some(
-                        (portal, index) =>
-                            index !== i &&
-                            portal.x === newPortal.x &&
-                            portal.y === newPortal.y
-                    );
-
-                    valid =
-                        !onSnake &&
-                        !onFruit &&
-                        !onObstacle &&
-                        !onOtherPortal;
-                }
-
-                portals[i] = newPortal;
+            if (snake.length > 1) {
+                snake[1] = {
+                    x: destination.x - dx,
+                    y: destination.y - dy
+                };
             }
         }
 
         function checkFoodCollision() {
-            for (let i = 0; i < fruits.length; i++) {
+
+            const head =
+                snake[0];
+
+            for (
+                let i = 0;
+                i < fruits.length;
+                i++
+            ) {
+
                 if (
-                    snake[0].x === fruits[i].x &&
-                    snake[0].y === fruits[i].y
+                    head.x === fruits[i].x &&
+                    head.y === fruits[i].y
                 ) {
+
                     score++;
 
-                    scoreElement.innerText = score;
+                    scoreElement.innerText =
+                        score;
 
-                    if (score > highScore) {
-                        highScore = score;
-                        highScoreElement.innerText = highScore;
+                    if (
+                        score > highScore
+                    ) {
+
+                        highScore =
+                            score;
+
+                        highScoreElement.innerText =
+                            highScore;
 
                         localStorage.setItem(
                             "snakeHighScore",
@@ -411,25 +611,31 @@ document.addEventListener("keydown", event => {
                         );
                     }
 
-                    const tail =
-                        snake[snake.length - 1];
-
                     snake.push({
-                        x: tail.x,
-                        y: tail.y
+                        x:
+                            snake[
+                                snake.length - 1
+                            ].x,
+
+                        y:
+                            snake[
+                                snake.length - 1
+                            ].y
                     });
 
                     fruits.splice(i, 1);
 
-                    maxObstacles =
-                        Math.min(
-                            30,
-                            12 + Math.floor(score / 2)
-                        );
+                    generateSingleFruit();
+
+                    movePortals();
 
                     generateObstacles();
-                    movePortals();
-                    generateSingleFruit();
+
+                    clearInterval(
+                        gameInterval
+                    );
+
+                    startGame();
 
                     break;
                 }
@@ -437,182 +643,275 @@ document.addEventListener("keydown", event => {
         }
 
         function generateSingleFruit() {
-            let newFruit;
-            let invalidPos = true;
 
-            while (invalidPos) {
-                newFruit = {
-                    x: Math.floor(
-                        Math.random() * tileCount
-                    ),
-                    y: Math.floor(
-                        Math.random() * tileCount
-                    )
+            let fruit;
+            let invalid = true;
+
+            while (invalid) {
+
+                fruit = {
+                    x:
+                        Math.floor(
+                            Math.random() *
+                            tileCount
+                        ),
+
+                    y:
+                        Math.floor(
+                            Math.random() *
+                            tileCount
+                        )
                 };
 
-                invalidPos =
+                invalid =
                     snake.some(
                         part =>
-                            part.x === newFruit.x &&
-                            part.y === newFruit.y
+                            part.x === fruit.x &&
+                            part.y === fruit.y
                     ) ||
+
                     obstacles.some(
-                        obs =>
-                            obs.x === newFruit.x &&
-                            obs.y === newFruit.y
+                        obstacle =>
+                            obstacle.x === fruit.x &&
+                            obstacle.y === fruit.y
                     ) ||
+
                     portals.some(
                         portal =>
-                            portal.x === newFruit.x &&
-                            portal.y === newFruit.y
+                            portal.x === fruit.x &&
+                            portal.y === fruit.y
                     );
             }
 
-            fruits.push(newFruit);
+            fruits.push(fruit);
+        }
+
+        function populateFruits() {
+
+            fruits = [];
+
+            generateSingleFruit();
+            generateSingleFruit();
+            generateSingleFruit();
         }
 
         function generateObstacles() {
+
             obstacles = [];
 
-            for (let i = 0; i < maxObstacles; i++) {
-                let newObs;
-                let invalidPos = true;
+            const amount =
+                Math.min(
+                    maxObstacles +
+                    Math.floor(score / 3),
+                    14
+                );
 
-                while (invalidPos) {
-                    newObs = {
-                        x: Math.floor(
-                            Math.random() * tileCount
-                        ),
-                        y: Math.floor(
-                            Math.random() * tileCount
-                        )
+            for (
+                let i = 0;
+                i < amount;
+                i++
+            ) {
+
+                let obstacle;
+                let invalid = true;
+
+                while (invalid) {
+
+                    obstacle = {
+                        x:
+                            Math.floor(
+                                Math.random() *
+                                tileCount
+                            ),
+
+                        y:
+                            Math.floor(
+                                Math.random() *
+                                tileCount
+                            )
                     };
 
-                    invalidPos =
+                    invalid =
                         snake.some(
                             part =>
                                 Math.abs(
-                                    newObs.x - part.x
-                                ) <= 1 &&
+                                    part.x -
+                                    obstacle.x
+                                ) <= 2 &&
                                 Math.abs(
-                                    newObs.y - part.y
-                                ) <= 1
+                                    part.y -
+                                    obstacle.y
+                                ) <= 2
                         ) ||
+
                         fruits.some(
                             fruit =>
-                                fruit.x === newObs.x &&
-                                fruit.y === newObs.y
+                                fruit.x ===
+                                    obstacle.x &&
+                                fruit.y ===
+                                    obstacle.y
                         ) ||
+
                         portals.some(
                             portal =>
-                                portal.x === newObs.x &&
-                                portal.y === newObs.y
+                                portal.x ===
+                                    obstacle.x &&
+                                portal.y ===
+                                    obstacle.y
                         ) ||
+
                         obstacles.some(
-                            obs =>
-                                obs.x === newObs.x &&
-                                obs.y === newObs.y
+                            existing =>
+                                existing.x ===
+                                    obstacle.x &&
+                                existing.y ===
+                                    obstacle.y
                         );
                 }
 
-                obstacles.push(newObs);
+                obstacles.push(obstacle);
             }
         }
 
         function generatePortals() {
+
             portals = [];
 
-            for (let i = 0; i < maxPortals; i++) {
-                let newPortal;
-                let invalidPos = true;
+            for (
+                let i = 0;
+                i < maxPortals;
+                i++
+            ) {
 
-                while (invalidPos) {
-                    newPortal = {
-                        x: Math.floor(
-                            Math.random() * (tileCount - 6)
-                        ) + 3,
-                        y: Math.floor(
-                            Math.random() * (tileCount - 6)
-                        ) + 3
+                let portal;
+                let invalid = true;
+
+                while (invalid) {
+
+                    portal = {
+                        x:
+                            Math.floor(
+                                Math.random() *
+                                (tileCount - 6)
+                            ) + 3,
+
+                        y:
+                            Math.floor(
+                                Math.random() *
+                                (tileCount - 6)
+                            ) + 3
                     };
 
-                    invalidPos =
+                    invalid =
                         snake.some(
                             part =>
-                                part.x === newPortal.x &&
-                                part.y === newPortal.y
+                                part.x ===
+                                    portal.x &&
+                                part.y ===
+                                    portal.y
                         ) ||
-                        obstacles.some(
-                            obs =>
-                                obs.x === newPortal.x &&
-                                obs.y === newPortal.y
-                        ) ||
+
                         portals.some(
-                            portal =>
-                                portal.x === newPortal.x &&
-                                portal.y === newPortal.y
+                            existing =>
+                                existing.x ===
+                                    portal.x &&
+                                existing.y ===
+                                    portal.y
                         );
                 }
 
-                portals.push(newPortal);
+                portals.push(portal);
             }
         }
 
-        function populateAllFruits() {
-            fruits = [];
+        function movePortals() {
 
-            for (let i = 0; i < maxFruits; i++) {
-                generateSingleFruit();
+            const oldPortals =
+                [...portals];
+
+            portals = [];
+
+            for (
+                let i = 0;
+                i < maxPortals;
+                i++
+            ) {
+
+                let portal;
+                let invalid = true;
+
+                while (invalid) {
+
+                    portal = {
+                        x:
+                            Math.floor(
+                                Math.random() *
+                                (tileCount - 6)
+                            ) + 3,
+
+                        y:
+                            Math.floor(
+                                Math.random() *
+                                (tileCount - 6)
+                            ) + 3
+                    };
+
+                    invalid =
+                        snake.some(
+                            part =>
+                                part.x ===
+                                    portal.x &&
+                                part.y ===
+                                    portal.y
+                        ) ||
+
+                        fruits.some(
+                            fruit =>
+                                fruit.x ===
+                                    portal.x &&
+                                fruit.y ===
+                                    portal.y
+                        ) ||
+
+                        obstacles.some(
+                            obstacle =>
+                                obstacle.x ===
+                                    portal.x &&
+                                obstacle.y ===
+                                    portal.y
+                        ) ||
+
+                        portals.some(
+                            existing =>
+                                existing.x ===
+                                    portal.x &&
+                                existing.y ===
+                                    portal.y
+                        );
+                }
+
+                portals.push(portal);
             }
-        }
 
-        function checkGameOver() {
-            return obstacles.some(
-                obs =>
-                    obs.x === snake[0].x &&
-                    obs.y === snake[0].y
-            );
+            if (oldPortals.length === 0) {
+                generatePortals();
+            }
         }
 
         function endGame() {
-            gameRunning = false;
 
-            clearInterval(gameInterval);
+            clearInterval(
+                gameInterval
+            );
 
-            finalScoreElement.innerText =
-                "Score: " + score;
+            finalScore.innerText =
+                score;
 
-            finalHighScoreElement.innerText =
-                "High Score: " + highScore;
+            finalHigh.innerText =
+                highScore;
 
-            gameOverScreen.style.display = "flex";
-        }
-
-        function resetGame() {
-            clearInterval(gameInterval);
-
-            snake = [{ x: 15, y: 15 }];
-
-            dx = 1;
-            dy = 0;
-
-            score = 0;
-            maxObstacles = 12;
-
-            scoreElement.innerText = score;
-
-            fruits = [];
-            obstacles = [];
-            portals = [];
-
-            gameOverScreen.style.display = "none";
-
-            generatePortals();
-            generateObstacles();
-            populateAllFruits();
-
-            draw();
-            startGame();
+            gameOverScreen.style.display =
+                "flex";
         }
 
         retryButton.addEventListener(
@@ -620,41 +919,84 @@ document.addEventListener("keydown", event => {
             resetGame
         );
 
-        window.addEventListener(
+        document.addEventListener(
             "keydown",
-            function(e) {
-                switch (e.key) {
-                    case "ArrowUp":
-                        if (dy === 0) {
-                            dx = 0;
-                            dy = -1;
-                        }
-                        e.preventDefault();
-                        break;
+            event => {
 
-                    case "ArrowDown":
-                        if (dy === 0) {
-                            dx = 0;
-                            dy = 1;
-                        }
-                        e.preventDefault();
-                        break;
+                if (
+                    event.key === "ArrowUp" ||
+                    event.key.toLowerCase() === "w"
+                ) {
 
-                    case "ArrowLeft":
-                        if (dx === 0) {
-                            dx = -1;
-                            dy = 0;
-                        }
-                        e.preventDefault();
-                        break;
+                    if (dy === 0) {
+                        dx = 0;
+                        dy = -1;
+                    }
+                }
 
-                    case "ArrowRight":
-                        if (dx === 0) {
-                            dx = 1;
-                            dy = 0;
-                        }
-                        e.preventDefault();
-                        break;
+                if (
+                    event.key === "ArrowDown" ||
+                    event.key.toLowerCase() === "s"
+                ) {
+
+                    if (dy === 0) {
+                        dx = 0;
+                        dy = 1;
+                    }
+                }
+
+                if (
+                    event.key === "ArrowLeft" ||
+                    event.key.toLowerCase() === "a"
+                ) {
+
+                    if (dx === 0) {
+                        dx = -1;
+                        dy = 0;
+                    }
+                }
+
+                if (
+                    event.key === "ArrowRight" ||
+                    event.key.toLowerCase() === "d"
+                ) {
+
+                    if (dx === 0) {
+                        dx = 1;
+                        dy = 0;
+                    }
+                }
+            }
+        );
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key.toLowerCase() !== "r"
+                ) {
+                    return;
+                }
+
+                rPresses++;
+
+                clearTimeout(rTimer);
+
+                rTimer =
+                    setTimeout(
+                        () => {
+                            rPresses = 0;
+                        },
+                        700
+                    );
+
+                if (rPresses === 3) {
+
+                    window.location.href =
+                        "flashcards.html";
+
+                    rPresses = 0;
                 }
             }
         );
@@ -664,3 +1006,4 @@ document.addEventListener("keydown", event => {
 
 </body>
 </html>
+```
