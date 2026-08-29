@@ -89,7 +89,7 @@ body {
     transform: scale(.7);
 }
 
-/* BACKGROUND HILLS */
+/* HILLS */
 
 .hill {
     position: absolute;
@@ -127,14 +127,11 @@ body {
     transform-origin: center;
 }
 
-/*
-   ORIGINAL PIXEL-ART STYLE BIRD
-*/
-
 .bird-pixel {
     position: absolute;
     width: 8px;
     height: 8px;
+
     box-shadow:
         8px 0 #f4c542,
         16px 0 #f4c542,
@@ -186,6 +183,7 @@ body {
     left: 32px;
     top: 16px;
     background: #e87527;
+
     box-shadow:
         8px 8px #a94e18;
 }
@@ -232,8 +230,10 @@ body {
     position: absolute;
     left: 0;
     bottom: 0;
+
     width: 200%;
     height: 75px;
+
     z-index: 15;
 
     background:
@@ -254,12 +254,15 @@ body {
     position: absolute;
     top: 22px;
     left: 0;
+
     width: 100%;
+
     z-index: 20;
 
     text-align: center;
 
     color: white;
+
     font-size: 48px;
     font-weight: bold;
 
@@ -267,16 +270,18 @@ body {
         3px 3px #555;
 }
 
-/* MENU */
+/* START / RETRY SCREEN */
 
 #message {
     position: absolute;
+
     z-index: 30;
 
     top: 50%;
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform:
+        translate(-50%, -50%);
 
     width: 85%;
 
@@ -285,6 +290,7 @@ body {
     background: white;
 
     border: 4px solid #555;
+
     border-radius: 10px;
 
     text-align: center;
@@ -293,14 +299,23 @@ body {
         0 5px #777;
 }
 
+/* THIS FIXES THE START SCREEN */
+
+#message.hidden {
+    display: none !important;
+}
+
 #message h1 {
     margin: 0 0 15px;
+
     color: #333;
+
     font-size: 30px;
 }
 
 #message p {
     color: #555;
+
     line-height: 1.6;
 }
 
@@ -308,6 +323,7 @@ body {
     border: none;
 
     background: #e9b52f;
+
     color: #333;
 
     padding: 13px 25px;
@@ -315,6 +331,7 @@ body {
     border-radius: 7px;
 
     font-size: 16px;
+
     font-weight: bold;
 
     cursor: pointer;
@@ -326,7 +343,7 @@ body {
     background: #f4c542;
 }
 
-/* MEDALS */
+/* MEDAL */
 
 #medal {
     width: 75px;
@@ -339,7 +356,9 @@ body {
     border: 5px solid #555;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     font-size: 32px;
@@ -361,7 +380,7 @@ body {
     background: #dff8ff;
 }
 
-/* MENU BUTTON */
+/* BACK BUTTON */
 
 #back {
     position: absolute;
@@ -384,6 +403,7 @@ body {
     text-decoration: none;
 
     font-size: 13px;
+
     font-weight: bold;
 }
 
@@ -408,11 +428,18 @@ body {
 
 </div>
 
-<a id="back" href="index.html">← Menu</a>
 
-<div id="score">0</div>
+<a id="back" href="index.html">
+    ← Menu
+</a>
 
-<!-- PIXEL BIRD -->
+
+<div id="score">
+    0
+</div>
+
+
+<!-- BIRD -->
 
 <div id="bird">
 
@@ -424,11 +451,19 @@ body {
 
 </div>
 
+
+<!-- GROUND -->
+
 <div id="ground"></div>
+
+
+<!-- START SCREEN -->
 
 <div id="message">
 
-    <h1>FLAPPY BIRD</h1>
+    <h1>
+        FLAPPY BIRD
+    </h1>
 
     <p>
         SPACE / CLICK / TAP<br>
@@ -446,6 +481,8 @@ body {
 
 <script>
 
+/* ELEMENTS */
+
 const game =
     document.getElementById("game");
 
@@ -462,6 +499,8 @@ const ground =
     document.getElementById("ground");
 
 
+/* GAME VARIABLES */
+
 let birdY = 300;
 
 let velocity = 0;
@@ -475,15 +514,19 @@ let pipes = [];
 
 let score = 0;
 
+
 let highScore =
     Number(
-        localStorage.getItem("flappyHighScore")
+        localStorage.getItem(
+            "flappyHighScore"
+        )
     ) || 0;
 
 
 let gameRunning = false;
 
 let gameOver = false;
+
 
 let lastTime = 0;
 
@@ -502,11 +545,14 @@ function startGame() {
     pipes.forEach(pipe => {
 
         pipe.top.remove();
+
         pipe.bottom.remove();
 
     });
 
+
     pipes = [];
+
 
     birdY = 300;
 
@@ -516,24 +562,39 @@ function startGame() {
 
     pipeTimer = 0;
 
+
     gameRunning = true;
 
     gameOver = false;
 
-    scoreDisplay.textContent = "0";
 
-    message.classList.add("hidden");
+    scoreDisplay.textContent =
+        "0";
+
+
+    /* HIDE START SCREEN */
+
+    message.classList.add(
+        "hidden"
+    );
+
 
     bird.style.top =
         birdY + "px";
 
+
     bird.style.transform =
         "rotate(0deg)";
+
 
     lastTime =
         performance.now();
 
-    requestAnimationFrame(gameLoop);
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
 
     flap();
 
@@ -548,12 +609,13 @@ function flap() {
         return;
     }
 
-    velocity = flapPower;
+    velocity =
+        flapPower;
 
 }
 
 
-/* PIPE */
+/* CREATE PIPE */
 
 function createPipe() {
 
@@ -561,11 +623,13 @@ function createPipe() {
 
     const minTop = 80;
 
+
     const maxTop =
         game.clientHeight -
         groundHeight -
         gap -
         80;
+
 
     const topHeight =
         Math.floor(
@@ -582,34 +646,49 @@ function createPipe() {
 
 
     const topPipe =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     topPipe.className =
         "pipe top";
 
+
     topPipe.style.height =
         topHeight + "px";
+
 
     topPipe.style.left =
         game.clientWidth + "px";
 
 
     const bottomPipe =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     bottomPipe.className =
         "pipe bottom";
 
+
     bottomPipe.style.height =
         bottomHeight + "px";
+
 
     bottomPipe.style.left =
         game.clientWidth + "px";
 
 
-    game.appendChild(topPipe);
+    game.appendChild(
+        topPipe
+    );
 
-    game.appendChild(bottomPipe);
+
+    game.appendChild(
+        bottomPipe
+    );
 
 
     pipes.push({
@@ -640,7 +719,8 @@ function gameLoop(time) {
 
     const delta =
         Math.min(
-            (time - lastTime) / 16.67,
+            (time - lastTime) /
+            16.67,
             2
         );
 
@@ -653,6 +733,7 @@ function gameLoop(time) {
     velocity +=
         gravity * delta;
 
+
     birdY +=
         velocity * delta;
 
@@ -664,6 +745,7 @@ function gameLoop(time) {
     const rotation =
         Math.max(
             -25,
+
             Math.min(
                 velocity * 5,
                 90
@@ -684,7 +766,9 @@ function gameLoop(time) {
 
 
     if (groundX <= -36) {
+
         groundX = 0;
+
     }
 
 
@@ -718,9 +802,12 @@ function gameLoop(time) {
         pipe.top.style.left =
             pipe.x + "px";
 
+
         pipe.bottom.style.left =
             pipe.x + "px";
 
+
+        /* SCORE */
 
         if (
             !pipe.passed &&
@@ -731,6 +818,7 @@ function gameLoop(time) {
 
             score++;
 
+
             scoreDisplay.textContent =
                 score;
 
@@ -739,7 +827,7 @@ function gameLoop(time) {
     });
 
 
-    /* DELETE OLD PIPES */
+    /* REMOVE OLD PIPES */
 
     pipes =
         pipes.filter(pipe => {
@@ -759,10 +847,11 @@ function gameLoop(time) {
         });
 
 
-    /* CEILING / GROUND */
+    /* GROUND / CEILING */
 
     if (
         birdY < 0 ||
+
         birdY + 40 >
         game.clientHeight -
         groundHeight
@@ -787,7 +876,9 @@ function gameLoop(time) {
         birdY + 40;
 
 
-    for (const pipe of pipes) {
+    for (
+        const pipe of pipes
+    ) {
 
         const pipeLeft =
             pipe.x;
@@ -804,13 +895,17 @@ function gameLoop(time) {
             const gapTop =
                 pipe.topHeight;
 
+
             const gapBottom =
-                pipe.topHeight + 155;
+                pipe.topHeight +
+                155;
 
 
             if (
                 birdTop < gapTop ||
-                birdBottom > gapBottom
+
+                birdBottom >
+                gapBottom
             ) {
 
                 endGame();
@@ -824,21 +919,27 @@ function gameLoop(time) {
     }
 
 
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(
+        gameLoop
+    );
 
 }
 
 
-/* MEDAL */
+/* MEDALS */
 
 function getMedal(score) {
 
     if (score >= 40) {
 
         return {
+
             name: "PLATINUM",
+
             className: "platinum",
+
             icon: "💎"
+
         };
 
     }
@@ -847,9 +948,13 @@ function getMedal(score) {
     if (score >= 30) {
 
         return {
+
             name: "GOLD",
+
             className: "gold",
+
             icon: "🥇"
+
         };
 
     }
@@ -858,9 +963,13 @@ function getMedal(score) {
     if (score >= 20) {
 
         return {
+
             name: "SILVER",
+
             className: "silver",
+
             icon: "🥈"
+
         };
 
     }
@@ -869,9 +978,13 @@ function getMedal(score) {
     if (score >= 10) {
 
         return {
+
             name: "BRONZE",
+
             className: "bronze",
+
             icon: "🥉"
+
         };
 
     }
@@ -894,6 +1007,7 @@ function endGame() {
     if (score > highScore) {
 
         highScore = score;
+
 
         localStorage.setItem(
             "flappyHighScore",
@@ -930,20 +1044,28 @@ function endGame() {
     }
 
 
-    message.classList.remove(
-        "hidden"
-    );
-
-
     message.innerHTML = `
 
-        <h1>TRY AGAIN</h1>
+        <h1>
+            TRY AGAIN
+        </h1>
 
         ${medalHTML}
 
         <p>
-            Score: <strong>${score}</strong><br>
-            Best: <strong>${highScore}</strong>
+
+            Score:
+            <strong>
+                ${score}
+            </strong>
+
+            <br>
+
+            Best:
+            <strong>
+                ${highScore}
+            </strong>
+
         </p>
 
         <button onclick="startGame()">
@@ -951,6 +1073,11 @@ function endGame() {
         </button>
 
     `;
+
+
+    message.classList.remove(
+        "hidden"
+    );
 
 }
 
@@ -995,8 +1122,11 @@ game.addEventListener(
     function(event) {
 
         if (
-            event.target.tagName === "BUTTON" ||
-            event.target.id === "back"
+            event.target.tagName ===
+            "BUTTON" ||
+
+            event.target.id ===
+            "back"
         ) {
 
             return;
@@ -1028,8 +1158,11 @@ game.addEventListener(
     function(event) {
 
         if (
-            event.target.tagName === "BUTTON" ||
-            event.target.id === "back"
+            event.target.tagName ===
+            "BUTTON" ||
+
+            event.target.id ===
+            "back"
         ) {
 
             return;
@@ -1072,7 +1205,8 @@ document.addEventListener(
     function(event) {
 
         if (
-            event.key.toLowerCase() !== "r"
+            event.key.toLowerCase() !==
+            "r"
         ) {
 
             return;
@@ -1083,7 +1217,9 @@ document.addEventListener(
         rPresses++;
 
 
-        clearTimeout(rTimer);
+        clearTimeout(
+            rTimer
+        );
 
 
         rTimer =
