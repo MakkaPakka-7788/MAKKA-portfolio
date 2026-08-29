@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hee Hee</title>
+    <title>Hee Hee - Snake</title>
 
     <style>
         * {
@@ -12,7 +11,7 @@
         }
 
         body {
-            background-color: #000;
+            background: #000;
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
@@ -24,9 +23,9 @@
         }
 
         h1 {
-            font-size: 42px;
-            margin: 0 0 15px 0;
-            letter-spacing: 5px;
+            font-size: 45px;
+            margin: 0 0 15px;
+            letter-spacing: 6px;
             text-shadow: 0 0 15px white;
         }
 
@@ -41,27 +40,42 @@
         #game-wrapper {
             border: 4px solid #333;
             padding: 12px;
-            background-color: #111;
+            background: #111;
             border-radius: 8px;
             box-shadow: 0 0 30px rgba(255,255,255,0.15);
         }
 
         canvas {
-            background-color: #050505;
+            background: #050505;
             display: block;
         }
 
         #instructions {
             margin-top: 15px;
-            color: #aaa;
-            font-size: 15px;
+            color: #888;
+        }
+
+        #home-button {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: #111;
+            color: white;
+            border: 2px solid #555;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #home-button:hover {
+            background: white;
+            color: black;
         }
 
         #game-over {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.94);
+            background: rgba(0,0,0,0.95);
             align-items: center;
             justify-content: center;
             flex-direction: column;
@@ -70,7 +84,7 @@
 
         #game-over h2 {
             font-size: 60px;
-            margin: 0 0 25px 0;
+            margin: 0 0 25px;
             color: #ff3030;
             text-shadow: 0 0 20px #ff0000;
         }
@@ -102,7 +116,7 @@
 
 <body>
 
-    <h1>Hee Hee</h1>
+    <h1>HEE HEE</h1>
 
     <div id="score-container">
         <div>Score: <span id="score">0</span></div>
@@ -117,6 +131,8 @@
         Use the arrow keys to move
     </div>
 
+    <a href="index.html" id="home-button">HOME</a>
+
     <div id="game-over">
         <h2>GAME OVER</h2>
 
@@ -128,9 +144,7 @@
             High Score: 0
         </div>
 
-        <button id="retry-button">
-            RETRY
-        </button>
+        <button id="retry-button">RETRY</button>
     </div>
 
     <script>
@@ -148,9 +162,10 @@
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
 
-        let maxFruits = 3;
-        let maxObstacles = 12;
+        const maxFruits = 3;
         const maxPortals = 6;
+
+        let maxObstacles = 12;
 
         let snake = [{ x: 15, y: 15 }];
         let fruits = [];
@@ -161,20 +176,17 @@
         let dy = 0;
 
         let score = 0;
+        let gameInterval;
+        let gameRunning = false;
 
         let highScore =
             Number(localStorage.getItem("snakeHighScore")) || 0;
-
-        let gameInterval;
-        let gameRunning = false;
 
         highScoreElement.innerText = highScore;
 
         function startGame() {
             clearInterval(gameInterval);
-
             gameRunning = true;
-
             gameInterval = setInterval(update, 140);
         }
 
@@ -272,12 +284,11 @@
             if (nextY < 0) nextY = tileCount - 1;
             if (nextY >= tileCount) nextY = 0;
 
-            const head = {
+            snake.unshift({
                 x: nextX,
                 y: nextY
-            };
+            });
 
-            snake.unshift(head);
             snake.pop();
         }
 
@@ -292,24 +303,18 @@
 
             if (portalIndex === -1) return;
 
-            const otherIndexes = [];
+            const otherPortals = portals.filter(
+                (_, index) => index !== portalIndex
+            );
 
-            for (let i = 0; i < portals.length; i++) {
-                if (i !== portalIndex) {
-                    otherIndexes.push(i);
-                }
-            }
+            if (otherPortals.length === 0) return;
 
-            if (otherIndexes.length === 0) return;
-
-            const destinationIndex =
-                otherIndexes[
+            const destination =
+                otherPortals[
                     Math.floor(
-                        Math.random() * otherIndexes.length
+                        Math.random() * otherPortals.length
                     )
                 ];
-
-            const destination = portals[destinationIndex];
 
             snake[0].x = destination.x;
             snake[0].y = destination.y;
@@ -325,7 +330,6 @@
                         x: Math.floor(
                             Math.random() * (tileCount - 6)
                         ) + 3,
-
                         y: Math.floor(
                             Math.random() * (tileCount - 6)
                         ) + 3
@@ -379,9 +383,7 @@
 
                     if (score > highScore) {
                         highScore = score;
-
-                        highScoreElement.innerText =
-                            highScore;
+                        highScoreElement.innerText = highScore;
 
                         localStorage.setItem(
                             "snakeHighScore",
@@ -401,8 +403,8 @@
 
                     maxObstacles =
                         Math.min(
-                            25,
-                            12 + Math.floor(score / 3)
+                            30,
+                            12 + Math.floor(score / 2)
                         );
 
                     generateObstacles();
@@ -423,34 +425,27 @@
                     x: Math.floor(
                         Math.random() * tileCount
                     ),
-
                     y: Math.floor(
                         Math.random() * tileCount
                     )
                 };
 
-                const onSnake = snake.some(
-                    part =>
-                        part.x === newFruit.x &&
-                        part.y === newFruit.y
-                );
-
-                const onObstacle = obstacles.some(
-                    obs =>
-                        obs.x === newFruit.x &&
-                        obs.y === newFruit.y
-                );
-
-                const onPortal = portals.some(
-                    portal =>
-                        portal.x === newFruit.x &&
-                        portal.y === newFruit.y
-                );
-
                 invalidPos =
-                    onSnake ||
-                    onObstacle ||
-                    onPortal;
+                    snake.some(
+                        part =>
+                            part.x === newFruit.x &&
+                            part.y === newFruit.y
+                    ) ||
+                    obstacles.some(
+                        obs =>
+                            obs.x === newFruit.x &&
+                            obs.y === newFruit.y
+                    ) ||
+                    portals.some(
+                        portal =>
+                            portal.x === newFruit.x &&
+                            portal.y === newFruit.y
+                    );
             }
 
             fruits.push(newFruit);
@@ -468,13 +463,12 @@
                         x: Math.floor(
                             Math.random() * tileCount
                         ),
-
                         y: Math.floor(
                             Math.random() * tileCount
                         )
                     };
 
-                    const nearSnake =
+                    invalidPos =
                         snake.some(
                             part =>
                                 Math.abs(
@@ -483,34 +477,22 @@
                                 Math.abs(
                                     newObs.y - part.y
                                 ) <= 1
-                        );
-
-                    const onFruit =
+                        ) ||
                         fruits.some(
                             fruit =>
                                 fruit.x === newObs.x &&
                                 fruit.y === newObs.y
-                        );
-
-                    const onPortal =
+                        ) ||
                         portals.some(
                             portal =>
                                 portal.x === newObs.x &&
                                 portal.y === newObs.y
-                        );
-
-                    const onObstacle =
+                        ) ||
                         obstacles.some(
                             obs =>
                                 obs.x === newObs.x &&
                                 obs.y === newObs.y
                         );
-
-                    invalidPos =
-                        nearSnake ||
-                        onFruit ||
-                        onPortal ||
-                        onObstacle;
                 }
 
                 obstacles.push(newObs);
@@ -527,50 +509,29 @@
                 while (invalidPos) {
                     newPortal = {
                         x: Math.floor(
-                            Math.random() *
-                            (tileCount - 6)
+                            Math.random() * (tileCount - 6)
                         ) + 3,
-
                         y: Math.floor(
-                            Math.random() *
-                            (tileCount - 6)
+                            Math.random() * (tileCount - 6)
                         ) + 3
                     };
 
-                    const nearCenter =
-                        Math.abs(
-                            newPortal.x - 15
-                        ) < 3 &&
-                        Math.abs(
-                            newPortal.y - 15
-                        ) < 3;
-
-                    const onSnake =
+                    invalidPos =
                         snake.some(
                             part =>
                                 part.x === newPortal.x &&
                                 part.y === newPortal.y
-                        );
-
-                    const onObstacle =
+                        ) ||
                         obstacles.some(
                             obs =>
                                 obs.x === newPortal.x &&
                                 obs.y === newPortal.y
-                        );
-
-                    const onPortal =
+                        ) ||
                         portals.some(
                             portal =>
                                 portal.x === newPortal.x &&
                                 portal.y === newPortal.y
                         );
-
-                    invalidPos =
-                        nearCenter ||
-                        onSnake ||
-                        onObstacle ||
-                        onPortal;
                 }
 
                 portals.push(newPortal);
@@ -616,11 +577,9 @@
             dy = 0;
 
             score = 0;
-
             maxObstacles = 12;
 
             scoreElement.innerText = score;
-            highScoreElement.innerText = highScore;
 
             fruits = [];
             obstacles = [];
@@ -685,4 +644,3 @@
 
 </body>
 </html>
-```
