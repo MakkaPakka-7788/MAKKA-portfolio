@@ -19,31 +19,37 @@ body {
 }
 
 h1 {
-    font-size: 70px;
+    font-size: 75px;
     margin: 0;
-    letter-spacing: 10px;
-    text-shadow: 0 0 10px white, 0 0 25px white;
+    letter-spacing: 12px;
+    color: #fff;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 15px #00e5ff,
+        0 0 30px #00e5ff,
+        0 0 60px #8a2be2;
 }
 
 .subtitle {
-    color: #777;
-    letter-spacing: 6px;
+    color: #00e5ff;
+    letter-spacing: 8px;
     margin-top: 5px;
-    margin-bottom: 45px;
+    margin-bottom: 50px;
+    text-shadow: 0 0 10px #00e5ff;
 }
 
 .games {
     display: flex;
-    gap: 25px;
+    gap: 30px;
     flex-wrap: wrap;
     justify-content: center;
 }
 
 .game-card {
-    width: 230px;
-    height: 250px;
-    background: #111;
-    border: 3px solid #444;
+    width: 240px;
+    height: 260px;
+    background: #050505;
+    border: 3px solid #00e5ff;
     border-radius: 10px;
     text-decoration: none;
     color: white;
@@ -52,22 +58,30 @@ h1 {
     align-items: center;
     justify-content: center;
     transition: 0.2s;
+    box-shadow:
+        0 0 8px #00e5ff,
+        inset 0 0 15px rgba(0,229,255,0.1);
 }
 
 .game-card:hover {
-    transform: translateY(-8px);
-    border-color: white;
-    box-shadow: 0 0 25px rgba(255,255,255,0.3);
+    transform: translateY(-10px) scale(1.03);
+    border-color: #ff00ff;
+    box-shadow:
+        0 0 10px #ff00ff,
+        0 0 30px #ff00ff,
+        inset 0 0 20px rgba(255,0,255,0.15);
 }
 
 .game-icon {
     font-size: 65px;
     margin-bottom: 10px;
+    filter: drop-shadow(0 0 10px #00e5ff);
 }
 
 .game-card h2 {
     margin: 5px;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px #00e5ff;
 }
 
 .game-card p {
