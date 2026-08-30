@@ -18,32 +18,25 @@ body {
     background: #000;
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
-}
-
-#game {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 25px;
-    padding: 20px;
 }
 
-/* BOARD */
-
-#boardWrap {
-    position: relative;
+#game {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
 }
 
 #board {
-    display: block;
+    width: 300px;
+    height: 600px;
     background: #111;
     border: 3px solid #fff;
     image-rendering: pixelated;
 }
-
-/* SIDE PANEL */
 
 #side {
     width: 180px;
@@ -51,21 +44,21 @@ body {
 
 #side h1 {
     margin: 0 0 20px;
-    font-size: 26px;
+    font-size: 28px;
 }
 
 .stat {
+    background: #111;
     border: 2px solid #fff;
     padding: 12px;
     margin-bottom: 10px;
-    background: #111;
 }
 
 .stat span {
     display: block;
     color: #aaa;
     font-size: 12px;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 }
 
 .stat strong {
@@ -73,29 +66,26 @@ body {
 }
 
 #nextTitle {
-    margin-top: 25px;
-    margin-bottom: 8px;
     color: #aaa;
     font-size: 12px;
+    margin: 25px 0 8px;
 }
 
 #next {
-    background: #111;
-    border: 2px solid #fff;
     width: 140px;
     height: 120px;
+    background: #111;
+    border: 2px solid #fff;
 }
-
-/* BUTTONS */
 
 button {
     border: none;
     background: #fff;
     color: #000;
     padding: 11px 16px;
+    margin-top: 10px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 8px;
 }
 
 button:hover {
@@ -107,19 +97,18 @@ button:hover {
 #overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.78);
+    background: rgba(0,0,0,.8);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 20;
 }
 
 #panel {
-    width: min(85vw, 380px);
     background: #111;
     border: 3px solid #fff;
     padding: 30px;
     text-align: center;
+    width: min(85vw, 380px);
 }
 
 #panel h2 {
@@ -136,56 +125,38 @@ button:hover {
     display: none !important;
 }
 
-/* MOBILE */
-
 #mobileControls {
     display: none;
-}
-
-.mobileRow {
-    display: flex;
-    justify-content: center;
 }
 
 .mobileButton {
     width: 55px;
     height: 45px;
-    margin: 3px;
     padding: 0;
+    margin: 3px;
     font-size: 18px;
 }
 
 @media (max-width: 650px) {
 
     body {
+        align-items: flex-start;
+        padding-top: 15px;
         overflow: auto;
     }
 
     #game {
         flex-direction: column;
-        padding-top: 10px;
+        align-items: center;
     }
 
     #side {
         width: 300px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-    }
-
-    #side h1,
-    #nextTitle,
-    #next,
-    #side button {
-        grid-column: 1 / -1;
-    }
-
-    .stat {
-        margin: 0;
     }
 
     #mobileControls {
         display: block;
+        text-align: center;
     }
 
 }
@@ -199,61 +170,31 @@ button:hover {
 <div id="game">
 
 ```
-<div id="boardWrap">
-
-    <canvas
-        id="board"
-        width="300"
-        height="600">
-    </canvas>
-
-</div>
+<canvas
+    id="board"
+    width="300"
+    height="600">
+</canvas>
 
 
 <div id="side">
 
-    <h1>
-        TETRIS
-    </h1>
+    <h1>TETRIS</h1>
 
     <div class="stat">
-
-        <span>
-            SCORE
-        </span>
-
-        <strong id="score">
-            0
-        </strong>
-
+        <span>SCORE</span>
+        <strong id="score">0</strong>
     </div>
-
 
     <div class="stat">
-
-        <span>
-            LINES
-        </span>
-
-        <strong id="lines">
-            0
-        </strong>
-
+        <span>LINES</span>
+        <strong id="lines">0</strong>
     </div>
-
 
     <div class="stat">
-
-        <span>
-            LEVEL
-        </span>
-
-        <strong id="level">
-            1
-        </strong>
-
+        <span>LEVEL</span>
+        <strong id="level">1</strong>
     </div>
-
 
     <div id="nextTitle">
         NEXT PIECE
@@ -265,58 +206,52 @@ button:hover {
         height="120">
     </canvas>
 
-
     <button onclick="togglePause()">
         PAUSE
     </button>
 
 </div>
+```
 
+</div>
 
 <div id="mobileControls">
 
-    <div class="mobileRow">
+```
+<div>
+    <button
+        class="mobileButton"
+        onclick="rotatePiece()">
+        ↻
+    </button>
+</div>
 
-        <button
-            class="mobileButton"
-            onclick="rotatePiece()">
-            ↻
-        </button>
+<div>
+    <button
+        class="mobileButton"
+        onclick="movePiece(-1)">
+        ◀
+    </button>
 
-    </div>
+    <button
+        class="mobileButton"
+        onclick="softDrop()">
+        ▼
+    </button>
 
-    <div class="mobileRow">
+    <button
+        class="mobileButton"
+        onclick="movePiece(1)">
+        ▶
+    </button>
+</div>
 
-        <button
-            class="mobileButton"
-            onclick="movePiece(-1)">
-            ◀
-        </button>
-
-        <button
-            class="mobileButton"
-            onclick="softDrop()">
-            ▼
-        </button>
-
-        <button
-            class="mobileButton"
-            onclick="movePiece(1)">
-            ▶
-        </button>
-
-    </div>
-
-    <div class="mobileRow">
-
-        <button
-            class="mobileButton"
-            onclick="hardDrop()">
-            ⬇
-        </button>
-
-    </div>
-
+<div>
+    <button
+        class="mobileButton"
+        onclick="hardDrop()">
+        ⬇
+    </button>
 </div>
 ```
 
@@ -334,10 +269,10 @@ button:hover {
     </h2>
 
     <p id="overlayText">
-        Arrow keys to move.<br>
-        Up to rotate.<br>
-        Down to drop.<br>
-        Space to hard drop.
+        ← → Move<br>
+        ↑ Rotate<br>
+        ↓ Drop<br>
+        SPACE Hard Drop
     </p>
 
     <button
@@ -353,14 +288,11 @@ button:hover {
 
 <script>
 
-/* CANVAS */
-
 const canvas =
     document.getElementById("board");
 
 const ctx =
     canvas.getContext("2d");
-
 
 const nextCanvas =
     document.getElementById("next");
@@ -369,16 +301,9 @@ const nextCtx =
     nextCanvas.getContext("2d");
 
 
-/* BOARD */
-
 const COLS = 10;
-
 const ROWS = 20;
-
 const SIZE = 30;
-
-
-let board;
 
 
 /* PIECES */
@@ -494,13 +419,13 @@ const pieces = {
 };
 
 
-/* PIECE TYPES */
-
 const types =
     Object.keys(pieces);
 
 
 /* GAME STATE */
+
+let board = [];
 
 let current;
 
@@ -508,52 +433,21 @@ let nextType;
 
 let rotation = 0;
 
-let running = false;
-
-let paused = false;
-
-let lastTime = 0;
-
-let dropCounter = 0;
-
-let dropInterval = 700;
-
-
-/* SCORE */
-
 let score = 0;
 
 let lines = 0;
 
 let level = 1;
 
-let highScore =
-    Number(
-        localStorage.getItem(
-            "tetrisHighScore"
-        )
-    ) || 0;
+let running = false;
 
+let paused = false;
 
-/* COLORS */
+let dropCounter = 0;
 
-const blockColors = {
+let lastTime = 0;
 
-    I: "#6ee7f2",
-
-    O: "#f5d547",
-
-    T: "#b875ff",
-
-    S: "#69d46d",
-
-    Z: "#ef6565",
-
-    J: "#668cff",
-
-    L: "#f0a34b"
-
-};
+let dropInterval = 700;
 
 
 /* CREATE BOARD */
@@ -577,7 +471,7 @@ function createBoard() {
 }
 
 
-/* RANDOM PIECE */
+/* RANDOM */
 
 function randomType() {
 
@@ -591,7 +485,21 @@ function randomType() {
 }
 
 
-/* NEW PIECE */
+/* SHAPE */
+
+function getShape(
+    type,
+    rot
+) {
+
+    return pieces[type][
+        rot % pieces[type].length
+    ];
+
+}
+
+
+/* SPAWN */
 
 function spawnPiece() {
 
@@ -601,36 +509,25 @@ function spawnPiece() {
     nextType =
         randomType();
 
-
     current = {
-
         type: type,
-
         x: 0,
-
         y: 0
-
     };
-
 
     rotation = 0;
 
-
     const shape =
-        pieces[type][rotation];
-
+        getShape(
+            current.type,
+            rotation
+        );
 
     current.x =
         Math.floor(
-            (COLS - shape[0].length) / 2
+            (COLS -
+            shape[0].length) / 2
         );
-
-
-    current.y = 0;
-
-
-    drawNext();
-
 
     if (
         collision(
@@ -642,21 +539,11 @@ function spawnPiece() {
 
         endGame();
 
+        return;
+
     }
 
-}
-
-
-/* GET SHAPE */
-
-function getShape(
-    type,
-    rot
-) {
-
-    return pieces[type][
-        rot % pieces[type].length
-    ];
+    drawNext();
 
 }
 
@@ -675,7 +562,6 @@ function collision(
             rot
         );
 
-
     for (
         let row = 0;
         row < shape.length;
@@ -692,28 +578,25 @@ function collision(
                 continue;
             }
 
-
-            const boardX =
+            const bx =
                 x + col;
 
-            const boardY =
+            const by =
                 y + row;
 
-
             if (
-                boardX < 0 ||
-                boardX >= COLS ||
-                boardY >= ROWS
+                bx < 0 ||
+                bx >= COLS ||
+                by >= ROWS
             ) {
 
                 return true;
 
             }
 
-
             if (
-                boardY >= 0 &&
-                board[boardY][boardX]
+                by >= 0 &&
+                board[by][bx]
             ) {
 
                 return true;
@@ -723,7 +606,6 @@ function collision(
         }
 
     }
-
 
     return false;
 
@@ -739,7 +621,6 @@ function merge() {
             current.type,
             rotation
         );
-
 
     shape.forEach(
         (row, y) => {
@@ -773,7 +654,6 @@ function clearLines() {
 
     let cleared = 0;
 
-
     for (
         let y = ROWS - 1;
         y >= 0;
@@ -786,16 +666,11 @@ function clearLines() {
             )
         ) {
 
-            board.splice(
-                y,
-                1
-            );
-
+            board.splice(y, 1);
 
             board.unshift(
                 new Array(COLS).fill(null)
             );
-
 
             cleared++;
 
@@ -805,8 +680,7 @@ function clearLines() {
 
     }
 
-
-    if (cleared > 0) {
+    if (cleared) {
 
         const points = [
             0,
@@ -816,20 +690,16 @@ function clearLines() {
             800
         ];
 
-
         score +=
             points[cleared] *
             level;
 
-
         lines += cleared;
-
 
         level =
             Math.floor(
                 lines / 10
             ) + 1;
-
 
         dropInterval =
             Math.max(
@@ -838,7 +708,6 @@ function clearLines() {
                 (level - 1) * 55
             );
 
-
         updateStats();
 
     }
@@ -846,7 +715,7 @@ function clearLines() {
 }
 
 
-/* LOCK PIECE */
+/* LOCK */
 
 function lockPiece() {
 
@@ -867,11 +736,8 @@ function movePiece(dir) {
         !running ||
         paused
     ) {
-
         return;
-
     }
-
 
     if (
         !collision(
@@ -898,11 +764,8 @@ function softDrop() {
         !running ||
         paused
     ) {
-
         return;
-
     }
-
 
     if (
         !collision(
@@ -924,7 +787,6 @@ function softDrop() {
 
     }
 
-
     dropCounter = 0;
 
     draw();
@@ -940,14 +802,10 @@ function hardDrop() {
         !running ||
         paused
     ) {
-
         return;
-
     }
 
-
     let distance = 0;
-
 
     while (
         !collision(
@@ -963,13 +821,10 @@ function hardDrop() {
 
     }
 
-
     score +=
         distance * 2;
 
-
     updateStats();
-
 
     lockPiece();
 
@@ -986,16 +841,14 @@ function rotatePiece() {
         !running ||
         paused
     ) {
-
         return;
-
     }
 
-
     const newRotation =
-        (rotation + 1) %
+        (
+            rotation + 1
+        ) %
         pieces[current.type].length;
-
 
     const kicks = [
         0,
@@ -1004,7 +857,6 @@ function rotatePiece() {
         -2,
         2
     ];
-
 
     for (
         const kick of kicks
@@ -1034,28 +886,26 @@ function rotatePiece() {
 }
 
 
-/* GHOST PIECE */
+/* GHOST */
 
-function getGhostY() {
+function ghostY() {
 
-    let ghostY =
+    let y =
         current.y;
-
 
     while (
         !collision(
             current.x,
-            ghostY + 1,
+            y + 1,
             rotation
         )
     ) {
 
-        ghostY++;
+        y++;
 
     }
 
-
-    return ghostY;
+    return y;
 
 }
 
@@ -1067,12 +917,14 @@ function drawBlock(
     x,
     y,
     type,
-    size
+    size,
+    alpha = 1
 ) {
 
-    context.fillStyle =
-        blockColors[type];
+    context.globalAlpha = alpha;
 
+    context.fillStyle =
+        getColor(type);
 
     context.fillRect(
         x * size,
@@ -1081,13 +933,10 @@ function drawBlock(
         size
     );
 
-
     context.strokeStyle =
-        "rgba(0,0,0,.45)";
-
+        "rgba(0,0,0,.5)";
 
     context.lineWidth = 2;
-
 
     context.strokeRect(
         x * size + 1,
@@ -1096,19 +945,38 @@ function drawBlock(
         size - 2
     );
 
-
-    /* HIGHLIGHT */
-
     context.fillStyle =
         "rgba(255,255,255,.25)";
-
 
     context.fillRect(
         x * size + 3,
         y * size + 3,
-        size - 7,
+        size - 6,
         4
     );
+
+    context.globalAlpha = 1;
+
+}
+
+
+/* COLORS */
+
+function getColor(type) {
+
+    const colors = {
+
+        I: "#66d9e8",
+        O: "#f5d547",
+        T: "#b76cff",
+        S: "#65d46e",
+        Z: "#ef6262",
+        J: "#6488ff",
+        L: "#f0a34b"
+
+    };
+
+    return colors[type];
 
 }
 
@@ -1117,9 +985,7 @@ function drawBlock(
 
 function drawBoard() {
 
-    ctx.fillStyle =
-        "#111";
-
+    ctx.fillStyle = "#111";
 
     ctx.fillRect(
         0,
@@ -1131,12 +997,9 @@ function drawBoard() {
 
     /* GRID */
 
-    ctx.strokeStyle =
-        "#1d1d1d";
-
+    ctx.strokeStyle = "#1d1d1d";
 
     ctx.lineWidth = 1;
-
 
     for (
         let x = 0;
@@ -1159,7 +1022,6 @@ function drawBoard() {
         ctx.stroke();
 
     }
-
 
     for (
         let y = 0;
@@ -1184,7 +1046,7 @@ function drawBoard() {
     }
 
 
-    /* LOCKED BLOCKS */
+    /* BLOCKS */
 
     board.forEach(
         (row, y) => {
@@ -1221,13 +1083,6 @@ function drawCurrent() {
         return;
     }
 
-
-    /* GHOST */
-
-    const ghostY =
-        getGhostY();
-
-
     const shape =
         getShape(
             current.type,
@@ -1235,9 +1090,10 @@ function drawCurrent() {
         );
 
 
-    ctx.globalAlpha =
-        0.22;
+    /* GHOST */
 
+    const gy =
+        ghostY();
 
     shape.forEach(
         (row, y) => {
@@ -1250,9 +1106,10 @@ function drawCurrent() {
                         drawBlock(
                             ctx,
                             current.x + x,
-                            ghostY + y,
+                            gy + y,
                             current.type,
-                            SIZE
+                            SIZE,
+                            0.2
                         );
 
                     }
@@ -1262,9 +1119,6 @@ function drawCurrent() {
 
         }
     );
-
-
-    ctx.globalAlpha = 1;
 
 
     /* CURRENT */
@@ -1307,13 +1161,11 @@ function draw() {
 }
 
 
-/* NEXT PIECE */
+/* NEXT */
 
 function drawNext() {
 
-    nextCtx.fillStyle =
-        "#111";
-
+    nextCtx.fillStyle = "#111";
 
     nextCtx.fillRect(
         0,
@@ -1322,6 +1174,9 @@ function drawNext() {
         nextCanvas.height
     );
 
+    if (!nextType) {
+        return;
+    }
 
     const shape =
         getShape(
@@ -1329,23 +1184,23 @@ function drawNext() {
             0
         );
 
-
     const size = 25;
-
 
     const offsetX =
         Math.floor(
-            (nextCanvas.width / size -
-            shape[0].length) / 2
+            (
+                nextCanvas.width / size -
+                shape[0].length
+            ) / 2
         );
-
 
     const offsetY =
         Math.floor(
-            (nextCanvas.height / size -
-            shape.length) / 2
+            (
+                nextCanvas.height / size -
+                shape.length
+            ) / 2
         );
-
 
     shape.forEach(
         (row, y) => {
@@ -1380,20 +1235,15 @@ function updateStats() {
 
     document.getElementById(
         "score"
-    ).textContent =
-        score;
-
+    ).textContent = score;
 
     document.getElementById(
         "lines"
-    ).textContent =
-        lines;
-
+    ).textContent = lines;
 
     document.getElementById(
         "level"
-    ).textContent =
-        level;
+    ).textContent = level;
 
 }
 
@@ -1403,7 +1253,6 @@ function updateStats() {
 function startGame() {
 
     createBoard();
-
 
     score = 0;
 
@@ -1419,16 +1268,12 @@ function startGame() {
 
     running = true;
 
-
     nextType =
         randomType();
 
-
     spawnPiece();
 
-
     updateStats();
-
 
     document.getElementById(
         "overlay"
@@ -1436,22 +1281,19 @@ function startGame() {
         "hidden"
     );
 
-
     lastTime =
         performance.now();
-
 
     requestAnimationFrame(
         gameLoop
     );
-
 
     draw();
 
 }
 
 
-/* GAME LOOP */
+/* LOOP */
 
 function gameLoop(time) {
 
@@ -1459,21 +1301,17 @@ function gameLoop(time) {
         return;
     }
 
-
     const delta =
         time - lastTime;
 
-
     lastTime = time;
-
 
     if (!paused) {
 
         dropCounter += delta;
 
-
         if (
-            dropCounter >
+            dropCounter >=
             dropInterval
         ) {
 
@@ -1485,9 +1323,7 @@ function gameLoop(time) {
 
     }
 
-
     draw();
-
 
     requestAnimationFrame(
         gameLoop
@@ -1504,51 +1340,41 @@ function togglePause() {
         return;
     }
 
-
     paused = !paused;
-
 
     const overlay =
         document.getElementById(
             "overlay"
         );
 
-
     const title =
         document.getElementById(
             "overlayTitle"
         );
-
 
     const text =
         document.getElementById(
             "overlayText"
         );
 
-
     const button =
         document.getElementById(
             "overlayButton"
         );
-
 
     if (paused) {
 
         title.textContent =
             "PAUSED";
 
-
         text.innerHTML =
             "Press P or click below<br>to continue.";
-
 
         button.textContent =
             "CONTINUE";
 
-
         button.onclick =
             togglePause;
-
 
         overlay.classList.remove(
             "hidden"
@@ -1560,10 +1386,8 @@ function togglePause() {
             "hidden"
         );
 
-
         button.textContent =
             "START";
-
 
         button.onclick =
             startGame;
@@ -1573,70 +1397,36 @@ function togglePause() {
 }
 
 
-/* END GAME */
+/* RETRY SCREEN */
 
 function endGame() {
 
     running = false;
 
+    document.getElementById(
+        "overlayTitle"
+    ).textContent =
+        "RETRY";
 
-    if (score > highScore) {
-
-        highScore = score;
-
-
-        localStorage.setItem(
-            "tetrisHighScore",
-            highScore
-        );
-
-    }
-
-
-    const title =
-        document.getElementById(
-            "overlayTitle"
-        );
-
-
-    const text =
-        document.getElementById(
-            "overlayText"
-        );
-
+    document.getElementById(
+        "overlayText"
+    ).innerHTML =
+        "Score: " +
+        score +
+        "<br><br>" +
+        "Lines: " +
+        lines;
 
     const button =
         document.getElementById(
             "overlayButton"
         );
 
-
-    title.textContent =
-        "RETRY";
-
-
-    text.innerHTML =
-
-        "Score: <strong>" +
-        score +
-        "</strong><br><br>" +
-
-        "Lines: <strong>" +
-        lines +
-        "</strong><br><br>" +
-
-        "Best: <strong>" +
-        highScore +
-        "</strong>";
-
-
     button.textContent =
         "RETRY";
 
-
     button.onclick =
         startGame;
-
 
     document.getElementById(
         "overlay"
@@ -1656,8 +1446,9 @@ document.addEventListener(
         const key =
             event.key.toLowerCase();
 
-
-        if (key === "arrowleft") {
+        if (
+            key === "arrowleft"
+        ) {
 
             event.preventDefault();
 
@@ -1665,8 +1456,9 @@ document.addEventListener(
 
         }
 
-
-        if (key === "arrowright") {
+        if (
+            key === "arrowright"
+        ) {
 
             event.preventDefault();
 
@@ -1674,8 +1466,9 @@ document.addEventListener(
 
         }
 
-
-        if (key === "arrowdown") {
+        if (
+            key === "arrowdown"
+        ) {
 
             event.preventDefault();
 
@@ -1683,15 +1476,15 @@ document.addEventListener(
 
         }
 
-
-        if (key === "arrowup") {
+        if (
+            key === "arrowup"
+        ) {
 
             event.preventDefault();
 
             rotatePiece();
 
         }
-
 
         if (key === " ") {
 
@@ -1700,7 +1493,6 @@ document.addEventListener(
             hardDrop();
 
         }
-
 
         if (key === "p") {
 
@@ -1712,49 +1504,35 @@ document.addEventListener(
 );
 
 
-/* SECRET RRR */
+/* RRR SHORTCUT */
 
 let rPresses = 0;
 
 let rTimer;
-
 
 document.addEventListener(
     "keydown",
     function(event) {
 
         if (
-            event.key.toLowerCase() !==
-            "r"
+            event.key.toLowerCase() !== "r"
         ) {
-
             return;
-
         }
-
 
         rPresses++;
 
-
-        clearTimeout(
-            rTimer
-        );
-
+        clearTimeout(rTimer);
 
         rTimer =
             setTimeout(
                 function() {
-
                     rPresses = 0;
-
                 },
                 700
             );
 
-
-        if (
-            rPresses === 3
-        ) {
+        if (rPresses === 3) {
 
             window.location.href =
                 "flashcards.html";
@@ -1772,8 +1550,6 @@ document.addEventListener(
 createBoard();
 
 updateStats();
-
-drawNext();
 
 draw();
 
