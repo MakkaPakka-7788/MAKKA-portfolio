@@ -8,7 +8,6 @@
 <title>Flashcard.com</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
@@ -18,117 +17,97 @@ body {
     background: #000;
     color: #fff;
     font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
-}
-
-#game {
-    width: 100vw;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    min-height: 100vh;
 }
 
-/* TOP */
-
-#top {
-    width: min(90vw, 700px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+header {
+    width: 100%;
+    text-align: center;
+    padding: 25px;
+    border-bottom: 3px solid #fff;
 }
 
-#title {
-    font-size: 24px;
-    font-weight: bold;
+header h1 {
+    margin: 0;
+    font-size: 28px;
 }
 
-#score {
-    font-size: 18px;
+#info {
+    margin: 15px 0;
+    font-size: 16px;
 }
 
-/* CANVAS */
+#gameContainer {
+    position: relative;
+}
 
-#canvas {
+canvas {
     background: #111;
     border: 3px solid #fff;
-    width: min(90vw, 700px);
-    height: min(70vh, 700px);
+    width: min(90vw, 600px);
+    height: min(90vw, 600px);
     image-rendering: pixelated;
 }
 
-/* BUTTONS */
-
-#controls {
-    margin-top: 15px;
+#overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.8);
     display: flex;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#overlayContent {
+    border: 3px solid #fff;
+    background: #111;
+    padding: 30px;
+    width: 80%;
+}
+
+#overlay h2 {
+    font-size: 28px;
+    margin-top: 0;
+}
+
+#overlay p {
+    color: #aaa;
+    line-height: 1.6;
 }
 
 button {
+    border: none;
     background: #fff;
     color: #000;
-    border: none;
-    padding: 10px 18px;
-    font-size: 14px;
+    padding: 12px 20px;
     font-weight: bold;
     cursor: pointer;
+    font-size: 14px;
 }
 
 button:hover {
     background: #ccc;
 }
 
-/* OVERLAY */
-
-#overlay {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,.7);
-    z-index: 10;
-}
-
-#panel {
-    width: min(85vw, 380px);
-    background: #111;
-    border: 3px solid #fff;
-    padding: 30px;
-    text-align: center;
-}
-
-#panel h1 {
-    margin-top: 0;
-    font-size: 28px;
-}
-
-#panel p {
-    color: #aaa;
-    line-height: 1.7;
-}
-
 .hidden {
     display: none !important;
 }
 
-/* TOUCH */
-
-#touch {
-    display: none;
+#controls {
     margin-top: 15px;
     text-align: center;
 }
 
-.touch-row {
+.controlRow {
     display: flex;
     justify-content: center;
 }
 
-.touch-button {
+.controlButton {
     width: 55px;
     height: 45px;
     margin: 3px;
@@ -136,21 +115,10 @@ button:hover {
     font-size: 20px;
 }
 
-@media (max-width: 700px) {
-
-    #touch {
+@media (max-width: 650px) {
+    #controls {
         display: block;
     }
-
-    #canvas {
-        width: 92vw;
-        height: 65vh;
-    }
-
-    #top {
-        width: 92vw;
-    }
-
 }
 
 </style>
@@ -159,96 +127,82 @@ button:hover {
 
 <body>
 
-<div id="game">
+<header>
+    <h1>SNAKE</h1>
+</header>
+
+<div id="info">
+    Score: <span id="score">0</span>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    Best: <span id="best">0</span>
+</div>
+
+<div id="gameContainer">
 
 ```
-<div id="top">
+<canvas
+    id="game"
+    width="600"
+    height="600">
+</canvas>
 
-    <div id="title">
-        SNAKE
-    </div>
+<div id="overlay">
 
-    <div id="score">
-        Score: 0 | Best: 0
+    <div id="overlayContent">
+
+        <h2 id="overlayTitle">
+            SNAKE
+        </h2>
+
+        <p id="overlayText">
+            Use the arrow keys or WASD<br>
+            to move.
+        </p>
+
+        <button
+            id="startButton"
+            onclick="startGame()">
+            START
+        </button>
+
     </div>
 
 </div>
+```
 
-
-<canvas id="canvas"
-        width="500"
-        height="500">
-</canvas>
-
+</div>
 
 <div id="controls">
 
-    <button onclick="togglePause()">
-        PAUSE
+```
+<div class="controlRow">
+
+    <button
+        class="controlButton"
+        onclick="changeDirection('up')">
+        ▲
     </button>
 
 </div>
 
+<div class="controlRow">
 
-<!-- TOUCH CONTROLS -->
+    <button
+        class="controlButton"
+        onclick="changeDirection('left')">
+        ◀
+    </button>
 
-<div id="touch">
+    <button
+        class="controlButton"
+        onclick="changeDirection('down')">
+        ▼
+    </button>
 
-    <div class="touch-row">
-
-        <button
-            class="touch-button"
-            onclick="changeDirection('up')">
-            ▲
-        </button>
-
-    </div>
-
-    <div class="touch-row">
-
-        <button
-            class="touch-button"
-            onclick="changeDirection('left')">
-            ◀
-        </button>
-
-        <button
-            class="touch-button"
-            onclick="changeDirection('down')">
-            ▼
-        </button>
-
-        <button
-            class="touch-button"
-            onclick="changeDirection('right')">
-            ▶
-        </button>
-
-    </div>
-
-</div>
-```
-
-</div>
-
-<!-- START / RETRY -->
-
-<div id="overlay">
-
-```
-<div id="panel">
-
-    <h1 id="overlayTitle">
-        SNAKE
-    </h1>
-
-    <p id="overlayText">
-        Use the arrow keys or WASD<br>
-        to move the snake.
-    </p>
-
-    <button onclick="startGame()">
-        START
+    <button
+        class="controlButton"
+        onclick="changeDirection('right')">
+        ▶
     </button>
 
 </div>
@@ -259,85 +213,36 @@ button:hover {
 <script>
 
 const canvas =
-    document.getElementById("canvas");
+    document.getElementById("game");
 
 const ctx =
     canvas.getContext("2d");
 
-
-const overlay =
-    document.getElementById("overlay");
-
-const overlayTitle =
-    document.getElementById("overlayTitle");
-
-const overlayText =
-    document.getElementById("overlayText");
-
-const scoreDisplay =
-    document.getElementById("score");
-
-
-/* GRID */
-
-const gridSize = 25;
+const gridSize = 30;
 
 const tileSize =
     canvas.width / gridSize;
 
+let snake;
 
-/* SNAKE */
+let food;
 
-let snake = [];
+let direction;
 
-let food = {
-    x: 10,
-    y: 10
-};
-
-
-/* DIRECTION */
-
-let direction = {
-    x: 1,
-    y: 0
-};
-
-let nextDirection = {
-    x: 1,
-    y: 0
-};
-
-
-/* GAME */
+let nextDirection;
 
 let score = 0;
 
-let highScore =
+let best =
     Number(
         localStorage.getItem(
-            "snakeHighScore"
+            "snakeBest"
         )
     ) || 0;
 
-let running = false;
+let gameRunning = false;
 
-let paused = false;
-
-let gameTimer;
-
-
-/* UPDATE SCORE */
-
-function updateScore() {
-
-    scoreDisplay.textContent =
-        "Score: " +
-        score +
-        " | Best: " +
-        highScore;
-
-}
+let gameLoopTimer;
 
 
 /* START GAME */
@@ -347,108 +252,84 @@ function startGame() {
     snake = [
 
         {
-            x: 12,
-            y: 12
+            x: 15,
+            y: 15
         },
 
         {
-            x: 11,
-            y: 12
+            x: 14,
+            y: 15
         },
 
         {
-            x: 10,
-            y: 12
+            x: 13,
+            y: 15
         }
 
     ];
-
 
     direction = {
         x: 1,
         y: 0
     };
 
-
     nextDirection = {
         x: 1,
         y: 0
     };
 
-
     score = 0;
 
-    paused = false;
-
-    running = true;
-
-
-    createFood();
+    gameRunning = true;
 
     updateScore();
 
+    spawnFood();
 
-    overlay.classList.add(
-        "hidden"
-    );
+    document
+        .getElementById("overlay")
+        .classList.add("hidden");
 
+    clearInterval(gameLoopTimer);
 
-    clearInterval(gameTimer);
-
-
-    gameTimer =
+    gameLoopTimer =
         setInterval(
-            gameLoop,
+            update,
             100
         );
 
-
     draw();
-
 }
 
 
 /* FOOD */
 
-function createFood() {
+function spawnFood() {
 
-    let valid = false;
+    food = {
 
+        x: Math.floor(
+            Math.random() *
+            gridSize
+        ),
 
-    while (!valid) {
+        y: Math.floor(
+            Math.random() *
+            gridSize
+        )
 
-        food = {
+    };
 
-            x: Math.floor(
-                Math.random() *
-                gridSize
-            ),
+    for (const part of snake) {
 
-            y: Math.floor(
-                Math.random() *
-                gridSize
-            )
-
-        };
-
-
-        valid = true;
-
-
-        for (
-            const segment of snake
+        if (
+            part.x === food.x &&
+            part.y === food.y
         ) {
 
-            if (
-                segment.x === food.x &&
-                segment.y === food.y
-            ) {
+            spawnFood();
 
-                valid = false;
-
-                break;
-
-            }
+            return;
 
         }
 
@@ -457,31 +338,31 @@ function createFood() {
 }
 
 
-/* GAME LOOP */
+/* UPDATE */
 
-function gameLoop() {
+function update() {
 
-    if (!running || paused) {
+    if (!gameRunning) {
         return;
     }
-
 
     direction =
         nextDirection;
 
-
     const head = {
 
-        x: snake[0].x +
-           direction.x,
+        x:
+            snake[0].x +
+            direction.x,
 
-        y: snake[0].y +
-           direction.y
+        y:
+            snake[0].y +
+            direction.y
 
     };
 
 
-    /* WALL */
+    /* WALL COLLISION */
 
     if (
         head.x < 0 ||
@@ -497,15 +378,13 @@ function gameLoop() {
     }
 
 
-    /* SELF */
+    /* BODY COLLISION */
 
-    for (
-        const segment of snake
-    ) {
+    for (const part of snake) {
 
         if (
-            head.x === segment.x &&
-            head.y === segment.y
+            head.x === part.x &&
+            head.y === part.y
         ) {
 
             endGame();
@@ -529,19 +408,18 @@ function gameLoop() {
 
         score++;
 
-        if (score > highScore) {
+        if (score > best) {
 
-            highScore = score;
+            best = score;
 
             localStorage.setItem(
-                "snakeHighScore",
-                highScore
+                "snakeBest",
+                best
             );
 
         }
 
-
-        createFood();
+        spawnFood();
 
         updateScore();
 
@@ -551,7 +429,6 @@ function gameLoop() {
 
     }
 
-
     draw();
 
 }
@@ -560,16 +437,6 @@ function gameLoop() {
 /* DRAW */
 
 function draw() {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /* BACKGROUND */
 
     ctx.fillStyle = "#111";
 
@@ -586,7 +453,6 @@ function draw() {
     ctx.strokeStyle = "#1d1d1d";
 
     ctx.lineWidth = 1;
-
 
     for (
         let i = 0;
@@ -607,7 +473,6 @@ function draw() {
         );
 
         ctx.stroke();
-
 
         ctx.beginPath();
 
@@ -632,13 +497,13 @@ function draw() {
 
     ctx.fillRect(
 
-        food.x * tileSize + 4,
+        food.x * tileSize + 5,
 
-        food.y * tileSize + 4,
+        food.y * tileSize + 5,
 
-        tileSize - 8,
+        tileSize - 10,
 
-        tileSize - 8
+        tileSize - 10
 
     );
 
@@ -646,21 +511,18 @@ function draw() {
     /* SNAKE */
 
     snake.forEach(
-        (segment, index) => {
+        (part, index) => {
 
             ctx.fillStyle =
                 index === 0
                     ? "#fff"
-                    : "#bbb";
-
+                    : "#aaa";
 
             ctx.fillRect(
 
-                segment.x *
-                tileSize + 2,
+                part.x * tileSize + 2,
 
-                segment.y *
-                tileSize + 2,
+                part.y * tileSize + 2,
 
                 tileSize - 4,
 
@@ -678,10 +540,9 @@ function draw() {
 
 function changeDirection(dir) {
 
-    if (!running) {
+    if (!gameRunning) {
         return;
     }
-
 
     if (
         dir === "up" &&
@@ -695,7 +556,6 @@ function changeDirection(dir) {
 
     }
 
-
     if (
         dir === "down" &&
         direction.y !== -1
@@ -708,7 +568,6 @@ function changeDirection(dir) {
 
     }
 
-
     if (
         dir === "left" &&
         direction.x !== 1
@@ -720,7 +579,6 @@ function changeDirection(dir) {
         };
 
     }
-
 
     if (
         dir === "right" &&
@@ -746,7 +604,6 @@ document.addEventListener(
         const key =
             event.key.toLowerCase();
 
-
         if (
             key === "arrowup" ||
             key === "w"
@@ -757,7 +614,6 @@ document.addEventListener(
             changeDirection("up");
 
         }
-
 
         if (
             key === "arrowdown" ||
@@ -770,7 +626,6 @@ document.addEventListener(
 
         }
 
-
         if (
             key === "arrowleft" ||
             key === "a"
@@ -781,7 +636,6 @@ document.addEventListener(
             changeDirection("left");
 
         }
-
 
         if (
             key === "arrowright" ||
@@ -794,70 +648,21 @@ document.addEventListener(
 
         }
 
-
-        if (
-            key === "p"
-        ) {
-
-            togglePause();
-
-        }
-
     }
 );
 
 
-/* PAUSE */
+/* SCORE */
 
-function togglePause() {
+function updateScore() {
 
-    if (!running) {
-        return;
-    }
+    document.getElementById(
+        "score"
+    ).textContent = score;
 
-
-    paused = !paused;
-
-
-    if (paused) {
-
-        overlayTitle.textContent =
-            "PAUSED";
-
-        overlayText.innerHTML =
-            "Press P or click below<br>to continue.";
-
-        document.querySelector(
-            "#panel button"
-        ).textContent =
-            "CONTINUE";
-
-        document.querySelector(
-            "#panel button"
-        ).onclick =
-            togglePause;
-
-        overlay.classList.remove(
-            "hidden"
-        );
-
-    } else {
-
-        overlay.classList.add(
-            "hidden"
-        );
-
-        document.querySelector(
-            "#panel button"
-        ).textContent =
-            "START";
-
-        document.querySelector(
-            "#panel button"
-        ).onclick =
-            startGame;
-
-    }
+    document.getElementById(
+        "best"
+    ).textContent = best;
 
 }
 
@@ -866,56 +671,51 @@ function togglePause() {
 
 function endGame() {
 
-    running = false;
+    gameRunning = false;
 
-    clearInterval(gameTimer);
+    clearInterval(gameLoopTimer);
 
 
-    if (score > highScore) {
+    if (score > best) {
 
-        highScore = score;
+        best = score;
 
         localStorage.setItem(
-            "snakeHighScore",
-            highScore
+            "snakeBest",
+            best
         );
 
     }
 
-
     updateScore();
 
 
-    overlayTitle.textContent =
-        "RETRY";
+    /* RETRY SCREEN */
 
+    document.getElementById(
+        "overlayTitle"
+    ).textContent = "RETRY";
 
-    overlayText.innerHTML =
-
-        "Score: <strong>" +
+    document.getElementById(
+        "overlayText"
+    ).innerHTML =
+        "Score: " +
         score +
-        "</strong><br><br>" +
+        "<br><br>" +
+        "Best: " +
+        best;
 
-        "Best: <strong>" +
-        highScore +
-        "</strong>";
+    document.getElementById(
+        "startButton"
+    ).textContent = "RETRY";
 
+    document.getElementById(
+        "startButton"
+    ).onclick = startGame;
 
-    const button =
-        document.querySelector(
-            "#panel button"
-        );
-
-
-    button.textContent =
-        "RETRY";
-
-
-    button.onclick =
-        startGame;
-
-
-    overlay.classList.remove(
+    document.getElementById(
+        "overlay"
+    ).classList.remove(
         "hidden"
     );
 
@@ -928,43 +728,29 @@ let rPresses = 0;
 
 let rTimer;
 
-
 document.addEventListener(
     "keydown",
     function(event) {
 
         if (
-            event.key.toLowerCase() !==
-            "r"
+            event.key.toLowerCase() !== "r"
         ) {
-
             return;
-
         }
-
 
         rPresses++;
 
-
-        clearTimeout(
-            rTimer
-        );
-
+        clearTimeout(rTimer);
 
         rTimer =
             setTimeout(
                 function() {
-
                     rPresses = 0;
-
                 },
                 700
             );
 
-
-        if (
-            rPresses === 3
-        ) {
+        if (rPresses === 3) {
 
             window.location.href =
                 "flashcards.html";
@@ -977,9 +763,21 @@ document.addEventListener(
 );
 
 
-/* INITIAL DRAW */
+/* INITIAL */
 
 updateScore();
+
+food = {
+    x: 20,
+    y: 15
+};
+
+snake = [
+    {
+        x: 15,
+        y: 15
+    }
+];
 
 draw();
 
