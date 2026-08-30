@@ -1,307 +1,577 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Flashcard.com</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    min-height: 100vh;
     background: #000;
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
 }
 
-#game-area {
+#game {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* TOP */
+
+#top {
+    width: min(90vw, 700px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+#title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#score {
+    font-size: 18px;
+}
+
+/* CANVAS */
+
+#canvas {
+    background: #111;
+    border: 3px solid #fff;
+    width: min(90vw, 700px);
+    height: min(70vh, 700px);
+    image-rendering: pixelated;
+}
+
+/* BUTTONS */
+
+#controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #ccc;
+}
+
+/* OVERLAY */
+
+#overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.7);
+    z-index: 10;
+}
+
+#panel {
+    width: min(85vw, 380px);
+    background: #111;
+    border: 3px solid #fff;
+    padding: 30px;
     text-align: center;
 }
 
-h1 {
-    margin: 0 0 12px;
-    font-size: 42px;
-    letter-spacing: 6px;
-    text-shadow:
-        0 0 8px #00ff66,
-        0 0 20px #00ff66,
-        0 0 40px #00ff66;
+#panel h1 {
+    margin-top: 0;
+    font-size: 28px;
 }
 
-#score-container {
+#panel p {
+    color: #aaa;
+    line-height: 1.7;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* TOUCH */
+
+#touch {
+    display: none;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.touch-row {
     display: flex;
     justify-content: center;
-    gap: 35px;
-    margin-bottom: 15px;
+}
+
+.touch-button {
+    width: 55px;
+    height: 45px;
+    margin: 3px;
+    padding: 0;
     font-size: 20px;
-    font-weight: bold;
-}
-
-#game-wrapper {
-    padding: 8px;
-    background: #050505;
-    border: 3px solid #00ff66;
-    box-shadow:
-        0 0 12px #00ff66,
-        0 0 35px rgba(0,255,102,0.3);
-}
-
-canvas {
-    display: block;
-    width: 600px;
-    height: 600px;
-    background: #000;
-}
-
-#controls {
-    margin-top: 12px;
-    color: #777;
-    font-size: 13px;
-}
-
-#home-button {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 22px;
-    color: #00ff66;
-    border: 2px solid #00ff66;
-    background: #050505;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 6px;
-}
-
-#home-button:hover {
-    background: #00ff66;
-    color: #000;
-}
-
-#game-over {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    background: rgba(0,0,0,0.97);
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-#game-over h2 {
-    margin: 0 0 20px;
-    font-size: 58px;
-    color: #ff1744;
-    text-shadow:
-        0 0 10px #ff1744,
-        0 0 30px #ff1744;
-}
-
-#game-over p {
-    margin: 7px;
-    font-size: 22px;
-}
-
-#retry-button {
-    margin-top: 25px;
-    padding: 13px 35px;
-    background: #050505;
-    color: #00ff66;
-    border: 2px solid #00ff66;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 15px rgba(0,255,102,0.4);
-}
-
-#retry-button:hover {
-    background: #00ff66;
-    color: #000;
 }
 
 @media (max-width: 700px) {
-    canvas {
-        width: 90vw;
-        height: 90vw;
+
+    #touch {
+        display: block;
     }
+
+    #canvas {
+        width: 92vw;
+        height: 65vh;
+    }
+
+    #top {
+        width: 92vw;
+    }
+
 }
+
 </style>
+
 </head>
 
 <body>
 
-<div id="game-area">
+<div id="game">
 
-    <h1>Flashcard.com</h1>
+```
+<div id="top">
 
-    <div id="score-container">
-        <div>Score: <span id="score">0</span></div>
-        <div>High Score: <span id="high-score">0</span></div>
+    <div id="title">
+        SNAKE
     </div>
 
-    <div id="game-wrapper">
-        <canvas id="gameCanvas" width="600" height="600"></canvas>
+    <div id="score">
+        Score: 0 | Best: 0
     </div>
-
-    <div id="controls">
-        Arrow Keys to Move
-    </div>
-
-    <a href="index.html" id="home-button">HOME</a>
 
 </div>
 
-<div id="game-over">
 
-    <h2>GAME OVER</h2>
+<canvas id="canvas"
+        width="500"
+        height="500">
+</canvas>
 
-    <p>
-        Score:
-        <span id="final-score">0</span>
+
+<div id="controls">
+
+    <button onclick="togglePause()">
+        PAUSE
+    </button>
+
+</div>
+
+
+<!-- TOUCH CONTROLS -->
+
+<div id="touch">
+
+    <div class="touch-row">
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('up')">
+            ▲
+        </button>
+
+    </div>
+
+    <div class="touch-row">
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('left')">
+            ◀
+        </button>
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('down')">
+            ▼
+        </button>
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('right')">
+            ▶
+        </button>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- START / RETRY -->
+
+<div id="overlay">
+
+```
+<div id="panel">
+
+    <h1 id="overlayTitle">
+        SNAKE
+    </h1>
+
+    <p id="overlayText">
+        Use the arrow keys or WASD<br>
+        to move the snake.
     </p>
 
-    <p>
-        High Score:
-        <span id="final-high">0</span>
-    </p>
+    <button onclick="startGame()">
+        START
+    </button>
 
-    <button id="retry-button">RETRY</button>
+</div>
+```
 
 </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
 
-const scoreElement = document.getElementById("score");
-const highScoreElement = document.getElementById("high-score");
+const canvas =
+    document.getElementById("canvas");
 
-const finalScore = document.getElementById("final-score");
-const finalHigh = document.getElementById("final-high");
+const ctx =
+    canvas.getContext("2d");
 
-const gameOverScreen = document.getElementById("game-over");
-const retryButton = document.getElementById("retry-button");
 
-const gridSize = 20;
-const tileCount = canvas.width / gridSize;
+const overlay =
+    document.getElementById("overlay");
+
+const overlayTitle =
+    document.getElementById("overlayTitle");
+
+const overlayText =
+    document.getElementById("overlayText");
+
+const scoreDisplay =
+    document.getElementById("score");
+
+
+/* GRID */
+
+const gridSize = 25;
+
+const tileSize =
+    canvas.width / gridSize;
+
+
+/* SNAKE */
 
 let snake = [];
-let fruits = [];
-let obstacles = [];
-let portals = [];
 
-let dx = 1;
-let dy = 0;
+let food = {
+    x: 10,
+    y: 10
+};
+
+
+/* DIRECTION */
+
+let direction = {
+    x: 1,
+    y: 0
+};
+
+let nextDirection = {
+    x: 1,
+    y: 0
+};
+
+
+/* GAME */
 
 let score = 0;
 
 let highScore =
-    Number(localStorage.getItem("snakeHighScore")) || 0;
+    Number(
+        localStorage.getItem(
+            "snakeHighScore"
+        )
+    ) || 0;
 
-let gameInterval;
+let running = false;
 
-let portalMoveCounter = 0;
+let paused = false;
 
-let maxFruits = 3;
-let maxObstacles = 6;
-let maxPortals = 8;
+let gameTimer;
 
-highScoreElement.textContent = highScore;
+
+/* UPDATE SCORE */
+
+function updateScore() {
+
+    scoreDisplay.textContent =
+        "Score: " +
+        score +
+        " | Best: " +
+        highScore;
+
+}
+
+
+/* START GAME */
 
 function startGame() {
-    clearInterval(gameInterval);
 
     snake = [
-        { x: 15, y: 15 },
-        { x: 14, y: 15 },
-        { x: 13, y: 15 }
+
+        {
+            x: 12,
+            y: 12
+        },
+
+        {
+            x: 11,
+            y: 12
+        },
+
+        {
+            x: 10,
+            y: 12
+        }
+
     ];
 
-    dx = 1;
-    dy = 0;
+
+    direction = {
+        x: 1,
+        y: 0
+    };
+
+
+    nextDirection = {
+        x: 1,
+        y: 0
+    };
+
 
     score = 0;
 
-    portalMoveCounter = 0;
+    paused = false;
 
-    maxObstacles = 6;
-    maxPortals = 8;
+    running = true;
 
-    scoreElement.textContent = score;
 
-    gameOverScreen.style.display = "none";
+    createFood();
 
-    obstacles = [];
-    portals = [];
-    fruits = [];
+    updateScore();
 
-    generateObstacles();
-    generatePortals();
-    populateFruits();
+
+    overlay.classList.add(
+        "hidden"
+    );
+
+
+    clearInterval(gameTimer);
+
+
+    gameTimer =
+        setInterval(
+            gameLoop,
+            100
+        );
+
 
     draw();
 
-    gameInterval = setInterval(update, 110);
 }
 
-function update() {
-    moveSnake();
 
-    if (checkObstacleCollision()) {
-        endGame();
+/* FOOD */
+
+function createFood() {
+
+    let valid = false;
+
+
+    while (!valid) {
+
+        food = {
+
+            x: Math.floor(
+                Math.random() *
+                gridSize
+            ),
+
+            y: Math.floor(
+                Math.random() *
+                gridSize
+            )
+
+        };
+
+
+        valid = true;
+
+
+        for (
+            const segment of snake
+        ) {
+
+            if (
+                segment.x === food.x &&
+                segment.y === food.y
+            ) {
+
+                valid = false;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* GAME LOOP */
+
+function gameLoop() {
+
+    if (!running || paused) {
         return;
     }
 
-    checkFoodCollision();
-    checkPortalCollision();
 
-    portalMoveCounter++;
+    direction =
+        nextDirection;
 
-    if (portalMoveCounter >= 8) {
-        movePortals();
-        portalMoveCounter = 0;
-    }
-
-    draw();
-}
-
-function moveSnake() {
-    let nextX = snake[0].x + dx;
-    let nextY = snake[0].y + dy;
-
-    if (nextX < 0) {
-        nextX = tileCount - 1;
-    }
-
-    if (nextX >= tileCount) {
-        nextX = 0;
-    }
-
-    if (nextY < 0) {
-        nextY = tileCount - 1;
-    }
-
-    if (nextY >= tileCount) {
-        nextY = 0;
-    }
 
     const head = {
-        x: nextX,
-        y: nextY
+
+        x: snake[0].x +
+           direction.x,
+
+        y: snake[0].y +
+           direction.y
+
     };
 
+
+    /* WALL */
+
+    if (
+        head.x < 0 ||
+        head.x >= gridSize ||
+        head.y < 0 ||
+        head.y >= gridSize
+    ) {
+
+        endGame();
+
+        return;
+
+    }
+
+
+    /* SELF */
+
+    for (
+        const segment of snake
+    ) {
+
+        if (
+            head.x === segment.x &&
+            head.y === segment.y
+        ) {
+
+            endGame();
+
+            return;
+
+        }
+
+    }
+
+
     snake.unshift(head);
-    snake.pop();
+
+
+    /* FOOD */
+
+    if (
+        head.x === food.x &&
+        head.y === food.y
+    ) {
+
+        score++;
+
+        if (score > highScore) {
+
+            highScore = score;
+
+            localStorage.setItem(
+                "snakeHighScore",
+                highScore
+            );
+
+        }
+
+
+        createFood();
+
+        updateScore();
+
+    } else {
+
+        snake.pop();
+
+    }
+
+
+    draw();
+
 }
 
+
+/* DRAW */
+
 function draw() {
-    ctx.fillStyle = "#000";
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /* BACKGROUND */
+
+    ctx.fillStyle = "#111";
 
     ctx.fillRect(
         0,
@@ -310,598 +580,409 @@ function draw() {
         canvas.height
     );
 
-    drawGrid();
-    drawObstacles();
-    drawPortals();
-    drawSnake();
-    drawFruits();
-}
 
-function drawGrid() {
-    ctx.strokeStyle = "rgba(0,255,102,0.04)";
+    /* GRID */
 
-    for (
-        let x = 0;
-        x <= canvas.width;
-        x += gridSize
-    ) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-    }
+    ctx.strokeStyle = "#1d1d1d";
 
-    for (
-        let y = 0;
-        y <= canvas.height;
-        y += gridSize
-    ) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-    }
-}
+    ctx.lineWidth = 1;
 
-function drawSnake() {
-    snake.forEach((part, index) => {
-
-        if (index === 0) {
-            ctx.fillStyle = "#00ff66";
-            ctx.shadowColor = "#00ff66";
-            ctx.shadowBlur = 15;
-        } else {
-            ctx.fillStyle = "#00aa44";
-            ctx.shadowColor = "#00aa44";
-            ctx.shadowBlur = 8;
-        }
-
-        ctx.fillRect(
-            part.x * gridSize + 2,
-            part.y * gridSize + 2,
-            gridSize - 4,
-            gridSize - 4
-        );
-
-        ctx.shadowBlur = 0;
-    });
-}
-
-function drawFruits() {
-    fruits.forEach(fruit => {
-
-        ctx.fillStyle = "#ff1744";
-        ctx.shadowColor = "#ff1744";
-        ctx.shadowBlur = 15;
-
-        ctx.fillRect(
-            fruit.x * gridSize + 3,
-            fruit.y * gridSize + 3,
-            gridSize - 6,
-            gridSize - 6
-        );
-
-        ctx.shadowBlur = 0;
-    });
-}
-
-function drawObstacles() {
-    obstacles.forEach(obs => {
-
-        ctx.fillStyle = "#666";
-        ctx.shadowColor = "#777";
-        ctx.shadowBlur = 8;
-
-        ctx.fillRect(
-            obs.x * gridSize + 2,
-            obs.y * gridSize + 2,
-            gridSize - 4,
-            gridSize - 4
-        );
-
-        ctx.shadowBlur = 0;
-    });
-}
-
-function drawPortals() {
-    portals.forEach((portal, index) => {
-
-        const pulse =
-            Math.sin(Date.now() / 120 + index) * 2;
-
-        ctx.fillStyle = "#050505";
-
-        ctx.fillRect(
-            portal.x * gridSize,
-            portal.y * gridSize,
-            gridSize,
-            gridSize
-        );
-
-        ctx.strokeStyle = "#00e5ff";
-        ctx.lineWidth = 2 + pulse / 2;
-        ctx.shadowColor = "#00e5ff";
-        ctx.shadowBlur = 15;
-
-        ctx.strokeRect(
-            portal.x * gridSize + 2,
-            portal.y * gridSize + 2,
-            gridSize - 4,
-            gridSize - 4
-        );
-
-        ctx.shadowBlur = 0;
-    });
-}
-
-function checkObstacleCollision() {
-    return obstacles.some(obs =>
-        obs.x === snake[0].x &&
-        obs.y === snake[0].y
-    );
-}
-
-function checkFoodCollision() {
 
     for (
         let i = 0;
-        i < fruits.length;
+        i <= gridSize;
         i++
     ) {
 
-        if (
-            snake[0].x === fruits[i].x &&
-            snake[0].y === fruits[i].y
-        ) {
+        ctx.beginPath();
 
-            score++;
-
-            scoreElement.textContent = score;
-
-            if (score > highScore) {
-                highScore = score;
-
-                highScoreElement.textContent =
-                    highScore;
-
-                localStorage.setItem(
-                    "snakeHighScore",
-                    highScore
-                );
-            }
-
-            snake.push({
-                x: snake[snake.length - 1].x,
-                y: snake[snake.length - 1].y
-            });
-
-            fruits.splice(i, 1);
-
-            generateSingleFruit();
-
-            maxObstacles =
-                Math.min(
-                    20,
-                    6 + Math.floor(score / 2)
-                );
-
-            maxPortals =
-                Math.min(
-                    16,
-                    8 + Math.floor(score / 2)
-                );
-
-            generateObstacles();
-            generatePortals();
-
-            break;
-        }
-    }
-}
-
-function checkPortalCollision() {
-
-    const head = snake[0];
-
-    const hitIndex =
-        portals.findIndex(
-            portal =>
-                portal.x === head.x &&
-                portal.y === head.y
+        ctx.moveTo(
+            i * tileSize,
+            0
         );
 
-    if (hitIndex === -1) {
-        return;
+        ctx.lineTo(
+            i * tileSize,
+            canvas.height
+        );
+
+        ctx.stroke();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            i * tileSize
+        );
+
+        ctx.lineTo(
+            canvas.width,
+            i * tileSize
+        );
+
+        ctx.stroke();
+
     }
 
-    if (portals.length < 2) {
-        return;
-    }
 
-    let destination;
+    /* FOOD */
 
-    do {
-        destination =
-            Math.floor(
-                Math.random() *
-                portals.length
-            );
-    } while (
-        destination === hitIndex
+    ctx.fillStyle = "#fff";
+
+    ctx.fillRect(
+
+        food.x * tileSize + 4,
+
+        food.y * tileSize + 4,
+
+        tileSize - 8,
+
+        tileSize - 8
+
     );
 
-    snake[0].x =
-        portals[destination].x;
 
-    snake[0].y =
-        portals[destination].y;
-}
+    /* SNAKE */
 
-function movePortals() {
+    snake.forEach(
+        (segment, index) => {
 
-    portals.forEach(portal => {
+            ctx.fillStyle =
+                index === 0
+                    ? "#fff"
+                    : "#bbb";
 
-        let newPosition;
-        let valid = false;
 
-        while (!valid) {
+            ctx.fillRect(
 
-            newPosition = {
-                x:
-                    Math.floor(
-                        Math.random() *
-                        (tileCount - 4)
-                    ) + 2,
+                segment.x *
+                tileSize + 2,
 
-                y:
-                    Math.floor(
-                        Math.random() *
-                        (tileCount - 4)
-                    ) + 2
-            };
+                segment.y *
+                tileSize + 2,
 
-            const onSnake =
-                snake.some(
-                    part =>
-                        part.x === newPosition.x &&
-                        part.y === newPosition.y
-                );
+                tileSize - 4,
 
-            const onObstacle =
-                obstacles.some(
-                    obs =>
-                        obs.x === newPosition.x &&
-                        obs.y === newPosition.y
-                );
+                tileSize - 4
 
-            const onFruit =
-                fruits.some(
-                    fruit =>
-                        fruit.x === newPosition.x &&
-                        fruit.y === newPosition.y
-                );
+            );
 
-            const onOtherPortal =
-                portals.some(
-                    other =>
-                        other !== portal &&
-                        other.x === newPosition.x &&
-                        other.y === newPosition.y
-                );
-
-            valid =
-                !onSnake &&
-                !onObstacle &&
-                !onFruit &&
-                !onOtherPortal;
         }
+    );
 
-        portal.x = newPosition.x;
-        portal.y = newPosition.y;
-    });
 }
 
-function generateSingleFruit() {
 
-    let fruit;
-    let valid = false;
+/* CHANGE DIRECTION */
 
-    while (!valid) {
+function changeDirection(dir) {
 
-        fruit = {
-            x:
-                Math.floor(
-                    Math.random() *
-                    tileCount
-                ),
+    if (!running) {
+        return;
+    }
 
-            y:
-                Math.floor(
-                    Math.random() *
-                    tileCount
-                )
+
+    if (
+        dir === "up" &&
+        direction.y !== 1
+    ) {
+
+        nextDirection = {
+            x: 0,
+            y: -1
         };
 
-        const onSnake =
-            snake.some(
-                part =>
-                    part.x === fruit.x &&
-                    part.y === fruit.y
-            );
-
-        const onObstacle =
-            obstacles.some(
-                obs =>
-                    obs.x === fruit.x &&
-                    obs.y === fruit.y
-            );
-
-        const onPortal =
-            portals.some(
-                portal =>
-                    portal.x === fruit.x &&
-                    portal.y === fruit.y
-            );
-
-        valid =
-            !onSnake &&
-            !onObstacle &&
-            !onPortal;
     }
 
-    fruits.push(fruit);
-}
 
-function populateFruits() {
-
-    fruits = [];
-
-    for (
-        let i = 0;
-        i < maxFruits;
-        i++
+    if (
+        dir === "down" &&
+        direction.y !== -1
     ) {
-        generateSingleFruit();
+
+        nextDirection = {
+            x: 0,
+            y: 1
+        };
+
     }
-}
 
-function generateObstacles() {
 
-    obstacles = [];
-
-    for (
-        let i = 0;
-        i < maxObstacles;
-        i++
+    if (
+        dir === "left" &&
+        direction.x !== 1
     ) {
 
-        let obstacle;
-        let valid = false;
+        nextDirection = {
+            x: -1,
+            y: 0
+        };
 
-        while (!valid) {
+    }
 
-            obstacle = {
-                x:
-                    Math.floor(
-                        Math.random() *
-                        tileCount
-                    ),
 
-                y:
-                    Math.floor(
-                        Math.random() *
-                        tileCount
-                    )
-            };
+    if (
+        dir === "right" &&
+        direction.x !== -1
+    ) {
 
-            const nearSnake =
-                snake.some(
-                    part =>
-                        Math.abs(
-                            part.x -
-                            obstacle.x
-                        ) <= 2 &&
-                        Math.abs(
-                            part.y -
-                            obstacle.y
-                        ) <= 2
-                );
+        nextDirection = {
+            x: 1,
+            y: 0
+        };
 
-            const onFruit =
-                fruits.some(
-                    fruit =>
-                        fruit.x === obstacle.x &&
-                        fruit.y === obstacle.y
-                );
+    }
 
-            const onPortal =
-                portals.some(
-                    portal =>
-                        portal.x === obstacle.x &&
-                        portal.y === obstacle.y
-                );
+}
 
-            const onObstacle =
-                obstacles.some(
-                    obs =>
-                        obs.x === obstacle.x &&
-                        obs.y === obstacle.y
-                );
 
-            valid =
-                !nearSnake &&
-                !onFruit &&
-                !onPortal &&
-                !onObstacle;
+/* KEYBOARD */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        const key =
+            event.key.toLowerCase();
+
+
+        if (
+            key === "arrowup" ||
+            key === "w"
+        ) {
+
+            event.preventDefault();
+
+            changeDirection("up");
+
         }
 
-        obstacles.push(obstacle);
-    }
-}
 
-function generatePortals() {
+        if (
+            key === "arrowdown" ||
+            key === "s"
+        ) {
 
-    portals = [];
+            event.preventDefault();
 
-    for (
-        let i = 0;
-        i < maxPortals;
-        i++
-    ) {
+            changeDirection("down");
 
-        let portal;
-        let valid = false;
-
-        while (!valid) {
-
-            portal = {
-                x:
-                    Math.floor(
-                        Math.random() *
-                        (tileCount - 4)
-                    ) + 2,
-
-                y:
-                    Math.floor(
-                        Math.random() *
-                        (tileCount - 4)
-                    ) + 2
-            };
-
-            const nearSnake =
-                snake.some(
-                    part =>
-                        Math.abs(
-                            part.x -
-                            portal.x
-                        ) <= 2 &&
-                        Math.abs(
-                            part.y -
-                            portal.y
-                        ) <= 2
-                );
-
-            const onObstacle =
-                obstacles.some(
-                    obs =>
-                        obs.x === portal.x &&
-                        obs.y === portal.y
-                );
-
-            const onFruit =
-                fruits.some(
-                    fruit =>
-                        fruit.x === portal.x &&
-                        fruit.y === portal.y
-                );
-
-            const onPortal =
-                portals.some(
-                    other =>
-                        other.x === portal.x &&
-                        other.y === portal.y
-                );
-
-            valid =
-                !nearSnake &&
-                !onObstacle &&
-                !onFruit &&
-                !onPortal;
         }
 
-        portals.push(portal);
+
+        if (
+            key === "arrowleft" ||
+            key === "a"
+        ) {
+
+            event.preventDefault();
+
+            changeDirection("left");
+
+        }
+
+
+        if (
+            key === "arrowright" ||
+            key === "d"
+        ) {
+
+            event.preventDefault();
+
+            changeDirection("right");
+
+        }
+
+
+        if (
+            key === "p"
+        ) {
+
+            togglePause();
+
+        }
+
     }
+);
+
+
+/* PAUSE */
+
+function togglePause() {
+
+    if (!running) {
+        return;
+    }
+
+
+    paused = !paused;
+
+
+    if (paused) {
+
+        overlayTitle.textContent =
+            "PAUSED";
+
+        overlayText.innerHTML =
+            "Press P or click below<br>to continue.";
+
+        document.querySelector(
+            "#panel button"
+        ).textContent =
+            "CONTINUE";
+
+        document.querySelector(
+            "#panel button"
+        ).onclick =
+            togglePause;
+
+        overlay.classList.remove(
+            "hidden"
+        );
+
+    } else {
+
+        overlay.classList.add(
+            "hidden"
+        );
+
+        document.querySelector(
+            "#panel button"
+        ).textContent =
+            "START";
+
+        document.querySelector(
+            "#panel button"
+        ).onclick =
+            startGame;
+
+    }
+
 }
+
+
+/* END GAME */
 
 function endGame() {
 
-    clearInterval(gameInterval);
+    running = false;
 
-    finalScore.textContent = score;
-    finalHigh.textContent = highScore;
+    clearInterval(gameTimer);
 
-    gameOverScreen.style.display = "flex";
+
+    if (score > highScore) {
+
+        highScore = score;
+
+        localStorage.setItem(
+            "snakeHighScore",
+            highScore
+        );
+
+    }
+
+
+    updateScore();
+
+
+    overlayTitle.textContent =
+        "RETRY";
+
+
+    overlayText.innerHTML =
+
+        "Score: <strong>" +
+        score +
+        "</strong><br><br>" +
+
+        "Best: <strong>" +
+        highScore +
+        "</strong>";
+
+
+    const button =
+        document.querySelector(
+            "#panel button"
+        );
+
+
+    button.textContent =
+        "RETRY";
+
+
+    button.onclick =
+        startGame;
+
+
+    overlay.classList.remove(
+        "hidden"
+    );
+
 }
 
-retryButton.addEventListener(
-    "click",
-    startGame
-);
 
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "ArrowUp" &&
-            dy === 0
-        ) {
-            dx = 0;
-            dy = -1;
-        }
-
-        if (
-            event.key === "ArrowDown" &&
-            dy === 0
-        ) {
-            dx = 0;
-            dy = 1;
-        }
-
-        if (
-            event.key === "ArrowLeft" &&
-            dx === 0
-        ) {
-            dx = -1;
-            dy = 0;
-        }
-
-        if (
-            event.key === "ArrowRight" &&
-            dx === 0
-        ) {
-            dx = 1;
-            dy = 0;
-        }
-    }
-);
+/* RRR SECRET SHORTCUT */
 
 let rPresses = 0;
+
 let rTimer;
+
 
 document.addEventListener(
     "keydown",
-    event => {
+    function(event) {
 
         if (
-            event.key.toLowerCase() !== "r"
+            event.key.toLowerCase() !==
+            "r"
         ) {
+
             return;
+
         }
+
 
         rPresses++;
 
-        clearTimeout(rTimer);
+
+        clearTimeout(
+            rTimer
+        );
+
 
         rTimer =
             setTimeout(
-                () => {
+                function() {
+
                     rPresses = 0;
+
                 },
                 700
             );
 
-        if (rPresses === 3) {
+
+        if (
+            rPresses === 3
+        ) {
 
             window.location.href =
                 "flashcards.html";
 
             rPresses = 0;
+
         }
+
     }
 );
 
-startGame();
+
+/* INITIAL DRAW */
+
+updateScore();
+
+draw();
+
 </script>
 
 </body>
