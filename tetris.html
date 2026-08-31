@@ -33,13 +33,13 @@ body {
 #board {
     width: 300px;
     height: 600px;
-    background: #111;
+    background: #101010;
     border: 3px solid #fff;
     image-rendering: pixelated;
 }
 
 #side {
-    width: 180px;
+    width: 190px;
 }
 
 #side h1 {
@@ -57,7 +57,7 @@ body {
 .stat span {
     display: block;
     color: #aaa;
-    font-size: 12px;
+    font-size: 11px;
     margin-bottom: 7px;
 }
 
@@ -67,8 +67,8 @@ body {
 
 #nextTitle {
     color: #aaa;
-    font-size: 12px;
-    margin: 25px 0 8px;
+    font-size: 11px;
+    margin: 22px 0 8px;
 }
 
 #next {
@@ -79,36 +79,36 @@ body {
 }
 
 button {
-    border: none;
-    background: #fff;
-    color: #000;
-    padding: 11px 16px;
+    border: 2px solid #fff;
+    background: #111;
+    color: #fff;
+    padding: 10px 15px;
     margin-top: 10px;
     font-weight: bold;
     cursor: pointer;
 }
 
 button:hover {
-    background: #ccc;
+    background: #fff;
+    color: #000;
 }
-
-/* OVERLAY */
 
 #overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.8);
+    background: rgba(0,0,0,.82);
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 10;
 }
 
 #panel {
-    background: #111;
-    border: 3px solid #fff;
+    width: min(85vw, 400px);
     padding: 30px;
     text-align: center;
-    width: min(85vw, 380px);
+    background: #111;
+    border: 3px solid #fff;
 }
 
 #panel h2 {
@@ -119,6 +119,12 @@ button:hover {
 #panel p {
     color: #aaa;
     line-height: 1.7;
+    font-size: 13px;
+}
+
+#panel button {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .hidden {
@@ -129,20 +135,12 @@ button:hover {
     display: none;
 }
 
-.mobileButton {
-    width: 55px;
-    height: 45px;
-    padding: 0;
-    margin: 3px;
-    font-size: 18px;
-}
-
 @media (max-width: 650px) {
 
     body {
         align-items: flex-start;
         padding-top: 15px;
-        overflow: auto;
+        overflow-y: auto;
     }
 
     #game {
@@ -157,6 +155,15 @@ button:hover {
     #mobileControls {
         display: block;
         text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .mobileButton {
+        width: 55px;
+        height: 45px;
+        padding: 0;
+        margin: 3px;
+        font-size: 18px;
     }
 
 }
@@ -175,7 +182,6 @@ button:hover {
     width="300"
     height="600">
 </canvas>
-
 
 <div id="side">
 
@@ -206,6 +212,8 @@ button:hover {
         height="120">
     </canvas>
 
+    <br>
+
     <button onclick="togglePause()">
         PAUSE
     </button>
@@ -219,14 +227,17 @@ button:hover {
 
 ```
 <div>
+
     <button
         class="mobileButton"
         onclick="rotatePiece()">
         ↻
     </button>
+
 </div>
 
 <div>
+
     <button
         class="mobileButton"
         onclick="movePiece(-1)">
@@ -244,20 +255,21 @@ button:hover {
         onclick="movePiece(1)">
         ▶
     </button>
+
 </div>
 
 <div>
+
     <button
         class="mobileButton"
         onclick="hardDrop()">
         ⬇
     </button>
+
 </div>
 ```
 
 </div>
-
-<!-- START / RETRY -->
 
 <div id="overlay">
 
@@ -271,14 +283,21 @@ button:hover {
     <p id="overlayText">
         ← → Move<br>
         ↑ Rotate<br>
-        ↓ Drop<br>
+        ↓ Soft Drop<br>
         SPACE Hard Drop
     </p>
 
     <button
-        id="overlayButton"
+        id="retryButton"
         onclick="startGame()">
         START
+    </button>
+
+    <button
+        id="homeButton"
+        onclick="goHome()"
+        style="display:none;">
+        HOME
     </button>
 
 </div>
@@ -305,8 +324,6 @@ const COLS = 10;
 const ROWS = 20;
 const SIZE = 30;
 
-
-/* PIECES */
 
 const pieces = {
 
@@ -423,13 +440,11 @@ const types =
     Object.keys(pieces);
 
 
-/* GAME STATE */
-
 let board = [];
 
-let current;
+let current = null;
 
-let nextType;
+let nextType = null;
 
 let rotation = 0;
 
@@ -450,7 +465,7 @@ let lastTime = 0;
 let dropInterval = 700;
 
 
-/* CREATE BOARD */
+/* BOARD */
 
 function createBoard() {
 
@@ -648,7 +663,7 @@ function merge() {
 }
 
 
-/* CLEAR LINES */
+/* CLEAR */
 
 function clearLines() {
 
@@ -666,7 +681,10 @@ function clearLines() {
             )
         ) {
 
-            board.splice(y, 1);
+            board.splice(
+                y,
+                1
+            );
 
             board.unshift(
                 new Array(COLS).fill(null)
@@ -680,7 +698,7 @@ function clearLines() {
 
     }
 
-    if (cleared) {
+    if (cleared > 0) {
 
         const points = [
             0,
@@ -734,7 +752,8 @@ function movePiece(dir) {
 
     if (
         !running ||
-        paused
+        paused ||
+        !current
     ) {
         return;
     }
@@ -762,7 +781,8 @@ function softDrop() {
 
     if (
         !running ||
-        paused
+        paused ||
+        !current
     ) {
         return;
     }
@@ -800,7 +820,8 @@ function hardDrop() {
 
     if (
         !running ||
-        paused
+        paused ||
+        !current
     ) {
         return;
     }
@@ -839,7 +860,8 @@ function rotatePiece() {
 
     if (
         !running ||
-        paused
+        paused ||
+        !current
     ) {
         return;
     }
@@ -850,13 +872,8 @@ function rotatePiece() {
         ) %
         pieces[current.type].length;
 
-    const kicks = [
-        0,
-        -1,
-        1,
-        -2,
-        2
-    ];
+    const kicks =
+        [0, -1, 1, -2, 2];
 
     for (
         const kick of kicks
@@ -886,9 +903,9 @@ function rotatePiece() {
 }
 
 
-/* GHOST */
+/* GHOST PIECE */
 
-function ghostY() {
+function getGhostY() {
 
     let y =
         current.y;
@@ -910,7 +927,28 @@ function ghostY() {
 }
 
 
-/* DRAW BLOCK */
+/* COLORS */
+
+function getColor(type) {
+
+    const colors = {
+
+        I: "#45d9ff",
+        O: "#ffd83d",
+        T: "#b967ff",
+        S: "#54e36b",
+        Z: "#ff5964",
+        J: "#5c7cff",
+        L: "#ff9f43"
+
+    };
+
+    return colors[type];
+
+}
+
+
+/* BLOCK */
 
 function drawBlock(
     context,
@@ -921,7 +959,8 @@ function drawBlock(
     alpha = 1
 ) {
 
-    context.globalAlpha = alpha;
+    context.globalAlpha =
+        alpha;
 
     context.fillStyle =
         getColor(type);
@@ -945,38 +984,7 @@ function drawBlock(
         size - 2
     );
 
-    context.fillStyle =
-        "rgba(255,255,255,.25)";
-
-    context.fillRect(
-        x * size + 3,
-        y * size + 3,
-        size - 6,
-        4
-    );
-
     context.globalAlpha = 1;
-
-}
-
-
-/* COLORS */
-
-function getColor(type) {
-
-    const colors = {
-
-        I: "#66d9e8",
-        O: "#f5d547",
-        T: "#b76cff",
-        S: "#65d46e",
-        Z: "#ef6262",
-        J: "#6488ff",
-        L: "#f0a34b"
-
-    };
-
-    return colors[type];
 
 }
 
@@ -985,7 +993,8 @@ function getColor(type) {
 
 function drawBoard() {
 
-    ctx.fillStyle = "#111";
+    ctx.fillStyle =
+        "#101010";
 
     ctx.fillRect(
         0,
@@ -995,9 +1004,8 @@ function drawBoard() {
     );
 
 
-    /* GRID */
-
-    ctx.strokeStyle = "#1d1d1d";
+    ctx.strokeStyle =
+        "#1d1d1d";
 
     ctx.lineWidth = 1;
 
@@ -1046,8 +1054,6 @@ function drawBoard() {
     }
 
 
-    /* BLOCKS */
-
     board.forEach(
         (row, y) => {
 
@@ -1075,7 +1081,7 @@ function drawBoard() {
 }
 
 
-/* DRAW CURRENT */
+/* CURRENT + GHOST */
 
 function drawCurrent() {
 
@@ -1092,8 +1098,8 @@ function drawCurrent() {
 
     /* GHOST */
 
-    const gy =
-        ghostY();
+    const ghostY =
+        getGhostY();
 
     shape.forEach(
         (row, y) => {
@@ -1106,10 +1112,10 @@ function drawCurrent() {
                         drawBlock(
                             ctx,
                             current.x + x,
-                            gy + y,
+                            ghostY + y,
                             current.type,
                             SIZE,
-                            0.2
+                            0.18
                         );
 
                     }
@@ -1121,7 +1127,7 @@ function drawCurrent() {
     );
 
 
-    /* CURRENT */
+    /* ACTIVE PIECE */
 
     shape.forEach(
         (row, y) => {
@@ -1165,7 +1171,8 @@ function draw() {
 
 function drawNext() {
 
-    nextCtx.fillStyle = "#111";
+    nextCtx.fillStyle =
+        "#111";
 
     nextCtx.fillRect(
         0,
@@ -1173,10 +1180,6 @@ function drawNext() {
         nextCanvas.width,
         nextCanvas.height
     );
-
-    if (!nextType) {
-        return;
-    }
 
     const shape =
         getShape(
@@ -1189,7 +1192,8 @@ function drawNext() {
     const offsetX =
         Math.floor(
             (
-                nextCanvas.width / size -
+                nextCanvas.width /
+                size -
                 shape[0].length
             ) / 2
         );
@@ -1197,7 +1201,8 @@ function drawNext() {
     const offsetY =
         Math.floor(
             (
-                nextCanvas.height / size -
+                nextCanvas.height /
+                size -
                 shape.length
             ) / 2
         );
@@ -1235,15 +1240,18 @@ function updateStats() {
 
     document.getElementById(
         "score"
-    ).textContent = score;
+    ).textContent =
+        score;
 
     document.getElementById(
         "lines"
-    ).textContent = lines;
+    ).textContent =
+        lines;
 
     document.getElementById(
         "level"
-    ).textContent = level;
+    ).textContent =
+        level;
 
 }
 
@@ -1293,7 +1301,7 @@ function startGame() {
 }
 
 
-/* LOOP */
+/* GAME LOOP */
 
 function gameLoop(time) {
 
@@ -1340,56 +1348,58 @@ function togglePause() {
         return;
     }
 
-    paused = !paused;
-
-    const overlay =
-        document.getElementById(
-            "overlay"
-        );
-
-    const title =
-        document.getElementById(
-            "overlayTitle"
-        );
-
-    const text =
-        document.getElementById(
-            "overlayText"
-        );
-
-    const button =
-        document.getElementById(
-            "overlayButton"
-        );
+    paused =
+        !paused;
 
     if (paused) {
 
-        title.textContent =
+        document.getElementById(
+            "overlayTitle"
+        ).textContent =
             "PAUSED";
 
-        text.innerHTML =
-            "Press P or click below<br>to continue.";
+        document.getElementById(
+            "overlayText"
+        ).innerHTML =
+            "Press P or continue below.";
 
-        button.textContent =
+        document.getElementById(
+            "retryButton"
+        ).textContent =
             "CONTINUE";
 
-        button.onclick =
+        document.getElementById(
+            "retryButton"
+        ).onclick =
             togglePause;
 
-        overlay.classList.remove(
+        document.getElementById(
+            "homeButton"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "overlay"
+        ).classList.remove(
             "hidden"
         );
 
     } else {
 
-        overlay.classList.add(
+        document.getElementById(
+            "overlay"
+        ).classList.add(
             "hidden"
         );
 
-        button.textContent =
+        document.getElementById(
+            "retryButton"
+        ).textContent =
             "START";
 
-        button.onclick =
+        document.getElementById(
+            "retryButton"
+        ).onclick =
             startGame;
 
     }
@@ -1397,7 +1407,7 @@ function togglePause() {
 }
 
 
-/* RETRY SCREEN */
+/* RETRY */
 
 function endGame() {
 
@@ -1417,22 +1427,36 @@ function endGame() {
         "Lines: " +
         lines;
 
-    const button =
-        document.getElementById(
-            "overlayButton"
-        );
-
-    button.textContent =
+    document.getElementById(
+        "retryButton"
+    ).textContent =
         "RETRY";
 
-    button.onclick =
+    document.getElementById(
+        "retryButton"
+    ).onclick =
         startGame;
+
+    document.getElementById(
+        "homeButton"
+    ).style.display =
+        "inline-block";
 
     document.getElementById(
         "overlay"
     ).classList.remove(
         "hidden"
     );
+
+}
+
+
+/* HOME */
+
+function goHome() {
+
+    window.location.href =
+        "index.html";
 
 }
 
@@ -1486,7 +1510,9 @@ document.addEventListener(
 
         }
 
-        if (key === " ") {
+        if (
+            key === " "
+        ) {
 
             event.preventDefault();
 
@@ -1494,7 +1520,9 @@ document.addEventListener(
 
         }
 
-        if (key === "p") {
+        if (
+            key === "p"
+        ) {
 
             togglePause();
 
@@ -1504,7 +1532,7 @@ document.addEventListener(
 );
 
 
-/* RRR SHORTCUT */
+/* RRR */
 
 let rPresses = 0;
 
@@ -1532,7 +1560,9 @@ document.addEventListener(
                 700
             );
 
-        if (rPresses === 3) {
+        if (
+            rPresses === 3
+        ) {
 
             window.location.href =
                 "flashcards.html";
