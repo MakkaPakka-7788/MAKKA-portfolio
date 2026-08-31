@@ -1,0 +1,2654 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Flashcard.com</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #080808;
+    color: white;
+    font-family: "Courier New", monospace;
+    text-align: center;
+}
+
+#top {
+    width: 800px;
+    max-width: 95vw;
+    margin: 16px auto 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#title {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#stats {
+    color: #ccc;
+    font-size: 13px;
+}
+
+#game {
+    display: block;
+    width: 800px;
+    height: 540px;
+    max-width: 95vw;
+    margin: auto;
+    background: #111;
+    border: 3px solid #555;
+    image-rendering: pixelated;
+}
+
+button {
+    background: #222;
+    color: white;
+    border: 2px solid #666;
+    padding: 9px 13px;
+    margin: 3px;
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #444;
+}
+
+#towerButtons,
+#controls,
+#saves {
+    width: 800px;
+    max-width: 95vw;
+    margin: 7px auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.towerButton {
+    min-width: 125px;
+}
+
+.towerButton.selected {
+    background: #eee;
+    color: #000;
+}
+
+.saveButton {
+    min-width: 130px;
+}
+
+#hint {
+    color: #777;
+    font-size: 11px;
+    margin: 8px;
+}
+
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+#panel {
+    width: min(90vw, 430px);
+    background: #111;
+    border: 3px solid #555;
+    padding: 35px;
+}
+
+#overlayTitle {
+    font-size: 38px;
+    margin: 0 0 20px;
+}
+
+#overlayText {
+    color: #aaa;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.retry-title {
+    color: #f22 !important;
+    text-shadow:
+        0 0 6px #f22,
+        0 0 18px #f22;
+}
+
+.retry-button {
+    background: #180000;
+    color: #f22;
+    border-color: #f22;
+}
+
+.retry-button:hover {
+    background: #f22;
+    color: #000;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#homeButton {
+    display: none;
+}
+
+@media (max-width: 650px) {
+    #game {
+        height: auto;
+        aspect-ratio: 800 / 540;
+    }
+
+    #top {
+        justify-content: center;
+    }
+
+    .towerButton {
+        min-width: 110px;
+        font-size: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="top">
+
+    <div id="title">
+        TOWER DEFENCE
+    </div>
+
+    <div id="stats">
+        💰 200 | ❤️ 20 | 🌊 1
+    </div>
+
+</div>
+
+
+<canvas id="game"
+        width="800"
+        height="540">
+</canvas>
+
+
+<div id="towerButtons">
+
+    <button class="towerButton"
+            id="basicButton"
+            onclick="selectTower('basic')">
+        [1] CANNON $50
+    </button>
+
+    <button class="towerButton"
+            id="rapidButton"
+            onclick="selectTower('rapid')">
+        [2] RAPID $75
+    </button>
+
+    <button class="towerButton"
+            id="heavyButton"
+            onclick="selectTower('heavy')">
+        [3] HEAVY $120
+    </button>
+
+    <button class="towerButton"
+            id="slowButton"
+            onclick="selectTower('slow')">
+        [4] SLOW $100
+    </button>
+
+    <button class="towerButton"
+            id="splashButton"
+            onclick="selectTower('splash')">
+        [5] SPLASH $150
+    </button>
+
+    <button class="towerButton"
+            id="laserButton"
+            onclick="selectTower('laser')">
+        [6] LASER $200
+    </button>
+
+    <button class="towerButton"
+            id="freezeButton"
+            onclick="selectTower('freeze')">
+        [7] FREEZE $250
+    </button>
+
+    <button class="towerButton"
+            id="sniperButton"
+            onclick="selectTower('sniper')">
+        [8] SNIPER $300
+    </button>
+
+    <button class="towerButton"
+            id="teslaButton"
+            onclick="selectTower('tesla')">
+        [9] TESLA $400
+    </button>
+
+    <button class="towerButton"
+            id="rocketButton"
+            onclick="selectTower('rocket')">
+        [10] ROCKET $500
+    </button>
+
+</div>
+
+
+<div id="controls">
+
+    <button onclick="startWave()">
+        START WAVE
+    </button>
+
+    <button onclick="upgradeSelected()">
+        UPGRADE
+    </button>
+
+    <button onclick="sellSelected()">
+        SELL
+    </button>
+
+</div>
+
+
+<div id="saves">
+
+    <button class="saveButton"
+            onclick="saveGame(1)">
+        SAVE SLOT 1
+    </button>
+
+    <button class="saveButton"
+            onclick="loadGame(1)">
+        LOAD SLOT 1
+    </button>
+
+    <button class="saveButton"
+            onclick="saveGame(2)">
+        SAVE SLOT 2
+    </button>
+
+    <button class="saveButton"
+            onclick="loadGame(2)">
+        LOAD SLOT 2
+    </button>
+
+    <button class="saveButton"
+            onclick="saveGame(3)">
+        SAVE SLOT 3
+    </button>
+
+    <button class="saveButton"
+            onclick="loadGame(3)">
+        LOAD SLOT 3
+    </button>
+
+</div>
+
+
+<div id="hint">
+    Choose a tower, then click beside the path to build.
+    Click a tower to select it.
+</div>
+
+
+<div id="overlay">
+
+    <div id="panel">
+
+        <h1 id="overlayTitle">
+            TOWER DEFENCE
+        </h1>
+
+        <p id="overlayText">
+            Defend your base and survive as many waves
+            as possible.
+            <br><br>
+            You have 3 save slots.
+            <br>
+            Your progress can be saved before using RRR.
+        </p>
+
+        <button id="mainButton"
+                onclick="startGame()">
+            START
+        </button>
+
+        <button id="homeButton"
+                onclick="goHome()">
+            HOME
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+const canvas =
+    document.getElementById("game");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+const WIDTH = 800;
+const HEIGHT = 540;
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let money = 200;
+let lives = 20;
+let wave = 1;
+
+let running = false;
+let waveRunning = false;
+
+let enemies = [];
+let towers = [];
+let bullets = [];
+let effects = [];
+
+let selectedTowerType = "basic";
+let selectedTower = null;
+
+let enemiesToSpawn = 0;
+let spawnTimer = 0;
+
+let lastTime = 0;
+
+
+/* =====================================================
+   PATH
+===================================================== */
+
+const path = [
+
+    {x: -30, y: 90},
+
+    {x: 120, y: 90},
+
+    {x: 120, y: 230},
+
+    {x: 300, y: 230},
+
+    {x: 300, y: 90},
+
+    {x: 500, y: 90},
+
+    {x: 500, y: 400},
+
+    {x: 680, y: 400},
+
+    {x: 680, y: 260},
+
+    {x: 830, y: 260}
+
+];
+
+
+/* =====================================================
+   TOWER TYPES
+===================================================== */
+
+const towerTypes = {
+
+    basic: {
+        cost: 50,
+        range: 115,
+        damage: 14,
+        fireRate: 600,
+        color: "#ccc",
+        ability: "Balanced"
+    },
+
+    rapid: {
+        cost: 75,
+        range: 90,
+        damage: 6,
+        fireRate: 190,
+        color: "#aaa",
+        ability: "Rapid fire"
+    },
+
+    heavy: {
+        cost: 120,
+        range: 130,
+        damage: 38,
+        fireRate: 1050,
+        color: "#777",
+        ability: "Heavy damage"
+    },
+
+    slow: {
+        cost: 100,
+        range: 110,
+        damage: 9,
+        fireRate: 700,
+        color: "#888",
+        ability: "Slows enemies"
+    },
+
+    splash: {
+        cost: 150,
+        range: 120,
+        damage: 22,
+        fireRate: 900,
+        color: "#bbb",
+        ability: "Area damage"
+    },
+
+    laser: {
+        cost: 200,
+        range: 150,
+        damage: 15,
+        fireRate: 120,
+        color: "#eee",
+        ability: "Fast laser"
+    },
+
+    freeze: {
+        cost: 250,
+        range: 125,
+        damage: 7,
+        fireRate: 500,
+        color: "#aaa",
+        ability: "Freezes enemies"
+    },
+
+    sniper: {
+        cost: 300,
+        range: 280,
+        damage: 100,
+        fireRate: 1700,
+        color: "#ddd",
+        ability: "Huge range"
+    },
+
+    tesla: {
+        cost: 400,
+        range: 145,
+        damage: 28,
+        fireRate: 650,
+        color: "#bbb",
+        ability: "Chains enemies"
+    },
+
+    rocket: {
+        cost: 500,
+        range: 190,
+        damage: 75,
+        fireRate: 1300,
+        color: "#999",
+        ability: "Massive splash"
+    }
+
+};
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    money = 200;
+    lives = 20;
+    wave = 1;
+
+    enemies = [];
+    towers = [];
+    bullets = [];
+    effects = [];
+
+    selectedTower = null;
+
+    running = true;
+    waveRunning = false;
+
+    hideOverlay();
+
+    updateStats();
+
+    lastTime =
+        performance.now();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
+
+function gameLoop(time) {
+
+    if (!running) {
+        return;
+    }
+
+    const dt =
+        Math.min(
+            time - lastTime,
+            50
+        );
+
+    lastTime = time;
+
+    update(dt);
+    draw();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update(dt) {
+
+    updateSpawning(dt);
+    updateEnemies(dt);
+    updateTowers(dt);
+    updateBullets(dt);
+    updateEffects(dt);
+
+    updateStats();
+
+}
+
+
+/* =====================================================
+   WAVES
+===================================================== */
+
+function startWave() {
+
+    if (
+        !running ||
+        waveRunning
+    ) {
+        return;
+    }
+
+    waveRunning = true;
+
+    enemiesToSpawn =
+        6 +
+        wave * 3;
+
+    spawnTimer = 0;
+
+}
+
+
+/* =====================================================
+   SPAWNING
+===================================================== */
+
+function updateSpawning(dt) {
+
+    if (!waveRunning) {
+        return;
+    }
+
+    spawnTimer -= dt;
+
+    if (
+        enemiesToSpawn > 0 &&
+        spawnTimer <= 0
+    ) {
+
+        spawnEnemy();
+
+        enemiesToSpawn--;
+
+        spawnTimer =
+            Math.max(
+                180,
+                650 -
+                wave * 8
+            );
+
+    }
+
+
+    if (
+        enemiesToSpawn <= 0 &&
+        enemies.length === 0
+    ) {
+
+        waveRunning = false;
+
+        wave++;
+
+    }
+
+}
+
+
+/* =====================================================
+   ENEMY
+===================================================== */
+
+function spawnEnemy() {
+
+    let hp =
+        40 +
+        wave * 12;
+
+    let speed =
+        0.55 +
+        wave * 0.015;
+
+    let reward =
+        10 +
+        Math.floor(wave * 1.5);
+
+
+    /*
+       FAST ENEMY
+    */
+
+    if (
+        Math.random() < 0.12 &&
+        wave >= 3
+    ) {
+
+        hp *= .55;
+        speed *= 1.8;
+        reward *= 1.5;
+
+    }
+
+
+    /*
+       TANK ENEMY
+    */
+
+    if (
+        Math.random() < 0.08 &&
+        wave >= 5
+    ) {
+
+        hp *= 3;
+        speed *= .55;
+        reward *= 3;
+
+    }
+
+
+    /*
+       BOSS
+    */
+
+    const boss =
+        wave % 10 === 0 &&
+        enemiesToSpawn === 1;
+
+
+    if (boss) {
+
+        hp *= 8;
+        speed *= .5;
+        reward *= 8;
+
+    }
+
+
+    enemies.push({
+
+        x: path[0].x,
+        y: path[0].y,
+
+        waypoint: 1,
+
+        hp: hp,
+        maxHp: hp,
+
+        speed: speed,
+
+        reward: Math.round(reward),
+
+        slow: 1,
+
+        freeze: 0,
+
+        boss: boss
+
+    });
+
+}
+
+
+/* =====================================================
+   ENEMY MOVEMENT
+===================================================== */
+
+function updateEnemies(dt) {
+
+    for (
+        let i = enemies.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const enemy =
+            enemies[i];
+
+        const target =
+            path[enemy.waypoint];
+
+
+        if (!target) {
+
+            lives--;
+
+            enemies.splice(i,1);
+
+            if (
+                lives <= 0
+            ) {
+
+                endGame();
+
+            }
+
+            continue;
+
+        }
+
+
+        if (
+            enemy.freeze > 0
+        ) {
+
+            enemy.freeze -= dt;
+
+            continue;
+
+        }
+
+
+        const dx =
+            target.x -
+            enemy.x;
+
+        const dy =
+            target.y -
+            enemy.y;
+
+        const distance =
+            Math.hypot(
+                dx,
+                dy
+            );
+
+
+        const move =
+            enemy.speed *
+            enemy.slow *
+            dt;
+
+
+        if (
+            distance <= move
+        ) {
+
+            enemy.x =
+                target.x;
+
+            enemy.y =
+                target.y;
+
+            enemy.waypoint++;
+
+        }
+        else {
+
+            enemy.x +=
+                dx /
+                distance *
+                move;
+
+            enemy.y +=
+                dy /
+                distance *
+                move;
+
+        }
+
+
+        if (
+            enemy.slow < 1
+        ) {
+
+            enemy.slow =
+                Math.min(
+                    1,
+                    enemy.slow +
+                    dt *
+                    .00015
+                );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   SELECT TOWER
+===================================================== */
+
+function selectTower(type) {
+
+    selectedTowerType = type;
+
+    document
+        .querySelectorAll(".towerButton")
+        .forEach(
+            b =>
+                b.classList.remove(
+                    "selected"
+                )
+        );
+
+
+    document
+        .getElementById(
+            type + "Button"
+        )
+        .classList.add(
+            "selected"
+        );
+
+}
+
+
+/* =====================================================
+   BUILD
+===================================================== */
+
+canvas.addEventListener(
+    "click",
+    function(event) {
+
+        if (!running) {
+            return;
+        }
+
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+
+        const x =
+            (event.clientX -
+            rect.left) *
+            WIDTH /
+            rect.width;
+
+
+        const y =
+            (event.clientY -
+            rect.top) *
+            HEIGHT /
+            rect.height;
+
+
+        /*
+           SELECT EXISTING TOWER
+        */
+
+        for (
+            const tower of towers
+        ) {
+
+            if (
+                Math.hypot(
+                    x - tower.x,
+                    y - tower.y
+                ) < 23
+            ) {
+
+                selectedTower =
+                    tower;
+
+                return;
+
+            }
+
+        }
+
+
+        const gx =
+            Math.floor(
+                x / 40
+            ) * 40 +
+            20;
+
+        const gy =
+            Math.floor(
+                y / 40
+            ) * 40 +
+            20;
+
+
+        /*
+           Can't build on path.
+        */
+
+        if (
+            pointOnPath(
+                gx,
+                gy
+            )
+        ) {
+            return;
+        }
+
+
+        /*
+           Can't stack towers.
+        */
+
+        if (
+            towers.some(
+                t =>
+                    t.x === gx &&
+                    t.y === gy
+            )
+        ) {
+            return;
+        }
+
+
+        const type =
+            towerTypes[
+                selectedTowerType
+            ];
+
+
+        if (
+            money < type.cost
+        ) {
+            return;
+        }
+
+
+        money -= type.cost;
+
+
+        towers.push({
+
+            x: gx,
+            y: gy,
+
+            type: selectedTowerType,
+
+            level: 1,
+
+            range: type.range,
+            damage: type.damage,
+            fireRate: type.fireRate,
+
+            cooldown: 0
+
+        });
+
+    }
+);
+
+
+/* =====================================================
+   PATH CHECK
+===================================================== */
+
+function pointOnPath(x,y) {
+
+    const width = 48;
+
+
+    for (
+        let i = 0;
+        i < path.length - 1;
+        i++
+    ) {
+
+        const a =
+            path[i];
+
+        const b =
+            path[i + 1];
+
+
+        if (
+            a.x === b.x
+        ) {
+
+            if (
+                Math.abs(
+                    x - a.x
+                ) < width &&
+                y >=
+                    Math.min(
+                        a.y,
+                        b.y
+                    ) - width &&
+                y <=
+                    Math.max(
+                        a.y,
+                        b.y
+                    ) + width
+            ) {
+
+                return true;
+
+            }
+
+        }
+        else {
+
+            if (
+                Math.abs(
+                    y - a.y
+                ) < width &&
+                x >=
+                    Math.min(
+                        a.x,
+                        b.x
+                    ) - width &&
+                x <=
+                    Math.max(
+                        a.x,
+                        b.x
+                    ) + width
+            ) {
+
+                return true;
+
+            }
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =====================================================
+   TOWERS
+===================================================== */
+
+function updateTowers(dt) {
+
+    for (
+        const tower of towers
+    ) {
+
+        tower.cooldown -= dt;
+
+
+        if (
+            tower.cooldown > 0
+        ) {
+            continue;
+        }
+
+
+        let target = null;
+        let best = Infinity;
+
+
+        for (
+            const enemy of enemies
+        ) {
+
+            const distance =
+                Math.hypot(
+                    enemy.x -
+                    tower.x,
+
+                    enemy.y -
+                    tower.y
+                );
+
+
+            if (
+                distance <=
+                tower.range &&
+                distance < best
+            ) {
+
+                target =
+                    enemy;
+
+                best =
+                    distance;
+
+            }
+
+        }
+
+
+        if (!target) {
+            continue;
+        }
+
+
+        bullets.push({
+
+            x: tower.x,
+            y: tower.y,
+
+            target: target,
+
+            damage:
+                tower.damage,
+
+            speed:
+                tower.type === "laser"
+                ? 18
+                : tower.type === "sniper"
+                ? 12
+                : 8,
+
+            tower: tower
+
+        });
+
+
+        tower.cooldown =
+            tower.fireRate;
+
+    }
+
+}
+
+
+/* =====================================================
+   BULLETS / SPECIAL ABILITIES
+===================================================== */
+
+function updateBullets(dt) {
+
+    for (
+        let i = bullets.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const bullet =
+            bullets[i];
+
+
+        if (
+            !bullet.target ||
+            !enemies.includes(
+                bullet.target
+            )
+        ) {
+
+            bullets.splice(i,1);
+
+            continue;
+
+        }
+
+
+        const target =
+            bullet.target;
+
+
+        const dx =
+            target.x -
+            bullet.x;
+
+        const dy =
+            target.y -
+            bullet.y;
+
+        const distance =
+            Math.hypot(
+                dx,
+                dy
+            );
+
+
+        const move =
+            bullet.speed *
+            dt;
+
+
+        if (
+            distance <=
+            move + 4
+        ) {
+
+            hitEnemy(
+                target,
+                bullet.damage,
+                bullet.tower
+            );
+
+
+            bullets.splice(
+                i,
+                1
+            );
+
+        }
+        else {
+
+            bullet.x +=
+                dx /
+                distance *
+                move;
+
+            bullet.y +=
+                dy /
+                distance *
+                move;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   HIT ENEMY
+===================================================== */
+
+function hitEnemy(
+    enemy,
+    damage,
+    tower
+) {
+
+    enemy.hp -= damage;
+
+
+    /*
+       SLOW
+    */
+
+    if (
+        tower.type === "slow"
+    ) {
+
+        enemy.slow =
+            .45;
+
+    }
+
+
+    /*
+       FREEZE
+    */
+
+    if (
+        tower.type === "freeze"
+    ) {
+
+        enemy.freeze =
+            900;
+
+    }
+
+
+    /*
+       SPLASH
+    */
+
+    if (
+        tower.type === "splash"
+    ) {
+
+        splashDamage(
+            enemy,
+            damage * .55,
+            60
+        );
+
+    }
+
+
+    /*
+       ROCKET
+    */
+
+    if (
+        tower.type === "rocket"
+    ) {
+
+        splashDamage(
+            enemy,
+            damage * .75,
+            95
+        );
+
+    }
+
+
+    /*
+       TESLA CHAIN
+    */
+
+    if (
+        tower.type === "tesla"
+    ) {
+
+        let hits = 0;
+
+        for (
+            const other of enemies
+        ) {
+
+            if (
+                other === enemy
+            ) {
+                continue;
+            }
+
+            if (
+                hits >= 2
+            ) {
+                break;
+            }
+
+
+            const distance =
+                Math.hypot(
+                    other.x -
+                    enemy.x,
+
+                    other.y -
+                    enemy.y
+                );
+
+
+            if (
+                distance < 80
+            ) {
+
+                other.hp -=
+                    damage * .45;
+
+                hits++;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       DEATH
+    */
+
+    if (
+        enemy.hp <= 0
+    ) {
+
+        killEnemy(
+            enemy
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SPLASH DAMAGE
+===================================================== */
+
+function splashDamage(
+    center,
+    damage,
+    radius
+) {
+
+    for (
+        const enemy of enemies
+    ) {
+
+        if (
+            enemy === center
+        ) {
+            continue;
+        }
+
+
+        const distance =
+            Math.hypot(
+                enemy.x -
+                center.x,
+
+                enemy.y -
+                center.y
+            );
+
+
+        if (
+            distance <= radius
+        ) {
+
+            enemy.hp -= damage;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   KILL
+===================================================== */
+
+function killEnemy(enemy) {
+
+    const index =
+        enemies.indexOf(
+            enemy
+        );
+
+
+    if (
+        index === -1
+    ) {
+        return;
+    }
+
+
+    enemies.splice(
+        index,
+        1
+    );
+
+
+    money +=
+        enemy.reward;
+
+
+    effects.push({
+
+        x: enemy.x,
+        y: enemy.y,
+
+        life: 300
+
+    });
+
+}
+
+
+/* =====================================================
+   EFFECTS
+===================================================== */
+
+function updateEffects(dt) {
+
+    for (
+        let i = effects.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        effects[i].life -= dt;
+
+        if (
+            effects[i].life <= 0
+        ) {
+
+            effects.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   UPGRADE
+===================================================== */
+
+function upgradeSelected() {
+
+    if (!selectedTower) {
+        return;
+    }
+
+
+    const cost =
+        50 *
+        selectedTower.level;
+
+
+    if (
+        money < cost
+    ) {
+        return;
+    }
+
+
+    money -= cost;
+
+    selectedTower.level++;
+
+    selectedTower.damage =
+        Math.round(
+            selectedTower.damage *
+            1.35
+        );
+
+    selectedTower.range += 10;
+
+    selectedTower.fireRate =
+        Math.max(
+            80,
+            selectedTower.fireRate *
+            .9
+        );
+
+}
+
+
+/* =====================================================
+   SELL
+===================================================== */
+
+function sellSelected() {
+
+    if (!selectedTower) {
+        return;
+    }
+
+
+    const index =
+        towers.indexOf(
+            selectedTower
+        );
+
+
+    if (
+        index === -1
+    ) {
+        return;
+    }
+
+
+    money +=
+        Math.floor(
+            25 *
+            selectedTower.level
+        );
+
+
+    towers.splice(
+        index,
+        1
+    );
+
+
+    selectedTower =
+        null;
+
+}
+
+
+/* =====================================================
+   SAVE SYSTEM
+===================================================== */
+
+function saveGame(slot) {
+
+    if (!running) {
+        return;
+    }
+
+
+    const data = {
+
+        money: money,
+        lives: lives,
+        wave: wave,
+
+        towers:
+            towers.map(
+                tower => ({
+                    x: tower.x,
+                    y: tower.y,
+                    type: tower.type,
+                    level: tower.level,
+                    range: tower.range,
+                    damage: tower.damage,
+                    fireRate: tower.fireRate
+                })
+            ),
+
+        waveRunning:
+            waveRunning,
+
+        enemiesToSpawn:
+            enemiesToSpawn,
+
+        savedAt:
+            Date.now()
+
+    };
+
+
+    localStorage.setItem(
+        "towerDefenseSave" + slot,
+        JSON.stringify(data)
+    );
+
+
+    alert(
+        "Game saved to Slot " +
+        slot
+    );
+
+}
+
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+function loadGame(slot) {
+
+    const raw =
+        localStorage.getItem(
+            "towerDefenseSave" +
+            slot
+        );
+
+
+    if (!raw) {
+
+        alert(
+            "Slot " +
+            slot +
+            " is empty."
+        );
+
+        return;
+
+    }
+
+
+    const data =
+        JSON.parse(raw);
+
+
+    money =
+        data.money;
+
+    lives =
+        data.lives;
+
+    wave =
+        data.wave;
+
+
+    towers =
+        data.towers.map(
+            tower => ({
+                ...tower,
+                cooldown: 0
+            })
+        );
+
+
+    enemies = [];
+    bullets = [];
+    effects = [];
+
+    waveRunning =
+        false;
+
+    enemiesToSpawn = 0;
+
+    selectedTower =
+        null;
+
+    running = true;
+
+
+    hideOverlay();
+
+    updateStats();
+
+    lastTime =
+        performance.now();
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+/* =====================================================
+   RETRY
+===================================================== */
+
+function endGame() {
+
+    running = false;
+
+    waveRunning = false;
+
+
+    document
+        .getElementById(
+            "overlayTitle"
+        )
+        .textContent =
+        "RETRY";
+
+
+    document
+        .getElementById(
+            "overlayTitle"
+        )
+        .className =
+        "retry-title";
+
+
+    document
+        .getElementById(
+            "overlayText"
+        )
+        .innerHTML =
+        "Base destroyed.<br><br>" +
+        "Wave: " +
+        wave +
+        "<br>" +
+        "Money: $" +
+        money +
+        "<br><br>" +
+        "Load a save slot if you want " +
+        "to continue an earlier game.";
+
+
+    const button =
+        document.getElementById(
+            "mainButton"
+        );
+
+
+    button.textContent =
+        "RETRY";
+
+
+    button.onclick =
+        startGame;
+
+
+    button.className =
+        "retry-button";
+
+
+    document
+        .getElementById(
+            "homeButton"
+        )
+        .style.display =
+        "inline-block";
+
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+}
+
+
+/* =====================================================
+   OVERLAY
+===================================================== */
+
+function hideOverlay() {
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+}
+
+
+function goHome() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+function updateStats() {
+
+    document
+        .getElementById(
+            "stats"
+        )
+        .textContent =
+        "💰 " +
+        money +
+        " | ❤️ " +
+        lives +
+        " | 🌊 " +
+        wave;
+
+}
+
+
+/* =====================================================
+   DRAW
+===================================================== */
+
+function draw() {
+
+    /*
+       DARK RETRO BACKGROUND
+    */
+
+    ctx.fillStyle =
+        "#101010";
+
+    ctx.fillRect(
+        0,
+        0,
+        WIDTH,
+        HEIGHT
+    );
+
+
+    /*
+       PIXEL GRID
+    */
+
+    ctx.strokeStyle =
+        "#181818";
+
+    ctx.lineWidth = 1;
+
+
+    for (
+        let x = 0;
+        x < WIDTH;
+        x += 20
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x,
+            0
+        );
+
+        ctx.lineTo(
+            x,
+            HEIGHT
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    for (
+        let y = 0;
+        y < HEIGHT;
+        y += 20
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            y
+        );
+
+        ctx.lineTo(
+            WIDTH,
+            y
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    /*
+       PATH
+    */
+
+    ctx.strokeStyle =
+        "#3b3b3b";
+
+    ctx.lineWidth =
+        62;
+
+    ctx.lineCap =
+        "square";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        path[0].x,
+        path[0].y
+    );
+
+
+    for (
+        let i = 1;
+        i < path.length;
+        i++
+    ) {
+
+        ctx.lineTo(
+            path[i].x,
+            path[i].y
+        );
+
+    }
+
+    ctx.stroke();
+
+
+    /*
+       PATH CENTRE
+    */
+
+    ctx.strokeStyle =
+        "#555";
+
+    ctx.lineWidth = 3;
+
+    ctx.setLineDash([
+        12,
+        12
+    ]);
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        path[0].x,
+        path[0].y
+    );
+
+
+    for (
+        let i = 1;
+        i < path.length;
+        i++
+    ) {
+
+        ctx.lineTo(
+            path[i].x,
+            path[i].y
+        );
+
+    }
+
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+
+    /*
+       BASE
+    */
+
+    ctx.fillStyle =
+        "#222";
+
+    ctx.fillRect(
+        735,
+        220,
+        50,
+        80
+    );
+
+    ctx.strokeStyle =
+        "#aaa";
+
+    ctx.lineWidth = 3;
+
+    ctx.strokeRect(
+        735,
+        220,
+        50,
+        80
+    );
+
+
+    ctx.fillStyle =
+        "#fff";
+
+    ctx.font =
+        "12px Courier New";
+
+    ctx.fillText(
+        "BASE",
+        742,
+        212
+    );
+
+
+    /*
+       TOWERS
+    */
+
+    for (
+        const tower of towers
+    ) {
+
+        drawTower(
+            tower
+        );
+
+    }
+
+
+    /*
+       ENEMIES
+    */
+
+    for (
+        const enemy of enemies
+    ) {
+
+        drawEnemy(
+            enemy
+        );
+
+    }
+
+
+    /*
+       BULLETS
+    */
+
+    for (
+        const bullet of bullets
+    ) {
+
+        ctx.fillStyle =
+            "#fff";
+
+        ctx.fillRect(
+            bullet.x - 3,
+            bullet.y - 3,
+            6,
+            6
+        );
+
+    }
+
+
+    /*
+       HIT EFFECTS
+    */
+
+    for (
+        const effect of effects
+    ) {
+
+        const size =
+            35 -
+            effect.life /
+            15;
+
+
+        ctx.strokeStyle =
+            "#aaa";
+
+        ctx.strokeRect(
+            effect.x - size / 2,
+            effect.y - size / 2,
+            size,
+            size
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DRAW TOWER
+===================================================== */
+
+function drawTower(tower) {
+
+    const type =
+        towerTypes[
+            tower.type
+        ];
+
+
+    /*
+       RANGE
+    */
+
+    if (
+        selectedTower === tower
+    ) {
+
+        ctx.strokeStyle =
+            "#666";
+
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            tower.x,
+            tower.y,
+            tower.range,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    /*
+       TOWER BASE
+    */
+
+    ctx.fillStyle =
+        "#151515";
+
+    ctx.fillRect(
+        tower.x - 18,
+        tower.y - 18,
+        36,
+        36
+    );
+
+
+    ctx.strokeStyle =
+        type.color;
+
+    ctx.lineWidth = 3;
+
+    ctx.strokeRect(
+        tower.x - 18,
+        tower.y - 18,
+        36,
+        36
+    );
+
+
+    /*
+       DIFFERENT TOWER SHAPES
+    */
+
+    ctx.fillStyle =
+        type.color;
+
+
+    if (
+        tower.type === "sniper"
+    ) {
+
+        ctx.fillRect(
+            tower.x - 4,
+            tower.y - 17,
+            8,
+            34
+        );
+
+    }
+    else if (
+        tower.type === "rocket"
+    ) {
+
+        ctx.fillRect(
+            tower.x - 13,
+            tower.y - 13,
+            26,
+            26
+        );
+
+        ctx.fillStyle =
+            "#111";
+
+        ctx.fillRect(
+            tower.x - 5,
+            tower.y - 5,
+            10,
+            10
+        );
+
+    }
+    else if (
+        tower.type === "tesla"
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            tower.x,
+            tower.y - 15
+        );
+
+        ctx.lineTo(
+            tower.x + 12,
+            tower.y + 8
+        );
+
+        ctx.lineTo(
+            tower.x - 12,
+            tower.y + 8
+        );
+
+        ctx.closePath();
+
+        ctx.fill();
+
+    }
+    else {
+
+        ctx.fillRect(
+            tower.x - 5,
+            tower.y - 14,
+            10,
+            28
+        );
+
+    }
+
+
+    /*
+       LEVEL
+    */
+
+    ctx.fillStyle =
+        "#fff";
+
+    ctx.font =
+        "9px Courier New";
+
+    ctx.fillText(
+        tower.level,
+        tower.x - 3,
+        tower.y + 3
+    );
+
+}
+
+
+/* =====================================================
+   DRAW ENEMY
+===================================================== */
+
+function drawEnemy(enemy) {
+
+    const size =
+        enemy.boss
+        ? 34
+        : 22;
+
+
+    ctx.fillStyle =
+        enemy.boss
+        ? "#bbb"
+        : "#888";
+
+
+    ctx.fillRect(
+        enemy.x - size / 2,
+        enemy.y - size / 2,
+        size,
+        size
+    );
+
+
+    /*
+       EYES
+    */
+
+    ctx.fillStyle =
+        "#111";
+
+
+    ctx.fillRect(
+        enemy.x - 7,
+        enemy.y - 5,
+        4,
+        4
+    );
+
+
+    ctx.fillRect(
+        enemy.x + 3,
+        enemy.y - 5,
+        4,
+        4
+    );
+
+
+    /*
+       HP BAR
+    */
+
+    const barWidth =
+        enemy.boss
+        ? 42
+        : 30;
+
+
+    const hp =
+        Math.max(
+            0,
+            enemy.hp /
+            enemy.maxHp
+        );
+
+
+    ctx.fillStyle =
+        "#222";
+
+    ctx.fillRect(
+        enemy.x -
+        barWidth / 2,
+        enemy.y -
+        size / 2 -
+        8,
+        barWidth,
+        4
+    );
+
+
+    ctx.fillStyle =
+        "#ddd";
+
+    ctx.fillRect(
+        enemy.x -
+        barWidth / 2,
+        enemy.y -
+        size / 2 -
+        8,
+        barWidth * hp,
+        4
+    );
+
+}
+
+
+/* =====================================================
+   RRR SECRET SHORTCUT
+===================================================== */
+
+let rPresses = 0;
+let rTimer;
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        const key =
+            event.key.toLowerCase();
+
+
+        if (key === "1") {
+            selectTower("basic");
+        }
+
+        if (key === "2") {
+            selectTower("rapid");
+        }
+
+        if (key === "3") {
+            selectTower("heavy");
+        }
+
+        if (key === "4") {
+            selectTower("slow");
+        }
+
+        if (key === "5") {
+            selectTower("splash");
+        }
+
+        if (key === "6") {
+            selectTower("laser");
+        }
+
+        if (key === "7") {
+            selectTower("freeze");
+        }
+
+        if (key === "8") {
+            selectTower("sniper");
+        }
+
+        if (key === "9") {
+            selectTower("tesla");
+        }
+
+        if (key === "0") {
+            selectTower("rocket");
+        }
+
+
+        /*
+           RRR takes you to
+           flashcards WITHOUT
+           resetting the saved game.
+        */
+
+        if (key !== "r") {
+            return;
+        }
+
+
+        rPresses++;
+
+
+        clearTimeout(
+            rTimer
+        );
+
+
+        rTimer =
+            setTimeout(
+                function() {
+
+                    rPresses = 0;
+
+                },
+                700
+            );
+
+
+        if (
+            rPresses === 3
+        ) {
+
+            /*
+               Automatically save
+               current progress to
+               the last-used slot.
+            */
+
+            localStorage.setItem(
+                "towerDefenseReturnSave",
+                JSON.stringify({
+
+                    money: money,
+                    lives: lives,
+                    wave: wave,
+
+                    towers:
+                        towers.map(
+                            tower => ({
+                                x: tower.x,
+                                y: tower.y,
+                                type: tower.type,
+                                level: tower.level,
+                                range: tower.range,
+                                damage: tower.damage,
+                                fireRate: tower.fireRate
+                            })
+                        )
+
+                })
+            );
+
+
+            window.location.href =
+                "flashcards.html";
+
+
+            rPresses = 0;
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   RETURN SAVE
+===================================================== */
+
+function loadReturnSave() {
+
+    const raw =
+        localStorage.getItem(
+            "towerDefenseReturnSave"
+        );
+
+
+    if (!raw) {
+        return false;
+    }
+
+
+    const data =
+        JSON.parse(raw);
+
+
+    money =
+        data.money;
+
+    lives =
+        data.lives;
+
+    wave =
+        data.wave;
+
+
+    towers =
+        data.towers.map(
+            tower => ({
+                ...tower,
+                cooldown: 0
+            })
+        );
+
+
+    enemies = [];
+    bullets = [];
+    effects = [];
+
+    running = true;
+    waveRunning = false;
+
+    hideOverlay();
+
+    updateStats();
+
+    lastTime =
+        performance.now();
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+
+    return true;
+
+}
+
+
+/* =====================================================
+   INITIAL DRAW
+===================================================== */
+
+updateStats();
+draw();
+
+</script>
+
+</body>
+</html>
+```
