@@ -1,5 +1,5 @@
+```html
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -16,30 +16,30 @@
 body {
     margin: 0;
     background: #000;
-    color: #fff;
+    color: white;
     font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
 }
 
 #game {
     display: flex;
-    gap: 25px;
+    gap: 22px;
     align-items: flex-start;
 }
 
 #board {
     width: 300px;
     height: 600px;
-    background: #101010;
+    background: #111;
     border: 3px solid #fff;
-    image-rendering: pixelated;
+    display: block;
 }
 
 #side {
-    width: 190px;
+    width: 180px;
 }
 
 #side h1 {
@@ -47,28 +47,21 @@ body {
     font-size: 28px;
 }
 
-.stat {
+.box {
     background: #111;
     border: 2px solid #fff;
     padding: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
-.stat span {
-    display: block;
+.label {
     color: #aaa;
     font-size: 11px;
     margin-bottom: 7px;
 }
 
-.stat strong {
-    font-size: 20px;
-}
-
-#nextTitle {
-    color: #aaa;
-    font-size: 11px;
-    margin: 22px 0 8px;
+.value {
+    font-size: 22px;
 }
 
 #next {
@@ -79,69 +72,56 @@ body {
 }
 
 button {
-    border: 2px solid #fff;
     background: #111;
-    color: #fff;
+    color: white;
+    border: 2px solid #fff;
     padding: 10px 15px;
     margin-top: 10px;
-    font-weight: bold;
     cursor: pointer;
+    font-weight: bold;
 }
 
 button:hover {
-    background: #fff;
-    color: #000;
+    background: white;
+    color: black;
 }
 
 #overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.82);
+    background: rgba(0,0,0,.85);
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 10;
+    justify-content: center;
 }
 
 #panel {
-    width: min(85vw, 400px);
-    padding: 30px;
-    text-align: center;
     background: #111;
-    border: 3px solid #fff;
+    border: 3px solid white;
+    padding: 35px;
+    width: min(90vw, 400px);
+    text-align: center;
 }
 
 #panel h2 {
-    font-size: 28px;
     margin-top: 0;
+    font-size: 28px;
 }
 
 #panel p {
     color: #aaa;
     line-height: 1.7;
-    font-size: 13px;
-}
-
-#panel button {
-    margin-left: 5px;
-    margin-right: 5px;
 }
 
 .hidden {
     display: none !important;
 }
 
-#mobileControls {
-    display: none;
+#homeButton {
+    margin-left: 8px;
 }
 
 @media (max-width: 650px) {
-
-    body {
-        align-items: flex-start;
-        padding-top: 15px;
-        overflow-y: auto;
-    }
 
     #game {
         flex-direction: column;
@@ -152,158 +132,89 @@ button:hover {
         width: 300px;
     }
 
-    #mobileControls {
-        display: block;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .mobileButton {
-        width: 55px;
-        height: 45px;
-        padding: 0;
-        margin: 3px;
-        font-size: 18px;
-    }
-
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div id="game">
 
-```
-<canvas
-    id="board"
-    width="300"
-    height="600">
-</canvas>
-
-<div id="side">
-
-    <h1>TETRIS</h1>
-
-    <div class="stat">
-        <span>SCORE</span>
-        <strong id="score">0</strong>
-    </div>
-
-    <div class="stat">
-        <span>LINES</span>
-        <strong id="lines">0</strong>
-    </div>
-
-    <div class="stat">
-        <span>LEVEL</span>
-        <strong id="level">1</strong>
-    </div>
-
-    <div id="nextTitle">
-        NEXT PIECE
-    </div>
-
-    <canvas
-        id="next"
-        width="140"
-        height="120">
+    <canvas id="board"
+        width="300"
+        height="600">
     </canvas>
 
-    <br>
+    <div id="side">
 
-    <button onclick="togglePause()">
-        PAUSE
-    </button>
+        <h1>TETRIS</h1>
 
-</div>
-```
+        <div class="box">
+            <div class="label">SCORE</div>
+            <div class="value" id="score">0</div>
+        </div>
 
-</div>
+        <div class="box">
+            <div class="label">LINES</div>
+            <div class="value" id="lines">0</div>
+        </div>
 
-<div id="mobileControls">
+        <div class="box">
+            <div class="label">LEVEL</div>
+            <div class="value" id="level">1</div>
+        </div>
 
-```
-<div>
+        <div class="label">
+            NEXT
+        </div>
 
-    <button
-        class="mobileButton"
-        onclick="rotatePiece()">
-        ↻
-    </button>
+        <canvas id="next"
+            width="140"
+            height="120">
+        </canvas>
 
-</div>
+        <br>
 
-<div>
+        <button onclick="togglePause()">
+            PAUSE
+        </button>
 
-    <button
-        class="mobileButton"
-        onclick="movePiece(-1)">
-        ◀
-    </button>
-
-    <button
-        class="mobileButton"
-        onclick="softDrop()">
-        ▼
-    </button>
-
-    <button
-        class="mobileButton"
-        onclick="movePiece(1)">
-        ▶
-    </button>
+    </div>
 
 </div>
 
-<div>
-
-    <button
-        class="mobileButton"
-        onclick="hardDrop()">
-        ⬇
-    </button>
-
-</div>
-```
-
-</div>
 
 <div id="overlay">
 
-```
-<div id="panel">
+    <div id="panel">
 
-    <h2 id="overlayTitle">
-        TETRIS
-    </h2>
+        <h2 id="overlayTitle">
+            TETRIS
+        </h2>
 
-    <p id="overlayText">
-        ← → Move<br>
-        ↑ Rotate<br>
-        ↓ Soft Drop<br>
-        SPACE Hard Drop
-    </p>
+        <p id="overlayText">
+            Arrow keys to move<br>
+            ↑ to rotate<br>
+            ↓ to drop<br>
+            SPACE to hard drop
+        </p>
 
-    <button
-        id="retryButton"
-        onclick="startGame()">
-        START
-    </button>
+        <button id="mainButton"
+            onclick="startGame()">
+            START
+        </button>
 
-    <button
-        id="homeButton"
-        onclick="goHome()"
-        style="display:none;">
-        HOME
-    </button>
+        <button id="homeButton"
+            onclick="goHome()"
+            style="display:none;">
+            HOME
+        </button>
 
-</div>
-```
+    </div>
 
 </div>
+
 
 <script>
 
@@ -324,6 +235,23 @@ const COLS = 10;
 const ROWS = 20;
 const SIZE = 30;
 
+
+/* CLASSIC TETRIS COLOURS */
+
+const colors = {
+
+    I: "#00f0f0",
+    O: "#f0f000",
+    T: "#a000f0",
+    S: "#00f000",
+    Z: "#f00000",
+    J: "#0000f0",
+    L: "#f0a000"
+
+};
+
+
+/* PIECES */
 
 const pieces = {
 
@@ -465,7 +393,7 @@ let lastTime = 0;
 let dropInterval = 700;
 
 
-/* BOARD */
+/* CREATE BOARD */
 
 function createBoard() {
 
@@ -486,26 +414,22 @@ function createBoard() {
 }
 
 
-/* RANDOM */
+/* RANDOM PIECE */
 
 function randomType() {
 
     return types[
         Math.floor(
-            Math.random() *
-            types.length
+            Math.random() * types.length
         )
     ];
 
 }
 
 
-/* SHAPE */
+/* GET SHAPE */
 
-function getShape(
-    type,
-    rot
-) {
+function getShape(type, rot) {
 
     return pieces[type][
         rot % pieces[type].length
@@ -554,8 +478,6 @@ function spawnPiece() {
 
         endGame();
 
-        return;
-
     }
 
     drawNext();
@@ -565,11 +487,7 @@ function spawnPiece() {
 
 /* COLLISION */
 
-function collision(
-    x,
-    y,
-    rot
-) {
+function collision(x, y, rot) {
 
     const shape =
         getShape(
@@ -593,11 +511,8 @@ function collision(
                 continue;
             }
 
-            const bx =
-                x + col;
-
-            const by =
-                y + row;
+            const bx = x + col;
+            const by = y + row;
 
             if (
                 bx < 0 ||
@@ -663,7 +578,7 @@ function merge() {
 }
 
 
-/* CLEAR */
+/* CLEAR LINES */
 
 function clearLines() {
 
@@ -681,10 +596,7 @@ function clearLines() {
             )
         ) {
 
-            board.splice(
-                y,
-                1
-            );
+            board.splice(y, 1);
 
             board.unshift(
                 new Array(COLS).fill(null)
@@ -709,21 +621,17 @@ function clearLines() {
         ];
 
         score +=
-            points[cleared] *
-            level;
+            points[cleared] * level;
 
         lines += cleared;
 
         level =
-            Math.floor(
-                lines / 10
-            ) + 1;
+            Math.floor(lines / 10) + 1;
 
         dropInterval =
             Math.max(
                 80,
-                700 -
-                (level - 1) * 55
+                700 - (level - 1) * 55
             );
 
         updateStats();
@@ -748,15 +656,13 @@ function lockPiece() {
 
 /* MOVE */
 
-function movePiece(dir) {
+function move(dir) {
 
     if (
         !running ||
         paused ||
         !current
-    ) {
-        return;
-    }
+    ) return;
 
     if (
         !collision(
@@ -775,7 +681,7 @@ function movePiece(dir) {
 }
 
 
-/* SOFT DROP */
+/* DROP */
 
 function softDrop() {
 
@@ -783,9 +689,7 @@ function softDrop() {
         !running ||
         paused ||
         !current
-    ) {
-        return;
-    }
+    ) return;
 
     if (
         !collision(
@@ -796,10 +700,6 @@ function softDrop() {
     ) {
 
         current.y++;
-
-        score++;
-
-        updateStats();
 
     } else {
 
@@ -822,9 +722,7 @@ function hardDrop() {
         !running ||
         paused ||
         !current
-    ) {
-        return;
-    }
+    ) return;
 
     let distance = 0;
 
@@ -842,8 +740,7 @@ function hardDrop() {
 
     }
 
-    score +=
-        distance * 2;
+    score += distance * 2;
 
     updateStats();
 
@@ -862,9 +759,7 @@ function rotatePiece() {
         !running ||
         paused ||
         !current
-    ) {
-        return;
-    }
+    ) return;
 
     const newRotation =
         (
@@ -872,8 +767,7 @@ function rotatePiece() {
         ) %
         pieces[current.type].length;
 
-    const kicks =
-        [0, -1, 1, -2, 2];
+    const kicks = [0, -1, 1, -2, 2];
 
     for (
         const kick of kicks
@@ -927,28 +821,7 @@ function getGhostY() {
 }
 
 
-/* COLORS */
-
-function getColor(type) {
-
-    const colors = {
-
-        I: "#45d9ff",
-        O: "#ffd83d",
-        T: "#b967ff",
-        S: "#54e36b",
-        Z: "#ff5964",
-        J: "#5c7cff",
-        L: "#ff9f43"
-
-    };
-
-    return colors[type];
-
-}
-
-
-/* BLOCK */
+/* DRAW BLOCK */
 
 function drawBlock(
     context,
@@ -959,11 +832,10 @@ function drawBlock(
     alpha = 1
 ) {
 
-    context.globalAlpha =
-        alpha;
+    context.globalAlpha = alpha;
 
     context.fillStyle =
-        getColor(type);
+        colors[type];
 
     context.fillRect(
         x * size,
@@ -972,10 +844,30 @@ function drawBlock(
         size
     );
 
-    context.strokeStyle =
-        "rgba(0,0,0,.5)";
+    /* CLASSIC BLOCK HIGHLIGHT */
 
-    context.lineWidth = 2;
+    context.fillStyle =
+        "rgba(255,255,255,.35)";
+
+    context.fillRect(
+        x * size + 2,
+        y * size + 2,
+        size - 4,
+        4
+    );
+
+    context.fillStyle =
+        "rgba(0,0,0,.25)";
+
+    context.fillRect(
+        x * size + 2,
+        y * size + size - 6,
+        size - 4,
+        4
+    );
+
+    context.strokeStyle =
+        "#000";
 
     context.strokeRect(
         x * size + 1,
@@ -989,12 +881,11 @@ function drawBlock(
 }
 
 
-/* DRAW BOARD */
+/* DRAW */
 
-function drawBoard() {
+function draw() {
 
-    ctx.fillStyle =
-        "#101010";
+    ctx.fillStyle = "#111";
 
     ctx.fillRect(
         0,
@@ -1004,10 +895,9 @@ function drawBoard() {
     );
 
 
-    ctx.strokeStyle =
-        "#1d1d1d";
+    /* GRID */
 
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#181818";
 
     for (
         let x = 0;
@@ -1054,6 +944,8 @@ function drawBoard() {
     }
 
 
+    /* PLACED BLOCKS */
+
     board.forEach(
         (row, y) => {
 
@@ -1078,16 +970,8 @@ function drawBoard() {
         }
     );
 
-}
 
-
-/* CURRENT + GHOST */
-
-function drawCurrent() {
-
-    if (!current) {
-        return;
-    }
+    if (!current) return;
 
     const shape =
         getShape(
@@ -1096,7 +980,7 @@ function drawCurrent() {
         );
 
 
-    /* GHOST */
+    /* FAINT GHOST */
 
     const ghostY =
         getGhostY();
@@ -1127,7 +1011,7 @@ function drawCurrent() {
     );
 
 
-    /* ACTIVE PIECE */
+    /* CURRENT PIECE */
 
     shape.forEach(
         (row, y) => {
@@ -1156,23 +1040,11 @@ function drawCurrent() {
 }
 
 
-/* DRAW */
-
-function draw() {
-
-    drawBoard();
-
-    drawCurrent();
-
-}
-
-
 /* NEXT */
 
 function drawNext() {
 
-    nextCtx.fillStyle =
-        "#111";
+    nextCtx.fillStyle = "#111";
 
     nextCtx.fillRect(
         0,
@@ -1192,8 +1064,7 @@ function drawNext() {
     const offsetX =
         Math.floor(
             (
-                nextCanvas.width /
-                size -
+                nextCanvas.width / size -
                 shape[0].length
             ) / 2
         );
@@ -1201,8 +1072,7 @@ function drawNext() {
     const offsetY =
         Math.floor(
             (
-                nextCanvas.height /
-                size -
+                nextCanvas.height / size -
                 shape.length
             ) / 2
         );
@@ -1238,20 +1108,14 @@ function drawNext() {
 
 function updateStats() {
 
-    document.getElementById(
-        "score"
-    ).textContent =
-        score;
+    document.getElementById("score")
+        .textContent = score;
 
-    document.getElementById(
-        "lines"
-    ).textContent =
-        lines;
+    document.getElementById("lines")
+        .textContent = lines;
 
-    document.getElementById(
-        "level"
-    ).textContent =
-        level;
+    document.getElementById("level")
+        .textContent = level;
 
 }
 
@@ -1263,38 +1127,28 @@ function startGame() {
     createBoard();
 
     score = 0;
-
     lines = 0;
-
     level = 1;
 
     dropInterval = 700;
-
     dropCounter = 0;
 
     paused = false;
-
     running = true;
 
-    nextType =
-        randomType();
+    nextType = randomType();
 
     spawnPiece();
 
     updateStats();
 
-    document.getElementById(
-        "overlay"
-    ).classList.add(
-        "hidden"
-    );
+    document.getElementById("overlay")
+        .classList.add("hidden");
 
     lastTime =
         performance.now();
 
-    requestAnimationFrame(
-        gameLoop
-    );
+    requestAnimationFrame(gameLoop);
 
     draw();
 
@@ -1305,9 +1159,7 @@ function startGame() {
 
 function gameLoop(time) {
 
-    if (!running) {
-        return;
-    }
+    if (!running) return;
 
     const delta =
         time - lastTime;
@@ -1319,8 +1171,7 @@ function gameLoop(time) {
         dropCounter += delta;
 
         if (
-            dropCounter >=
-            dropInterval
+            dropCounter >= dropInterval
         ) {
 
             softDrop();
@@ -1333,9 +1184,7 @@ function gameLoop(time) {
 
     draw();
 
-    requestAnimationFrame(
-        gameLoop
-    );
+    requestAnimationFrame(gameLoop);
 
 }
 
@@ -1344,63 +1193,50 @@ function gameLoop(time) {
 
 function togglePause() {
 
-    if (!running) {
-        return;
-    }
+    if (!running) return;
 
-    paused =
-        !paused;
+    paused = !paused;
 
     if (paused) {
 
         document.getElementById(
             "overlayTitle"
-        ).textContent =
-            "PAUSED";
+        ).textContent = "PAUSED";
 
         document.getElementById(
             "overlayText"
         ).innerHTML =
-            "Press P or continue below.";
+            "Press P or continue.";
 
         document.getElementById(
-            "retryButton"
-        ).textContent =
-            "CONTINUE";
+            "mainButton"
+        ).textContent = "CONTINUE";
 
         document.getElementById(
-            "retryButton"
-        ).onclick =
-            togglePause;
+            "mainButton"
+        ).onclick = togglePause;
 
         document.getElementById(
             "homeButton"
-        ).style.display =
-            "none";
+        ).style.display = "none";
 
         document.getElementById(
             "overlay"
-        ).classList.remove(
-            "hidden"
-        );
+        ).classList.remove("hidden");
 
     } else {
 
         document.getElementById(
             "overlay"
-        ).classList.add(
-            "hidden"
-        );
+        ).classList.add("hidden");
 
         document.getElementById(
-            "retryButton"
-        ).textContent =
-            "START";
+            "mainButton"
+        ).textContent = "START";
 
         document.getElementById(
-            "retryButton"
-        ).onclick =
-            startGame;
+            "mainButton"
+        ).onclick = startGame;
 
     }
 
@@ -1415,8 +1251,7 @@ function endGame() {
 
     document.getElementById(
         "overlayTitle"
-    ).textContent =
-        "RETRY";
+    ).textContent = "RETRY";
 
     document.getElementById(
         "overlayText"
@@ -1428,25 +1263,20 @@ function endGame() {
         lines;
 
     document.getElementById(
-        "retryButton"
-    ).textContent =
-        "RETRY";
+        "mainButton"
+    ).textContent = "RETRY";
 
     document.getElementById(
-        "retryButton"
-    ).onclick =
-        startGame;
+        "mainButton"
+    ).onclick = startGame;
 
     document.getElementById(
         "homeButton"
-    ).style.display =
-        "inline-block";
+    ).style.display = "inline-block";
 
     document.getElementById(
         "overlay"
-    ).classList.remove(
-        "hidden"
-    );
+    ).classList.remove("hidden");
 
 }
 
@@ -1476,7 +1306,7 @@ document.addEventListener(
 
             event.preventDefault();
 
-            movePiece(-1);
+            move(-1);
 
         }
 
@@ -1486,7 +1316,7 @@ document.addEventListener(
 
             event.preventDefault();
 
-            movePiece(1);
+            move(1);
 
         }
 
@@ -1520,9 +1350,7 @@ document.addEventListener(
 
         }
 
-        if (
-            key === "p"
-        ) {
+        if (key === "p") {
 
             togglePause();
 
@@ -1532,10 +1360,9 @@ document.addEventListener(
 );
 
 
-/* RRR */
+/* RRR SECRET SHORTCUT */
 
 let rPresses = 0;
-
 let rTimer;
 
 document.addEventListener(
@@ -1544,9 +1371,7 @@ document.addEventListener(
 
         if (
             event.key.toLowerCase() !== "r"
-        ) {
-            return;
-        }
+        ) return;
 
         rPresses++;
 
@@ -1560,9 +1385,7 @@ document.addEventListener(
                 700
             );
 
-        if (
-            rPresses === 3
-        ) {
+        if (rPresses === 3) {
 
             window.location.href =
                 "flashcards.html";
@@ -1578,12 +1401,11 @@ document.addEventListener(
 /* INITIAL */
 
 createBoard();
-
 updateStats();
-
 draw();
 
 </script>
 
 </body>
 </html>
+```
