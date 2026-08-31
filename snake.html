@@ -17,35 +17,32 @@ body {
     background: #000;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-#game {
     text-align: center;
+    overflow-x: hidden;
 }
 
 #top {
     width: 500px;
     max-width: 94vw;
+    margin: 20px auto 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
 }
 
 #title {
     font-size: 28px;
     font-weight: bold;
     color: #39ff14;
-    text-shadow: 0 0 10px #39ff14;
+    text-shadow:
+        0 0 5px #39ff14,
+        0 0 15px #39ff14,
+        0 0 25px #39ff14;
 }
 
 #score {
+    font-size: 14px;
     color: #aaa;
-    font-size: 15px;
 }
 
 #canvas {
@@ -53,32 +50,34 @@ body {
     height: 500px;
     max-width: 94vw;
     max-height: 94vw;
+    border: 2px solid #222;
     background: #000;
-    border: 2px solid #333;
+    box-shadow:
+        0 0 15px rgba(0,255,80,.15);
     image-rendering: pixelated;
 }
 
 #controls {
-    margin-top: 12px;
+    margin: 12px;
 }
 
 button {
     background: #111;
     color: white;
-    border: 2px solid #555;
+    border: 2px solid #444;
     padding: 10px 18px;
     font-weight: bold;
     cursor: pointer;
 }
 
 button:hover {
-    background: #222;
-    border-color: white;
+    border-color: #39ff14;
+    box-shadow: 0 0 10px rgba(57,255,20,.4);
 }
 
 #touch {
     display: none;
-    margin-top: 12px;
+    margin: 10px auto;
 }
 
 .touch-row {
@@ -88,57 +87,74 @@ button:hover {
 
 .touch-button {
     width: 55px;
-    height: 45px;
+    height: 55px;
     margin: 3px;
-    padding: 0;
     font-size: 20px;
 }
 
 #overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.88);
+    background: rgba(0,0,0,.94);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 5;
+    z-index: 10;
 }
 
 #panel {
-    background: #080808;
-    border: 2px solid #39ff14;
-    box-shadow: 0 0 25px rgba(57,255,20,.25);
+    width: min(90vw, 400px);
     padding: 35px;
-    width: min(90vw, 420px);
-    text-align: center;
+    background: #000;
+    border: 2px solid #333;
 }
 
-#panel h1 {
+#overlayTitle {
+    font-size: 42px;
+    margin: 0 0 20px;
     color: #39ff14;
-    text-shadow: 0 0 10px #39ff14;
+    text-shadow:
+        0 0 5px #39ff14,
+        0 0 15px #39ff14,
+        0 0 30px #39ff14;
 }
 
-#panel p {
+#overlayText {
     color: #aaa;
-    line-height: 1.6;
-    font-size: 14px;
+    line-height: 1.7;
+    font-size: 13px;
 }
 
 .hidden {
     display: none !important;
 }
 
-#homeButton {
-    margin-left: 8px;
+.retry-title {
+    color: #ff2222 !important;
+    text-shadow:
+        0 0 5px #ff2222,
+        0 0 15px #ff2222,
+        0 0 30px #ff0000,
+        0 0 50px #ff0000 !important;
 }
 
-@media (max-width: 650px) {
+.retry-button {
+    color: #ff2222;
+    border-color: #ff2222;
+    background: #180000;
+    box-shadow:
+        0 0 10px #ff0000,
+        0 0 25px rgba(255,0,0,.35);
+}
+
+.retry-button:hover {
+    background: #ff2222;
+    color: #000;
+}
+
+@media (max-width: 700px) {
     #touch {
         display: block;
-    }
-
-    #top {
-        width: 94vw;
     }
 }
 </style>
@@ -146,46 +162,62 @@ button:hover {
 
 <body>
 
-<div id="game">
+<div id="top">
 
-    <div id="top">
-        <div id="title">SNAKE</div>
-        <div id="score">Score: 0 | Best: 0</div>
+    <div id="title">
+        SNAKE
     </div>
 
-    <canvas id="canvas"
-            width="500"
-            height="500"></canvas>
-
-    <div id="controls">
-        <button onclick="togglePause()">PAUSE</button>
+    <div id="score">
+        Score: 0 | Best: 0
     </div>
 
-    <div id="touch">
+</div>
 
-        <div class="touch-row">
-            <button class="touch-button"
-                    onclick="changeDirection('up')">
-                ▲
-            </button>
-        </div>
+<canvas id="canvas"
+        width="500"
+        height="500">
+</canvas>
 
-        <div class="touch-row">
-            <button class="touch-button"
-                    onclick="changeDirection('left')">
-                ◀
-            </button>
+<div id="controls">
 
-            <button class="touch-button"
-                    onclick="changeDirection('down')">
-                ▼
-            </button>
+    <button onclick="togglePause()">
+        PAUSE
+    </button>
 
-            <button class="touch-button"
-                    onclick="changeDirection('right')">
-                ▶
-            </button>
-        </div>
+</div>
+
+<div id="touch">
+
+    <div class="touch-row">
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('up')">
+            ▲
+        </button>
+
+    </div>
+
+    <div class="touch-row">
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('left')">
+            ◀
+        </button>
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('down')">
+            ▼
+        </button>
+
+        <button
+            class="touch-button"
+            onclick="changeDirection('right')">
+            ▶
+        </button>
 
     </div>
 
@@ -196,18 +228,21 @@ button:hover {
 
     <div id="panel">
 
-        <h1 id="overlayTitle">SNAKE</h1>
+        <h1 id="overlayTitle">
+            SNAKE
+        </h1>
 
         <p id="overlayText">
             Use the arrow keys or WASD<br>
-            to move the snake.<br><br>
-            Eat the food and use the portals!
+            to move the snake.
         </p>
 
         <button id="mainButton"
                 onclick="startGame()">
             START
         </button>
+
+        <br>
 
         <button id="homeButton"
                 onclick="goHome()"
@@ -222,22 +257,37 @@ button:hover {
 
 <script>
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+/* BOARD */
 
 const GRID = 25;
-const SIZE = canvas.width / GRID;
+const CELL = 20;
 
-let snake = [];
-let direction = "right";
-let nextDirection = "right";
+
+/* GAME */
+
+let snake;
+let direction;
+let nextDirection;
 
 let foods = [];
+
 let obstacles = [];
+
 let portals = [];
 
 let score = 0;
-let best = Number(localStorage.getItem("snakeBest")) || 0;
+
+let best =
+    Number(
+        localStorage.getItem("snakeBest")
+    ) || 0;
 
 let running = false;
 let paused = false;
@@ -245,30 +295,59 @@ let paused = false;
 let gameTimer;
 
 
-/* ---------------- RANDOM POSITION ---------------- */
+/* PORTAL SETTINGS */
+
+const PORTAL_COUNT = 12;
+
+
+/* OBSTACLE SETTINGS */
+
+const OBSTACLE_COUNT = 7;
+
+
+/* =========================
+   RANDOM CELL
+========================= */
 
 function randomCell() {
 
     return {
-        x: Math.floor(Math.random() * GRID),
-        y: Math.floor(Math.random() * GRID)
+        x:
+            Math.floor(
+                Math.random() * GRID
+            ),
+
+        y:
+            Math.floor(
+                Math.random() * GRID
+            )
     };
 
 }
 
 
-function samePosition(a, b) {
+/* =========================
+   POSITION CHECK
+========================= */
 
-    return a.x === b.x && a.y === b.y;
+function samePosition(a,b) {
+
+    return (
+        a.x === b.x &&
+        a.y === b.y
+    );
 
 }
 
 
-function occupied(pos) {
+function occupied(x,y) {
 
     if (
+        snake &&
         snake.some(
-            part => samePosition(part, pos)
+            part =>
+                part.x === x &&
+                part.y === y
         )
     ) {
         return true;
@@ -276,7 +355,9 @@ function occupied(pos) {
 
     if (
         foods.some(
-            food => samePosition(food, pos)
+            food =>
+                food.x === x &&
+                food.y === y
         )
     ) {
         return true;
@@ -284,195 +365,422 @@ function occupied(pos) {
 
     if (
         obstacles.some(
-            obstacle => samePosition(obstacle, pos)
-        )
-    ) {
-        return true;
-    }
-
-    if (
-        portals.some(
-            portal => samePosition(portal, pos)
+            obstacle =>
+                obstacle.x === x &&
+                obstacle.y === y
         )
     ) {
         return true;
     }
 
     return false;
+
 }
 
 
-function randomFreePosition() {
+/* =========================
+   MAKE FOOD
+========================= */
 
-    let pos;
+function createFoods() {
 
-    do {
-        pos = randomCell();
+    foods = [];
+
+    while (
+        foods.length < 3
+    ) {
+
+        const p =
+            randomCell();
+
+        if (
+            !occupied(
+                p.x,
+                p.y
+            )
+        ) {
+
+            foods.push(p);
+
+        }
+
     }
-    while (occupied(pos));
 
-    return pos;
 }
 
 
-/* ---------------- START GAME ---------------- */
+/* =========================
+   MAKE OBSTACLES
+========================= */
+
+function createObstacles() {
+
+    obstacles = [];
+
+    while (
+        obstacles.length <
+        OBSTACLE_COUNT
+    ) {
+
+        const p =
+            randomCell();
+
+        if (
+            !occupied(
+                p.x,
+                p.y
+            )
+        ) {
+
+            obstacles.push(p);
+
+        }
+
+    }
+
+}
+
+
+/* =========================
+   MAKE PORTALS
+========================= */
+
+function createPortals() {
+
+    portals = [];
+
+    /*
+       12 portals = 6 pairs
+    */
+
+    while (
+        portals.length <
+        PORTAL_COUNT
+    ) {
+
+        const p =
+            randomCell();
+
+        if (
+            occupied(
+                p.x,
+                p.y
+            )
+        ) {
+            continue;
+        }
+
+        let tooClose = false;
+
+        for (
+            const portal of portals
+        ) {
+
+            if (
+                Math.abs(
+                    portal.x - p.x
+                ) <= 1 &&
+                Math.abs(
+                    portal.y - p.y
+                ) <= 1
+            ) {
+
+                tooClose = true;
+                break;
+
+            }
+
+        }
+
+        if (!tooClose) {
+
+            portals.push({
+
+                x: p.x,
+                y: p.y,
+
+                dx:
+                    Math.random() < .5
+                    ? 1
+                    : -1,
+
+                dy:
+                    Math.random() < .5
+                    ? 1
+                    : -1
+
+            });
+
+        }
+
+    }
+
+}
+
+
+/* =========================
+   MOVE PORTALS
+========================= */
+
+function movePortals() {
+
+    for (
+        const portal of portals
+    ) {
+
+        /*
+           Portals constantly move.
+           They bounce off the edges.
+        */
+
+        let nx =
+            portal.x + portal.dx;
+
+        let ny =
+            portal.y + portal.dy;
+
+
+        if (
+            nx < 0 ||
+            nx >= GRID
+        ) {
+
+            portal.dx *= -1;
+
+            nx =
+                portal.x +
+                portal.dx;
+
+        }
+
+
+        if (
+            ny < 0 ||
+            ny >= GRID
+        ) {
+
+            portal.dy *= -1;
+
+            ny =
+                portal.y +
+                portal.dy;
+
+        }
+
+
+        /*
+           Don't let portals sit directly
+           on obstacles.
+        */
+
+        if (
+            obstacles.some(
+                obstacle =>
+                    obstacle.x === nx &&
+                    obstacle.y === ny
+            )
+        ) {
+
+            portal.dx *= -1;
+            portal.dy *= -1;
+
+        }
+        else {
+
+            portal.x = nx;
+            portal.y = ny;
+
+        }
+
+    }
+
+}
+
+
+/* =========================
+   RANDOMIZE OBSTACLES
+========================= */
+
+function randomizeObstacles() {
+
+    obstacles = [];
+
+    let attempts = 0;
+
+    while (
+        obstacles.length <
+        OBSTACLE_COUNT &&
+        attempts < 1000
+    ) {
+
+        attempts++;
+
+        const p =
+            randomCell();
+
+        if (
+            occupied(
+                p.x,
+                p.y
+            )
+        ) {
+            continue;
+        }
+
+        if (
+            portals.some(
+                portal =>
+                    portal.x === p.x &&
+                    portal.y === p.y
+            )
+        ) {
+            continue;
+        }
+
+        obstacles.push(p);
+
+    }
+
+}
+
+
+/* =========================
+   START
+========================= */
 
 function startGame() {
 
-    clearInterval(gameTimer);
-
     snake = [
-        { x: 12, y: 12 },
-        { x: 11, y: 12 },
-        { x: 10, y: 12 }
-    ];
 
-    direction = "right";
-    nextDirection = "right";
+        {
+            x: 12,
+            y: 12
+        },
 
-    score = 0;
+        {
+            x: 11,
+            y: 12
+        },
 
-    foods = [];
-    obstacles = [];
-    portals = [];
-
-
-    /* 3 FOODS */
-
-    for (let i = 0; i < 3; i++) {
-
-        foods.push(
-            randomFreePosition()
-        );
-
-    }
-
-
-    /* ONLY 3 OBSTACLES */
-
-    for (let i = 0; i < 3; i++) {
-
-        let obstacle =
-            randomFreePosition();
-
-        obstacle.dx =
-            Math.floor(Math.random() * 3) - 1;
-
-        obstacle.dy =
-            Math.floor(Math.random() * 3) - 1;
-
-        if (
-            obstacle.dx === 0 &&
-            obstacle.dy === 0
-        ) {
-            obstacle.dx = 1;
+        {
+            x: 10,
+            y: 12
         }
 
-        obstacles.push(obstacle);
-
-    }
+    ];
 
 
-    /* 8 PORTALS */
-
-    for (let i = 0; i < 8; i++) {
-
-        portals.push(
-            randomFreePosition()
-        );
-
-    }
-
-
-    running = true;
-    paused = false;
-
-    document.getElementById("overlay")
-        .classList.add("hidden");
-
-    updateScore();
-
-    draw();
-
-    gameTimer =
-        setInterval(gameStep, 115);
-
-}
-
-
-/* ---------------- DIRECTION ---------------- */
-
-function changeDirection(newDirection) {
-
-    if (!running || paused) {
-        return;
-    }
-
-    if (
-        newDirection === "up" &&
-        direction !== "down"
-    ) {
-        nextDirection = "up";
-    }
-
-    if (
-        newDirection === "down" &&
-        direction !== "up"
-    ) {
-        nextDirection = "down";
-    }
-
-    if (
-        newDirection === "left" &&
-        direction !== "right"
-    ) {
-        nextDirection = "left";
-    }
-
-    if (
-        newDirection === "right" &&
-        direction !== "left"
-    ) {
-        nextDirection = "right";
-    }
-
-}
-
-
-/* ---------------- GAME STEP ---------------- */
-
-function gameStep() {
-
-    if (!running || paused) {
-        return;
-    }
-
-    direction = nextDirection;
-
-    let head = {
-        x: snake[0].x,
-        y: snake[0].y
+    direction = {
+        x: 1,
+        y: 0
     };
 
 
-    if (direction === "up") {
-        head.y--;
+    nextDirection = {
+        x: 1,
+        y: 0
+    };
+
+
+    score = 0;
+
+    paused = false;
+    running = true;
+
+
+    obstacles = [];
+
+    portals = [];
+
+    foods = [];
+
+
+    /*
+       Create obstacles first so
+       other objects avoid them.
+    */
+
+    createObstacles();
+
+    createPortals();
+
+    createFoods();
+
+
+    updateScore();
+
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "homeButton"
+        )
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById(
+            "mainButton"
+        )
+        .className = "";
+
+
+    clearInterval(gameTimer);
+
+
+    gameTimer =
+        setInterval(
+            gameStep,
+            115
+        );
+
+
+    draw();
+
+}
+
+
+/* =========================
+   GAME STEP
+========================= */
+
+function gameStep() {
+
+    if (
+        !running ||
+        paused
+    ) {
+        return;
     }
 
-    if (direction === "down") {
-        head.y++;
-    }
 
-    if (direction === "left") {
-        head.x--;
-    }
-
-    if (direction === "right") {
-        head.x++;
-    }
+    direction =
+        nextDirection;
 
 
-    /* EDGE TELEPORT / WRAP */
+    const head = {
+        x:
+            snake[0].x +
+            direction.x,
+
+        y:
+            snake[0].y +
+            direction.y
+    };
+
+
+    /*
+       WALL WRAP
+    */
 
     if (head.x < 0) {
         head.x = GRID - 1;
@@ -491,12 +799,15 @@ function gameStep() {
     }
 
 
-    /* SNAKE COLLISION */
+    /*
+       SELF COLLISION
+    */
 
     if (
         snake.some(
-            segment =>
-                samePosition(segment, head)
+            part =>
+                part.x === head.x &&
+                part.y === head.y
         )
     ) {
 
@@ -506,12 +817,15 @@ function gameStep() {
     }
 
 
-    /* OBSTACLE COLLISION */
+    /*
+       OBSTACLE COLLISION
+    */
 
     if (
         obstacles.some(
             obstacle =>
-                samePosition(obstacle, head)
+                obstacle.x === head.x &&
+                obstacle.y === head.y
         )
     ) {
 
@@ -524,24 +838,76 @@ function gameStep() {
     snake.unshift(head);
 
 
-    /* FOOD */
+    /*
+       FOOD
+    */
 
-    const foodIndex =
-        foods.findIndex(
-            food =>
-                samePosition(food, head)
+    let ateFood = false;
+
+    for (
+        let i = foods.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        if (
+            samePosition(
+                head,
+                foods[i]
+            )
+        ) {
+
+            foods.splice(
+                i,
+                1
+            );
+
+            score++;
+
+            ateFood = true;
+
+            break;
+
+        }
+
+    }
+
+
+    if (ateFood) {
+
+        /*
+           NEW FOOD
+        */
+
+        let newFood;
+
+        do {
+
+            newFood =
+                randomCell();
+
+        }
+        while (
+            occupied(
+                newFood.x,
+                newFood.y
+            )
         );
 
-
-    if (foodIndex !== -1) {
-
-        foods.splice(foodIndex, 1);
-
-        score++;
 
         foods.push(
-            randomFreePosition()
+            newFood
         );
+
+
+        /*
+           THIS IS THE IMPORTANT PART:
+           every time food is eaten,
+           all 7 obstacles randomize.
+        */
+
+        randomizeObstacles();
+
 
         updateScore();
 
@@ -553,352 +919,261 @@ function gameStep() {
     }
 
 
-    /* PORTAL TELEPORT */
+    /*
+       PORTAL TELEPORT
+    */
 
-    const portalIndex =
-        portals.findIndex(
-            portal =>
-                samePosition(portal, head)
-        );
+    checkPortals();
 
 
-    if (portalIndex !== -1) {
+    /*
+       PORTALS KEEP MOVING
+    */
 
-        /*
-         * Choose another portal.
-         */
+    movePortals();
 
-        let destination;
-
-        do {
-
-            destination =
-                Math.floor(
-                    Math.random() *
-                    portals.length
-                );
-
-        }
-        while (
-            destination === portalIndex
-        );
-
-
-        head.x =
-            portals[destination].x;
-
-        head.y =
-            portals[destination].y;
-
-
-        /*
-         * Portals move after teleporting.
-         */
-
-        movePortals();
-
-    }
-
-
-    moveObstacles();
 
     draw();
 
 }
 
 
-/* ---------------- MOVING PORTALS ---------------- */
+/* =========================
+   PORTAL TELEPORT
+========================= */
 
-function movePortals() {
+function checkPortals() {
+
+    const head =
+        snake[0];
+
 
     for (
         let i = 0;
         i < portals.length;
-        i++
+        i += 2
     ) {
 
-        /*
-         * Some portals move every step.
-         * Others stay briefly so the arena
-         * does not become impossible.
-         */
+        const a =
+            portals[i];
 
-        if (Math.random() < 0.30) {
-
-            let newPosition;
-
-            do {
-
-                newPosition =
-                    randomCell();
-
-            }
-            while (
-                occupied(newPosition)
-            );
-
-            portals[i] =
-                newPosition;
-
-        }
-
-    }
-
-}
-
-
-/* ---------------- MOVING OBSTACLES ---------------- */
-
-function moveObstacles() {
-
-    for (
-        let obstacle of obstacles
-    ) {
-
-        if (Math.random() < 0.25) {
-
-            obstacle.dx =
-                Math.floor(
-                    Math.random() * 3
-                ) - 1;
-
-            obstacle.dy =
-                Math.floor(
-                    Math.random() * 3
-                ) - 1;
-
-            if (
-                obstacle.dx === 0 &&
-                obstacle.dy === 0
-            ) {
-                obstacle.dx = 1;
-            }
-
-        }
-
-
-        let newX =
-            obstacle.x +
-            obstacle.dx;
-
-        let newY =
-            obstacle.y +
-            obstacle.dy;
+        const b =
+            portals[i + 1];
 
 
         if (
-            newX < 0 ||
-            newX >= GRID
+            samePosition(
+                head,
+                a
+            )
         ) {
 
-            obstacle.dx *= -1;
+            snake[0] = {
 
-            newX =
-                obstacle.x +
-                obstacle.dx;
+                x: b.x,
+                y: b.y
+
+            };
+
+            return;
 
         }
 
 
         if (
-            newY < 0 ||
-            newY >= GRID
+            samePosition(
+                head,
+                b
+            )
         ) {
 
-            obstacle.dy *= -1;
+            snake[0] = {
 
-            newY =
-                obstacle.y +
-                obstacle.dy;
+                x: a.x,
+                y: a.y
+
+            };
+
+            return;
 
         }
-
-
-        obstacle.x = newX;
-        obstacle.y = newY;
 
     }
 
 }
 
 
-/* ---------------- DRAW ---------------- */
+/* =========================
+   DIRECTION
+========================= */
 
-function draw() {
+function changeDirection(dir) {
 
-    ctx.fillStyle = "#000";
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /* GRID */
-
-    ctx.strokeStyle = "#151515";
-    ctx.lineWidth = 1;
+    if (
+        !running ||
+        paused
+    ) {
+        return;
+    }
 
 
-    for (
-        let i = 0;
-        i <= GRID;
-        i++
+    if (
+        dir === "up" &&
+        direction.y !== 1
     ) {
 
-        ctx.beginPath();
-
-        ctx.moveTo(
-            i * SIZE,
-            0
-        );
-
-        ctx.lineTo(
-            i * SIZE,
-            canvas.height
-        );
-
-        ctx.stroke();
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            0,
-            i * SIZE
-        );
-
-        ctx.lineTo(
-            canvas.width,
-            i * SIZE
-        );
-
-        ctx.stroke();
+        nextDirection = {
+            x: 0,
+            y: -1
+        };
 
     }
 
 
-    /* 8 BLUE PORTALS */
-
-    for (
-        let portal of portals
+    if (
+        dir === "down" &&
+        direction.y !== -1
     ) {
 
-        /* BLUE OUTSIDE */
-
-        ctx.fillStyle = "#147cff";
-
-        ctx.shadowColor = "#147cff";
-        ctx.shadowBlur = 12;
-
-        ctx.fillRect(
-            portal.x * SIZE + 2,
-            portal.y * SIZE + 2,
-            SIZE - 4,
-            SIZE - 4
-        );
-
-        ctx.shadowBlur = 0;
-
-
-        /* BLACK CENTRE */
-
-        ctx.fillStyle = "#000";
-
-        ctx.fillRect(
-            portal.x * SIZE + 7,
-            portal.y * SIZE + 7,
-            SIZE - 14,
-            SIZE - 14
-        );
+        nextDirection = {
+            x: 0,
+            y: 1
+        };
 
     }
 
 
-    /* GREY OBSTACLES */
-
-    for (
-        let obstacle of obstacles
+    if (
+        dir === "left" &&
+        direction.x !== 1
     ) {
 
-        ctx.fillStyle = "#777";
-
-        ctx.fillRect(
-            obstacle.x * SIZE + 2,
-            obstacle.y * SIZE + 2,
-            SIZE - 4,
-            SIZE - 4
-        );
+        nextDirection = {
+            x: -1,
+            y: 0
+        };
 
     }
 
 
-    /* FOOD */
-
-    for (
-        let food of foods
+    if (
+        dir === "right" &&
+        direction.x !== -1
     ) {
 
-        ctx.fillStyle = "#ff3333";
-
-        ctx.shadowColor = "#ff3333";
-        ctx.shadowBlur = 12;
-
-        ctx.fillRect(
-            food.x * SIZE + 6,
-            food.y * SIZE + 6,
-            SIZE - 12,
-            SIZE - 12
-        );
-
-        ctx.shadowBlur = 0;
+        nextDirection = {
+            x: 1,
+            y: 0
+        };
 
     }
 
-
-    /* SNAKE */
-
-    snake.forEach(
-        (segment, index) => {
-
-            if (index === 0) {
-
-                /* DARKER GREEN HEAD */
-
-                ctx.fillStyle =
-                    "#159b25";
-
-            }
-            else {
-
-                /* GREEN BODY */
-
-                ctx.fillStyle =
-                    "#39ff14";
-
-            }
+}
 
 
-            ctx.fillRect(
-                segment.x * SIZE + 2,
-                segment.y * SIZE + 2,
-                SIZE - 4,
-                SIZE - 4
+/* =========================
+   PAUSE
+========================= */
+
+function togglePause() {
+
+    if (!running) {
+        return;
+    }
+
+
+    paused =
+        !paused;
+
+
+    if (paused) {
+
+        document
+            .getElementById(
+                "overlayTitle"
+            )
+            .textContent =
+            "PAUSED";
+
+
+        document
+            .getElementById(
+                "overlayTitle"
+            )
+            .className = "";
+
+
+        document
+            .getElementById(
+                "overlayText"
+            )
+            .innerHTML =
+            "Game paused.<br><br>" +
+            "Press CONTINUE to resume.";
+
+
+        const button =
+            document.getElementById(
+                "mainButton"
             );
 
-        }
-    );
+
+        button.textContent =
+            "CONTINUE";
+
+
+        button.onclick =
+            togglePause;
+
+
+        document
+            .getElementById(
+                "homeButton"
+            )
+            .style.display =
+            "none";
+
+
+        document
+            .getElementById(
+                "overlay"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+    }
+    else {
+
+        document
+            .getElementById(
+                "overlay"
+            )
+            .classList.add(
+                "hidden"
+            );
+
+    }
 
 }
 
 
-/* ---------------- SCORE ---------------- */
+/* =========================
+   GAME OVER / RETRY
+========================= */
 
-function updateScore() {
+function endGame() {
 
-    if (score > best) {
+    running = false;
+
+    clearInterval(
+        gameTimer
+    );
+
+
+    if (
+        score > best
+    ) {
 
         best = score;
 
@@ -909,7 +1184,82 @@ function updateScore() {
 
     }
 
-    document.getElementById("score")
+
+    document
+        .getElementById(
+            "overlayTitle"
+        )
+        .textContent =
+        "RETRY";
+
+
+    document
+        .getElementById(
+            "overlayTitle"
+        )
+        .className =
+        "retry-title";
+
+
+    document
+        .getElementById(
+            "overlayText"
+        )
+        .innerHTML =
+        "Score: " +
+        score +
+        "<br><br>" +
+        "Best: " +
+        best;
+
+
+    const button =
+        document.getElementById(
+            "mainButton"
+        );
+
+
+    button.textContent =
+        "RETRY";
+
+
+    button.onclick =
+        startGame;
+
+
+    button.className =
+        "retry-button";
+
+
+    document
+        .getElementById(
+            "homeButton"
+        )
+        .style.display =
+        "inline-block";
+
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+function updateScore() {
+
+    document
+        .getElementById(
+            "score"
+        )
         .textContent =
         "Score: " +
         score +
@@ -919,126 +1269,320 @@ function updateScore() {
 }
 
 
-/* ---------------- PAUSE ---------------- */
+/* =========================
+   DRAW
+========================= */
 
-function togglePause() {
+function draw() {
 
-    if (!running) {
-        return;
+    /*
+       BLACK BACKGROUND
+    */
+
+    ctx.fillStyle =
+        "#000";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+       SQUARE GRID
+    */
+
+    ctx.strokeStyle =
+        "#111";
+
+    ctx.lineWidth = 1;
+
+
+    for (
+        let x = 0;
+        x <= GRID;
+        x++
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x * CELL,
+            0
+        );
+
+        ctx.lineTo(
+            x * CELL,
+            canvas.height
+        );
+
+        ctx.stroke();
+
     }
 
-    paused = !paused;
 
+    for (
+        let y = 0;
+        y <= GRID;
+        y++
+    ) {
 
-    if (paused) {
+        ctx.beginPath();
 
-        document.getElementById(
-            "overlayTitle"
-        ).textContent = "PAUSED";
+        ctx.moveTo(
+            0,
+            y * CELL
+        );
 
+        ctx.lineTo(
+            canvas.width,
+            y * CELL
+        );
 
-        document.getElementById(
-            "overlayText"
-        ).innerHTML =
-            "Game paused.<br><br>" +
-            "Press CONTINUE to resume.";
-
-
-        document.getElementById(
-            "mainButton"
-        ).textContent =
-            "CONTINUE";
-
-
-        document.getElementById(
-            "mainButton"
-        ).onclick =
-            togglePause;
-
-
-        document.getElementById(
-            "homeButton"
-        ).style.display =
-            "none";
-
-
-        document.getElementById(
-            "overlay"
-        ).classList.remove("hidden");
+        ctx.stroke();
 
     }
-    else {
 
-        document.getElementById(
-            "overlay"
-        ).classList.add("hidden");
 
-        document.getElementById(
-            "mainButton"
-        ).textContent =
-            "START";
+    /*
+       OBSTACLES
+       GREY SQUARES
+    */
 
-        document.getElementById(
-            "mainButton"
-        ).onclick =
-            startGame;
+    for (
+        const obstacle of obstacles
+    ) {
+
+        ctx.fillStyle =
+            "#555";
+
+        ctx.fillRect(
+            obstacle.x * CELL + 2,
+            obstacle.y * CELL + 2,
+            CELL - 4,
+            CELL - 4
+        );
+
+
+        ctx.strokeStyle =
+            "#777";
+
+        ctx.strokeRect(
+            obstacle.x * CELL + 2,
+            obstacle.y * CELL + 2,
+            CELL - 4,
+            CELL - 4
+        );
+
+    }
+
+
+    /*
+       PORTALS
+       BLUE OUTER
+       BLACK INNER
+    */
+
+    for (
+        const portal of portals
+    ) {
+
+        const cx =
+            portal.x * CELL +
+            CELL / 2;
+
+        const cy =
+            portal.y * CELL +
+            CELL / 2;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            cx,
+            cy,
+            8,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+            "#006eff";
+
+        ctx.shadowColor =
+            "#006eff";
+
+        ctx.shadowBlur =
+            12;
+
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            cx,
+            cy,
+            4,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            "#000";
+
+        ctx.fill();
+
+    }
+
+
+    /*
+       FOOD
+       3 RED PIXEL FRUITS
+    */
+
+    for (
+        const food of foods
+    ) {
+
+        ctx.fillStyle =
+            "#ff3333";
+
+        ctx.shadowColor =
+            "#ff3333";
+
+        ctx.shadowBlur =
+            8;
+
+        ctx.fillRect(
+            food.x * CELL + 5,
+            food.y * CELL + 5,
+            10,
+            10
+        );
+
+        ctx.shadowBlur = 0;
+
+    }
+
+
+    /*
+       SNAKE
+    */
+
+    snake.forEach(
+        (part,index) => {
+
+            ctx.fillStyle =
+                index === 0
+                ? "#159400"
+                : "#39ff14";
+
+
+            ctx.shadowColor =
+                "#39ff14";
+
+            ctx.shadowBlur =
+                index === 0
+                ? 8
+                : 5;
+
+
+            ctx.fillRect(
+                part.x * CELL + 2,
+                part.y * CELL + 2,
+                CELL - 4,
+                CELL - 4
+            );
+
+
+            ctx.shadowBlur = 0;
+
+        }
+    );
+
+
+    /*
+       HEAD EYES
+    */
+
+    if (
+        snake &&
+        snake.length
+    ) {
+
+        const head =
+            snake[0];
+
+
+        ctx.fillStyle =
+            "#000";
+
+
+        if (
+            direction.x !== 0
+        ) {
+
+            const eyeX =
+                direction.x === 1
+                ? head.x * CELL + 14
+                : head.x * CELL + 4;
+
+
+            ctx.fillRect(
+                eyeX,
+                head.y * CELL + 5,
+                3,
+                3
+            );
+
+
+            ctx.fillRect(
+                eyeX,
+                head.y * CELL + 12,
+                3,
+                3
+            );
+
+        }
+        else {
+
+            const eyeY =
+                direction.y === 1
+                ? head.y * CELL + 14
+                : head.y * CELL + 4;
+
+
+            ctx.fillRect(
+                head.x * CELL + 5,
+                eyeY,
+                3,
+                3
+            );
+
+
+            ctx.fillRect(
+                head.x * CELL + 12,
+                eyeY,
+                3,
+                3
+            );
+
+        }
 
     }
 
 }
 
 
-/* ---------------- RETRY ---------------- */
-
-function endGame() {
-
-    running = false;
-
-    clearInterval(gameTimer);
-
-
-    document.getElementById(
-        "overlayTitle"
-    ).textContent =
-        "RETRY";
-
-
-    document.getElementById(
-        "overlayText"
-    ).innerHTML =
-        "Score: " +
-        score +
-        "<br><br>" +
-        "Best: " +
-        best;
-
-
-    document.getElementById(
-        "mainButton"
-    ).textContent =
-        "RETRY";
-
-
-    document.getElementById(
-        "mainButton"
-    ).onclick =
-        startGame;
-
-
-    document.getElementById(
-        "homeButton"
-    ).style.display =
-        "inline-block";
-
-
-    document.getElementById(
-        "overlay"
-    ).classList.remove("hidden");
-
-}
-
-
-/* ---------------- HOME ---------------- */
+/* =========================
+   HOME
+========================= */
 
 function goHome() {
 
@@ -1048,7 +1592,9 @@ function goHome() {
 }
 
 
-/* ---------------- KEYBOARD ---------------- */
+/* =========================
+   KEYBOARD
+========================= */
 
 document.addEventListener(
     "keydown",
@@ -1065,7 +1611,9 @@ document.addEventListener(
 
             event.preventDefault();
 
-            changeDirection("up");
+            changeDirection(
+                "up"
+            );
 
         }
 
@@ -1077,7 +1625,9 @@ document.addEventListener(
 
             event.preventDefault();
 
-            changeDirection("down");
+            changeDirection(
+                "down"
+            );
 
         }
 
@@ -1089,7 +1639,9 @@ document.addEventListener(
 
             event.preventDefault();
 
-            changeDirection("left");
+            changeDirection(
+                "left"
+            );
 
         }
 
@@ -1101,7 +1653,9 @@ document.addEventListener(
 
             event.preventDefault();
 
-            changeDirection("right");
+            changeDirection(
+                "right"
+            );
 
         }
 
@@ -1116,7 +1670,9 @@ document.addEventListener(
 );
 
 
-/* ---------------- RRR SECRET SHORTCUT ---------------- */
+/* =========================
+   RRR SECRET SHORTCUT
+========================= */
 
 let rPresses = 0;
 let rTimer;
@@ -1127,7 +1683,8 @@ document.addEventListener(
     function(event) {
 
         if (
-            event.key.toLowerCase() !== "r"
+            event.key.toLowerCase()
+            !== "r"
         ) {
             return;
         }
@@ -1135,7 +1692,10 @@ document.addEventListener(
 
         rPresses++;
 
-        clearTimeout(rTimer);
+
+        clearTimeout(
+            rTimer
+        );
 
 
         rTimer =
@@ -1149,7 +1709,9 @@ document.addEventListener(
             );
 
 
-        if (rPresses === 3) {
+        if (
+            rPresses === 3
+        ) {
 
             window.location.href =
                 "flashcards.html";
