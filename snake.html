@@ -1,101 +1,85 @@
+```html
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Flashcard.com</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    background:
-        radial-gradient(circle at 20% 20%, #403016 0 2px, transparent 3px),
-        radial-gradient(circle at 80% 70%, #503b1d 0 2px, transparent 3px),
-        #21180d;
-    background-size: 35px 35px;
+    background: #000;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    overflow-x: hidden;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#game {
+    text-align: center;
 }
 
 #top {
     width: 500px;
-    max-width: 92vw;
-    margin-top: 20px;
+    max-width: 94vw;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
 }
 
 #title {
     font-size: 28px;
     font-weight: bold;
-    letter-spacing: 4px;
-    color: #39ff88;
-    text-shadow:
-        0 0 5px #39ff88,
-        0 0 15px #39ff88,
-        0 0 30px #39ff88;
+    color: #39ff14;
+    text-shadow: 0 0 10px #39ff14;
 }
 
 #score {
-    font-size: 14px;
-    color: #fff;
-    text-shadow: 0 0 8px #fff;
+    font-size: 15px;
+    color: #aaa;
 }
 
 #canvas {
-    margin-top: 15px;
     width: 500px;
     height: 500px;
-    max-width: 92vw;
-    max-height: 92vw;
-    border: 3px solid #39ff88;
-    background: #c99b55;
-    box-shadow:
-        0 0 8px #39ff88,
-        0 0 25px rgba(57,255,136,.5),
-        inset 0 0 25px rgba(0,0,0,.5);
+    max-width: 94vw;
+    max-height: 94vw;
+    background: #000;
+    border: 2px solid #333;
+    box-shadow: 0 0 18px rgba(0,255,80,.18);
     image-rendering: pixelated;
 }
 
 #controls {
-    margin-top: 15px;
+    margin-top: 12px;
 }
 
 button {
-    border: 2px solid #39ff88;
     background: #111;
-    color: #39ff88;
+    color: white;
+    border: 2px solid #555;
     padding: 10px 18px;
     font-weight: bold;
     cursor: pointer;
-    font-size: 13px;
-    box-shadow:
-        0 0 7px rgba(57,255,136,.6);
 }
 
 button:hover {
-    background: #39ff88;
-    color: #000;
-    box-shadow:
-        0 0 15px #39ff88;
+    background: #222;
+    border-color: white;
 }
 
 #touch {
-    margin-top: 15px;
     display: none;
+    margin-top: 12px;
 }
 
 .touch-row {
@@ -106,439 +90,364 @@ button:hover {
 .touch-button {
     width: 55px;
     height: 45px;
-    padding: 0;
     margin: 3px;
+    padding: 0;
     font-size: 20px;
 }
-
-/* OVERLAY */
 
 #overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.72);
+    background: rgba(0,0,0,.88);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10;
+    z-index: 5;
 }
 
 #panel {
-    width: min(85vw, 380px);
-    padding: 30px;
+    background: #080808;
+    border: 2px solid #39ff14;
+    box-shadow: 0 0 25px rgba(57,255,20,.25);
+    padding: 35px;
+    width: min(90vw, 420px);
     text-align: center;
-    background: #090d0b;
-    border: 3px solid #39ff88;
-    box-shadow:
-        0 0 10px #39ff88,
-        0 0 35px rgba(57,255,136,.5);
 }
 
 #panel h1 {
-    color: #39ff88;
-    text-shadow:
-        0 0 8px #39ff88,
-        0 0 20px #39ff88;
+    color: #39ff14;
+    text-shadow: 0 0 10px #39ff14;
 }
 
 #panel p {
-    color: #ccc;
-    line-height: 1.7;
-    font-size: 13px;
-}
-
-#medal {
-    font-size: 42px;
-    margin: 15px;
-    min-height: 48px;
+    color: #aaa;
+    line-height: 1.6;
+    font-size: 14px;
 }
 
 .hidden {
     display: none !important;
 }
 
-@media (max-width: 650px) {
+#homeButton {
+    margin-left: 8px;
+}
 
+@media (max-width: 650px) {
     #touch {
         display: block;
     }
 
     #top {
-        margin-top: 12px;
+        width: 94vw;
     }
-
 }
-
 </style>
-
 </head>
 
 <body>
 
-<div id="top">
+<div id="game">
 
-```
-<div id="title">
-    SNAKE
-</div>
+    <div id="top">
+        <div id="title">SNAKE</div>
+        <div id="score">Score: 0 | Best: 0</div>
+    </div>
 
-<div id="score">
-    Score: 0 | Best: 0
-</div>
-```
+    <canvas id="canvas" width="500" height="500"></canvas>
 
-</div>
+    <div id="controls">
+        <button onclick="togglePause()">PAUSE</button>
+    </div>
 
-<canvas
- id="canvas"
- width="500"
- height="500"> </canvas>
+    <div id="touch">
 
-<div id="controls">
+        <div class="touch-row">
+            <button class="touch-button"
+                onclick="changeDirection('up')">▲</button>
+        </div>
 
-```
-<button onclick="togglePause()">
-    PAUSE
-</button>
-```
+        <div class="touch-row">
+            <button class="touch-button"
+                onclick="changeDirection('left')">◀</button>
 
-</div>
+            <button class="touch-button"
+                onclick="changeDirection('down')">▼</button>
 
-<!-- TOUCH CONTROLS -->
+            <button class="touch-button"
+                onclick="changeDirection('right')">▶</button>
+        </div>
 
-<div id="touch">
-
-```
-<div class="touch-row">
-
-    <button
-        class="touch-button"
-        onclick="changeDirection('up')">
-        ▲
-    </button>
+    </div>
 
 </div>
 
-<div class="touch-row">
-
-    <button
-        class="touch-button"
-        onclick="changeDirection('left')">
-        ◀
-    </button>
-
-    <button
-        class="touch-button"
-        onclick="changeDirection('down')">
-        ▼
-    </button>
-
-    <button
-        class="touch-button"
-        onclick="changeDirection('right')">
-        ▶
-    </button>
-
-</div>
-```
-
-</div>
-
-<!-- OVERLAY -->
 
 <div id="overlay">
 
-```
-<div id="panel">
+    <div id="panel">
 
-    <h1 id="overlayTitle">
-        SNAKE
-    </h1>
+        <h1 id="overlayTitle">SNAKE</h1>
 
-    <p id="overlayText">
-        Use the arrow keys or WASD<br>
-        to move the snake.
-    </p>
+        <p id="overlayText">
+            Use the arrow keys or WASD<br>
+            to move the snake.<br><br>
+            Eat all 3 foods!
+        </p>
 
-    <div id="medal"></div>
+        <button id="mainButton" onclick="startGame()">
+            START
+        </button>
 
-    <button
-        id="overlayButton"
-        onclick="startGame()">
-        START
-    </button>
+        <button id="homeButton"
+            onclick="goHome()"
+            style="display:none;">
+            HOME
+        </button>
+
+    </div>
 
 </div>
-```
 
-</div>
 
 <script>
 
-const canvas =
-    document.getElementById("canvas");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-const ctx =
-    canvas.getContext("2d");
+const GRID = 25;
+const SIZE = canvas.width / GRID;
 
+let snake;
+let direction;
+let nextDirection;
 
-const SIZE = 25;
-
-const GRID = 20;
-
-
-let snake = [];
-
-let food = {};
-
-let direction = {
-    x: 1,
-    y: 0
-};
-
-let nextDirection = {
-    x: 1,
-    y: 0
-};
+let foods = [];
 
 let obstacles = [];
-
 let portals = [];
 
 let score = 0;
-
-let best =
-    Number(
-        localStorage.getItem(
-            "snakeBest"
-        )
-    ) || 0;
+let best = Number(localStorage.getItem("snakeBest")) || 0;
 
 let running = false;
-
 let paused = false;
 
-let timer;
+let gameTimer = null;
 
 
-/* START */
+/* ---------------- RANDOM POSITION ---------------- */
+
+function randomCell() {
+    return {
+        x: Math.floor(Math.random() * GRID),
+        y: Math.floor(Math.random() * GRID)
+    };
+}
+
+
+function samePosition(a, b) {
+    return a.x === b.x && a.y === b.y;
+}
+
+
+function occupied(pos) {
+
+    if (snake && snake.some(s => samePosition(s, pos))) {
+        return true;
+    }
+
+    if (foods.some(f => samePosition(f, pos))) {
+        return true;
+    }
+
+    if (obstacles.some(o => samePosition(o, pos))) {
+        return true;
+    }
+
+    if (portals.some(p => samePosition(p, pos))) {
+        return true;
+    }
+
+    return false;
+}
+
+
+function randomFreePosition() {
+
+    let pos;
+
+    do {
+        pos = randomCell();
+    } while (occupied(pos));
+
+    return pos;
+}
+
+
+/* ---------------- START ---------------- */
 
 function startGame() {
 
+    clearInterval(gameTimer);
+
     snake = [
-        {x: 10, y: 10},
-        {x: 9, y: 10},
-        {x: 8, y: 10}
+        {x: 12, y: 12},
+        {x: 11, y: 12},
+        {x: 10, y: 12}
     ];
 
-    direction = {
-        x: 1,
-        y: 0
-    };
-
-    nextDirection = {
-        x: 1,
-        y: 0
-    };
+    direction = "right";
+    nextDirection = "right";
 
     score = 0;
 
-    paused = false;
+    foods = [];
+    obstacles = [];
+    portals = [];
+
+    /* THREE FOODS */
+
+    for (let i = 0; i < 3; i++) {
+        foods.push(randomFreePosition());
+    }
+
+    /* GREY MOVING OBSTACLES */
+
+    for (let i = 0; i < 7; i++) {
+
+        let obstacle = randomFreePosition();
+
+        obstacle.dx =
+            Math.floor(Math.random() * 3) - 1;
+
+        obstacle.dy =
+            Math.floor(Math.random() * 3) - 1;
+
+        if (obstacle.dx === 0 && obstacle.dy === 0) {
+            obstacle.dx = 1;
+        }
+
+        obstacles.push(obstacle);
+    }
+
+    /* BLUE PORTALS */
+
+    for (let i = 0; i < 2; i++) {
+        portals.push(randomFreePosition());
+    }
 
     running = true;
+    paused = false;
 
-    createObstacles();
-
-    createPortals();
-
-    spawnFood();
+    document.getElementById("overlay")
+        .classList.add("hidden");
 
     updateScore();
 
-    document
-        .getElementById("overlay")
-        .classList.add("hidden");
-
-    clearInterval(timer);
-
-    timer =
-        setInterval(
-            update,
-            115
-        );
-
     draw();
 
-}
-
-
-/* OBSTACLES */
-
-function createObstacles() {
-
-    obstacles = [];
-
-    const patterns = [
-
-        [
-            {x: 5, y: 5},
-            {x: 6, y: 5},
-            {x: 7, y: 5}
-        ],
-
-        [
-            {x: 14, y: 13},
-            {x: 14, y: 14},
-            {x: 14, y: 15}
-        ],
-
-        [
-            {x: 4, y: 16},
-            {x: 5, y: 16},
-            {x: 6, y: 16}
-        ]
-
-    ];
-
-    const selected =
-        patterns[
-            Math.floor(
-                Math.random() *
-                patterns.length
-            )
-        ];
-
-    obstacles =
-        selected.map(
-            p => ({
-                x: p.x,
-                y: p.y
-            })
-        );
+    gameTimer = setInterval(gameStep, 115);
 
 }
 
 
-/* PORTALS */
+/* ---------------- MOVEMENT ---------------- */
 
-function createPortals() {
+function changeDirection(newDirection) {
 
-    portals = [
-
-        {
-            x: 2,
-            y: 2,
-            color: "#00eaff"
-        },
-
-        {
-            x: 17,
-            y: 17,
-            color: "#ff38ff"
-        }
-
-    ];
-
-}
-
-
-/* FOOD */
-
-function spawnFood() {
-
-    do {
-
-        food = {
-
-            x:
-                Math.floor(
-                    Math.random() *
-                    GRID
-                ),
-
-            y:
-                Math.floor(
-                    Math.random() *
-                    GRID
-                )
-
-        };
-
-    } while (
-        onSnake(food) ||
-        onObstacle(food) ||
-        onPortal(food)
-    );
-
-}
-
-
-/* UPDATE */
-
-function update() {
+    if (!running || paused) return;
 
     if (
-        !running ||
-        paused
+        newDirection === "up" &&
+        direction !== "down"
     ) {
-        return;
+        nextDirection = "up";
     }
 
-    direction =
-        nextDirection;
+    if (
+        newDirection === "down" &&
+        direction !== "up"
+    ) {
+        nextDirection = "down";
+    }
 
-    const head = {
+    if (
+        newDirection === "left" &&
+        direction !== "right"
+    ) {
+        nextDirection = "left";
+    }
 
-        x:
-            snake[0].x +
-            direction.x,
+    if (
+        newDirection === "right" &&
+        direction !== "left"
+    ) {
+        nextDirection = "right";
+    }
+}
 
-        y:
-            snake[0].y +
-            direction.y
 
+/* ---------------- GAME STEP ---------------- */
+
+function gameStep() {
+
+    if (!running || paused) return;
+
+    direction = nextDirection;
+
+    let head = {
+        x: snake[0].x,
+        y: snake[0].y
     };
 
 
-    /* WALL */
+    if (direction === "up") head.y--;
+    if (direction === "down") head.y++;
+    if (direction === "left") head.x--;
+    if (direction === "right") head.x++;
 
-    if (
-        head.x < 0 ||
-        head.x >= GRID ||
-        head.y < 0 ||
-        head.y >= GRID
-    ) {
 
-        endGame();
+    /* EDGE TELEPORT / WRAP */
 
-        return;
+    if (head.x < 0) {
+        head.x = GRID - 1;
+    }
 
+    if (head.x >= GRID) {
+        head.x = 0;
+    }
+
+    if (head.y < 0) {
+        head.y = GRID - 1;
+    }
+
+    if (head.y >= GRID) {
+        head.y = 0;
     }
 
 
-    /* OBSTACLE */
+    /* SNAKE COLLISION */
 
     if (
-        onObstacle(head)
+        snake.some(
+            segment => samePosition(segment, head)
+        )
     ) {
-
         endGame();
-
         return;
-
     }
 
 
-    /* BODY */
+    /* OBSTACLE COLLISION */
 
     if (
-        onSnake(head)
+        obstacles.some(
+            obstacle => samePosition(obstacle, head)
+        )
     ) {
-
         endGame();
-
         return;
-
     }
 
 
@@ -547,27 +456,19 @@ function update() {
 
     /* FOOD */
 
-    if (
-        head.x === food.x &&
-        head.y === food.y
-    ) {
+    let foodIndex = foods.findIndex(
+        food => samePosition(food, head)
+    );
+
+    if (foodIndex !== -1) {
+
+        foods.splice(foodIndex, 1);
 
         score++;
 
-        if (
-            score > best
-        ) {
+        /* Replace eaten food so there are always 3 */
 
-            best = score;
-
-            localStorage.setItem(
-                "snakeBest",
-                best
-            );
-
-        }
-
-        spawnFood();
+        foods.push(randomFreePosition());
 
         updateScore();
 
@@ -580,102 +481,110 @@ function update() {
 
     /* PORTAL */
 
-    for (
-        let i = 0;
-        i < portals.length;
-        i++
-    ) {
+    let portalIndex = portals.findIndex(
+        portal => samePosition(portal, head)
+    );
 
-        const portal =
-            portals[i];
+    if (portalIndex !== -1) {
 
-        if (
-            head.x === portal.x &&
-            head.y === portal.y
-        ) {
+        let otherPortal =
+            portals[portalIndex === 0 ? 1 : 0];
 
-            const other =
-                portals[
-                    i === 0 ? 1 : 0
-                ];
+        head.x = otherPortal.x;
+        head.y = otherPortal.y;
 
-            snake[0] = {
-                x: other.x,
-                y: other.y
-            };
+        /*
+         * Move both portals after teleporting.
+         */
 
-        }
+        movePortals();
 
     }
 
+
+    moveObstacles();
 
     draw();
 
 }
 
 
-/* CHECK SNAKE */
+/* ---------------- MOVING PORTALS ---------------- */
 
-function onSnake(pos) {
+function movePortals() {
 
-    return snake.some(
-        part =>
-            part.x === pos.x &&
-            part.y === pos.y
-    );
+    for (let i = 0; i < portals.length; i++) {
 
-}
+        let old = portals[i];
 
+        let newPosition;
 
-/* CHECK OBSTACLE */
+        do {
+            newPosition = randomCell();
+        } while (
+            occupied(newPosition) ||
+            samePosition(newPosition, old)
+        );
 
-function onObstacle(pos) {
-
-    return obstacles.some(
-        block =>
-            block.x === pos.x &&
-            block.y === pos.y
-    );
+        portals[i] = newPosition;
+    }
 
 }
 
 
-/* CHECK PORTAL */
+/* ---------------- MOVING OBSTACLES ---------------- */
 
-function onPortal(pos) {
+function moveObstacles() {
 
-    return portals.some(
-        portal =>
-            portal.x === pos.x &&
-            portal.y === pos.y
-    );
+    for (let obstacle of obstacles) {
+
+        /*
+         * Occasionally change direction.
+         */
+
+        if (Math.random() < 0.25) {
+
+            obstacle.dx =
+                Math.floor(Math.random() * 3) - 1;
+
+            obstacle.dy =
+                Math.floor(Math.random() * 3) - 1;
+
+        }
+
+        let newX =
+            obstacle.x + obstacle.dx;
+
+        let newY =
+            obstacle.y + obstacle.dy;
+
+
+        /* Bounce off edges */
+
+        if (newX < 0 || newX >= GRID) {
+            obstacle.dx *= -1;
+            newX = obstacle.x + obstacle.dx;
+        }
+
+        if (newY < 0 || newY >= GRID) {
+            obstacle.dy *= -1;
+            newY = obstacle.y + obstacle.dy;
+        }
+
+
+        obstacle.x = newX;
+        obstacle.y = newY;
+
+    }
 
 }
 
 
-/* DRAW */
+/* ---------------- DRAW ---------------- */
 
 function draw() {
 
-    drawSand();
-
-    drawObstacles();
-
-    drawPortals();
-
-    drawFood();
-
-    drawSnake();
-
-}
-
-
-/* SAND */
-
-function drawSand() {
-
-    ctx.fillStyle = "#c99b55";
-
+    ctx.fillStyle = "#000";
     ctx.fillRect(
         0,
         0,
@@ -684,140 +593,153 @@ function drawSand() {
     );
 
 
-    /* SAND DOTS */
+    /* GRID */
 
-    for (
-        let y = 0;
-        y < GRID;
-        y++
-    ) {
+    ctx.strokeStyle = "#151515";
+    ctx.lineWidth = 1;
 
-        for (
-            let x = 0;
-            x < GRID;
-            x++
-        ) {
+    for (let i = 0; i <= GRID; i++) {
 
-            const value =
-                (
-                    x * 17 +
-                    y * 31
-                ) % 7;
+        ctx.beginPath();
 
-            if (
-                value === 0 ||
-                value === 3
-            ) {
+        ctx.moveTo(
+            i * SIZE,
+            0
+        );
 
-                ctx.fillStyle =
-                    "rgba(90,55,20,.22)";
+        ctx.lineTo(
+            i * SIZE,
+            canvas.height
+        );
 
-                ctx.fillRect(
-                    x * SIZE + 5,
-                    y * SIZE + 8,
-                    3,
-                    3
-                );
+        ctx.stroke();
 
-            }
 
-        }
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            i * SIZE
+        );
+
+        ctx.lineTo(
+            canvas.width,
+            i * SIZE
+        );
+
+        ctx.stroke();
 
     }
 
-}
+
+    /* PORTALS */
+
+    for (let portal of portals) {
+
+        ctx.fillStyle = "#147cff";
+
+        ctx.shadowColor = "#147cff";
+        ctx.shadowBlur = 12;
+
+        ctx.fillRect(
+            portal.x * SIZE + 2,
+            portal.y * SIZE + 2,
+            SIZE - 4,
+            SIZE - 4
+        );
+
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = "#000";
+
+        ctx.fillRect(
+            portal.x * SIZE + 7,
+            portal.y * SIZE + 7,
+            SIZE - 14,
+            SIZE - 14
+        );
+
+    }
 
 
-/* OBSTACLES */
+    /* OBSTACLES */
 
-function drawObstacles() {
+    for (let obstacle of obstacles) {
 
-    obstacles.forEach(
-        block => {
+        ctx.fillStyle = "#777";
 
-            const px =
-                block.x * SIZE;
+        ctx.fillRect(
+            obstacle.x * SIZE + 2,
+            obstacle.y * SIZE + 2,
+            SIZE - 4,
+            SIZE - 4
+        );
 
-            const py =
-                block.y * SIZE;
+        ctx.fillStyle = "#999";
 
-            ctx.fillStyle =
-                "#5b4630";
+        ctx.fillRect(
+            obstacle.x * SIZE + 5,
+            obstacle.y * SIZE + 5,
+            SIZE - 10,
+            4
+        );
+
+    }
+
+
+    /* FOOD */
+
+    for (let food of foods) {
+
+        ctx.fillStyle = "#ff3333";
+
+        ctx.shadowColor = "#ff3333";
+        ctx.shadowBlur = 12;
+
+        ctx.fillRect(
+            food.x * SIZE + 6,
+            food.y * SIZE + 6,
+            SIZE - 12,
+            SIZE - 12
+        );
+
+        ctx.shadowBlur = 0;
+
+    }
+
+
+    /* SNAKE */
+
+    snake.forEach(
+        (segment, index) => {
+
+            if (index === 0) {
+
+                /* DARKER HEAD */
+
+                ctx.fillStyle = "#159b25";
+
+                ctx.shadowColor = "#39ff14";
+                ctx.shadowBlur = 10;
+
+            } else {
+
+                /* GREEN BODY */
+
+                ctx.fillStyle = "#39ff14";
+
+                ctx.shadowColor = "#39ff14";
+                ctx.shadowBlur = 8;
+
+            }
 
             ctx.fillRect(
-                px + 2,
-                py + 2,
+                segment.x * SIZE + 2,
+                segment.y * SIZE + 2,
                 SIZE - 4,
                 SIZE - 4
             );
 
-            ctx.strokeStyle =
-                "#302417";
-
-            ctx.lineWidth = 2;
-
-            ctx.strokeRect(
-                px + 3,
-                py + 3,
-                SIZE - 6,
-                SIZE - 6
-            );
-
-        }
-    );
-
-}
-
-
-/* PORTALS */
-
-function drawPortals() {
-
-    portals.forEach(
-        portal => {
-
-            const cx =
-                portal.x * SIZE +
-                SIZE / 2;
-
-            const cy =
-                portal.y * SIZE +
-                SIZE / 2;
-
-            ctx.beginPath();
-
-            ctx.arc(
-                cx,
-                cy,
-                9,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.strokeStyle =
-                portal.color;
-
-            ctx.lineWidth = 3;
-
-            ctx.shadowColor =
-                portal.color;
-
-            ctx.shadowBlur = 12;
-
-            ctx.stroke();
-
-            ctx.beginPath();
-
-            ctx.arc(
-                cx,
-                cy,
-                4,
-                0,
-                Math.PI * 2
-            );
-
-            ctx.stroke();
-
             ctx.shadowBlur = 0;
 
         }
@@ -826,217 +748,120 @@ function drawPortals() {
 }
 
 
-/* FOOD */
+/* ---------------- SCORE ---------------- */
 
-function drawFood() {
+function updateScore() {
 
-    const cx =
-        food.x * SIZE +
-        SIZE / 2;
+    if (score > best) {
 
-    const cy =
-        food.y * SIZE +
-        SIZE / 2;
+        best = score;
 
-    ctx.beginPath();
+        localStorage.setItem(
+            "snakeBest",
+            best
+        );
 
-    ctx.arc(
-        cx,
-        cy,
-        7,
-        0,
-        Math.PI * 2
-    );
+    }
 
-    ctx.fillStyle =
-        "#ff315f";
-
-    ctx.shadowColor =
-        "#ff315f";
-
-    ctx.shadowBlur = 15;
-
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
+    document.getElementById("score")
+        .textContent =
+        "Score: " +
+        score +
+        " | Best: " +
+        best;
 
 }
 
 
-/* SNAKE */
+/* ---------------- PAUSE ---------------- */
 
-function drawSnake() {
+function togglePause() {
 
-    snake.forEach(
-        (part, index) => {
+    if (!running) return;
 
-            const px =
-                part.x * SIZE;
+    paused = !paused;
 
-            const py =
-                part.y * SIZE;
+    if (paused) {
 
-            ctx.fillStyle =
-                index === 0
-                    ? "#39ff88"
-                    : "#16d96c";
+        document.getElementById("overlayTitle")
+            .textContent = "PAUSED";
 
-            ctx.shadowColor =
-                "#39ff88";
+        document.getElementById("overlayText")
+            .innerHTML =
+            "Game paused.";
 
-            ctx.shadowBlur =
-                index === 0
-                    ? 15
-                    : 8;
+        document.getElementById("mainButton")
+            .textContent = "CONTINUE";
 
-            ctx.fillRect(
-                px + 3,
-                py + 3,
-                SIZE - 6,
-                SIZE - 6
-            );
+        document.getElementById("mainButton")
+            .onclick = togglePause;
 
-            ctx.shadowBlur = 0;
+        document.getElementById("homeButton")
+            .style.display = "none";
 
-            if (
-                index === 0
-            ) {
-
-                drawEyes(
-                    px,
-                    py
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* EYES */
-
-function drawEyes(
-    px,
-    py
-) {
-
-    ctx.fillStyle =
-        "#001b0b";
-
-    if (
-        direction.x !== 0
-    ) {
-
-        const eyeX =
-            direction.x > 0
-                ? px + 17
-                : px + 8;
-
-        ctx.fillRect(
-            eyeX,
-            py + 7,
-            3,
-            3
-        );
-
-        ctx.fillRect(
-            eyeX,
-            py + 15,
-            3,
-            3
-        );
+        document.getElementById("overlay")
+            .classList.remove("hidden");
 
     } else {
 
-        const eyeY =
-            direction.y > 0
-                ? py + 17
-                : py + 8;
+        document.getElementById("overlay")
+            .classList.add("hidden");
 
-        ctx.fillRect(
-            px + 7,
-            eyeY,
-            3,
-            3
-        );
+        document.getElementById("mainButton")
+            .textContent = "START";
 
-        ctx.fillRect(
-            px + 15,
-            eyeY,
-            3,
-            3
-        );
+        document.getElementById("mainButton")
+            .onclick = startGame;
 
     }
 
 }
 
 
-/* DIRECTION */
+/* ---------------- RETRY ---------------- */
 
-function changeDirection(dir) {
+function endGame() {
 
-    if (
-        !running ||
-        paused
-    ) {
-        return;
-    }
+    running = false;
 
-    if (
-        dir === "up" &&
-        direction.y !== 1
-    ) {
+    clearInterval(gameTimer);
 
-        nextDirection = {
-            x: 0,
-            y: -1
-        };
+    document.getElementById("overlayTitle")
+        .textContent = "RETRY";
 
-    }
+    document.getElementById("overlayText")
+        .innerHTML =
+        "Score: " +
+        score +
+        "<br><br>" +
+        "Best: " +
+        best;
 
-    if (
-        dir === "down" &&
-        direction.y !== -1
-    ) {
+    document.getElementById("mainButton")
+        .textContent = "RETRY";
 
-        nextDirection = {
-            x: 0,
-            y: 1
-        };
+    document.getElementById("mainButton")
+        .onclick = startGame;
 
-    }
+    document.getElementById("homeButton")
+        .style.display = "inline-block";
 
-    if (
-        dir === "left" &&
-        direction.x !== 1
-    ) {
-
-        nextDirection = {
-            x: -1,
-            y: 0
-        };
-
-    }
-
-    if (
-        dir === "right" &&
-        direction.x !== -1
-    ) {
-
-        nextDirection = {
-            x: 1,
-            y: 0
-        };
-
-    }
+    document.getElementById("overlay")
+        .classList.remove("hidden");
 
 }
 
 
-/* KEYBOARD */
+/* ---------------- HOME ---------------- */
+
+function goHome() {
+
+    window.location.href = "index.html";
+
+}
+
+
+/* ---------------- KEYBOARD ---------------- */
 
 document.addEventListener(
     "keydown",
@@ -1049,195 +874,45 @@ document.addEventListener(
             key === "arrowup" ||
             key === "w"
         ) {
-
             event.preventDefault();
-
             changeDirection("up");
-
         }
 
         if (
             key === "arrowdown" ||
             key === "s"
         ) {
-
             event.preventDefault();
-
             changeDirection("down");
-
         }
 
         if (
             key === "arrowleft" ||
             key === "a"
         ) {
-
             event.preventDefault();
-
             changeDirection("left");
-
         }
 
         if (
             key === "arrowright" ||
             key === "d"
         ) {
-
             event.preventDefault();
-
             changeDirection("right");
+        }
 
+        if (key === "p") {
+            togglePause();
         }
 
     }
 );
 
 
-/* PAUSE */
-
-function togglePause() {
-
-    if (!running) {
-        return;
-    }
-
-    paused =
-        !paused;
-
-    if (paused) {
-
-        document.getElementById(
-            "overlayTitle"
-        ).textContent =
-            "PAUSED";
-
-        document.getElementById(
-            "overlayText"
-        ).innerHTML =
-            "The game is paused.";
-
-        document.getElementById(
-            "overlayButton"
-        ).textContent =
-            "CONTINUE";
-
-        document.getElementById(
-            "overlayButton"
-        ).onclick =
-            togglePause;
-
-        document.getElementById(
-            "overlay"
-        ).classList.remove(
-            "hidden"
-        );
-
-    } else {
-
-        document.getElementById(
-            "overlay"
-        ).classList.add(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-/* SCORE */
-
-function updateScore() {
-
-    document.getElementById(
-        "score"
-    ).textContent =
-        "Score: " +
-        score +
-        " | Best: " +
-        best;
-
-}
-
-
-/* MEDALS */
-
-function getMedal() {
-
-    if (score >= 30) {
-        return "🏆";
-    }
-
-    if (score >= 20) {
-        return "🥇";
-    }
-
-    if (score >= 10) {
-        return "🥈";
-    }
-
-    if (score >= 5) {
-        return "🥉";
-    }
-
-    return "";
-
-}
-
-
-/* END GAME */
-
-function endGame() {
-
-    running = false;
-
-    clearInterval(timer);
-
-    const medal =
-        getMedal();
-
-    document.getElementById(
-        "overlayTitle"
-    ).textContent =
-        "RETRY";
-
-    document.getElementById(
-        "overlayText"
-    ).innerHTML =
-        "Score: " +
-        score +
-        "<br>" +
-        "Best: " +
-        best;
-
-    document.getElementById(
-        "medal"
-    ).textContent =
-        medal;
-
-    document.getElementById(
-        "overlayButton"
-    ).textContent =
-        "RETRY";
-
-    document.getElementById(
-        "overlayButton"
-    ).onclick =
-        startGame;
-
-    document.getElementById(
-        "overlay"
-    ).classList.remove(
-        "hidden"
-    );
-
-}
-
-
-/* RRR SECRET SHORTCUT */
+/* ---------------- RRR SHORTCUT ---------------- */
 
 let rPresses = 0;
-
 let rTimer;
 
 document.addEventListener(
@@ -1254,23 +929,19 @@ document.addEventListener(
 
         clearTimeout(rTimer);
 
-        rTimer =
-            setTimeout(
-                function() {
-                    rPresses = 0;
-                },
-                700
-            );
+        rTimer = setTimeout(
+            function() {
+                rPresses = 0;
+            },
+            700
+        );
 
-        if (
-            rPresses === 3
-        ) {
+        if (rPresses === 3) {
 
             window.location.href =
                 "flashcards.html";
 
             rPresses = 0;
-
         }
 
     }
@@ -1280,10 +951,10 @@ document.addEventListener(
 /* INITIAL */
 
 updateScore();
-
 draw();
 
 </script>
 
 </body>
 </html>
+```
