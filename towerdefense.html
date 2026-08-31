@@ -1,10 +1,10 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Flashcard.com</title>
+<title>Flashcard Creator</title>
 
 <style>
 *{box-sizing:border-box}
@@ -18,16 +18,17 @@ body{
 }
 
 #top{
-    width:1000px;
+    width:1100px;
     max-width:96vw;
     margin:10px auto;
     display:flex;
     justify-content:space-between;
+    font-size:14px;
     font-weight:bold;
 }
 
 canvas{
-    width:1000px;
+    width:1100px;
     max-width:96vw;
     height:auto;
     background:#101010;
@@ -35,8 +36,10 @@ canvas{
     image-rendering:pixelated;
 }
 
-#towers,#controls,#saves{
-    width:1000px;
+#towerBar,
+#controls,
+#saves{
+    width:1100px;
     max-width:96vw;
     margin:7px auto;
     display:flex;
@@ -47,9 +50,9 @@ canvas{
 
 button{
     background:#151515;
-    color:white;
+    color:#eee;
     border:2px solid #555;
-    padding:8px 11px;
+    padding:9px 12px;
     font-family:"Courier New",monospace;
     font-weight:bold;
     cursor:pointer;
@@ -60,18 +63,27 @@ button:hover{
 }
 
 .towerButton{
-    min-width:105px;
+    min-width:120px;
     font-size:10px;
 }
 
-.selected{
-    background:#ddd!important;
-    color:#000!important;
+.towerButton.locked{
+    color:#555;
+    border-color:#292929;
+    background:#090909;
+    cursor:not-allowed;
+}
+
+.towerButton.selected{
+    background:#ddd;
+    color:#000;
+    border-color:#fff;
 }
 
 #hint{
     color:#777;
     font-size:11px;
+    margin:5px;
 }
 
 #overlay{
@@ -85,7 +97,7 @@ button:hover{
 }
 
 #panel{
-    width:min(90vw,520px);
+    width:min(90vw,550px);
     background:#111;
     border:3px solid #555;
     padding:35px;
@@ -116,113 +128,169 @@ button:hover{
 <body>
 
 <div id="top">
-    <div>TOWER DEFENCE — KINGDOM WAR</div>
+    <div>KINGDOM WAR</div>
     <div id="stats"></div>
 </div>
 
-<canvas id="game" width="1000" height="620"></canvas>
+<canvas id="game" width="1100" height="650"></canvas>
 
-<div id="towers">
+<div id="towerBar">
 
-<button class="towerButton selected" id="basicButton"
-onclick="selectTower('basic')">[1] CANNON $50</button>
+<button class="towerButton selected"
+id="basicButton"
+onclick="selectTower('basic')">
+[1] CANNON $50
+</button>
 
-<button class="towerButton" id="rapidButton"
-onclick="selectTower('rapid')">[2] RAPID $75</button>
+<button class="towerButton"
+id="rapidButton"
+onclick="selectTower('rapid')">
+[2] RAPID $75
+</button>
 
-<button class="towerButton" id="heavyButton"
-onclick="selectTower('heavy')">[3] HEAVY $120</button>
+<button class="towerButton locked"
+id="heavyButton"
+onclick="selectTower('heavy')">
+[3] 🔒 HEAVY
+</button>
 
-<button class="towerButton" id="slowButton"
-onclick="selectTower('slow')">[4] SLOW $100</button>
+<button class="towerButton locked"
+id="slowButton"
+onclick="selectTower('slow')">
+[4] 🔒 SLOW
+</button>
 
-<button class="towerButton" id="splashButton"
-onclick="selectTower('splash')">[5] SPLASH $150</button>
+<button class="towerButton locked"
+id="splashButton"
+onclick="selectTower('splash')">
+[5] 🔒 SPLASH
+</button>
 
-<button class="towerButton" id="laserButton"
-onclick="selectTower('laser')">[6] LASER $200</button>
+<button class="towerButton locked"
+id="laserButton"
+onclick="selectTower('laser')">
+[6] 🔒 LASER
+</button>
 
-<button class="towerButton" id="freezeButton"
-onclick="selectTower('freeze')">[7] FREEZE $250</button>
+<button class="towerButton locked"
+id="freezeButton"
+onclick="selectTower('freeze')">
+[7] 🔒 FREEZE
+</button>
 
-<button class="towerButton" id="sniperButton"
-onclick="selectTower('sniper')">[8] SNIPER $300</button>
+<button class="towerButton locked"
+id="sniperButton"
+onclick="selectTower('sniper')">
+[8] 🔒 SNIPER
+</button>
 
-<button class="towerButton" id="teslaButton"
-onclick="selectTower('tesla')">[9] TESLA $400</button>
+<button class="towerButton locked"
+id="teslaButton"
+onclick="selectTower('tesla')">
+[9] 🔒 TESLA
+</button>
 
-<button class="towerButton" id="rocketButton"
-onclick="selectTower('rocket')">[0] ROCKET $500</button>
+<button class="towerButton locked"
+id="rocketButton"
+onclick="selectTower('rocket')">
+[0] 🔒 ROCKET
+</button>
 
 </div>
 
 <div id="controls">
     <button onclick="startWave()">START WAVE</button>
     <button onclick="upgradeSelected()">UPGRADE</button>
-    <button onclick="sellSelected()">SELL</button>
+    <button onclick="sellSelected()">DELETE / SELL</button>
 </div>
 
 <div id="saves">
     <button onclick="saveGame(1)">SAVE 1</button>
     <button onclick="loadGame(1)">LOAD 1</button>
+
     <button onclick="saveGame(2)">SAVE 2</button>
     <button onclick="loadGame(2)">LOAD 2</button>
+
     <button onclick="saveGame(3)">SAVE 3</button>
     <button onclick="loadGame(3)">LOAD 3</button>
 </div>
 
 <div id="hint">
-    Grey = buildable • Red = blocked • Click to build • RRR = Home
+    Click a tower to select it • Click empty ground to build • RRR = Home
 </div>
 
 <div id="overlay">
 
 <div id="panel">
 
-<h1 id="overlayTitle">KINGDOM DEFENCE</h1>
+<h1 id="overlayTitle">
+KINGDOM WAR
+</h1>
 
 <p id="overlayText">
 Defend Castle 1.<br><br>
-Defeat the enemy kingdom to capture its castle.<br>
-Captured castles give you new troops and create new lanes.
+
+You begin with TWO towers.<br>
+Defeat enemy castles to unlock new towers
+and capture their armies.
 </p>
 
-<button id="mainButton" onclick="startGame()">START</button>
+<button id="mainButton" onclick="startGame()">
+START
+</button>
 
 <button id="homeButton"
 class="hidden"
-onclick="goHome()">HOME</button>
+onclick="goHome()">
+HOME
+</button>
 
 </div>
-
 </div>
 
 <script>
 
 /* =====================================================
-   BASIC
+   CANVAS
 ===================================================== */
 
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+const canvas =
+    document.getElementById("game");
 
-const W=1000;
-const H=620;
+const ctx =
+    canvas.getContext("2d");
+
+const W=1100;
+const H=650;
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
 
 let running=false;
 let waveRunning=false;
 
 let money=300;
+
 let wave=1;
+
 let kingdom=1;
 
+let castles=[];
+
 let enemies=[];
+
 let troops=[];
+
 let towers=[];
+
 let bullets=[];
+
 let effects=[];
 
 let selectedTowerType="basic";
+
 let selectedTower=null;
 
 let mouseX=500;
@@ -241,126 +309,174 @@ let rTimer;
 
 
 /* =====================================================
-   CASTLES
+   UNLOCKS
 ===================================================== */
 
 /*
-    IMPORTANT:
+    START:
+    Castle 1
+    Cannon
+    Rapid
 
-    Castle 1 starts alone.
-
-    After defeating the first enemy:
-
-    1 ──────────────┐
-                    ├──────────── ENEMY
-    2 ──────────────┘
-
-    Every new castle gets its OWN lane.
+    Each conquered castle unlocks ONE tower.
 */
 
-let castles=[
-{
-    id:1,
-    x:85,
-    y:300,
-    hp:1000,
-    maxHp:1000,
-    alive:true,
-    owner:"player",
-    troop:"Swordsmen",
-    troopColor:"#ddd",
-    laneY:300
-}
+let unlockedTowers=[
+    "basic",
+    "rapid"
+];
+
+const unlockOrder=[
+    "heavy",
+    "slow",
+    "splash",
+    "laser",
+    "freeze",
+    "sniper",
+    "tesla",
+    "rocket"
 ];
 
 
 /* =====================================================
-   TROOP TYPES
+   TROOPS
 ===================================================== */
 
 const troopTypes={
 
     Swordsmen:{
-        hp:120,
-        damage:12,
+        hp:130,
+        damage:13,
         speed:.045,
         color:"#ddd"
     },
 
     Archers:{
-        hp:70,
-        damage:18,
-        speed:.035,
+        hp:80,
+        damage:19,
+        speed:.038,
         color:"#4af"
     },
 
     Knights:{
-        hp:220,
-        damage:30,
+        hp:240,
+        damage:32,
         speed:.055,
         color:"#fa3"
     },
 
     Spearmen:{
-        hp:160,
-        damage:20,
-        speed:.04,
+        hp:170,
+        damage:21,
+        speed:.042,
         color:"#5c6"
     },
 
     Crossbowmen:{
-        hp:100,
-        damage:28,
-        speed:.032,
+        hp:110,
+        damage:29,
+        speed:.034,
         color:"#b65cff"
     },
 
     Guards:{
-        hp:300,
-        damage:38,
-        speed:.025,
+        hp:320,
+        damage:40,
+        speed:.026,
         color:"#f66"
     },
 
     Mages:{
-        hp:110,
-        damage:45,
-        speed:.03,
+        hp:130,
+        damage:48,
+        speed:.032,
         color:"#5ff"
-    }
+    },
 
+    Berserkers:{
+        hp:200,
+        damage:55,
+        speed:.06,
+        color:"#f90"
+    }
 };
 
 
 /* =====================================================
-   ENEMY TROOPS
-===================================================== */
-
-const enemyTroops=[
-    "Spearmen",
-    "Crossbowmen",
-    "Guards",
-    "Mages"
-];
-
-
-/* =====================================================
-   TOWER TYPES
+   TOWERS
 ===================================================== */
 
 const towerTypes={
 
-basic:{cost:50,range:120,damage:15,fireRate:700},
-rapid:{cost:75,range:100,damage:7,fireRate:240},
-heavy:{cost:120,range:140,damage:42,fireRate:1100},
-slow:{cost:100,range:120,damage:9,fireRate:650},
-splash:{cost:150,range:125,damage:24,fireRate:950},
-laser:{cost:200,range:165,damage:13,fireRate:130},
-freeze:{cost:250,range:135,damage:8,fireRate:600},
-sniper:{cost:300,range:300,damage:120,fireRate:1800},
-tesla:{cost:400,range:155,damage:30,fireRate:700},
-rocket:{cost:500,range:200,damage:80,fireRate:1400}
+basic:{
+    cost:50,
+    range:125,
+    damage:15,
+    fireRate:700
+},
 
+rapid:{
+    cost:75,
+    range:105,
+    damage:7,
+    fireRate:240
+},
+
+heavy:{
+    cost:120,
+    range:145,
+    damage:45,
+    fireRate:1100
+},
+
+slow:{
+    cost:100,
+    range:130,
+    damage:10,
+    fireRate:650
+},
+
+splash:{
+    cost:150,
+    range:130,
+    damage:27,
+    fireRate:950
+},
+
+laser:{
+    cost:200,
+    range:170,
+    damage:14,
+    fireRate:130
+},
+
+freeze:{
+    cost:250,
+    range:140,
+    damage:9,
+    fireRate:600
+},
+
+sniper:{
+    cost:300,
+    range:310,
+    damage:125,
+    fireRate:1800
+},
+
+tesla:{
+    cost:400,
+    range:160,
+    damage:32,
+    fireRate:700
+},
+
+rocket:{
+    cost:500,
+    range:210,
+    damage:85,
+    fireRate:1400
+}
 };
 
 
@@ -374,49 +490,68 @@ function startGame(){
     wave=1;
     kingdom=1;
 
+    unlockedTowers=[
+        "basic",
+        "rapid"
+    ];
+
+    castles=[
+        {
+            id:1,
+            x:90,
+            y:300,
+            laneY:300,
+
+            hp:1000,
+            maxHp:1000,
+
+            alive:true,
+            owner:"player",
+
+            troop:"Swordsmen",
+
+            troopColor:"#ddd"
+        }
+    ];
+
     enemies=[];
     troops=[];
     towers=[];
     bullets=[];
     effects=[];
 
-    castles=[
-    {
-        id:1,
-        x:85,
-        y:300,
-        hp:1000,
-        maxHp:1000,
-        alive:true,
-        owner:"player",
-        troop:"Swordsmen",
-        troopColor:"#ddd",
-        laneY:300
-    }
-    ];
-
     selectedTower=null;
+
+    selectedTowerType="basic";
 
     running=true;
     waveRunning=false;
 
+    updateTowerButtons();
+
     hideOverlay();
 
-    lastTime=performance.now();
+    lastTime=
+        performance.now();
 
     requestAnimationFrame(gameLoop);
 }
 
 
 /* =====================================================
-   LOOP
+   GAME LOOP
 ===================================================== */
 
 function gameLoop(time){
 
-    if(!running)return;
+    if(!running)
+        return;
 
-    const dt=Math.min(time-lastTime,50);
+    const dt=
+        Math.min(
+            time-lastTime,
+            50
+        );
 
     lastTime=time;
 
@@ -434,10 +569,15 @@ function gameLoop(time){
 function update(dt){
 
     updateSpawning(dt);
+
     updateEnemies(dt);
+
     updateTroops(dt);
+
     updateTowers(dt);
+
     updateBullets(dt);
+
     updateEffects(dt);
 
 }
@@ -449,27 +589,36 @@ function update(dt){
 
 function startWave(){
 
-    if(!running || waveRunning)return;
+    if(!running)
+        return;
+
+    if(waveRunning)
+        return;
 
     waveRunning=true;
 
     spawnLeft=
         Math.min(
-            100,
-            5+Math.floor(wave*.55)
+            120,
+            6+
+            Math.floor(
+                wave*.6
+            )
         );
 
     spawnTimer=0;
+
 }
 
 
 /* =====================================================
-   ENEMY SPAWNING
+   SPAWNING
 ===================================================== */
 
 function updateSpawning(dt){
 
-    if(!waveRunning)return;
+    if(!waveRunning)
+        return;
 
     spawnTimer-=dt;
 
@@ -484,8 +633,9 @@ function updateSpawning(dt){
 
         spawnTimer=
             Math.max(
-                400,
-                1000-wave*2
+                350,
+                950-
+                wave*2
             );
     }
 
@@ -498,12 +648,14 @@ function updateSpawning(dt){
 
         /*
             Every 40 waves:
-            defeat kingdom and gain castle.
+            conquer next castle.
         */
 
-        if(wave%40===0){
+        if(
+            wave%40===0
+        ){
 
-            captureNextCastle();
+            captureCastle();
 
         }else{
 
@@ -514,73 +666,126 @@ function updateSpawning(dt){
 
 
 /* =====================================================
-   ENEMY
+   ENEMY SPAWN
 ===================================================== */
 
 function spawnEnemy(){
 
     let type;
 
-    if(wave<10)
+    const roll=
+        Math.random();
+
+    if(wave<10){
+
         type="Spearmen";
 
-    else if(wave<20)
+    }else if(wave<20){
+
         type=
-            Math.random()<.5
+            roll<.55
             ?"Spearmen"
             :"Crossbowmen";
 
-    else if(wave<40)
+    }else if(wave<40){
+
         type=
-            Math.random()<.5
+            roll<.45
             ?"Crossbowmen"
             :"Guards";
 
-    else
+    }else if(wave<80){
+
+        const types=[
+            "Crossbowmen",
+            "Guards",
+            "Mages"
+        ];
+
         type=
-            enemyTroops[
+            types[
                 Math.floor(
                     Math.random()*
-                    enemyTroops.length
+                    types.length
                 )
             ];
 
-    const base=troopTypes[type];
+    }else{
+
+        const types=[
+            "Guards",
+            "Mages",
+            "Berserkers"
+        ];
+
+        type=
+            types[
+                Math.floor(
+                    Math.random()*
+                    types.length
+                )
+            ];
+    }
+
+
+    const base=
+        troopTypes[type];
+
 
     const scale=
         1+
         wave*.025+
-        kingdom*.15;
+        kingdom*.12;
+
+
+    const aliveCastles=
+        castles.filter(
+            c=>c.alive
+        );
+
+
+    let targetCastle=
+        aliveCastles[
+            Math.floor(
+                Math.random()*
+                aliveCastles.length
+            )
+        ];
+
 
     enemies.push({
 
         type:type,
 
-        x:1030,
+        x:1080,
+
         y:300,
 
-        hp:base.hp*scale,
-        maxHp:base.hp*scale,
+        hp:
+            base.hp*
+            scale,
 
-        damage:base.damage*scale,
+        maxHp:
+            base.hp*
+            scale,
 
-        speed:.035+
+        damage:
+            base.damage*
+            scale,
 
+        speed:
+            .035+
             Math.min(
-                wave*.0001,
-                .025
+                wave*.00015,
+                .03
             ),
 
         targetCastle:
-            castles[
-                Math.floor(
-                    Math.random()*
-                    castles.length
-                )
-            ],
+            targetCastle,
 
-        lane:300
+        slow:0
     });
+
 }
 
 
@@ -596,45 +801,58 @@ function updateEnemies(dt){
         i--
     ){
 
-        const e=enemies[i];
+        const e=
+            enemies[i];
+
+
+        let speed=
+            e.speed;
+
+
+        if(e.slow>0){
+
+            speed*=.45;
+
+            e.slow-=dt;
+        }
+
 
         /*
-            Move toward merge point.
+            Before merge:
+            move toward target castle lane.
         */
 
-        const targetX=620;
+        if(e.x>650){
 
-        if(e.x>targetX){
+            e.x-=
+                speed*
+                dt;
 
-            e.x-=e.speed*dt;
-
-            /*
-                Move toward the
-                castle's lane.
-            */
-
-            const lane=
+            const targetY=
                 e.targetCastle
                 ?e.targetCastle.laneY
                 :300;
 
-            e.y +=
-                (lane-e.y)*
-                .002*
+            e.y+=
+                (targetY-e.y)*
+                .0025*
                 dt;
 
         }else{
 
             /*
                 After merge:
-                move straight left.
+                one giant battlefield.
             */
 
-            e.x-=e.speed*dt;
+            e.x-=
+                speed*
+                dt;
         }
 
+
         /*
-            Reached player side.
+            Enemy reaches castles.
         */
 
         if(e.x<80){
@@ -648,29 +866,30 @@ function updateEnemies(dt){
 
 
 /* =====================================================
-   ENEMY ATTACK
+   CASTLE DAMAGE
 ===================================================== */
 
 function attackCastle(enemy){
 
-    let alive=
-        castles.filter(
-            c=>c.alive
-        );
-
-    if(!alive.length){
-
-        endGame();
-        return;
-    }
-
     let castle=
         enemy.targetCastle;
+
 
     if(
         !castle ||
         !castle.alive
     ){
+
+        const alive=
+            castles.filter(
+                c=>c.alive
+            );
+
+        if(!alive.length){
+
+            endGame();
+            return;
+        }
 
         castle=
             alive[
@@ -681,19 +900,29 @@ function attackCastle(enemy){
             ];
     }
 
-    castle.hp-=enemy.damage*.35;
+
+    castle.hp-=
+        enemy.damage*.35;
+
 
     if(castle.hp<=0){
 
         castle.hp=0;
+
         castle.alive=false;
 
+
         effects.push({
+
             x:castle.x,
+
             y:castle.y,
-            life:1000,
+
+            life:1500,
+
             type:"fallen"
         });
+
 
         if(
             castles.every(
@@ -708,7 +937,7 @@ function attackCastle(enemy){
 
 
 /* =====================================================
-   PLAYER TROOPS
+   TROOPS
 ===================================================== */
 
 function spawnPlayerTroops(){
@@ -720,38 +949,52 @@ function spawnPlayerTroops(){
         if(!castle.alive)
             continue;
 
+
         const data=
             troopTypes[
                 castle.troop
             ];
 
+
         /*
-            Each castle creates
-            its own army.
+            Multiple troops per castle
+            makes the armies feel alive.
         */
 
-        troops.push({
+        for(
+            let i=0;
+            i<3;
+            i++
+        ){
 
-            castle:castle,
+            troops.push({
 
-            x:castle.x+45,
+                castle:castle,
 
-            y:castle.laneY,
+                x:
+                    castle.x+
+                    35+
+                    i*12,
 
-            hp:data.hp,
+                y:
+                    castle.laneY+
+                    (i-1)*13,
 
-            maxHp:data.hp,
+                hp:data.hp,
 
-            damage:data.damage,
+                maxHp:data.hp,
 
-            speed:data.speed,
+                damage:data.damage,
 
-            type:castle.troop,
+                speed:data.speed,
 
-            color:data.color,
+                type:castle.troop,
 
-            attackCooldown:0
-        });
+                color:data.color,
+
+                attackCooldown:0
+            });
+        }
     }
 }
 
@@ -768,46 +1011,67 @@ function updateTroops(dt){
 
         troop.attackCooldown-=dt;
 
-        /*
-            Move toward merge.
-        */
 
-        if(troop.x<620){
+        if(
+            troop.x<650
+        ){
 
             troop.x+=
-                troop.speed*dt;
+                troop.speed*
+                dt;
 
         }else{
 
-            /*
-                After merge point,
-                all troops share
-                the same battlefield.
-            */
+            let target=null;
 
-            const enemy=
-                enemies.find(
-                    e=>
+            let closest=Infinity;
+
+
+            for(
+                const enemy of enemies
+            ){
+
+                const d=
                     Math.hypot(
-                        e.x-troop.x,
-                        e.y-troop.y
-                    )<35
-                );
+                        enemy.x-
+                        troop.x,
 
-            if(enemy){
+                        enemy.y-
+                        troop.y
+                    );
+
+
+                if(
+                    d<45 &&
+                    d<closest
+                ){
+
+                    closest=d;
+                    target=enemy;
+                }
+            }
+
+
+            if(target){
 
                 if(
                     troop.attackCooldown<=0
                 ){
 
-                    enemy.hp-=troop.damage;
+                    target.hp-=
+                        troop.damage;
 
-                    troop.attackCooldown=650;
+                    troop.attackCooldown=
+                        650;
 
                     effects.push({
-                        x:enemy.x,
-                        y:enemy.y,
+
+                        x:target.x,
+
+                        y:target.y,
+
                         life:120,
+
                         type:"hit"
                     });
                 }
@@ -815,7 +1079,8 @@ function updateTroops(dt){
             }else{
 
                 troop.x+=
-                    troop.speed*dt;
+                    troop.speed*
+                    dt;
             }
         }
     }
@@ -863,22 +1128,36 @@ function updateTroops(dt){
 
 
 /* =====================================================
-   TOWER SELECT
+   SELECT TOWER
 ===================================================== */
 
 function selectTower(type){
 
+    if(
+        !unlockedTowers.includes(
+            type
+        )
+    ){
+
+        return;
+    }
+
+
     selectedTowerType=type;
+
+    selectedTower=null;
 
     document
         .querySelectorAll(
             ".towerButton"
         )
         .forEach(
-            b=>b.classList.remove(
+            b=>
+            b.classList.remove(
                 "selected"
             )
         );
+
 
     document
         .getElementById(
@@ -891,7 +1170,103 @@ function selectTower(type){
 
 
 /* =====================================================
-   MOUSE
+   UPDATE BUTTONS
+===================================================== */
+
+function updateTowerButtons(){
+
+    const names=[
+        "basic",
+        "rapid",
+        "heavy",
+        "slow",
+        "splash",
+        "laser",
+        "freeze",
+        "sniper",
+        "tesla",
+        "rocket"
+    ];
+
+
+    names.forEach(
+        type=>{
+
+            const button=
+                document.getElementById(
+                    type+"Button"
+                );
+
+
+            if(
+                unlockedTowers.includes(
+                    type
+                )
+            ){
+
+                button.classList.remove(
+                    "locked"
+                );
+
+                const number=
+                    {
+                        basic:"[1]",
+                        rapid:"[2]",
+                        heavy:"[3]",
+                        slow:"[4]",
+                        splash:"[5]",
+                        laser:"[6]",
+                        freeze:"[7]",
+                        sniper:"[8]",
+                        tesla:"[9]",
+                        rocket:"[0]"
+                    }[type];
+
+
+                const displayName=
+                    type.toUpperCase();
+
+
+                button.textContent=
+                    number+
+                    " "+
+                    displayName+
+                    " $"+
+                    towerTypes[type].cost;
+
+            }else{
+
+                button.classList.add(
+                    "locked"
+                );
+
+                const number=
+                    {
+                        basic:"[1]",
+                        rapid:"[2]",
+                        heavy:"[3]",
+                        slow:"[4]",
+                        splash:"[5]",
+                        laser:"[6]",
+                        freeze:"[7]",
+                        sniper:"[8]",
+                        tesla:"[9]",
+                        rocket:"[0]"
+                    }[type];
+
+
+                button.textContent=
+                    number+
+                    " 🔒 "+
+                    type.toUpperCase();
+            }
+        }
+    );
+}
+
+
+/* =====================================================
+   MOUSE POSITION
 ===================================================== */
 
 canvas.addEventListener(
@@ -901,46 +1276,89 @@ function(e){
     const rect=
         canvas.getBoundingClientRect();
 
+
     mouseX=
-        (e.clientX-rect.left)*
-        W/rect.width;
+        (e.clientX-
+        rect.left)*
+        W/
+        rect.width;
+
 
     mouseY=
-        (e.clientY-rect.top)*
-        H/rect.height;
+        (e.clientY-
+        rect.top)*
+        H/
+        rect.height;
+
 
     placementX=
         Math.floor(
             mouseX/40
-        )*40+20;
+        )*
+        40+
+        20;
+
 
     placementY=
         Math.floor(
             mouseY/40
-        )*40+20;
-
+        )*
+        40+
+        20;
 });
 
 
 /* =====================================================
-   BUILD
+   CLICK
 ===================================================== */
 
 canvas.addEventListener(
 "click",
 function(){
 
-    if(!running)return;
+    if(!running)
+        return;
+
+
+    /*
+        FIRST:
+        select existing tower.
+    */
+
+    for(
+        const tower of towers
+    ){
+
+        if(
+            Math.hypot(
+                mouseX-tower.x,
+                mouseY-tower.y
+            )<25
+        ){
+
+            selectedTower=tower;
+
+            return;
+        }
+    }
+
+
+    /*
+        SECOND:
+        build.
+    */
 
     const type=
         towerTypes[
             selectedTowerType
         ];
 
+
     if(
         money<type.cost
     )
         return;
+
 
     if(
         !validPlacement(
@@ -950,11 +1368,17 @@ function(){
     )
         return;
 
+
     money-=type.cost;
+
+
+    selectedTower=null;
+
 
     towers.push({
 
         x:placementX,
+
         y:placementY,
 
         type:selectedTowerType,
@@ -984,8 +1408,7 @@ function(){
 function validPlacement(x,y){
 
     /*
-        Don't build near
-        castle lanes.
+        Don't build on castle lanes.
     */
 
     for(
@@ -1000,30 +1423,31 @@ function validPlacement(x,y){
         )
             return false;
 
+
         if(
             Math.hypot(
                 x-castle.x,
                 y-castle.y
-            )<55
+            )<65
         )
             return false;
     }
 
 
     /*
-        Don't block merged path.
+        Don't build on merged path.
     */
 
     if(
         y>265 &&
         y<335 &&
-        x>600
+        x>620
     )
         return false;
 
 
     /*
-        Don't overlap towers.
+        Tower overlap.
     */
 
     for(
@@ -1034,10 +1458,11 @@ function validPlacement(x,y){
             Math.hypot(
                 x-tower.x,
                 y-tower.y
-            )<42
+            )<45
         )
             return false;
     }
+
 
     return true;
 }
@@ -1061,13 +1486,17 @@ function updateTowers(dt){
                 tower.flash-dt
             );
 
+
         if(
             tower.cooldown>0
         )
             continue;
 
+
         let target=null;
+
         let closest=Infinity;
+
 
         for(
             const enemy of enemies
@@ -1079,6 +1508,7 @@ function updateTowers(dt){
                     enemy.y-tower.y
                 );
 
+
             if(
                 d<tower.range &&
                 d<closest
@@ -1089,8 +1519,10 @@ function updateTowers(dt){
             }
         }
 
+
         if(!target)
             continue;
+
 
         tower.angle=
             Math.atan2(
@@ -1098,11 +1530,14 @@ function updateTowers(dt){
                 target.x-tower.x
             );
 
+
         tower.flash=100;
+
 
         bullets.push({
 
             x:tower.x,
+
             y:tower.y,
 
             target:target,
@@ -1112,8 +1547,11 @@ function updateTowers(dt){
             speed:
                 tower.type==="laser"
                 ?18
-                :8
+                :8,
+
+            type:tower.type
         });
+
 
         tower.cooldown=
             tower.fireRate;
@@ -1133,52 +1571,126 @@ function updateBullets(dt){
         i--
     ){
 
-        const b=bullets[i];
+        const bullet=
+            bullets[i];
+
 
         if(
             !enemies.includes(
-                b.target
+                bullet.target
             )
         ){
 
             bullets.splice(i,1);
+
             continue;
         }
 
+
         const dx=
-            b.target.x-b.x;
+            bullet.target.x-
+            bullet.x;
+
 
         const dy=
-            b.target.y-b.y;
+            bullet.target.y-
+            bullet.y;
+
 
         const d=
             Math.hypot(dx,dy);
 
+
         if(
-            d<b.speed*dt+5
+            d<
+            bullet.speed*dt+
+            5
         ){
 
-            b.target.hp-=b.damage;
+            /*
+                Splash ability.
+            */
+
+            if(
+                bullet.type==="splash"
+            ){
+
+                for(
+                    const enemy of enemies
+                ){
+
+                    if(
+                        Math.hypot(
+                            enemy.x-
+                            bullet.target.x,
+
+                            enemy.y-
+                            bullet.target.y
+                        )<65
+                    ){
+
+                        enemy.hp-=
+                            bullet.damage;
+                    }
+                }
+
+            }else{
+
+                bullet.target.hp-=
+                    bullet.damage;
+            }
+
+
+            /*
+                Slow tower.
+            */
+
+            if(
+                bullet.type==="slow"
+            ){
+
+                bullet.target.slow=
+                    1000;
+            }
+
+
+            /*
+                Freeze tower.
+            */
+
+            if(
+                bullet.type==="freeze"
+            ){
+
+                bullet.target.slow=
+                    2200;
+            }
+
 
             effects.push({
-                x:b.target.x,
-                y:b.target.y,
-                life:150,
+
+                x:bullet.target.x,
+
+                y:bullet.target.y,
+
+                life:170,
+
                 type:"hit"
             });
+
 
             bullets.splice(i,1);
 
         }else{
 
-            b.x+=
+            bullet.x+=
                 dx/d*
-                b.speed*
+                bullet.speed*
                 dt;
 
-            b.y+=
+            bullet.y+=
                 dy/d*
-                b.speed*
+                bullet.speed*
                 dt;
         }
     }
@@ -1199,42 +1711,36 @@ function updateEffects(dt){
 
         effects[i].life-=dt;
 
+
         if(
             effects[i].life<=0
-        )
+        ){
+
             effects.splice(i,1);
+        }
     }
 }
 
 
 /* =====================================================
-   CAPTURE NEXT CASTLE
+   CAPTURE CASTLE
 ===================================================== */
 
-function captureNextCastle(){
+function captureCastle(){
 
     const id=
         castles.length+1;
 
-    const newTroop=
-        enemyTroops[
-            (id-2)%
-            enemyTroops.length
-        ];
-
-    /*
-        New castle is placed
-        on another parallel lane.
-    */
 
     const laneList=[
-        150,
+        130,
         300,
-        450,
-        540,
-        210,
-        390
+        470,
+        200,
+        400,
+        540
     ];
+
 
     const laneY=
         laneList[
@@ -1242,11 +1748,34 @@ function captureNextCastle(){
             laneList.length
         ];
 
+
+    const enemyTroops=[
+        "Archers",
+        "Knights",
+        "Spearmen",
+        "Crossbowmen",
+        "Guards",
+        "Mages",
+        "Berserkers"
+    ];
+
+
+    const newTroop=
+        enemyTroops[
+            (id-2)%
+            enemyTroops.length
+        ];
+
+
+    /*
+        Add castle.
+    */
+
     castles.push({
 
         id:id,
 
-        x:85,
+        x:90,
 
         y:laneY,
 
@@ -1271,27 +1800,81 @@ function captureNextCastle(){
 
     kingdom++;
 
+
+    /*
+        Unlock ONE new tower.
+    */
+
+    const unlockIndex=
+        castles.length-2;
+
+
+    if(
+        unlockIndex<
+        unlockOrder.length
+    ){
+
+        const newTower=
+            unlockOrder[
+                unlockIndex
+            ];
+
+
+        if(
+            !unlockedTowers.includes(
+                newTower
+            )
+        ){
+
+            unlockedTowers.push(
+                newTower
+            );
+
+
+            effects.push({
+
+                x:550,
+
+                y:180,
+
+                life:3500,
+
+                type:"unlock",
+
+                tower:newTower
+            });
+        }
+    }
+
+
+    /*
+        Bigger reward.
+    */
+
     money+=
         300+
         kingdom*100;
 
 
     /*
-        Spawn troops
-        from every castle.
+        Spawn army from
+        ALL castles.
     */
 
     spawnPlayerTroops();
 
+
     effects.push({
 
-        x:500,
-        y:220,
+        x:550,
+
+        y:230,
 
         life:2500,
 
         type:"conquest"
     });
+
 
     wave++;
 }
@@ -1306,25 +1889,33 @@ function upgradeSelected(){
     if(!selectedTower)
         return;
 
+
     const cost=
         selectedTower.level*
         50;
+
 
     if(
         money<cost
     )
         return;
 
+
     money-=cost;
+
 
     selectedTower.level++;
 
+
     selectedTower.damage=
         Math.round(
-            selectedTower.damage*1.35
+            selectedTower.damage*
+            1.35
         );
 
+
     selectedTower.range+=10;
+
 
     selectedTower.fireRate=
         Math.max(
@@ -1335,7 +1926,7 @@ function upgradeSelected(){
 
 
 /* =====================================================
-   SELL
+   DELETE / SELL
 ===================================================== */
 
 function sellSelected(){
@@ -1343,12 +1934,16 @@ function sellSelected(){
     if(!selectedTower)
         return;
 
-    const i=
+
+    const index=
         towers.indexOf(
             selectedTower
         );
 
-    if(i<0)return;
+
+    if(index<0)
+        return;
+
 
     money+=
         Math.floor(
@@ -1356,7 +1951,12 @@ function sellSelected(){
             25
         );
 
-    towers.splice(i,1);
+
+    towers.splice(
+        index,
+        1
+    );
+
 
     selectedTower=null;
 }
@@ -1369,11 +1969,17 @@ function sellSelected(){
 function draw(){
 
     ctx.fillStyle="#101010";
-    ctx.fillRect(0,0,W,H);
+
+    ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+    );
 
 
     /*
-        GRID
+        Grid.
     */
 
     ctx.strokeStyle="#181818";
@@ -1385,10 +1991,20 @@ function draw(){
     ){
 
         ctx.beginPath();
-        ctx.moveTo(x,0);
-        ctx.lineTo(x,H);
+
+        ctx.moveTo(
+            x,
+            0
+        );
+
+        ctx.lineTo(
+            x,
+            H
+        );
+
         ctx.stroke();
     }
+
 
     for(
         let y=0;
@@ -1397,19 +2013,35 @@ function draw(){
     ){
 
         ctx.beginPath();
-        ctx.moveTo(0,y);
-        ctx.lineTo(W,y);
+
+        ctx.moveTo(
+            0,
+            y
+        );
+
+        ctx.lineTo(
+            W,
+            y
+        );
+
         ctx.stroke();
     }
 
 
     drawPaths();
+
     drawCastles();
+
     drawPlacement();
+
     drawTowers();
+
     drawTroops();
+
     drawEnemies();
+
     drawBullets();
+
     drawEffects();
 
     updateStats();
@@ -1423,10 +2055,7 @@ function draw(){
 function drawPaths(){
 
     /*
-        Every castle gets
-        its own horizontal lane.
-
-        They merge at x=620.
+        Every castle has its own lane.
     */
 
     for(
@@ -1436,98 +2065,110 @@ function drawPaths(){
         if(!castle.alive)
             continue;
 
+
         ctx.strokeStyle="#444";
+
         ctx.lineWidth=48;
+
 
         ctx.beginPath();
 
         ctx.moveTo(
-            castle.x+25,
+            castle.x+30,
             castle.laneY
         );
 
         ctx.lineTo(
-            620,
+            650,
             castle.laneY
         );
 
         ctx.stroke();
 
+
         ctx.strokeStyle="#777";
+
         ctx.lineWidth=2;
 
         ctx.setLineDash([
-            10,10
+            10,
+            10
         ]);
+
 
         ctx.beginPath();
 
         ctx.moveTo(
-            castle.x+25,
+            castle.x+30,
             castle.laneY
         );
 
         ctx.lineTo(
-            620,
+            650,
             castle.laneY
         );
 
         ctx.stroke();
+
 
         ctx.setLineDash([]);
     }
 
 
     /*
-        MERGED MAIN PATH
+        Merge into one path.
     */
 
-    if(castles.length){
+    ctx.strokeStyle="#444";
 
-        ctx.strokeStyle="#444";
-        ctx.lineWidth=48;
+    ctx.lineWidth=48;
 
-        ctx.beginPath();
 
-        ctx.moveTo(
-            620,
-            300
-        );
+    ctx.beginPath();
 
-        ctx.lineTo(
-            1030,
-            300
-        );
+    ctx.moveTo(
+        650,
+        300
+    );
 
-        ctx.stroke();
+    ctx.lineTo(
+        1100,
+        300
+    );
 
-        ctx.strokeStyle="#777";
-        ctx.lineWidth=2;
+    ctx.stroke();
 
-        ctx.setLineDash([
-            10,10
-        ]);
 
-        ctx.beginPath();
+    ctx.strokeStyle="#777";
 
-        ctx.moveTo(
-            620,
-            300
-        );
+    ctx.lineWidth=2;
 
-        ctx.lineTo(
-            1030,
-            300
-        );
+    ctx.setLineDash([
+        10,
+        10
+    ]);
 
-        ctx.stroke();
 
-        ctx.setLineDash([]);
-    }
+    ctx.beginPath();
+
+    ctx.moveTo(
+        650,
+        300
+    );
+
+    ctx.lineTo(
+        1100,
+        300
+    );
+
+    ctx.stroke();
+
+
+    ctx.setLineDash([]);
 
 
     /*
-        MERGE NODE
+        Merge box.
     */
 
     if(castles.length>1){
@@ -1535,23 +2176,50 @@ function drawPaths(){
         ctx.fillStyle="#aaa";
 
         ctx.fillRect(
-            605,
-            280,
+            635,
+            275,
             30,
-            40
+            50
         );
+
 
         ctx.fillStyle="#111";
 
         ctx.font=
-            "bold 12px Courier New";
+            "bold 11px Courier New";
 
         ctx.fillText(
             "MERGE",
-            600,
-            345
+            628,
+            350
         );
     }
+
+
+    /*
+        Enemy gate.
+    */
+
+    ctx.fillStyle="#600";
+
+    ctx.fillRect(
+        1050,
+        260,
+        45,
+        80
+    );
+
+
+    ctx.fillStyle="#f33";
+
+    ctx.font=
+        "bold 12px Courier New";
+
+    ctx.fillText(
+        "ENEMY",
+        1050,
+        250
+    );
 }
 
 
@@ -1576,11 +2244,23 @@ function drawCastles(){
                 64
             );
 
+            ctx.fillStyle="#555";
+
+            ctx.font=
+                "bold 10px Courier New";
+
+            ctx.fillText(
+                "FALLEN",
+                castle.x-27,
+                castle.y+5
+            );
+
             continue;
         }
 
+
         /*
-            Castle body
+            Castle body.
         */
 
         ctx.fillStyle="#777";
@@ -1594,28 +2274,28 @@ function drawCastles(){
 
 
         /*
-            Towers
+            Towers.
         */
 
         ctx.fillStyle="#aaa";
 
         ctx.fillRect(
             castle.x-40,
-            castle.y-42,
+            castle.y-43,
             15,
             25
         );
 
         ctx.fillRect(
             castle.x+25,
-            castle.y-42,
+            castle.y-43,
             15,
             25
         );
 
 
         /*
-            Flag
+            Flag.
         */
 
         ctx.fillStyle=
@@ -1623,33 +2303,34 @@ function drawCastles(){
 
         ctx.fillRect(
             castle.x,
-            castle.y-55,
+            castle.y-58,
             3,
-            25
+            30
         );
+
 
         ctx.beginPath();
 
         ctx.moveTo(
             castle.x+3,
-            castle.y-55
+            castle.y-58
         );
 
         ctx.lineTo(
-            castle.x+23,
-            castle.y-48
+            castle.x+24,
+            castle.y-50
         );
 
         ctx.lineTo(
             castle.x+3,
-            castle.y-40
+            castle.y-42
         );
 
         ctx.fill();
 
 
         /*
-            Castle number
+            Number.
         */
 
         ctx.fillStyle="#111";
@@ -1665,32 +2346,33 @@ function drawCastles(){
 
 
         /*
-            HP
+            HP.
         */
 
         ctx.fillStyle="#222";
 
         ctx.fillRect(
-            castle.x-38,
+            castle.x-40,
             castle.y+45,
-            76,
-            6
+            80,
+            7
         );
+
 
         ctx.fillStyle="#ddd";
 
         ctx.fillRect(
-            castle.x-38,
+            castle.x-40,
             castle.y+45,
-            76*
+            80*
             castle.hp/
             castle.maxHp,
-            6
+            7
         );
 
 
         /*
-            Troop label
+            Troop type.
         */
 
         ctx.fillStyle=
@@ -1702,24 +2384,27 @@ function drawCastles(){
         ctx.fillText(
             castle.troop,
             castle.x-35,
-            castle.y+65
+            castle.y+67
         );
     }
 }
 
 
 /* =====================================================
-   PLACEMENT
+   PLACEMENT PREVIEW
 ===================================================== */
 
 function drawPlacement(){
 
-    if(!running)return;
+    if(!running)
+        return;
+
 
     const type=
         towerTypes[
             selectedTowerType
         ];
+
 
     const valid=
         money>=type.cost &&
@@ -1728,12 +2413,15 @@ function drawPlacement(){
             placementY
         );
 
+
     ctx.strokeStyle=
         valid
         ?"rgba(255,255,255,.35)"
-        :"rgba(255,0,0,.4)";
+        :"rgba(255,0,0,.5)";
+
 
     ctx.lineWidth=2;
+
 
     ctx.beginPath();
 
@@ -1750,8 +2438,9 @@ function drawPlacement(){
 
     ctx.fillStyle=
         valid
-        ?"rgba(210,210,210,.25)"
+        ?"rgba(220,220,220,.25)"
         :"rgba(255,0,0,.25)";
+
 
     ctx.fillRect(
         placementX-20,
@@ -1760,10 +2449,12 @@ function drawPlacement(){
         40
     );
 
+
     ctx.strokeStyle=
         valid
         ?"white"
         :"red";
+
 
     ctx.strokeRect(
         placementX-20,
@@ -1775,34 +2466,49 @@ function drawPlacement(){
 
 
 /* =====================================================
-   TOWERS DRAW
+   TOWER DRAW
 ===================================================== */
 
 function drawTowers(){
 
     const colours={
+
         basic:"#d44",
+
         rapid:"#4af",
+
         heavy:"#f5a623",
+
         slow:"#5c6",
+
         splash:"#b65cff",
+
         laser:"#4ff",
+
         freeze:"#8cf",
+
         sniper:"#eee",
+
         tesla:"#ff5",
+
         rocket:"#f66"
     };
+
 
     for(
         const tower of towers
     ){
+
+        /*
+            Selected range.
+        */
 
         if(
             selectedTower===tower
         ){
 
             ctx.strokeStyle=
-                "rgba(255,255,255,.3)";
+                "rgba(255,255,255,.35)";
 
             ctx.beginPath();
 
@@ -1819,58 +2525,117 @@ function drawTowers(){
 
 
         ctx.fillStyle=
-            colours[tower.type];
-
-        ctx.fillRect(
-            tower.x-18,
-            tower.y-18,
-            36,
-            36
-        );
+            colours[
+                tower.type
+            ];
 
 
         /*
-            Different tower shapes.
+            Different tower bodies.
         */
 
-        ctx.fillStyle="#111";
-
         if(
-            tower.type==="basic"
+            tower.type==="heavy"
+        ){
+
+            ctx.fillRect(
+                tower.x-22,
+                tower.y-22,
+                44,
+                44
+            );
+
+        }else if(
+            tower.type==="sniper"
         ){
 
             ctx.beginPath();
 
-            ctx.arc(
+            ctx.moveTo(
                 tower.x,
-                tower.y,
-                10,
-                0,
-                Math.PI*2
+                tower.y-24
             );
+
+            ctx.lineTo(
+                tower.x+24,
+                tower.y+20
+            );
+
+            ctx.lineTo(
+                tower.x-24,
+                tower.y+20
+            );
+
+            ctx.closePath();
 
             ctx.fill();
 
         }else if(
+            tower.type==="tesla"
+        ){
+
+            ctx.beginPath();
+
+            for(
+                let i=0;
+                i<8;
+                i++
+            ){
+
+                const a=
+                    i*
+                    Math.PI/4;
+
+                const r=
+                    i%2
+                    ?12
+                    :23;
+
+                const x=
+                    tower.x+
+                    Math.cos(a)*r;
+
+                const y=
+                    tower.y+
+                    Math.sin(a)*r;
+
+                if(i===0)
+                    ctx.moveTo(x,y);
+                else
+                    ctx.lineTo(x,y);
+            }
+
+            ctx.closePath();
+
+            ctx.fill();
+
+        }else{
+
+            ctx.fillRect(
+                tower.x-18,
+                tower.y-18,
+                36,
+                36
+            );
+        }
+
+
+        /*
+            Inner design.
+        */
+
+        ctx.fillStyle="#111";
+
+
+        if(
             tower.type==="rapid"
         ){
 
             ctx.fillRect(
                 tower.x-4,
-                tower.y-22,
+                tower.y-23,
                 8,
-                44
-            );
-
-        }else if(
-            tower.type==="heavy"
-        ){
-
-            ctx.fillRect(
-                tower.x-12,
-                tower.y-12,
-                24,
-                24
+                46
             );
 
         }else if(
@@ -1878,10 +2643,10 @@ function drawTowers(){
         ){
 
             ctx.fillRect(
-                tower.x-4,
-                tower.y-24,
-                8,
-                48
+                tower.x-5,
+                tower.y-25,
+                10,
+                50
             );
 
         }else{
@@ -1891,7 +2656,7 @@ function drawTowers(){
             ctx.arc(
                 tower.x,
                 tower.y,
-                7,
+                8,
                 0,
                 Math.PI*2
             );
@@ -1901,7 +2666,7 @@ function drawTowers(){
 
 
         /*
-            Barrel
+            Barrel.
         */
 
         ctx.save();
@@ -1920,7 +2685,7 @@ function drawTowers(){
         ctx.fillRect(
             0,
             -4,
-            22,
+            25,
             8
         );
 
@@ -1928,14 +2693,14 @@ function drawTowers(){
 
 
         /*
-            Shooting flash
+            Shooting animation.
         */
 
         if(
             tower.flash>0
         ){
 
-            ctx.fillStyle="white";
+            ctx.fillStyle="#fff";
 
             ctx.beginPath();
 
@@ -1943,14 +2708,16 @@ function drawTowers(){
                 tower.x+
                 Math.cos(
                     tower.angle
-                )*28,
+                )*
+                30,
 
                 tower.y+
                 Math.sin(
                     tower.angle
-                )*28,
+                )*
+                30,
 
-                8,
+                9,
                 0,
                 Math.PI*2
             );
@@ -1958,6 +2725,10 @@ function drawTowers(){
             ctx.fill();
         }
 
+
+        /*
+            Level.
+        */
 
         ctx.fillStyle="#111";
 
@@ -1974,7 +2745,7 @@ function drawTowers(){
 
 
 /* =====================================================
-   TROOPS DRAW
+   TROOPS
 ===================================================== */
 
 function drawTroops(){
@@ -1986,9 +2757,6 @@ function drawTroops(){
         ctx.fillStyle=
             troop.color;
 
-        /*
-            Body
-        */
 
         ctx.fillRect(
             troop.x-7,
@@ -1999,7 +2767,7 @@ function drawTroops(){
 
 
         /*
-            Weapon
+            Weapon.
         */
 
         ctx.strokeStyle="#111";
@@ -2022,23 +2790,24 @@ function drawTroops(){
 
 
         /*
-            HP
+            HP.
         */
 
         ctx.fillStyle="#222";
 
         ctx.fillRect(
             troop.x-10,
-            troop.y-15,
+            troop.y-16,
             20,
             3
         );
+
 
         ctx.fillStyle="#ddd";
 
         ctx.fillRect(
             troop.x-10,
-            troop.y-15,
+            troop.y-16,
             20*
             Math.max(
                 0,
@@ -2052,17 +2821,24 @@ function drawTroops(){
 
 
 /* =====================================================
-   ENEMIES DRAW
+   ENEMIES
 ===================================================== */
 
 function drawEnemies(){
 
     const colours={
+
         Spearmen:"#5c6",
+
         Crossbowmen:"#b65cff",
+
         Guards:"#f66",
-        Mages:"#5ff"
+
+        Mages:"#5ff",
+
+        Berserkers:"#f90"
     };
+
 
     for(
         const enemy of enemies
@@ -2071,12 +2847,8 @@ function drawEnemies(){
         ctx.fillStyle=
             colours[
                 enemy.type
-            ]||"#f33";
+            ];
 
-
-        /*
-            Different enemy shapes.
-        */
 
         if(
             enemy.type==="Spearmen"
@@ -2097,21 +2869,21 @@ function drawEnemies(){
 
             ctx.moveTo(
                 enemy.x,
-                enemy.y-13
+                enemy.y-14
             );
 
             ctx.lineTo(
-                enemy.x+13,
+                enemy.x+14,
                 enemy.y
             );
 
             ctx.lineTo(
                 enemy.x,
-                enemy.y+13
+                enemy.y+14
             );
 
             ctx.lineTo(
-                enemy.x-13,
+                enemy.x-14,
                 enemy.y
             );
 
@@ -2124,13 +2896,15 @@ function drawEnemies(){
         ){
 
             ctx.fillRect(
-                enemy.x-14,
-                enemy.y-14,
-                28,
-                28
+                enemy.x-15,
+                enemy.y-15,
+                30,
+                30
             );
 
-        }else{
+        }else if(
+            enemy.type==="Mages"
+        ){
 
             ctx.beginPath();
 
@@ -2143,28 +2917,52 @@ function drawEnemies(){
             );
 
             ctx.fill();
+
+        }else{
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                enemy.x,
+                enemy.y-17
+            );
+
+            ctx.lineTo(
+                enemy.x+17,
+                enemy.y+14
+            );
+
+            ctx.lineTo(
+                enemy.x-17,
+                enemy.y+14
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
         }
 
 
         /*
-            HP
+            HP.
         */
 
         ctx.fillStyle="#222";
 
         ctx.fillRect(
-            enemy.x-14,
-            enemy.y-21,
-            28,
+            enemy.x-16,
+            enemy.y-23,
+            32,
             4
         );
+
 
         ctx.fillStyle="#eee";
 
         ctx.fillRect(
-            enemy.x-14,
-            enemy.y-21,
-            28*
+            enemy.x-16,
+            enemy.y-23,
+            32*
             Math.max(
                 0,
                 enemy.hp/
@@ -2183,14 +2981,18 @@ function drawEnemies(){
 function drawBullets(){
 
     for(
-        const b of bullets
+        const bullet of bullets
     ){
 
-        ctx.fillStyle="white";
+        ctx.fillStyle=
+            bullet.type==="laser"
+            ?"white"
+            :"#ddd";
+
 
         ctx.fillRect(
-            b.x-3,
-            b.y-3,
+            bullet.x-3,
+            bullet.y-3,
             6,
             6
         );
@@ -2212,24 +3014,40 @@ function drawEffects(){
             e.type==="conquest"
         ){
 
-            ctx.fillStyle="white";
+            ctx.fillStyle="#fff";
 
             ctx.font=
                 "bold 30px Courier New";
 
             ctx.fillText(
                 "CASTLE CAPTURED!",
-                340,
-                210
+                390,
+                200
             );
 
+        }else if(
+            e.type==="unlock"
+        ){
+
+            ctx.fillStyle="#fff";
+
             ctx.font=
-                "15px Courier New";
+                "bold 22px Courier New";
 
             ctx.fillText(
-                "NEW TROOPS JOINED YOUR KINGDOM",
-                310,
-                240
+                "NEW TOWER UNLOCKED!",
+                385,
+                235
+            );
+
+
+            ctx.font=
+                "bold 18px Courier New";
+
+            ctx.fillText(
+                e.tower.toUpperCase(),
+                485,
+                270
             );
 
         }else if(
@@ -2239,7 +3057,7 @@ function drawEffects(){
             ctx.fillStyle="#f33";
 
             ctx.font=
-                "bold 13px Courier New";
+                "bold 12px Courier New";
 
             ctx.fillText(
                 "CASTLE FALLEN",
@@ -2250,7 +3068,7 @@ function drawEffects(){
         }else{
 
             ctx.strokeStyle=
-                "rgba(255,255,255,.7)";
+                "rgba(255,255,255,.8)";
 
             ctx.strokeRect(
                 e.x-10,
@@ -2274,10 +3092,12 @@ function updateStats(){
             c=>c.alive
         ).length;
 
+
     document.getElementById(
         "stats"
     ).textContent=
-        "$"+money+
+        "$"+
+        money+
         " | Castles "+
         alive+
         "/"+
@@ -2295,23 +3115,38 @@ function updateStats(){
 
 function saveGame(slot){
 
-    if(!running)return;
+    if(!running)
+        return;
+
 
     const data={
-        money,
-        wave,
-        kingdom,
-        castles,
-        towers
+
+        money:money,
+
+        wave:wave,
+
+        kingdom:kingdom,
+
+        castles:castles,
+
+        towers:towers,
+
+        unlockedTowers:
+            unlockedTowers
     };
 
+
     localStorage.setItem(
-        "kingdomTDsave"+slot,
+        "kingdomWarSave"+
+        slot,
+
         JSON.stringify(data)
     );
 
+
     alert(
-        "GAME SAVED TO SLOT "+slot
+        "GAME SAVED — SLOT "+
+        slot
     );
 }
 
@@ -2324,42 +3159,69 @@ function loadGame(slot){
 
     const raw=
         localStorage.getItem(
-            "kingdomTDsave"+slot
+            "kingdomWarSave"+
+            slot
         );
+
 
     if(!raw){
 
         alert(
-            "SAVE SLOT "+slot+
+            "SAVE SLOT "+
+            slot+
             " IS EMPTY"
         );
 
         return;
     }
 
+
     const data=
         JSON.parse(raw);
 
+
     money=data.money;
+
     wave=data.wave;
+
     kingdom=data.kingdom;
+
     castles=data.castles;
+
     towers=data.towers||[];
 
+    unlockedTowers=
+        data.unlockedTowers||
+        [
+            "basic",
+            "rapid"
+        ];
+
+
     enemies=[];
+
     troops=[];
+
     bullets=[];
+
     effects=[];
 
+
     running=true;
+
     waveRunning=false;
 
     selectedTower=null;
 
+
+    updateTowerButtons();
+
     hideOverlay();
+
 
     lastTime=
         performance.now();
+
 
     requestAnimationFrame(
         gameLoop
@@ -2374,47 +3236,69 @@ function loadGame(slot){
 function endGame(){
 
     running=false;
+
     waveRunning=false;
 
-    const title=
-        document.getElementById(
+
+    document
+        .getElementById(
             "overlayTitle"
-        );
+        )
+        .textContent="RETRY";
 
-    title.textContent="RETRY";
-    title.className="retry";
 
-    document.getElementById(
-        "overlayText"
-    ).innerHTML=
+    document
+        .getElementById(
+            "overlayTitle"
+        )
+        .className="retry";
+
+
+    document
+        .getElementById(
+            "overlayText"
+        )
+        .innerHTML=
         "ALL YOUR CASTLES HAVE FALLEN"+
         "<br><br>"+
-        "Kingdom: "+kingdom+
+        "Kingdom: "+
+        kingdom+
         "<br>"+
-        "Wave: "+wave+
+        "Wave: "+
+        wave+
         "<br><br>"+
-        "Your save slots are safe.";
+        "Your saves are safe.";
+
 
     const button=
         document.getElementById(
             "mainButton"
         );
 
+
     button.textContent="RETRY";
+
     button.onclick=startGame;
+
     button.className="retry";
 
-    document.getElementById(
-        "homeButton"
-    ).classList.remove(
-        "hidden"
-    );
 
-    document.getElementById(
-        "overlay"
-    ).classList.remove(
-        "hidden"
-    );
+    document
+        .getElementById(
+            "homeButton"
+        )
+        .classList.remove(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "overlay"
+        )
+        .classList.remove(
+            "hidden"
+        );
 }
 
 
@@ -2424,12 +3308,8 @@ function endGame(){
 
 function goHome(){
 
-    /*
-        If your homepage has a different
-        filename, change this to that file.
-    */
-
-    window.location.href="index.html";
+    window.location.href=
+        "index.html";
 }
 
 
@@ -2439,11 +3319,13 @@ function goHome(){
 
 function hideOverlay(){
 
-    document.getElementById(
-        "overlay"
-    ).classList.add(
-        "hidden"
-    );
+    document
+        .getElementById(
+            "overlay"
+        )
+        .classList.add(
+            "hidden"
+        );
 }
 
 
@@ -2458,7 +3340,9 @@ function(e){
     const key=
         e.key.toLowerCase();
 
+
     const keys={
+
         "1":"basic",
         "2":"rapid",
         "3":"heavy",
@@ -2471,7 +3355,9 @@ function(e){
         "0":"rocket"
     };
 
+
     if(keys[key]){
+
         selectTower(
             keys[key]
         );
@@ -2479,16 +3365,18 @@ function(e){
 
 
     /*
-        RRR = HOME
+        RRR = Home
     */
 
     if(key==="r"){
 
         rCount++;
 
+
         clearTimeout(
             rTimer
         );
+
 
         rTimer=
             setTimeout(
@@ -2497,6 +3385,7 @@ function(e){
                 },
                 700
             );
+
 
         if(rCount===3){
 
@@ -2513,7 +3402,10 @@ function(e){
    INITIAL
 ===================================================== */
 
+updateTowerButtons();
+
 updateStats();
+
 draw();
 
 </script>
