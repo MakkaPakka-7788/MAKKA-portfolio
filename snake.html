@@ -800,24 +800,6 @@ function gameStep() {
 
 
     /*
-       SELF COLLISION
-    */
-
-    if (
-        snake.some(
-            part =>
-                part.x === head.x &&
-                part.y === head.y
-        )
-    ) {
-
-        endGame();
-        return;
-
-    }
-
-
-    /*
        OBSTACLE COLLISION
     */
 
