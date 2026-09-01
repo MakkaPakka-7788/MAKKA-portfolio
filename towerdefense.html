@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,10 +159,7 @@ button.locked {
 <button id="laserButton" class="locked" onclick="selectTower('laser')">[6] LOCKED</button>
 <button id="freezeButton" class="locked" onclick="selectTower('freeze')">[7] LOCKED</button>
 <button id="sniperButton" class="locked" onclick="selectTower('sniper')">[8] LOCKED</button>
-<button id="poisonButton" class="locked" onclick="selectTower('poison')">[9] LOCKED</button>
-<button id="ballistaButton" class="locked" onclick="selectTower('ballista')">[0] LOCKED</button>
-<button id="catapultButton" class="locked" onclick="selectTower('catapult')">[-] LOCKED</button>
-<button id="fireButton" class="locked" onclick="selectTower('fire')">[=] LOCKED</button>
+<button id="mortarButton" class="locked" onclick="selectTower('mortar')">[9] LOCKED</button>
 
 <button onclick="upgradeSelected()">UPGRADE</button>
 <button onclick="sellSelected()">DELETE / SELL</button>
@@ -282,15 +280,15 @@ const towerTypes = {
 
     heavy: {
         name: "HEAVY",
-        cost: 145,
-        damage: 42,
+        cost: 150,
+        damage: 48,
         range: 150,
-        fireRate: 1300
+        fireRate: 1350
     },
 
     slow: {
         name: "SLOW",
-        cost: 125,
+        cost: 130,
         damage: 10,
         range: 140,
         fireRate: 700
@@ -298,7 +296,7 @@ const towerTypes = {
 
     splash: {
         name: "SPLASH",
-        cost: 180,
+        cost: 185,
         damage: 25,
         range: 145,
         fireRate: 1100
@@ -309,7 +307,7 @@ const towerTypes = {
         cost: 250,
         damage: 12,
         range: 185,
-        fireRate: 180
+        fireRate: 170
     },
 
     freeze: {
@@ -317,47 +315,23 @@ const towerTypes = {
         cost: 300,
         damage: 8,
         range: 155,
-        fireRate: 700
+        fireRate: 720
     },
 
     sniper: {
         name: "SNIPER",
         cost: 350,
-        damage: 70,
+        damage: 85,
         range: 330,
-        fireRate: 1700
-    },
-
-    poison: {
-        name: "POISON",
-        cost: 400,
-        damage: 13,
-        range: 180,
-        fireRate: 850
-    },
-
-    ballista: {
-        name: "BALLISTA",
-        cost: 500,
-        damage: 95,
-        range: 250,
         fireRate: 1900
     },
 
-    catapult: {
-        name: "CATAPULT",
-        cost: 650,
-        damage: 55,
-        range: 280,
-        fireRate: 2200
-    },
-
-    fire: {
-        name: "FIRE",
-        cost: 750,
-        damage: 24,
-        range: 200,
-        fireRate: 650
+    mortar: {
+        name: "MORTAR",
+        cost: 450,
+        damage: 48,
+        range: 270,
+        fireRate: 1700
     }
 };
 
@@ -370,10 +344,7 @@ const towerOrder = [
     "laser",
     "freeze",
     "sniper",
-    "poison",
-    "ballista",
-    "catapult",
-    "fire"
+    "mortar"
 ];
 
 let unlockedTowers = [
@@ -389,35 +360,35 @@ let unlockedTowers = [
 const troopTypes = {
 
     Swordsmen: {
-        hp: 180,
-        damage: 22,
+        hp: 140,
+        damage: 18,
         speed: .045,
         cost: 30,
         color: "#ddd",
-        attackRate: 700
+        attackRate: 650
     },
 
     Archers: {
-        hp: 110,
-        damage: 28,
+        hp: 90,
+        damage: 24,
         speed: .038,
         cost: 45,
         color: "#4af",
-        attackRate: 850
+        attackRate: 900
     },
 
     Knights: {
         hp: 300,
-        damage: 45,
+        damage: 42,
         speed: .052,
         cost: 80,
         color: "#fa3",
-        attackRate: 800
+        attackRate: 700
     },
 
     Spearmen: {
-        hp: 220,
-        damage: 28,
+        hp: 190,
+        damage: 27,
         speed: .04,
         cost: 55,
         color: "#6c6",
@@ -425,26 +396,26 @@ const troopTypes = {
     },
 
     Crossbowmen: {
-        hp: 140,
-        damage: 38,
+        hp: 120,
+        damage: 35,
         speed: .034,
         cost: 90,
         color: "#b65cff",
-        attackRate: 900
+        attackRate: 1000
     },
 
     Guards: {
-        hp: 400,
-        damage: 50,
+        hp: 380,
+        damage: 48,
         speed: .026,
         cost: 115,
         color: "#f66",
-        attackRate: 850
+        attackRate: 650
     },
 
     Mages: {
-        hp: 170,
-        damage: 60,
+        hp: 150,
+        damage: 58,
         speed: .032,
         cost: 145,
         color: "#5ff",
@@ -534,9 +505,8 @@ function gameLoop(time) {
 
     lastTime = time;
 
-    if (!paused) {
+    if (!paused)
         update(dt);
-    }
 
     draw();
     updateStats();
@@ -576,7 +546,6 @@ function updateWaves(dt) {
                 kingdom > 1 &&
                 !roadConnected()
             ) {
-
                 roadMode = true;
                 return;
             }
@@ -599,8 +568,8 @@ function updateWaves(dt) {
         spawnLeft--;
 
         spawnTimer = Math.max(
-            300,
-            800 - wave * 2
+            700,
+            1200 - wave * 2
         );
     }
 
@@ -611,19 +580,27 @@ function updateWaves(dt) {
 
         waveRunning = false;
 
+        /*
+            WAVE PAYOUT
+
+            Higher waves give more money,
+            but the payout stays reasonable
+            so the game does not become easy.
+        */
+
         waveReward =
-            50 +
-            wave * 12 +
-            kingdom * 35;
+            45 +
+            wave * 9 +
+            kingdom * 30;
 
         money += waveReward;
 
         effects.push({
             x: W / 2,
-            y: 145,
-            life: 2600,
+            y: 75,
+            life: 2200,
             type: "reward",
-            text: "+$" + waveReward + " WAVE PAYOUT"
+            text: "WAVE CLEAR  +$" + waveReward
         });
 
         if (wave % 40 === 0) {
@@ -659,15 +636,127 @@ function startWave() {
 
     waveRunning = true;
 
+    /*
+        Fewer enemies.
+
+        They get much stronger as waves
+        increase instead of simply becoming
+        a giant swarm.
+    */
+
     spawnLeft =
         Math.min(
-            220,
-            6 +
-            Math.floor(wave * .9) +
-            kingdom * 3
+            65,
+            4 +
+            Math.floor(wave * .34) +
+            kingdom
         );
 
     spawnTimer = 500;
+}
+
+
+/* =========================
+   ENEMY DATA
+========================= */
+
+function getEnemyType() {
+
+    const random = Math.random();
+
+    /*
+        New powerful enemies start appearing
+        in later waves.
+    */
+
+    if (wave < 10) {
+
+        return random < .65
+            ? "Spearmen"
+            : "Crossbowmen";
+
+    }
+
+    if (wave < 20) {
+
+        return random < .5
+            ? "Crossbowmen"
+            : "Guards";
+
+    }
+
+    if (wave < 35) {
+
+        if (random < .35)
+            return "Crossbowmen";
+
+        if (random < .7)
+            return "Guards";
+
+        return "Mages";
+    }
+
+    if (wave < 50) {
+
+        if (random < .25)
+            return "Guards";
+
+        if (random < .55)
+            return "Mages";
+
+        if (random < .8)
+            return "Knights";
+
+        return "Boss";
+    }
+
+    /*
+        Wave 50+.
+
+        Mostly powerful enemies with occasional
+        bosses.
+    */
+
+    if (random < .18)
+        return "Boss";
+
+    if (random < .43)
+        return "Mages";
+
+    if (random < .68)
+        return "Guards";
+
+    if (random < .84)
+        return "Knights";
+
+    return "Crossbowmen";
+}
+
+
+/* =========================
+   ENEMY STATS
+========================= */
+
+function getEnemyStats(type) {
+
+    if (type === "Boss") {
+
+        return {
+            hp: 1800,
+            damage: 115,
+            speed: .018,
+            size: 23
+        };
+    }
+
+    const data = troopTypes[type];
+
+    return {
+        hp: data.hp,
+        damage: data.damage,
+        speed: .035,
+        size: 15
+    };
 }
 
 
@@ -677,116 +766,75 @@ function startWave() {
 
 function spawnEnemy() {
 
-    let type;
-    let random = Math.random();
+    const type = getEnemyType();
+    const data = getEnemyStats(type);
 
-    if (wave < 10) {
+    /*
+        Strong scaling.
 
-        type =
-            random < .55
-            ? "Spearmen"
-            : "Crossbowmen";
+        This is intentionally much harder
+        around Wave 50+.
+    */
 
-    } else if (wave < 20) {
-
-        type =
-            random < .4
-            ? "Crossbowmen"
-            : "Guards";
-
-    } else if (wave < 35) {
-
-        type =
-            random < .3
-            ? "Guards"
-            : "Mages";
-
-    } else {
-
-        const choices = [
-            "Guards",
-            "Mages",
-            "Knights",
-            "Crossbowmen"
-        ];
-
-        type =
-            choices[
-                Math.floor(
-                    Math.random() *
-                    choices.length
-                )
-            ];
-    }
-
-    const data = troopTypes[type];
-
-    let scale =
+    const waveScale =
         1 +
-        wave * .045 +
-        kingdom * .18;
+        Math.max(0, wave - 1) * .055;
 
-    if (wave >= 20)
-        scale *= 1.15;
+    const kingdomScale =
+        1 +
+        Math.max(0, kingdom - 1) * .12;
 
-    if (wave >= 40)
-        scale *= 1.2;
+    let hp =
+        data.hp *
+        waveScale *
+        kingdomScale;
 
-    if (wave >= 60)
-        scale *= 1.25;
+    let damage =
+        data.damage *
+        (
+            1 +
+            Math.max(0, wave - 1) * .032
+        ) *
+        kingdomScale;
 
-    const giant =
-        Math.random() <
-        Math.min(
-            .05 + wave * .0015,
-            .22
-        );
+    if (type === "Boss") {
 
-    if (giant)
-        scale *= 1.75;
-
-    let startY = 325;
-
-    if (
-        kingdom > 1 &&
-        roadPoints.length > 0
-    ) {
-
-        startY =
-            roadPoints[
-                roadPoints.length - 1
-            ].y;
+        hp *= 1.4;
+        damage *= 1.25;
     }
 
     enemies.push({
 
-        type: type,
+        type,
 
         x: 1080,
-        y: startY,
+        y: 325,
 
-        hp: data.hp * scale,
-        maxHp: data.hp * scale,
+        hp,
+        maxHp: hp,
 
-        damage: data.damage * scale,
+        damage,
 
         speed:
-            .035 +
+            data.speed +
             Math.min(
-                wave * .00012,
-                .018
+                wave * .00008,
+                .006
             ),
 
         slow: 0,
 
-        giant: giant,
+        size: data.size,
 
-        roadIndex:
-            roadPoints.length - 1,
+        targetRoadIndex: null,
 
         pathChoice: Math.random(),
 
-        attackCooldown: 0
+        attackCooldown: 0,
+
+        animation: Math.random() * Math.PI * 2,
+
+        hitFlash: 0
     });
 }
 
@@ -805,18 +853,25 @@ function updateEnemies(dt) {
 
         const enemy = enemies[i];
 
+        enemy.animation += dt * .006;
+        enemy.hitFlash =
+            Math.max(
+                0,
+                enemy.hitFlash - dt
+            );
+
         let speed = enemy.speed;
 
         if (enemy.slow > 0) {
 
             speed *= .35;
-
             enemy.slow -= dt;
         }
 
         if (kingdom === 1) {
 
             enemy.x -= speed * dt;
+
             enemy.y = 325;
 
         } else {
@@ -828,10 +883,12 @@ function updateEnemies(dt) {
             );
         }
 
-        enemy.attackCooldown -= dt;
+        /*
+            Castle reached.
+        */
 
         if (
-            enemy.x < 145
+            enemy.x < 130
         ) {
 
             damageCastle(enemy);
@@ -853,7 +910,7 @@ function moveEnemyAlongRoad(
 ) {
 
     if (
-        roadPoints.length < 2
+        roadPoints.length === 0
     ) {
 
         enemy.x -= speed * dt;
@@ -861,31 +918,105 @@ function moveEnemyAlongRoad(
     }
 
     /*
-        Enemies travel backwards
-        from the gate toward the castle.
-
-        Small random sideways movement
-        makes enemies choose slightly
-        different positions around road
-        bends instead of stacking together.
+        Enemies move toward the road
+        point that is closest to them,
+        but they can choose between nearby
+        points instead of following exactly
+        the same movement every time.
     */
 
     if (
-        enemy.roadIndex >=
-        roadPoints.length
+        enemy.targetRoadIndex === null
     ) {
 
-        enemy.roadIndex =
-            roadPoints.length - 1;
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+
+        for (
+            let i = 0;
+            i < roadPoints.length;
+            i++
+        ) {
+
+            const p = roadPoints[i];
+
+            const d =
+                Math.hypot(
+                    p.x - enemy.x,
+                    p.y - enemy.y
+                );
+
+            if (
+                d < closestDistance
+            ) {
+
+                closestDistance = d;
+                closestIndex = i;
+            }
+        }
+
+        enemy.targetRoadIndex =
+            closestIndex;
     }
 
-    let target =
-        roadPoints[
-            Math.max(
-                0,
-                enemy.roadIndex - 1
-            )
-        ];
+    let index =
+        enemy.targetRoadIndex;
+
+    /*
+        Occasionally choose a nearby road
+        point to make movement less identical.
+    */
+
+    if (
+        Math.random() <
+        .002
+    ) {
+
+        const choices = [];
+
+        if (index > 0)
+            choices.push(index - 1);
+
+        if (index > 1)
+            choices.push(index - 2);
+
+        if (index < roadPoints.length - 1)
+            choices.push(index + 1);
+
+        if (choices.length > 0) {
+
+            enemy.targetRoadIndex =
+                choices[
+                    Math.floor(
+                        Math.random() *
+                        choices.length
+                    )
+                ];
+
+            index =
+                enemy.targetRoadIndex;
+        }
+    }
+
+    /*
+        Road is stored castle → gate,
+        so enemies normally travel backward.
+    */
+
+    let target;
+
+    if (index > 0) {
+
+        target =
+            roadPoints[index - 1];
+
+    } else {
+
+        target = {
+            x: castles[0].x,
+            y: roadPoints[0].y
+        };
+    }
 
     const dx =
         target.x - enemy.x;
@@ -896,58 +1027,28 @@ function moveEnemyAlongRoad(
     const distance =
         Math.hypot(dx, dy);
 
-    if (
-        distance < 14
-    ) {
-
-        enemy.roadIndex--;
-
-        if (
-            enemy.roadIndex <= 0
-        ) {
-
-            enemy.roadIndex = 0;
-
-            target = {
-                x: castles[0].x,
-                y: castles[0].y
-            };
-        }
-    }
-
-    /*
-        Random path offset.
-        It stays inside the road.
-    */
-
-    let side =
-        Math.sin(
-            enemy.pathChoice * 20 +
-            performance.now() * .0008
-        ) * 10;
-
-    if (
-        distance > 1
-    ) {
-
-        const nx = -dy / distance;
-        const ny = dx / distance;
+    if (distance > 5) {
 
         enemy.x +=
-            (
-                dx / distance +
-                nx * side * .01
-            ) *
+            dx / distance *
             speed *
             dt;
 
         enemy.y +=
-            (
-                dy / distance +
-                ny * side * .01
-            ) *
+            dy / distance *
             speed *
             dt;
+    }
+
+    if (
+        distance < 12
+    ) {
+
+        enemy.targetRoadIndex =
+            Math.max(
+                0,
+                index - 1
+            );
     }
 }
 
@@ -989,9 +1090,7 @@ function damageCastle(enemy) {
                 enemy.y
             );
 
-        if (
-            d < best
-        ) {
+        if (d < best) {
 
             best = d;
             castle = c;
@@ -999,7 +1098,7 @@ function damageCastle(enemy) {
     }
 
     castle.hp -=
-        enemy.damage * .42;
+        enemy.damage * .35;
 
     effects.push({
         x: castle.x,
@@ -1047,20 +1146,16 @@ function drawRoad() {
     ctx.lineWidth = 48;
 
     ctx.beginPath();
-
     ctx.moveTo(105, 325);
     ctx.lineTo(1080, 325);
-
     ctx.stroke();
 
     ctx.strokeStyle = "#555";
     ctx.lineWidth = 38;
 
     ctx.beginPath();
-
     ctx.moveTo(105, 325);
     ctx.lineTo(1080, 325);
-
     ctx.stroke();
 
     if (
@@ -1117,60 +1212,6 @@ function drawRoad() {
         ctx.stroke();
     }
 
-    /*
-        Road branches.
-
-        These give enemies multiple
-        visual routes to choose from.
-    */
-
-    if (
-        kingdom > 1 &&
-        roadPoints.length > 2
-    ) {
-
-        ctx.strokeStyle = "#444";
-        ctx.lineWidth = 18;
-
-        for (
-            let i = 1;
-            i < roadPoints.length - 1;
-            i += 2
-        ) {
-
-            const p =
-                roadPoints[i];
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                p.x,
-                p.y
-            );
-
-            ctx.lineTo(
-                p.x + 35,
-                p.y - 25
-            );
-
-            ctx.stroke();
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                p.x,
-                p.y
-            );
-
-            ctx.lineTo(
-                p.x + 35,
-                p.y + 25
-            );
-
-            ctx.stroke();
-        }
-    }
-
     ctx.lineCap = "butt";
 }
 
@@ -1181,9 +1222,7 @@ function drawRoad() {
 
 function toggleRoadMode() {
 
-    if (
-        kingdom <= 1
-    )
+    if (kingdom <= 1)
         return;
 
     roadMode = !roadMode;
@@ -1231,9 +1270,7 @@ function addRoadPoint() {
 
     if (
         x > 1030 &&
-        Math.abs(
-            y - 325
-        ) < 75
+        Math.abs(y - 325) < 75
     ) {
 
         roadPoints.push({
@@ -1250,9 +1287,7 @@ function addRoadPoint() {
 
 function roadConnected() {
 
-    if (
-        kingdom === 1
-    )
+    if (kingdom === 1)
         return true;
 
     if (
@@ -1288,9 +1323,7 @@ canvas.addEventListener(
         )
             return;
 
-        if (
-            roadMode
-        ) {
+        if (roadMode) {
 
             addRoadPoint();
             return;
@@ -1307,7 +1340,8 @@ canvas.addEventListener(
                 ) < 28
             ) {
 
-                selectedTower = tower;
+                selectedTower =
+                    tower;
 
                 showTowerInfo();
 
@@ -1369,17 +1403,13 @@ function buildTower() {
         x: mouseX,
         y: mouseY,
 
-        type:
-            selectedTowerType,
+        type: selectedTowerType,
 
-        damage:
-            data.damage,
+        damage: data.damage,
 
-        range:
-            data.range,
+        range: data.range,
 
-        fireRate:
-            data.fireRate,
+        fireRate: data.fireRate,
 
         cooldown: 0,
 
@@ -1399,9 +1429,7 @@ function validTowerPlacement(
 
     if (
         kingdom === 1 &&
-        Math.abs(
-            y - 325
-        ) < 35
+        Math.abs(y - 325) < 35
     )
         return false;
 
@@ -1410,9 +1438,7 @@ function validTowerPlacement(
     ) {
 
         if (
-            Math.abs(
-                y - 325
-            ) < 35 &&
+            Math.abs(y - 325) < 35 &&
             x > 80
         )
             return false;
@@ -1495,9 +1521,7 @@ function pointNearLine(
     const length =
         Math.hypot(dx, dy);
 
-    if (
-        length === 0
-    )
+    if (length === 0)
         return false;
 
     let t =
@@ -1510,10 +1534,7 @@ function pointNearLine(
     t =
         Math.max(
             0,
-            Math.min(
-                1,
-                t
-            )
+            Math.min(1, t)
         );
 
     const cx =
@@ -1577,9 +1598,7 @@ function updateTowers(dt) {
             }
         }
 
-        if (
-            !target
-        )
+        if (!target)
             continue;
 
         tower.angle =
@@ -1597,16 +1616,16 @@ function updateTowers(dt) {
 
             target,
 
-            damage:
-                tower.damage,
+            damage: tower.damage,
 
             speed:
                 tower.type === "laser"
                 ? 18
+                : tower.type === "sniper"
+                ? 15
                 : 8,
 
-            type:
-                tower.type
+            type: tower.type
         });
 
         tower.cooldown =
@@ -1658,12 +1677,12 @@ function updateBullets(dt) {
 
             if (
                 bullet.type === "splash" ||
-                bullet.type === "catapult"
+                bullet.type === "mortar"
             ) {
 
                 const radius =
-                    bullet.type === "catapult"
-                    ? 100
+                    bullet.type === "mortar"
+                    ? 95
                     : 65;
 
                 for (
@@ -1681,6 +1700,8 @@ function updateBullets(dt) {
 
                         enemy.hp -=
                             bullet.damage;
+
+                        enemy.hitFlash = 100;
                     }
                 }
 
@@ -1688,45 +1709,29 @@ function updateBullets(dt) {
 
                 bullet.target.hp -=
                     bullet.damage;
+
+                bullet.target.hitFlash =
+                    100;
             }
 
             if (
                 bullet.type === "slow"
             ) {
 
-                bullet.target.slow = 1200;
+                bullet.target.slow = 1000;
             }
 
             if (
                 bullet.type === "freeze"
             ) {
 
-                bullet.target.slow = 2600;
-            }
-
-            if (
-                bullet.type === "poison"
-            ) {
-
-                bullet.target.poison =
-                    2500;
-            }
-
-            if (
-                bullet.type === "fire"
-            ) {
-
-                bullet.target.fire =
-                    2200;
+                bullet.target.slow = 2200;
             }
 
             effects.push({
 
-                x:
-                    bullet.target.x,
-
-                y:
-                    bullet.target.y,
+                x: bullet.target.x,
+                y: bullet.target.y,
 
                 life: 150,
 
@@ -1750,31 +1755,6 @@ function updateBullets(dt) {
     }
 
     for (
-        const enemy of enemies
-    ) {
-
-        if (
-            enemy.poison > 0
-        ) {
-
-            enemy.hp -=
-                .009 * dt;
-
-            enemy.poison -= dt;
-        }
-
-        if (
-            enemy.fire > 0
-        ) {
-
-            enemy.hp -=
-                .014 * dt;
-
-            enemy.fire -= dt;
-        }
-    }
-
-    for (
         let i = enemies.length - 1;
         i >= 0;
         i--
@@ -1784,23 +1764,16 @@ function updateBullets(dt) {
             enemies[i].hp <= 0
         ) {
 
-            money +=
-                enemies[i].giant
-                ? 30
-                : 15;
+            /*
+                Bosses give more money.
+            */
 
-            effects.push({
-
-                x:
-                    enemies[i].x,
-
-                y:
-                    enemies[i].y,
-
-                life: 300,
-
-                type: "coin"
-            });
+            if (
+                enemies[i].type === "Boss"
+            )
+                money += 75;
+            else
+                money += 15;
 
             enemies.splice(i, 1);
         }
@@ -1818,15 +1791,18 @@ function updateTroops(dt) {
         const troop of troops
     ) {
 
-        troop.attackCooldown -= dt;
-        troop.animTime += dt;
+        troop.animation += dt * .008;
+
+        troop.cooldown -= dt;
+
+        /*
+            Find enemy nearby.
+
+            Troops STOP MOVING while fighting.
+        */
 
         let target = null;
         let closest = Infinity;
-
-        /*
-            Find the nearest enemy.
-        */
 
         for (
             const enemy of enemies
@@ -1848,27 +1824,25 @@ function updateTroops(dt) {
             }
         }
 
-        /*
-            Troop stops moving while fighting.
-        */
-
-        if (
-            target
-        ) {
+        if (target) {
 
             troop.fighting = true;
 
+            /*
+                Actual troop damage.
+            */
+
             if (
-                troop.attackCooldown <= 0
+                troop.cooldown <= 0
             ) {
 
                 target.hp -=
                     troop.damage;
 
-                troop.attackCooldown =
-                    troop.attackRate;
+                target.hitFlash = 100;
 
-                troop.attackAnim = 180;
+                troop.cooldown =
+                    troop.attackRate;
 
                 effects.push({
 
@@ -1877,7 +1851,7 @@ function updateTroops(dt) {
 
                     life: 100,
 
-                    type: "troophit"
+                    type: "hit"
                 });
             }
 
@@ -1886,41 +1860,17 @@ function updateTroops(dt) {
             troop.fighting = false;
 
             /*
-                Follow road toward gate.
+                Follow the road.
+
+                Troops leave their castle and
+                travel toward the enemy side.
             */
 
-            if (
-                kingdom === 1
-            ) {
-
-                troop.x +=
-                    troop.speed *
-                    dt;
-
-                troop.y = 325;
-
-            } else if (
-                roadPoints.length > 1
-            ) {
-
-                moveTroopAlongRoad(
-                    troop,
-                    dt
-                );
-
-            } else {
-
-                troop.x +=
-                    troop.speed *
-                    dt;
-            }
-        }
-
-        troop.attackAnim =
-            Math.max(
-                0,
-                troop.attackAnim - dt
+            moveTroopAlongRoad(
+                troop,
+                dt
             );
+        }
     }
 
     for (
@@ -1949,32 +1899,45 @@ function moveTroopAlongRoad(
 ) {
 
     if (
-        !troop.roadIndex
+        kingdom === 1
+    ) {
+
+        troop.x +=
+            troop.speed * dt;
+
+        troop.y = 325;
+
+        return;
+    }
+
+    if (
+        roadPoints.length === 0
+    )
+        return;
+
+    /*
+        Troops travel from the castle
+        toward the enemy gate.
+
+        This is the opposite direction
+        from enemies.
+    */
+
+    if (
+        troop.roadIndex === undefined
     ) {
 
         troop.roadIndex = 0;
     }
 
-    /*
-        Troops travel castle → gate.
-    */
-
-    if (
-        troop.roadIndex >=
-        roadPoints.length - 1
-    ) {
-
-        troop.roadIndex =
-            roadPoints.length - 1;
-    }
+    const index =
+        Math.min(
+            troop.roadIndex,
+            roadPoints.length - 1
+        );
 
     const target =
-        roadPoints[
-            Math.min(
-                troop.roadIndex + 1,
-                roadPoints.length - 1
-            )
-        ];
+        roadPoints[index];
 
     const dx =
         target.x - troop.x;
@@ -1982,31 +1945,47 @@ function moveTroopAlongRoad(
     const dy =
         target.y - troop.y;
 
-    const d =
+    const distance =
         Math.hypot(dx, dy);
 
     if (
-        d < 15
-    ) {
-
-        troop.roadIndex++;
-
-        return;
-    }
-
-    if (
-        d > 1
+        distance > 8
     ) {
 
         troop.x +=
-            dx / d *
+            dx / distance *
             troop.speed *
             dt;
 
         troop.y +=
-            dy / d *
+            dy / distance *
             troop.speed *
             dt;
+
+    } else {
+
+        if (
+            troop.roadIndex <
+            roadPoints.length - 1
+        ) {
+
+            troop.roadIndex++;
+        }
+    }
+
+    /*
+        Once they reach the gate,
+        keep them near the front rather
+        than disappearing.
+    */
+
+    if (
+        troop.roadIndex >=
+        roadPoints.length - 1
+    ) {
+
+        troop.x +=
+            troop.speed * dt;
     }
 }
 
@@ -2028,9 +2007,7 @@ function updateCastleButtons() {
         const castle of castles
     ) {
 
-        if (
-            !castle.alive
-        )
+        if (!castle.alive)
             continue;
 
         const data =
@@ -2053,18 +2030,18 @@ function updateCastleButtons() {
 
         button.onclick =
             () =>
-                spawnTroop(
-                    castle
-                );
+                spawnTroop(castle);
 
         bar.appendChild(button);
     }
 }
 
 
-function spawnTroop(
-    castle
-) {
+/* =========================
+   SPAWN TROOP
+========================= */
+
+function spawnTroop(castle) {
 
     const data =
         troopTypes[
@@ -2106,18 +2083,19 @@ function spawnTroop(
 
         cooldown: 0,
 
-        attackCooldown: 0,
-
         attackRate:
             data.attackRate,
 
         fighting: false,
 
-        attackAnim: 0,
+        animation:
+            Math.random() *
+            Math.PI * 2,
 
-        animTime: 0,
-
-        roadIndex: 0
+        roadIndex:
+            kingdom === 1
+            ? 0
+            : 0
     });
 }
 
@@ -2176,7 +2154,7 @@ function conquerKingdom() {
         kingdom * 75;
 
     /*
-        Unlock towers more gradually.
+        Unlock towers gradually.
     */
 
     const unlockIndex =
@@ -2193,9 +2171,7 @@ function conquerKingdom() {
             ];
 
         if (
-            !unlockedTowers.includes(
-                type
-            )
+            !unlockedTowers.includes(type)
         ) {
 
             unlockedTowers.push(type);
@@ -2220,10 +2196,12 @@ function conquerKingdom() {
     }
 
     roadPoints = [
+
         {
             x: 105,
             y: lane
         }
+
     ];
 
     roadMode = true;
@@ -2249,13 +2227,20 @@ function upgradeSelected() {
         return;
 
     /*
-        Much more expensive upgrades.
+        Upgrades become MUCH more expensive.
+
+        This stops high-level cannons from
+        becoming ridiculous.
     */
 
     const cost =
-        100 +
-        selectedTower.level *
-        125;
+        Math.floor(
+            90 *
+            Math.pow(
+                1.48,
+                selectedTower.level - 1
+            )
+        );
 
     if (
         money < cost
@@ -2267,28 +2252,38 @@ function upgradeSelected() {
     selectedTower.level++;
 
     /*
-        Small damage buff.
+        Much smaller damage buff.
+
+        Old:
+        x1.35
+
+        New:
+        x1.12
     */
 
     selectedTower.damage =
-        Math.round(
-            selectedTower.damage *
-            1.10
+        Math.max(
+            1,
+            Math.round(
+                selectedTower.damage *
+                1.12
+            )
         );
 
     /*
-        Small range buff.
+        Range also grows slower.
     */
 
     selectedTower.range += 5;
 
     /*
-        Small fire-rate buff.
+        Fire rate improvement is also
+        reduced.
     */
 
     selectedTower.fireRate =
         Math.max(
-            180,
+            150,
             Math.round(
                 selectedTower.fireRate *
                 .96
@@ -2315,17 +2310,38 @@ function sellSelected() {
             selectedTower
         );
 
-    if (
-        index < 0
-    )
+    if (index < 0)
         return;
+
+    /*
+        Sell value is based on actual
+        money spent on the tower.
+    */
+
+    let invested =
+        towerTypes[
+            selectedTower.type
+        ].cost;
+
+    for (
+        let level = 1;
+        level < selectedTower.level;
+        level++
+    ) {
+
+        invested +=
+            Math.floor(
+                90 *
+                Math.pow(
+                    1.48,
+                    level - 1
+                )
+            );
+    }
 
     money +=
         Math.floor(
-            towerTypes[
-                selectedTower.type
-            ].cost *
-            .6
+            invested * .55
         );
 
     towers.splice(
@@ -2345,9 +2361,7 @@ function sellSelected() {
    INFO
 ========================= */
 
-function showBuildInfo(
-    type
-) {
+function showBuildInfo(type) {
 
     const data =
         towerTypes[type];
@@ -2384,9 +2398,12 @@ function showTowerInfo() {
         selectedTower;
 
     const nextDamage =
-        Math.round(
-            t.damage *
-            1.10
+        Math.max(
+            1,
+            Math.round(
+                t.damage *
+                1.12
+            )
         );
 
     const nextRange =
@@ -2394,7 +2411,7 @@ function showTowerInfo() {
 
     const nextRate =
         Math.max(
-            180,
+            150,
             Math.round(
                 t.fireRate *
                 .96
@@ -2402,9 +2419,13 @@ function showTowerInfo() {
         );
 
     const cost =
-        100 +
-        t.level *
-        125;
+        Math.floor(
+            90 *
+            Math.pow(
+                1.48,
+                t.level - 1
+            )
+        );
 
     document.getElementById(
         "infoTitle"
@@ -2463,9 +2484,7 @@ function updateButtons() {
                 return;
 
             if (
-                unlockedTowers.includes(
-                    type
-                )
+                unlockedTowers.includes(type)
             ) {
 
                 button.classList.remove(
@@ -2510,10 +2529,7 @@ function getKey(type) {
         laser: "[6]",
         freeze: "[7]",
         sniper: "[8]",
-        poison: "[9]",
-        ballista: "[0]",
-        catapult: "[-]",
-        fire: "[=]"
+        mortar: "[9]"
     };
 
     return keys[type];
@@ -2706,7 +2722,8 @@ function drawCastles() {
             !castle.alive
         ) {
 
-            ctx.fillStyle = "#252525";
+            ctx.fillStyle =
+                "#252525";
 
             ctx.fillRect(
                 castle.x - 35,
@@ -2715,7 +2732,8 @@ function drawCastles() {
                 70
             );
 
-            ctx.fillStyle = "#777";
+            ctx.fillStyle =
+                "#777";
 
             ctx.font =
                 "bold 10px Courier New";
@@ -2729,7 +2747,8 @@ function drawCastles() {
             continue;
         }
 
-        ctx.fillStyle = "#777";
+        ctx.fillStyle =
+            "#777";
 
         ctx.fillRect(
             castle.x - 30,
@@ -2738,7 +2757,8 @@ function drawCastles() {
             60
         );
 
-        ctx.fillStyle = "#aaa";
+        ctx.fillStyle =
+            "#aaa";
 
         ctx.fillRect(
             castle.x - 40,
@@ -2754,7 +2774,8 @@ function drawCastles() {
             28
         );
 
-        ctx.fillStyle = "#222";
+        ctx.fillStyle =
+            "#222";
 
         ctx.fillRect(
             castle.x - 8,
@@ -2763,7 +2784,8 @@ function drawCastles() {
             22
         );
 
-        ctx.strokeStyle = "#ddd";
+        ctx.strokeStyle =
+            "#ddd";
 
         ctx.beginPath();
 
@@ -2779,7 +2801,8 @@ function drawCastles() {
 
         ctx.stroke();
 
-        ctx.fillStyle = "#ddd";
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.beginPath();
 
@@ -2800,7 +2823,8 @@ function drawCastles() {
 
         ctx.fill();
 
-        ctx.fillStyle = "#111";
+        ctx.fillStyle =
+            "#111";
 
         ctx.font =
             "bold 19px Courier New";
@@ -2811,7 +2835,8 @@ function drawCastles() {
             castle.y + 4
         );
 
-        ctx.fillStyle = "#222";
+        ctx.fillStyle =
+            "#222";
 
         ctx.fillRect(
             castle.x - 42,
@@ -2820,7 +2845,8 @@ function drawCastles() {
             7
         );
 
-        ctx.fillStyle = "#ddd";
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.fillRect(
             castle.x - 42,
@@ -2864,10 +2890,7 @@ function drawTowers() {
         laser: "#5ff",
         freeze: "#8cf",
         sniper: "#fff",
-        poison: "#9c5",
-        ballista: "#c88",
-        catapult: "#a76",
-        fire: "#f75"
+        mortar: "#aaa"
     };
 
     for (
@@ -2881,8 +2904,7 @@ function drawTowers() {
 
         if (
             tower.type === "heavy" ||
-            tower.type === "ballista" ||
-            tower.type === "catapult"
+            tower.type === "mortar"
         ) {
 
             ctx.fillRect(
@@ -2902,6 +2924,31 @@ function drawTowers() {
                 38,
                 38
             );
+
+        } else if (
+            tower.type === "sniper"
+        ) {
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                tower.x,
+                tower.y - 23
+            );
+
+            ctx.lineTo(
+                tower.x + 20,
+                tower.y + 18
+            );
+
+            ctx.lineTo(
+                tower.x - 20,
+                tower.y + 18
+            );
+
+            ctx.closePath();
+
+            ctx.fill();
 
         } else {
 
@@ -2949,20 +2996,24 @@ function drawTowers() {
             tower.angle
         );
 
-        ctx.fillStyle = "#111";
+        ctx.fillStyle =
+            "#111";
 
         ctx.fillRect(
             0,
             -4,
             tower.type === "sniper"
-            ? 38
-            : 28,
+                ? 42
+                : tower.type === "mortar"
+                ? 20
+                : 28,
             8
         );
 
         ctx.restore();
 
-        ctx.fillStyle = "#111";
+        ctx.fillStyle =
+            "#111";
 
         ctx.beginPath();
 
@@ -2980,7 +3031,8 @@ function drawTowers() {
             tower.flash > 0
         ) {
 
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle =
+                "#fff";
 
             ctx.beginPath();
 
@@ -2988,14 +3040,12 @@ function drawTowers() {
                 tower.x +
                 Math.cos(
                     tower.angle
-                ) *
-                34,
+                ) * 34,
 
                 tower.y +
                 Math.sin(
                     tower.angle
-                ) *
-                34,
+                ) * 34,
 
                 8,
                 0,
@@ -3005,7 +3055,8 @@ function drawTowers() {
             ctx.fill();
         }
 
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle =
+            "#fff";
 
         ctx.font =
             "bold 9px Courier New";
@@ -3030,32 +3081,74 @@ function drawEnemies() {
         Spearmen: "#5c6",
         Crossbowmen: "#b65cff",
         Guards: "#e55",
-        Mages: "#5ff"
+        Mages: "#5ff",
+        Knights: "#fa3",
+        Boss: "#fff"
     };
 
     for (
         const enemy of enemies
     ) {
 
-        ctx.fillStyle =
-            colours[
-                enemy.type
-            ];
+        const bob =
+            Math.sin(
+                enemy.animation
+            ) * 2;
 
-        const size =
-            enemy.giant
-            ? 1.65
-            : 1;
+        ctx.save();
+
+        ctx.translate(
+            enemy.x,
+            enemy.y + bob
+        );
 
         if (
+            enemy.hitFlash > 0
+        )
+            ctx.fillStyle = "#fff";
+        else
+            ctx.fillStyle =
+                colours[
+                    enemy.type
+                ];
+
+        if (
+            enemy.type === "Boss"
+        ) {
+
+            ctx.fillRect(
+                -23,
+                -23,
+                46,
+                46
+            );
+
+            ctx.fillStyle =
+                "#111";
+
+            ctx.fillRect(
+                -10,
+                -7,
+                7,
+                7
+            );
+
+            ctx.fillRect(
+                4,
+                -7,
+                7,
+                7
+            );
+
+        } else if (
             enemy.type === "Spearmen"
         ) {
 
             ctx.fillRect(
-                enemy.x - 9 * size,
-                enemy.y - 10 * size,
-                18 * size,
-                20 * size
+                -9,
+                -10,
+                18,
+                20
             );
 
         } else if (
@@ -3065,23 +3158,23 @@ function drawEnemies() {
             ctx.beginPath();
 
             ctx.moveTo(
-                enemy.x,
-                enemy.y - 15 * size
+                0,
+                -15
             );
 
             ctx.lineTo(
-                enemy.x + 15 * size,
-                enemy.y
+                15,
+                0
             );
 
             ctx.lineTo(
-                enemy.x,
-                enemy.y + 15 * size
+                0,
+                15
             );
 
             ctx.lineTo(
-                enemy.x - 15 * size,
-                enemy.y
+                -15,
+                0
             );
 
             ctx.closePath();
@@ -3093,10 +3186,10 @@ function drawEnemies() {
         ) {
 
             ctx.fillRect(
-                enemy.x - 14 * size,
-                enemy.y - 14 * size,
-                28 * size,
-                28 * size
+                -14,
+                -14,
+                28,
+                28
             );
 
         } else {
@@ -3104,9 +3197,9 @@ function drawEnemies() {
             ctx.beginPath();
 
             ctx.arc(
-                enemy.x,
-                enemy.y,
-                14 * size,
+                0,
+                0,
+                enemy.size,
                 0,
                 Math.PI * 2
             );
@@ -3114,44 +3207,70 @@ function drawEnemies() {
             ctx.fill();
         }
 
-        if (
-            enemy.giant
-        ) {
+        ctx.restore();
 
-            ctx.fillStyle = "#fff";
+        /*
+            Bigger enemies get larger HP bars.
+        */
 
-            ctx.font =
-                "bold 8px Courier New";
+        const barWidth =
+            enemy.type === "Boss"
+            ? 60
+            : 36;
 
-            ctx.fillText(
-                "ELITE",
-                enemy.x - 13,
-                enemy.y - 25 * size
-            );
-        }
-
-        ctx.fillStyle = "#222";
+        ctx.fillStyle =
+            "#222";
 
         ctx.fillRect(
-            enemy.x - 18,
-            enemy.y - 24 * size,
-            36,
-            4
+            enemy.x -
+            barWidth / 2,
+            enemy.y -
+            enemy.size -
+            10,
+            barWidth,
+            5
         );
 
-        ctx.fillStyle = "#ddd";
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.fillRect(
-            enemy.x - 18,
-            enemy.y - 24 * size,
-            36 *
+            enemy.x -
+            barWidth / 2,
+            enemy.y -
+            enemy.size -
+            10,
+            barWidth *
             Math.max(
                 0,
                 enemy.hp /
                 enemy.maxHp
             ),
-            4
+            5
         );
+
+        if (
+            enemy.type === "Boss"
+        ) {
+
+            ctx.fillStyle =
+                "#fff";
+
+            ctx.font =
+                "bold 9px Courier New";
+
+            ctx.textAlign =
+                "center";
+
+            ctx.fillText(
+                "BOSS",
+                enemy.x,
+                enemy.y - 32
+            );
+
+            ctx.textAlign =
+                "left";
+        }
     }
 }
 
@@ -3166,30 +3285,52 @@ function drawTroops() {
         const troop of troops
     ) {
 
-        const bob =
+        /*
+            Walking animation.
+        */
+
+        const walk =
             troop.fighting
-            ? 0
+            ? Math.sin(
+                troop.animation * 2
+              ) * 1
             : Math.sin(
-                troop.animTime * .012
-            ) * 2;
+                troop.animation
+              ) * 4;
+
+        ctx.save();
+
+        ctx.translate(
+            troop.x,
+            troop.y + walk
+        );
+
+        /*
+            Body
+        */
 
         ctx.fillStyle =
             troop.color;
 
         ctx.fillRect(
-            troop.x - 7,
-            troop.y - 9 + bob,
+            -7,
+            -9,
             14,
             18
         );
 
-        ctx.fillStyle = "#ddd";
+        /*
+            Head
+        */
+
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.beginPath();
 
         ctx.arc(
-            troop.x,
-            troop.y - 14 + bob,
+            0,
+            -14,
             5,
             0,
             Math.PI * 2
@@ -3199,72 +3340,98 @@ function drawTroops() {
 
         /*
             Animated weapon.
+
+            When fighting, swing the weapon.
         */
 
-        ctx.strokeStyle = "#111";
+        const swing =
+            troop.fighting
+            ? Math.sin(
+                troop.animation * 4
+              ) * 18
+            : 0;
+
+        ctx.strokeStyle =
+            "#111";
+
         ctx.lineWidth = 3;
 
         ctx.beginPath();
 
         ctx.moveTo(
-            troop.x,
-            troop.y
+            0,
+            0
         );
 
-        let weaponX =
-            troop.x + 14;
-
-        let weaponY =
-            troop.y - 10;
-
-        if (
-            troop.fighting
-        ) {
-
-            const swing =
-                troop.attackAnim > 0
-                ? Math.sin(
-                    troop.attackAnim * .05
-                ) * 14
-                : 0;
-
-            weaponX += swing;
-            weaponY +=
-                Math.abs(swing) * .3;
-        }
-
         ctx.lineTo(
-            weaponX,
-            weaponY
+            14,
+            -10 + swing
         );
 
         ctx.stroke();
 
         /*
-            Troop HP.
+            Legs animate while walking.
         */
 
-        ctx.fillStyle = "#222";
+        if (
+            !troop.fighting
+        ) {
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                -4,
+                9
+            );
+
+            ctx.lineTo(
+                -7 + walk,
+                18
+            );
+
+            ctx.moveTo(
+                4,
+                9
+            );
+
+            ctx.lineTo(
+                7 - walk,
+                18
+            );
+
+            ctx.stroke();
+        }
+
+        ctx.restore();
+
+        /*
+            Troop HP bar.
+        */
+
+        ctx.fillStyle =
+            "#222";
 
         ctx.fillRect(
-            troop.x - 12,
-            troop.y + 12,
-            24,
-            3
+            troop.x - 14,
+            troop.y + 22,
+            28,
+            4
         );
 
-        ctx.fillStyle = troop.color;
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.fillRect(
-            troop.x - 12,
-            troop.y + 12,
-            24 *
+            troop.x - 14,
+            troop.y + 22,
+            28 *
             Math.max(
                 0,
                 troop.hp /
                 troop.maxHp
             ),
-            3
+            4
         );
 
         /*
@@ -3275,15 +3442,16 @@ function drawTroops() {
             troop.fighting
         ) {
 
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle =
+                "#fff";
 
             ctx.font =
-                "bold 9px Courier New";
+                "bold 10px Courier New";
 
             ctx.fillText(
                 "!",
-                troop.x + 10,
-                troop.y - 15
+                troop.x + 12,
+                troop.y - 18
             );
         }
     }
@@ -3303,10 +3471,8 @@ function drawBullets() {
         ctx.fillStyle =
             bullet.type === "laser"
             ? "#fff"
-            : bullet.type === "fire"
-            ? "#f75"
-            : bullet.type === "poison"
-            ? "#9c5"
+            : bullet.type === "mortar"
+            ? "#aaa"
             : "#ddd";
 
         ctx.beginPath();
@@ -3314,9 +3480,9 @@ function drawBullets() {
         ctx.arc(
             bullet.x,
             bullet.y,
-            bullet.type === "catapult"
-            ? 7
-            : 4,
+            bullet.type === "mortar"
+                ? 6
+                : 4,
             0,
             Math.PI * 2
         );
@@ -3360,12 +3526,14 @@ function drawEffects() {
             effect.type === "unlock"
         ) {
 
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle =
+                "#fff";
 
             ctx.font =
                 "bold 22px Courier New";
 
-            ctx.textAlign = "center";
+            ctx.textAlign =
+                "center";
 
             ctx.fillText(
                 effect.text,
@@ -3373,32 +3541,37 @@ function drawEffects() {
                 110
             );
 
-            ctx.textAlign = "left";
+            ctx.textAlign =
+                "left";
 
         } else if (
             effect.type === "reward"
         ) {
 
-            ctx.fillStyle = "#ddd";
+            ctx.fillStyle =
+                "#fff";
 
             ctx.font =
                 "bold 18px Courier New";
 
-            ctx.textAlign = "center";
+            ctx.textAlign =
+                "center";
 
             ctx.fillText(
                 effect.text,
                 W / 2,
-                145
+                75
             );
 
-            ctx.textAlign = "left";
+            ctx.textAlign =
+                "left";
 
         } else if (
             effect.type === "fallen"
         ) {
 
-            ctx.fillStyle = "#e33";
+            ctx.fillStyle =
+                "#e33";
 
             ctx.font =
                 "bold 11px Courier New";
@@ -3431,18 +3604,16 @@ function drawEffects() {
 
 function drawWaveText() {
 
-    if (
-        !running
-    )
+    if (!running)
         return;
 
-    ctx.textAlign = "center";
+    ctx.textAlign =
+        "center";
 
-    if (
-        paused
-    ) {
+    if (paused) {
 
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle =
+            "#fff";
 
         ctx.font =
             "bold 24px Courier New";
@@ -3453,11 +3624,10 @@ function drawWaveText() {
             40
         );
 
-    } else if (
-        roadMode
-    ) {
+    } else if (roadMode) {
 
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle =
+            "#fff";
 
         ctx.font =
             "bold 18px Courier New";
@@ -3468,11 +3638,10 @@ function drawWaveText() {
             40
         );
 
-    } else if (
-        !waveRunning
-    ) {
+    } else if (!waveRunning) {
 
-        ctx.fillStyle = "#ddd";
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.font =
             "bold 20px Courier New";
@@ -3491,7 +3660,8 @@ function drawWaveText() {
 
     } else {
 
-        ctx.fillStyle = "#ddd";
+        ctx.fillStyle =
+            "#ddd";
 
         ctx.font =
             "bold 18px Courier New";
@@ -3509,7 +3679,8 @@ function drawWaveText() {
         );
     }
 
-    ctx.textAlign = "left";
+    ctx.textAlign =
+        "left";
 }
 
 
@@ -3550,12 +3721,11 @@ function updateStats() {
 
 function togglePause() {
 
-    if (
-        !running
-    )
+    if (!running)
         return;
 
-    paused = !paused;
+    paused =
+        !paused;
 }
 
 
@@ -3565,9 +3735,7 @@ function togglePause() {
 
 function saveGame(slot) {
 
-    if (
-        !running
-    )
+    if (!running)
         return;
 
     const data = {
@@ -3606,9 +3774,7 @@ function loadGame(slot) {
             slot
         );
 
-    if (
-        !raw
-    )
+    if (!raw)
         return;
 
     const data =
@@ -3659,31 +3825,14 @@ function loadGame(slot) {
     bullets = [];
     effects = [];
 
-    selectedTower = null;
+    selectedTower =
+        null;
 
-    paused = false;
+    paused =
+        false;
 
-    running = true;
-
-    /*
-        Restore missing troop animation
-        properties safely.
-    */
-
-    castles.forEach(c => {
-
-        if (!c.troop)
-            c.troop = "Swordsmen";
-    });
-
-    towers.forEach(t => {
-
-        if (!t.level)
-            t.level = 1;
-
-        if (!t.cooldown)
-            t.cooldown = 0;
-    });
+    running =
+        true;
 
     updateButtons();
     updateCastleButtons();
@@ -3792,7 +3941,7 @@ function hideOverlay() {
 
 
 /* =========================
-   RRR + KEYBOARD
+   RRR
 ========================= */
 
 document.addEventListener(
@@ -3802,9 +3951,7 @@ document.addEventListener(
         const key =
             e.key.toLowerCase();
 
-        if (
-            key === "r"
-        ) {
+        if (key === "r") {
 
             rCount++;
 
@@ -3840,10 +3987,7 @@ document.addEventListener(
             "6": "laser",
             "7": "freeze",
             "8": "sniper",
-            "9": "poison",
-            "0": "ballista",
-            "-": "catapult",
-            "=": "fire"
+            "9": "mortar"
         };
 
         if (
@@ -3871,3 +4015,4 @@ draw();
 
 </body>
 </html>
+```
