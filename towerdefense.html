@@ -150,33 +150,18 @@ button.locked {
 
 <div id="toolbar">
 
-<button id="basicButton" onclick="selectTower('basic')">
-[1] CANNON
-</button>
-
-<button id="rapidButton" onclick="selectTower('rapid')">
-[2] RAPID
-</button>
-
-<button id="heavyButton" class="locked" onclick="selectTower('heavy')">
-[3] LOCKED
-</button>
-
-<button id="slowButton" class="locked" onclick="selectTower('slow')">
-[4] LOCKED
-</button>
-
-<button id="splashButton" class="locked" onclick="selectTower('splash')">
-[5] LOCKED
-</button>
-
-<button id="laserButton" class="locked" onclick="selectTower('laser')">
-[6] LOCKED
-</button>
-
-<button id="freezeButton" class="locked" onclick="selectTower('freeze')">
-[7] LOCKED
-</button>
+<button id="basicButton" onclick="selectTower('basic')">[1] CANNON</button>
+<button id="rapidButton" onclick="selectTower('rapid')">[2] RAPID</button>
+<button id="heavyButton" class="locked" onclick="selectTower('heavy')">[3] LOCKED</button>
+<button id="slowButton" class="locked" onclick="selectTower('slow')">[4] LOCKED</button>
+<button id="splashButton" class="locked" onclick="selectTower('splash')">[5] LOCKED</button>
+<button id="laserButton" class="locked" onclick="selectTower('laser')">[6] LOCKED</button>
+<button id="freezeButton" class="locked" onclick="selectTower('freeze')">[7] LOCKED</button>
+<button id="sniperButton" class="locked" onclick="selectTower('sniper')">[8] LOCKED</button>
+<button id="poisonButton" class="locked" onclick="selectTower('poison')">[9] LOCKED</button>
+<button id="ballistaButton" class="locked" onclick="selectTower('ballista')">[0] LOCKED</button>
+<button id="catapultButton" class="locked" onclick="selectTower('catapult')">[-] LOCKED</button>
+<button id="fireButton" class="locked" onclick="selectTower('fire')">[=] LOCKED</button>
 
 <button onclick="upgradeSelected()">UPGRADE</button>
 <button onclick="sellSelected()">DELETE / SELL</button>
@@ -188,26 +173,19 @@ button.locked {
 <div id="castlebar"></div>
 
 <div id="savebar">
-
 <button onclick="saveGame(1)">SAVE 1</button>
 <button onclick="loadGame(1)">LOAD 1</button>
-
 <button onclick="saveGame(2)">SAVE 2</button>
 <button onclick="loadGame(2)">LOAD 2</button>
-
 <button onclick="saveGame(3)">SAVE 3</button>
 <button onclick="loadGame(3)">LOAD 3</button>
-
 </div>
 
 <div id="info">
-
 <div id="infoTitle">NO TOWER SELECTED</div>
-
 <div id="infoText">
 Choose a tower and click on empty land to place it.
 </div>
-
 </div>
 
 <div id="hint">
@@ -230,12 +208,9 @@ Conquer new kingdoms to unlock more towers and troops.
 
 <button id="mainButton" onclick="startGame()">START</button>
 
-<button id="homeButton" class="hidden" onclick="goHome()">
-HOME
-</button>
+<button id="homeButton" class="hidden" onclick="goHome()">HOME</button>
 
 </div>
-
 </div>
 
 <script>
@@ -277,6 +252,8 @@ let waveTimer = 2500;
 let spawnLeft = 0;
 let spawnTimer = 0;
 
+let waveReward = 0;
+
 let rCount = 0;
 let rTimer;
 
@@ -305,41 +282,81 @@ const towerTypes = {
 
     heavy: {
         name: "HEAVY",
-        cost: 125,
-        damage: 55,
+        cost: 145,
+        damage: 42,
         range: 150,
-        fireRate: 1200
+        fireRate: 1300
     },
 
     slow: {
         name: "SLOW",
-        cost: 110,
-        damage: 13,
+        cost: 125,
+        damage: 10,
         range: 140,
-        fireRate: 650
+        fireRate: 700
     },
 
     splash: {
         name: "SPLASH",
-        cost: 160,
-        damage: 32,
+        cost: 180,
+        damage: 25,
         range: 145,
-        fireRate: 1000
+        fireRate: 1100
     },
 
     laser: {
         name: "LASER",
-        cost: 220,
-        damage: 16,
+        cost: 250,
+        damage: 12,
         range: 185,
-        fireRate: 150
+        fireRate: 180
     },
 
     freeze: {
         name: "FREEZE",
-        cost: 270,
-        damage: 11,
+        cost: 300,
+        damage: 8,
         range: 155,
+        fireRate: 700
+    },
+
+    sniper: {
+        name: "SNIPER",
+        cost: 350,
+        damage: 70,
+        range: 330,
+        fireRate: 1700
+    },
+
+    poison: {
+        name: "POISON",
+        cost: 400,
+        damage: 13,
+        range: 180,
+        fireRate: 850
+    },
+
+    ballista: {
+        name: "BALLISTA",
+        cost: 500,
+        damage: 95,
+        range: 250,
+        fireRate: 1900
+    },
+
+    catapult: {
+        name: "CATAPULT",
+        cost: 650,
+        damage: 55,
+        range: 280,
+        fireRate: 2200
+    },
+
+    fire: {
+        name: "FIRE",
+        cost: 750,
+        damage: 24,
+        range: 200,
         fireRate: 650
     }
 };
@@ -351,7 +368,12 @@ const towerOrder = [
     "slow",
     "splash",
     "laser",
-    "freeze"
+    "freeze",
+    "sniper",
+    "poison",
+    "ballista",
+    "catapult",
+    "fire"
 ];
 
 let unlockedTowers = [
@@ -367,59 +389,66 @@ let unlockedTowers = [
 const troopTypes = {
 
     Swordsmen: {
-        hp: 140,
-        damage: 15,
+        hp: 180,
+        damage: 22,
         speed: .045,
         cost: 30,
-        color: "#ddd"
+        color: "#ddd",
+        attackRate: 700
     },
 
     Archers: {
-        hp: 90,
-        damage: 20,
+        hp: 110,
+        damage: 28,
         speed: .038,
         cost: 45,
-        color: "#4af"
+        color: "#4af",
+        attackRate: 850
     },
 
     Knights: {
-        hp: 250,
-        damage: 35,
+        hp: 300,
+        damage: 45,
         speed: .052,
         cost: 80,
-        color: "#fa3"
+        color: "#fa3",
+        attackRate: 800
     },
 
     Spearmen: {
-        hp: 180,
-        damage: 22,
+        hp: 220,
+        damage: 28,
         speed: .04,
         cost: 55,
-        color: "#6c6"
+        color: "#6c6",
+        attackRate: 750
     },
 
     Crossbowmen: {
-        hp: 115,
-        damage: 30,
+        hp: 140,
+        damage: 38,
         speed: .034,
         cost: 90,
-        color: "#b65cff"
+        color: "#b65cff",
+        attackRate: 900
     },
 
     Guards: {
-        hp: 340,
-        damage: 42,
+        hp: 400,
+        damage: 50,
         speed: .026,
         cost: 115,
-        color: "#f66"
+        color: "#f66",
+        attackRate: 850
     },
 
     Mages: {
-        hp: 140,
-        damage: 50,
+        hp: 170,
+        damage: 60,
         speed: .032,
         cost: 145,
-        color: "#5ff"
+        color: "#5ff",
+        attackRate: 1000
     }
 };
 
@@ -501,11 +530,7 @@ function gameLoop(time) {
     if (!running)
         return;
 
-    const dt =
-        Math.min(
-            time - lastTime,
-            50
-        );
+    const dt = Math.min(time - lastTime, 50);
 
     lastTime = time;
 
@@ -514,7 +539,6 @@ function gameLoop(time) {
     }
 
     draw();
-
     updateStats();
 
     requestAnimationFrame(gameLoop);
@@ -554,7 +578,6 @@ function updateWaves(dt) {
             ) {
 
                 roadMode = true;
-
                 return;
             }
 
@@ -563,7 +586,6 @@ function updateWaves(dt) {
 
         return;
     }
-
 
     spawnTimer -= dt;
 
@@ -576,13 +598,11 @@ function updateWaves(dt) {
 
         spawnLeft--;
 
-        spawnTimer =
-            Math.max(
-                300,
-                850 - wave * 2
-            );
+        spawnTimer = Math.max(
+            300,
+            800 - wave * 2
+        );
     }
-
 
     if (
         spawnLeft <= 0 &&
@@ -591,26 +611,20 @@ function updateWaves(dt) {
 
         waveRunning = false;
 
-        /*
-            WAVE PAYOUT
-        */
+        waveReward =
+            50 +
+            wave * 12 +
+            kingdom * 35;
 
-        const payout =
-            35 +
-            Math.floor(wave * 8) +
-            kingdom * 20;
-
-        money += payout;
+        money += waveReward;
 
         effects.push({
-
             x: W / 2,
-            y: 75,
-            life: 2200,
-            type: "payout",
-            text: "+$" + payout + " WAVE PAYOUT"
+            y: 145,
+            life: 2600,
+            type: "reward",
+            text: "+$" + waveReward + " WAVE PAYOUT"
         });
-
 
         if (wave % 40 === 0) {
 
@@ -649,7 +663,7 @@ function startWave() {
         Math.min(
             220,
             6 +
-            Math.floor(wave * .95) +
+            Math.floor(wave * .9) +
             kingdom * 3
         );
 
@@ -664,90 +678,92 @@ function startWave() {
 function spawnEnemy() {
 
     let type;
+    let random = Math.random();
 
-    const random = Math.random();
-
-    /*
-        Stronger enemies appear earlier.
-    */
-
-    if (wave < 5) {
+    if (wave < 10) {
 
         type =
-            random < .45
+            random < .55
             ? "Spearmen"
             : "Crossbowmen";
-
-    } else if (wave < 10) {
-
-        type =
-            random < .35
-            ? "Spearmen"
-            : random < .75
-            ? "Crossbowmen"
-            : "Guards";
 
     } else if (wave < 20) {
 
         type =
-            random < .25
+            random < .4
             ? "Crossbowmen"
-            : random < .65
+            : "Guards";
+
+    } else if (wave < 35) {
+
+        type =
+            random < .3
             ? "Guards"
             : "Mages";
 
     } else {
 
+        const choices = [
+            "Guards",
+            "Mages",
+            "Knights",
+            "Crossbowmen"
+        ];
+
         type =
-            random < .2
-            ? "Crossbowmen"
-            : random < .55
-            ? "Guards"
-            : "Mages";
+            choices[
+                Math.floor(
+                    Math.random() *
+                    choices.length
+                )
+            ];
     }
 
-
-    /*
-        Every 10 waves has a chance
-        to create a much stronger elite.
-    */
-
-    const elite =
-        wave >= 10 &&
-        (
-            wave % 10 === 0 ||
-            Math.random() < Math.min(.18, wave * .004)
-        );
-
-
-    const data =
-        troopTypes[type];
-
-
-    /*
-        Much harder scaling.
-    */
+    const data = troopTypes[type];
 
     let scale =
         1 +
-        wave * .055 +
-        Math.pow(wave, 1.18) * .012 +
+        wave * .045 +
         kingdom * .18;
 
+    if (wave >= 20)
+        scale *= 1.15;
 
-    if (elite) {
-        scale *= 2.2;
+    if (wave >= 40)
+        scale *= 1.2;
+
+    if (wave >= 60)
+        scale *= 1.25;
+
+    const giant =
+        Math.random() <
+        Math.min(
+            .05 + wave * .0015,
+            .22
+        );
+
+    if (giant)
+        scale *= 1.75;
+
+    let startY = 325;
+
+    if (
+        kingdom > 1 &&
+        roadPoints.length > 0
+    ) {
+
+        startY =
+            roadPoints[
+                roadPoints.length - 1
+            ].y;
     }
-
 
     enemies.push({
 
         type: type,
 
-        elite: elite,
-
         x: 1080,
-        y: 325,
+        y: startY,
 
         hp: data.hp * scale,
         maxHp: data.hp * scale,
@@ -755,13 +771,22 @@ function spawnEnemy() {
         damage: data.damage * scale,
 
         speed:
-            .032 +
+            .035 +
             Math.min(
-                wave * .00018,
-                .03
+                wave * .00012,
+                .018
             ),
 
-        slow: 0
+        slow: 0,
+
+        giant: giant,
+
+        roadIndex:
+            roadPoints.length - 1,
+
+        pathChoice: Math.random(),
+
+        attackCooldown: 0
     });
 }
 
@@ -789,12 +814,9 @@ function updateEnemies(dt) {
             enemy.slow -= dt;
         }
 
-
         if (kingdom === 1) {
 
-            enemy.x -=
-                speed * dt;
-
+            enemy.x -= speed * dt;
             enemy.y = 325;
 
         } else {
@@ -806,24 +828,22 @@ function updateEnemies(dt) {
             );
         }
 
+        enemy.attackCooldown -= dt;
 
         if (
-            enemy.x < 130
+            enemy.x < 145
         ) {
 
             damageCastle(enemy);
 
-            enemies.splice(
-                i,
-                1
-            );
+            enemies.splice(i, 1);
         }
     }
 }
 
 
 /* =========================
-   ROAD FOLLOWING
+   RANDOM ROAD PATH
 ========================= */
 
 function moveEnemyAlongRoad(
@@ -833,93 +853,99 @@ function moveEnemyAlongRoad(
 ) {
 
     if (
-        roadPoints.length === 0
+        roadPoints.length < 2
     ) {
 
-        enemy.x -=
-            speed * dt;
-
+        enemy.x -= speed * dt;
         return;
     }
 
+    /*
+        Enemies travel backwards
+        from the gate toward the castle.
 
-    let closestIndex = 0;
-    let closestDistance = Infinity;
+        Small random sideways movement
+        makes enemies choose slightly
+        different positions around road
+        bends instead of stacking together.
+    */
 
-
-    for (
-        let i = 0;
-        i < roadPoints.length;
-        i++
+    if (
+        enemy.roadIndex >=
+        roadPoints.length
     ) {
 
-        const p =
-            roadPoints[i];
+        enemy.roadIndex =
+            roadPoints.length - 1;
+    }
 
-        const d =
-            Math.hypot(
-                p.x - enemy.x,
-                p.y - enemy.y
-            );
+    let target =
+        roadPoints[
+            Math.max(
+                0,
+                enemy.roadIndex - 1
+            )
+        ];
+
+    const dx =
+        target.x - enemy.x;
+
+    const dy =
+        target.y - enemy.y;
+
+    const distance =
+        Math.hypot(dx, dy);
+
+    if (
+        distance < 14
+    ) {
+
+        enemy.roadIndex--;
 
         if (
-            d < closestDistance
+            enemy.roadIndex <= 0
         ) {
 
-            closestDistance = d;
-            closestIndex = i;
+            enemy.roadIndex = 0;
+
+            target = {
+                x: castles[0].x,
+                y: castles[0].y
+            };
         }
     }
 
+    /*
+        Random path offset.
+        It stays inside the road.
+    */
 
-    let target;
-
-    if (
-        closestIndex > 0
-    ) {
-
-        target =
-            roadPoints[
-                closestIndex - 1
-            ];
-
-    } else {
-
-        target = {
-            x: castles[0].x,
-            y: roadPoints[0].y
-        };
-    }
-
-
-    const dx =
-        target.x -
-        enemy.x;
-
-    const dy =
-        target.y -
-        enemy.y;
-
-    const distance =
-        Math.hypot(
-            dx,
-            dy
-        );
-
+    let side =
+        Math.sin(
+            enemy.pathChoice * 20 +
+            performance.now() * .0008
+        ) * 10;
 
     if (
-        distance > 3
+        distance > 1
     ) {
+
+        const nx = -dy / distance;
+        const ny = dx / distance;
 
         enemy.x +=
-            dx /
-            distance *
+            (
+                dx / distance +
+                nx * side * .01
+            ) *
             speed *
             dt;
 
         enemy.y +=
-            dy /
-            distance *
+            (
+                dy / distance +
+                ny * side * .01
+            ) *
             speed *
             dt;
     }
@@ -937,26 +963,21 @@ function damageCastle(enemy) {
             c => c.alive
         );
 
-
     if (
         alive.length === 0
     ) {
 
         endGame();
-
         return;
     }
 
-
-    let castle =
-        alive[0];
+    let castle = alive[0];
 
     let best =
         Math.abs(
             castle.y -
             enemy.y
         );
-
 
     for (
         const c of alive
@@ -966,7 +987,7 @@ function damageCastle(enemy) {
             Math.abs(
                 c.y -
                 enemy.y
-        );
+            );
 
         if (
             d < best
@@ -977,21 +998,15 @@ function damageCastle(enemy) {
         }
     }
 
-
     castle.hp -=
-        enemy.damage * .35;
-
+        enemy.damage * .42;
 
     effects.push({
-
         x: castle.x,
         y: castle.y,
-
         life: 150,
-
         type: "hit"
     });
-
 
     if (
         castle.hp <= 0
@@ -1000,17 +1015,12 @@ function damageCastle(enemy) {
         castle.hp = 0;
         castle.alive = false;
 
-
         effects.push({
-
             x: castle.x,
             y: castle.y,
-
             life: 1800,
-
             type: "fallen"
         });
-
 
         if (
             castles.every(
@@ -1038,36 +1048,20 @@ function drawRoad() {
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        105,
-        325
-    );
-
-    ctx.lineTo(
-        1080,
-        325
-    );
+    ctx.moveTo(105, 325);
+    ctx.lineTo(1080, 325);
 
     ctx.stroke();
-
 
     ctx.strokeStyle = "#555";
     ctx.lineWidth = 38;
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        105,
-        325
-    );
-
-    ctx.lineTo(
-        1080,
-        325
-    );
+    ctx.moveTo(105, 325);
+    ctx.lineTo(1080, 325);
 
     ctx.stroke();
-
 
     if (
         kingdom > 1 &&
@@ -1098,7 +1092,6 @@ function drawRoad() {
 
         ctx.stroke();
 
-
         ctx.strokeStyle = "#555";
         ctx.lineWidth = 38;
 
@@ -1124,6 +1117,59 @@ function drawRoad() {
         ctx.stroke();
     }
 
+    /*
+        Road branches.
+
+        These give enemies multiple
+        visual routes to choose from.
+    */
+
+    if (
+        kingdom > 1 &&
+        roadPoints.length > 2
+    ) {
+
+        ctx.strokeStyle = "#444";
+        ctx.lineWidth = 18;
+
+        for (
+            let i = 1;
+            i < roadPoints.length - 1;
+            i += 2
+        ) {
+
+            const p =
+                roadPoints[i];
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                p.x,
+                p.y
+            );
+
+            ctx.lineTo(
+                p.x + 35,
+                p.y - 25
+            );
+
+            ctx.stroke();
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                p.x,
+                p.y
+            );
+
+            ctx.lineTo(
+                p.x + 35,
+                p.y + 25
+            );
+
+            ctx.stroke();
+        }
+    }
 
     ctx.lineCap = "butt";
 }
@@ -1140,8 +1186,7 @@ function toggleRoadMode() {
     )
         return;
 
-    roadMode =
-        !roadMode;
+    roadMode = !roadMode;
 }
 
 
@@ -1150,7 +1195,6 @@ function addRoadPoint() {
     const x = mouseX;
     const y = mouseY;
 
-
     if (
         x < 70 ||
         x > 1080 ||
@@ -1158,7 +1202,6 @@ function addRoadPoint() {
         y > 580
     )
         return;
-
 
     if (
         roadPoints.length > 0
@@ -1175,19 +1218,16 @@ function addRoadPoint() {
                 y - last.y
             );
 
-
         if (
             distance > 190
         )
             return;
     }
 
-
     roadPoints.push({
         x,
         y
     });
-
 
     if (
         x > 1030 &&
@@ -1215,18 +1255,15 @@ function roadConnected() {
     )
         return true;
 
-
     if (
         roadPoints.length === 0
     )
         return false;
 
-
     const last =
         roadPoints[
             roadPoints.length - 1
         ];
-
 
     return (
         last.x >= 1070 &&
@@ -1251,16 +1288,13 @@ canvas.addEventListener(
         )
             return;
 
-
         if (
             roadMode
         ) {
 
             addRoadPoint();
-
             return;
         }
-
 
         for (
             const tower of towers
@@ -1273,15 +1307,13 @@ canvas.addEventListener(
                 ) < 28
             ) {
 
-                selectedTower =
-                    tower;
+                selectedTower = tower;
 
                 showTowerInfo();
 
                 return;
             }
         }
-
 
         buildTower();
     }
@@ -1295,17 +1327,12 @@ canvas.addEventListener(
 function selectTower(type) {
 
     if (
-        !unlockedTowers.includes(
-            type
-        )
+        !unlockedTowers.includes(type)
     )
         return;
 
-
     selectedTower = null;
-
-    selectedTowerType =
-        type;
+    selectedTowerType = type;
 
     showBuildInfo(type);
 }
@@ -1322,12 +1349,10 @@ function buildTower() {
             selectedTowerType
         ];
 
-
     if (
         money < data.cost
     )
         return;
-
 
     if (
         !validTowerPlacement(
@@ -1337,10 +1362,7 @@ function buildTower() {
     )
         return;
 
-
-    money -=
-        data.cost;
-
+    money -= data.cost;
 
     towers.push({
 
@@ -1383,7 +1405,6 @@ function validTowerPlacement(
     )
         return false;
 
-
     if (
         kingdom > 1
     ) {
@@ -1396,7 +1417,6 @@ function validTowerPlacement(
         )
             return false;
 
-
         for (
             let i = 0;
             i < roadPoints.length - 1;
@@ -1408,7 +1428,6 @@ function validTowerPlacement(
 
             const b =
                 roadPoints[i + 1];
-
 
             if (
                 pointNearLine(
@@ -1425,7 +1444,6 @@ function validTowerPlacement(
         }
     }
 
-
     for (
         const castle of castles
     ) {
@@ -1439,7 +1457,6 @@ function validTowerPlacement(
             return false;
     }
 
-
     for (
         const tower of towers
     ) {
@@ -1452,7 +1469,6 @@ function validTowerPlacement(
         )
             return false;
     }
-
 
     return (
         x > 30 &&
@@ -1473,25 +1489,16 @@ function pointNearLine(
     distance
 ) {
 
-    const dx =
-        x2 - x1;
-
-    const dy =
-        y2 - y1;
-
+    const dx = x2 - x1;
+    const dy = y2 - y1;
 
     const length =
-        Math.hypot(
-            dx,
-            dy
-        );
-
+        Math.hypot(dx, dy);
 
     if (
         length === 0
     )
         return false;
-
 
     let t =
         (
@@ -1499,7 +1506,6 @@ function pointNearLine(
             (py - y1) * dy
         ) /
         (length * length);
-
 
     t =
         Math.max(
@@ -1510,15 +1516,11 @@ function pointNearLine(
             )
         );
 
-
     const cx =
-        x1 +
-        t * dx;
+        x1 + t * dx;
 
     const cy =
-        y1 +
-        t * dy;
-
+        y1 + t * dy;
 
     return (
         Math.hypot(
@@ -1547,17 +1549,13 @@ function updateTowers(dt) {
                 tower.flash - dt
             );
 
-
         if (
             tower.cooldown > 0
         )
             continue;
 
-
         let target = null;
-        let closest =
-            Infinity;
-
+        let closest = Infinity;
 
         for (
             const enemy of enemies
@@ -1569,7 +1567,6 @@ function updateTowers(dt) {
                     enemy.y - tower.y
                 );
 
-
             if (
                 d <= tower.range &&
                 d < closest
@@ -1580,12 +1577,10 @@ function updateTowers(dt) {
             }
         }
 
-
         if (
             !target
         )
             continue;
-
 
         tower.angle =
             Math.atan2(
@@ -1593,9 +1588,7 @@ function updateTowers(dt) {
                 target.x - tower.x
             );
 
-
         tower.flash = 120;
-
 
         bullets.push({
 
@@ -1615,7 +1608,6 @@ function updateTowers(dt) {
             type:
                 tower.type
         });
-
 
         tower.cooldown =
             tower.fireRate;
@@ -1638,21 +1630,15 @@ function updateBullets(dt) {
         const bullet =
             bullets[i];
 
-
         if (
             !enemies.includes(
                 bullet.target
             )
         ) {
 
-            bullets.splice(
-                i,
-                1
-            );
-
+            bullets.splice(i, 1);
             continue;
         }
-
 
         const dx =
             bullet.target.x -
@@ -1663,22 +1649,22 @@ function updateBullets(dt) {
             bullet.y;
 
         const d =
-            Math.hypot(
-                dx,
-                dy
-            );
-
+            Math.hypot(dx, dy);
 
         if (
             d <
-            bullet.speed * dt +
-            6
+            bullet.speed * dt + 6
         ) {
 
             if (
-                bullet.type ===
-                "splash"
+                bullet.type === "splash" ||
+                bullet.type === "catapult"
             ) {
+
+                const radius =
+                    bullet.type === "catapult"
+                    ? 100
+                    : 65;
 
                 for (
                     const enemy of enemies
@@ -1688,10 +1674,9 @@ function updateBullets(dt) {
                         Math.hypot(
                             enemy.x -
                             bullet.target.x,
-
                             enemy.y -
                             bullet.target.y
-                        ) < 65
+                        ) < radius
                     ) {
 
                         enemy.hp -=
@@ -1705,26 +1690,35 @@ function updateBullets(dt) {
                     bullet.damage;
             }
 
-
             if (
-                bullet.type ===
-                "slow"
+                bullet.type === "slow"
             ) {
 
-                bullet.target.slow =
-                    1000;
+                bullet.target.slow = 1200;
             }
 
-
             if (
-                bullet.type ===
-                "freeze"
+                bullet.type === "freeze"
             ) {
 
-                bullet.target.slow =
+                bullet.target.slow = 2600;
+            }
+
+            if (
+                bullet.type === "poison"
+            ) {
+
+                bullet.target.poison =
+                    2500;
+            }
+
+            if (
+                bullet.type === "fire"
+            ) {
+
+                bullet.target.fire =
                     2200;
             }
-
 
             effects.push({
 
@@ -1739,11 +1733,7 @@ function updateBullets(dt) {
                 type: "hit"
             });
 
-
-            bullets.splice(
-                i,
-                1
-            );
+            bullets.splice(i, 1);
 
         } else {
 
@@ -1759,6 +1749,30 @@ function updateBullets(dt) {
         }
     }
 
+    for (
+        const enemy of enemies
+    ) {
+
+        if (
+            enemy.poison > 0
+        ) {
+
+            enemy.hp -=
+                .009 * dt;
+
+            enemy.poison -= dt;
+        }
+
+        if (
+            enemy.fire > 0
+        ) {
+
+            enemy.hp -=
+                .014 * dt;
+
+            enemy.fire -= dt;
+        }
+    }
 
     for (
         let i = enemies.length - 1;
@@ -1770,21 +1784,25 @@ function updateBullets(dt) {
             enemies[i].hp <= 0
         ) {
 
-            /*
-                Elites give more money,
-                but not enough to make
-                upgrades unstoppable.
-            */
-
             money +=
-                enemies[i].elite
-                ? 25
-                : 12;
+                enemies[i].giant
+                ? 30
+                : 15;
 
-            enemies.splice(
-                i,
-                1
-            );
+            effects.push({
+
+                x:
+                    enemies[i].x,
+
+                y:
+                    enemies[i].y,
+
+                life: 300,
+
+                type: "coin"
+            });
+
+            enemies.splice(i, 1);
         }
     }
 }
@@ -1800,25 +1818,15 @@ function updateTroops(dt) {
         const troop of troops
     ) {
 
-        /*
-            Attack animation timer.
-        */
-
-        if (
-            troop.attackTimer > 0
-        ) {
-
-            troop.attackTimer -= dt;
-        }
-
-
-        /*
-            Find the closest enemy.
-        */
+        troop.attackCooldown -= dt;
+        troop.animTime += dt;
 
         let target = null;
         let closest = Infinity;
 
+        /*
+            Find the nearest enemy.
+        */
 
         for (
             const enemy of enemies
@@ -1830,9 +1838,8 @@ function updateTroops(dt) {
                     enemy.y - troop.y
                 );
 
-
             if (
-                d < 55 &&
+                d < 65 &&
                 d < closest
             ) {
 
@@ -1841,43 +1848,27 @@ function updateTroops(dt) {
             }
         }
 
-
         /*
-            If an enemy is close,
-            stop moving and fight.
+            Troop stops moving while fighting.
         */
 
         if (
             target
         ) {
 
-            troop.target = target;
-
-            troop.cooldown -= dt;
-
-
-            troop.facing =
-                Math.atan2(
-                    target.y - troop.y,
-                    target.x - troop.x
-                );
-
+            troop.fighting = true;
 
             if (
-                troop.cooldown <= 0
+                troop.attackCooldown <= 0
             ) {
 
                 target.hp -=
                     troop.damage;
 
+                troop.attackCooldown =
+                    troop.attackRate;
 
-                troop.cooldown =
-                    700;
-
-
-                troop.attackTimer =
-                    230;
-
+                troop.attackAnim = 180;
 
                 effects.push({
 
@@ -1890,29 +1881,47 @@ function updateTroops(dt) {
                 });
             }
 
+        } else {
 
-            continue;
+            troop.fighting = false;
+
+            /*
+                Follow road toward gate.
+            */
+
+            if (
+                kingdom === 1
+            ) {
+
+                troop.x +=
+                    troop.speed *
+                    dt;
+
+                troop.y = 325;
+
+            } else if (
+                roadPoints.length > 1
+            ) {
+
+                moveTroopAlongRoad(
+                    troop,
+                    dt
+                );
+
+            } else {
+
+                troop.x +=
+                    troop.speed *
+                    dt;
+            }
         }
 
-
-        /*
-            Enemy died or moved away.
-            Continue along the road.
-        */
-
-        troop.target = null;
-
-
-        moveTroopAlongRoad(
-            troop,
-            dt
-        );
+        troop.attackAnim =
+            Math.max(
+                0,
+                troop.attackAnim - dt
+            );
     }
-
-
-    /*
-        Remove dead troops.
-    */
 
     for (
         let i = troops.length - 1;
@@ -1924,10 +1933,7 @@ function updateTroops(dt) {
             troops[i].hp <= 0
         ) {
 
-            troops.splice(
-                i,
-                1
-            );
+            troops.splice(i, 1);
         }
     }
 }
@@ -1942,85 +1948,45 @@ function moveTroopAlongRoad(
     dt
 ) {
 
-    /*
-        Kingdom 1:
-        castle → right.
-    */
-
     if (
-        kingdom === 1
-    ) {
-
-        troop.y = 325;
-
-        if (
-            troop.x < 1060
-        ) {
-
-            troop.x +=
-                troop.speed *
-                dt;
-        }
-
-        return;
-    }
-
-
-    if (
-        roadPoints.length === 0
-    )
-        return;
-
-
-    /*
-        Troops follow roadPoints
-        forwards:
-        castle → enemy gate.
-    */
-
-    if (
-        troop.roadIndex === undefined
+        !troop.roadIndex
     ) {
 
         troop.roadIndex = 0;
     }
 
+    /*
+        Troops travel castle → gate.
+    */
 
     if (
         troop.roadIndex >=
-        roadPoints.length
+        roadPoints.length - 1
     ) {
 
         troop.roadIndex =
             roadPoints.length - 1;
-
-        return;
     }
-
 
     const target =
         roadPoints[
-            troop.roadIndex
+            Math.min(
+                troop.roadIndex + 1,
+                roadPoints.length - 1
+            )
         ];
 
-
     const dx =
-        target.x -
-        troop.x;
+        target.x - troop.x;
 
     const dy =
-        target.y -
-        troop.y;
+        target.y - troop.y;
 
-    const distance =
-        Math.hypot(
-            dx,
-            dy
-        );
-
+    const d =
+        Math.hypot(dx, dy);
 
     if (
-        distance < 8
+        d < 15
     ) {
 
         troop.roadIndex++;
@@ -2028,25 +1994,20 @@ function moveTroopAlongRoad(
         return;
     }
 
+    if (
+        d > 1
+    ) {
 
-    troop.facing =
-        Math.atan2(
-            dy,
-            dx
-        );
+        troop.x +=
+            dx / d *
+            troop.speed *
+            dt;
 
-
-    troop.x +=
-        dx /
-        distance *
-        troop.speed *
-        dt;
-
-    troop.y +=
-        dy /
-        distance *
-        troop.speed *
-        dt;
+        troop.y +=
+            dy / d *
+            troop.speed *
+            dt;
+    }
 }
 
 
@@ -2063,7 +2024,6 @@ function updateCastleButtons() {
 
     bar.innerHTML = "";
 
-
     for (
         const castle of castles
     ) {
@@ -2073,18 +2033,15 @@ function updateCastleButtons() {
         )
             continue;
 
-
         const data =
             troopTypes[
                 castle.troop
             ];
 
-
         const button =
             document.createElement(
                 "button"
             );
-
 
         button.textContent =
             "CASTLE " +
@@ -2094,17 +2051,13 @@ function updateCastleButtons() {
             " $" +
             data.cost;
 
-
         button.onclick =
             () =>
                 spawnTroop(
                     castle
                 );
 
-
-        bar.appendChild(
-            button
-        );
+        bar.appendChild(button);
     }
 }
 
@@ -2118,16 +2071,12 @@ function spawnTroop(
             castle.troop
         ];
 
-
     if (
         money < data.cost
     )
         return;
 
-
-    money -=
-        data.cost;
-
+    money -= data.cost;
 
     troops.push({
 
@@ -2157,16 +2106,18 @@ function spawnTroop(
 
         cooldown: 0,
 
-        attackTimer: 0,
+        attackCooldown: 0,
 
-        target: null,
+        attackRate:
+            data.attackRate,
 
-        facing: 0,
+        fighting: false,
 
-        roadIndex:
-            kingdom > 1
-            ? 0
-            : undefined
+        attackAnim: 0,
+
+        animTime: 0,
+
+        roadIndex: 0
     });
 }
 
@@ -2180,7 +2131,6 @@ function conquerKingdom() {
     const id =
         castles.length + 1;
 
-
     const lanes = [
         180,
         470,
@@ -2190,20 +2140,17 @@ function conquerKingdom() {
         520
     ];
 
-
     const lane =
         lanes[
             (id - 2) %
             lanes.length
         ];
 
-
     const troop =
         troopOrder[
             (id - 1) %
             troopOrder.length
         ];
-
 
     castles.push({
 
@@ -2222,18 +2169,18 @@ function conquerKingdom() {
         troop
     });
 
-
     kingdom++;
-
 
     money +=
         250 +
         kingdom * 75;
 
+    /*
+        Unlock towers more gradually.
+    */
 
     const unlockIndex =
         kingdom - 2;
-
 
     if (
         unlockIndex + 2 <
@@ -2245,17 +2192,13 @@ function conquerKingdom() {
                 unlockIndex + 2
             ];
 
-
         if (
             !unlockedTowers.includes(
                 type
             )
         ) {
 
-            unlockedTowers.push(
-                type
-            );
-
+            unlockedTowers.push(type);
 
             effects.push({
 
@@ -2276,23 +2219,18 @@ function conquerKingdom() {
         }
     }
 
-
     roadPoints = [
-
         {
             x: 105,
             y: lane
         }
-
     ];
-
 
     roadMode = true;
 
     waveRunning = false;
 
     waveTimer = 999999;
-
 
     updateButtons();
     updateCastleButtons();
@@ -2310,67 +2248,52 @@ function upgradeSelected() {
     )
         return;
 
-
     /*
-        MUCH MORE EXPENSIVE
-        as the tower gets stronger.
+        Much more expensive upgrades.
     */
 
     const cost =
-        Math.floor(
-            90 *
-            Math.pow(
-                selectedTower.level,
-                1.55
-            )
-        );
-
+        100 +
+        selectedTower.level *
+        125;
 
     if (
         money < cost
     )
         return;
 
-
     money -= cost;
-
 
     selectedTower.level++;
 
-
     /*
-        Smaller buff:
-        35% → 15%
+        Small damage buff.
     */
 
     selectedTower.damage =
         Math.round(
             selectedTower.damage *
-            1.15
+            1.10
         );
 
-
     /*
-        Smaller range increase.
+        Small range buff.
     */
 
-    selectedTower.range +=
-        5;
-
+    selectedTower.range += 5;
 
     /*
-        Smaller fire-rate improvement.
+        Small fire-rate buff.
     */
 
     selectedTower.fireRate =
         Math.max(
-            130,
+            180,
             Math.round(
                 selectedTower.fireRate *
                 .96
             )
         );
-
 
     showTowerInfo();
 }
@@ -2387,34 +2310,28 @@ function sellSelected() {
     )
         return;
 
-
     const index =
         towers.indexOf(
             selectedTower
         );
-
 
     if (
         index < 0
     )
         return;
 
-
     money +=
         Math.floor(
             towerTypes[
                 selectedTower.type
             ].cost *
-            .6 *
-            selectedTower.level
+            .6
         );
-
 
     towers.splice(
         index,
         1
     );
-
 
     selectedTower = null;
 
@@ -2435,14 +2352,12 @@ function showBuildInfo(
     const data =
         towerTypes[type];
 
-
     document.getElementById(
         "infoTitle"
     ).textContent =
         data.name +
         " • $" +
         data.cost;
-
 
     document.getElementById(
         "infoText"
@@ -2465,41 +2380,31 @@ function showTowerInfo() {
     )
         return;
 
-
     const t =
         selectedTower;
-
 
     const nextDamage =
         Math.round(
             t.damage *
-            1.15
+            1.10
         );
-
 
     const nextRange =
         t.range + 5;
 
-
     const nextRate =
         Math.max(
-            130,
+            180,
             Math.round(
                 t.fireRate *
                 .96
             )
         );
 
-
     const cost =
-        Math.floor(
-            90 *
-            Math.pow(
-                t.level,
-                1.55
-            )
-        );
-
+        100 +
+        t.level *
+        125;
 
     document.getElementById(
         "infoTitle"
@@ -2509,7 +2414,6 @@ function showTowerInfo() {
         ].name +
         " • LEVEL " +
         t.level;
-
 
     document.getElementById(
         "infoText"
@@ -2555,6 +2459,8 @@ function updateButtons() {
                     "Button"
                 );
 
+            if (!button)
+                return;
 
             if (
                 unlockedTowers.includes(
@@ -2565,7 +2471,6 @@ function updateButtons() {
                 button.classList.remove(
                     "locked"
                 );
-
 
                 button.textContent =
                     getKey(type) +
@@ -2583,7 +2488,6 @@ function updateButtons() {
                 button.classList.add(
                     "locked"
                 );
-
 
                 button.textContent =
                     getKey(type) +
@@ -2604,9 +2508,13 @@ function getKey(type) {
         slow: "[4]",
         splash: "[5]",
         laser: "[6]",
-        freeze: "[7]"
+        freeze: "[7]",
+        sniper: "[8]",
+        poison: "[9]",
+        ballista: "[0]",
+        catapult: "[-]",
+        fire: "[=]"
     };
-
 
     return keys[type];
 }
@@ -2623,13 +2531,11 @@ canvas.addEventListener(
         const rect =
             canvas.getBoundingClientRect();
 
-
         mouseX =
             (e.clientX -
             rect.left) *
             W /
             rect.width;
-
 
         mouseY =
             (e.clientY -
@@ -2646,9 +2552,7 @@ canvas.addEventListener(
 
 function draw() {
 
-    ctx.fillStyle =
-        "#090909";
-
+    ctx.fillStyle = "#090909";
 
     ctx.fillRect(
         0,
@@ -2656,7 +2560,6 @@ function draw() {
         W,
         H
     );
-
 
     drawLand();
     drawRoad();
@@ -2678,9 +2581,7 @@ function draw() {
 
 function drawLand() {
 
-    ctx.fillStyle =
-        "#111";
-
+    ctx.fillStyle = "#111";
 
     ctx.fillRect(
         20,
@@ -2689,14 +2590,11 @@ function drawLand() {
         100
     );
 
-
     if (
         kingdom > 1
     ) {
 
-        ctx.fillStyle =
-            "#141414";
-
+        ctx.fillStyle = "#141414";
 
         ctx.fillRect(
             20,
@@ -2714,9 +2612,7 @@ function drawLand() {
 
 function drawGate() {
 
-    ctx.fillStyle =
-        "#222";
-
+    ctx.fillStyle = "#222";
 
     ctx.fillRect(
         1070,
@@ -2725,21 +2621,16 @@ function drawGate() {
         70
     );
 
-
-    ctx.fillStyle =
-        "#ddd";
-
+    ctx.fillStyle = "#ddd";
 
     ctx.font =
         "bold 10px Courier New";
-
 
     ctx.fillText(
         "ENEMY",
         1067,
         278
     );
-
 
     ctx.fillText(
         "GATE",
@@ -2762,22 +2653,17 @@ function drawPlacement() {
     )
         return;
 
-
     const data =
         towerTypes[
             selectedTowerType
         ];
 
-
     ctx.strokeStyle =
         "rgba(255,255,255,.2)";
 
-
     ctx.lineWidth = 1;
 
-
     ctx.beginPath();
-
 
     ctx.arc(
         mouseX,
@@ -2787,9 +2673,7 @@ function drawPlacement() {
         Math.PI * 2
     );
 
-
     ctx.stroke();
-
 
     ctx.strokeStyle =
         validTowerPlacement(
@@ -2798,7 +2682,6 @@ function drawPlacement() {
         )
         ? "rgba(255,255,255,.5)"
         : "rgba(255,60,60,.6)";
-
 
     ctx.strokeRect(
         mouseX - 20,
@@ -2823,9 +2706,7 @@ function drawCastles() {
             !castle.alive
         ) {
 
-            ctx.fillStyle =
-                "#252525";
-
+            ctx.fillStyle = "#252525";
 
             ctx.fillRect(
                 castle.x - 35,
@@ -2834,14 +2715,10 @@ function drawCastles() {
                 70
             );
 
-
-            ctx.fillStyle =
-                "#777";
-
+            ctx.fillStyle = "#777";
 
             ctx.font =
                 "bold 10px Courier New";
-
 
             ctx.fillText(
                 "FALLEN",
@@ -2849,14 +2726,10 @@ function drawCastles() {
                 castle.y + 4
             );
 
-
             continue;
         }
 
-
-        ctx.fillStyle =
-            "#777";
-
+        ctx.fillStyle = "#777";
 
         ctx.fillRect(
             castle.x - 30,
@@ -2865,10 +2738,7 @@ function drawCastles() {
             60
         );
 
-
-        ctx.fillStyle =
-            "#aaa";
-
+        ctx.fillStyle = "#aaa";
 
         ctx.fillRect(
             castle.x - 40,
@@ -2877,7 +2747,6 @@ function drawCastles() {
             28
         );
 
-
         ctx.fillRect(
             castle.x + 26,
             castle.y - 43,
@@ -2885,10 +2754,7 @@ function drawCastles() {
             28
         );
 
-
-        ctx.fillStyle =
-            "#222";
-
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             castle.x - 8,
@@ -2897,64 +2763,47 @@ function drawCastles() {
             22
         );
 
-
-        ctx.strokeStyle =
-            "#ddd";
-
+        ctx.strokeStyle = "#ddd";
 
         ctx.beginPath();
-
 
         ctx.moveTo(
             castle.x,
             castle.y - 55
         );
-
 
         ctx.lineTo(
             castle.x,
             castle.y - 28
         );
 
-
         ctx.stroke();
 
-
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = "#ddd";
 
         ctx.beginPath();
-
 
         ctx.moveTo(
             castle.x,
             castle.y - 55
         );
 
-
         ctx.lineTo(
             castle.x + 23,
             castle.y - 48
         );
-
 
         ctx.lineTo(
             castle.x,
             castle.y - 41
         );
 
-
         ctx.fill();
 
-
-        ctx.fillStyle =
-            "#111";
-
+        ctx.fillStyle = "#111";
 
         ctx.font =
             "bold 19px Courier New";
-
 
         ctx.fillText(
             castle.id,
@@ -2962,10 +2811,7 @@ function drawCastles() {
             castle.y + 4
         );
 
-
-        ctx.fillStyle =
-            "#222";
-
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             castle.x - 42,
@@ -2974,10 +2820,7 @@ function drawCastles() {
             7
         );
 
-
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = "#ddd";
 
         ctx.fillRect(
             castle.x - 42,
@@ -2988,16 +2831,13 @@ function drawCastles() {
             7
         );
 
-
         ctx.fillStyle =
             troopTypes[
                 castle.troop
             ].color;
 
-
         ctx.font =
             "9px Courier New";
-
 
         ctx.fillText(
             castle.troop,
@@ -3022,9 +2862,13 @@ function drawTowers() {
         slow: "#6c6",
         splash: "#b65cff",
         laser: "#5ff",
-        freeze: "#8cf"
+        freeze: "#8cf",
+        sniper: "#fff",
+        poison: "#9c5",
+        ballista: "#c88",
+        catapult: "#a76",
+        fire: "#f75"
     };
-
 
     for (
         const tower of towers
@@ -3035,10 +2879,10 @@ function drawTowers() {
                 tower.type
             ];
 
-
         if (
-            tower.type ===
-            "heavy"
+            tower.type === "heavy" ||
+            tower.type === "ballista" ||
+            tower.type === "catapult"
         ) {
 
             ctx.fillRect(
@@ -3049,8 +2893,7 @@ function drawTowers() {
             );
 
         } else if (
-            tower.type ===
-            "splash"
+            tower.type === "splash"
         ) {
 
             ctx.fillRect(
@@ -3064,7 +2907,6 @@ function drawTowers() {
 
             ctx.beginPath();
 
-
             ctx.arc(
                 tower.x,
                 tower.y,
@@ -3073,22 +2915,17 @@ function drawTowers() {
                 Math.PI * 2
             );
 
-
             ctx.fill();
         }
 
-
         if (
-            selectedTower ===
-            tower
+            selectedTower === tower
         ) {
 
             ctx.strokeStyle =
                 "rgba(255,255,255,.3)";
 
-
             ctx.beginPath();
-
 
             ctx.arc(
                 tower.x,
@@ -3098,46 +2935,36 @@ function drawTowers() {
                 Math.PI * 2
             );
 
-
             ctx.stroke();
         }
 
-
         ctx.save();
-
 
         ctx.translate(
             tower.x,
             tower.y
         );
 
-
         ctx.rotate(
             tower.angle
         );
 
-
-        ctx.fillStyle =
-            "#111";
-
+        ctx.fillStyle = "#111";
 
         ctx.fillRect(
             0,
             -4,
-            28,
+            tower.type === "sniper"
+            ? 38
+            : 28,
             8
         );
 
-
         ctx.restore();
 
-
-        ctx.fillStyle =
-            "#111";
-
+        ctx.fillStyle = "#111";
 
         ctx.beginPath();
-
 
         ctx.arc(
             tower.x,
@@ -3147,20 +2974,15 @@ function drawTowers() {
             Math.PI * 2
         );
 
-
         ctx.fill();
-
 
         if (
             tower.flash > 0
         ) {
 
-            ctx.fillStyle =
-                "#fff";
-
+            ctx.fillStyle = "#fff";
 
             ctx.beginPath();
-
 
             ctx.arc(
                 tower.x +
@@ -3180,18 +3002,13 @@ function drawTowers() {
                 Math.PI * 2
             );
 
-
             ctx.fill();
         }
 
-
-        ctx.fillStyle =
-            "#fff";
-
+        ctx.fillStyle = "#fff";
 
         ctx.font =
             "bold 9px Courier New";
-
 
         ctx.fillText(
             tower.level,
@@ -3216,7 +3033,6 @@ function drawEnemies() {
         Mages: "#5ff"
     };
 
-
     for (
         const enemy of enemies
     ) {
@@ -3226,20 +3042,13 @@ function drawEnemies() {
                 enemy.type
             ];
 
-
-        /*
-            Elite enemies are bigger.
-        */
-
         const size =
-            enemy.elite
-            ? 1.45
+            enemy.giant
+            ? 1.65
             : 1;
 
-
         if (
-            enemy.type ===
-            "Spearmen"
+            enemy.type === "Spearmen"
         ) {
 
             ctx.fillRect(
@@ -3250,45 +3059,37 @@ function drawEnemies() {
             );
 
         } else if (
-            enemy.type ===
-            "Crossbowmen"
+            enemy.type === "Crossbowmen"
         ) {
 
             ctx.beginPath();
-
 
             ctx.moveTo(
                 enemy.x,
                 enemy.y - 15 * size
             );
 
-
             ctx.lineTo(
                 enemy.x + 15 * size,
                 enemy.y
             );
-
 
             ctx.lineTo(
                 enemy.x,
                 enemy.y + 15 * size
             );
 
-
             ctx.lineTo(
                 enemy.x - 15 * size,
                 enemy.y
             );
 
-
             ctx.closePath();
-
 
             ctx.fill();
 
         } else if (
-            enemy.type ===
-            "Guards"
+            enemy.type === "Guards"
         ) {
 
             ctx.fillRect(
@@ -3302,7 +3103,6 @@ function drawEnemies() {
 
             ctx.beginPath();
 
-
             ctx.arc(
                 enemy.x,
                 enemy.y,
@@ -3311,32 +3111,26 @@ function drawEnemies() {
                 Math.PI * 2
             );
 
-
             ctx.fill();
         }
 
-
         if (
-            enemy.elite
+            enemy.giant
         ) {
 
-            ctx.strokeStyle =
-                "#fff";
+            ctx.fillStyle = "#fff";
 
-            ctx.lineWidth = 2;
+            ctx.font =
+                "bold 8px Courier New";
 
-            ctx.strokeRect(
-                enemy.x - 21,
-                enemy.y - 21,
-                42,
-                42
+            ctx.fillText(
+                "ELITE",
+                enemy.x - 13,
+                enemy.y - 25 * size
             );
         }
 
-
-        ctx.fillStyle =
-            "#222";
-
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             enemy.x - 18,
@@ -3345,10 +3139,7 @@ function drawEnemies() {
             4
         );
 
-
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = "#ddd";
 
         ctx.fillRect(
             enemy.x - 18,
@@ -3375,166 +3166,98 @@ function drawTroops() {
         const troop of troops
     ) {
 
-        /*
-            Small movement animation.
-        */
-
-        const moving =
-            !troop.target;
-
-
-        const walk =
-            moving
-            ? Math.sin(
-                performance.now() / 120 +
-                troop.x
-            ) * 2
-            : 0;
-
-
-        ctx.save();
-
-
-        ctx.translate(
-            troop.x,
-            troop.y + walk
-        );
-
-
-        /*
-            Face the enemy / road.
-        */
-
-        ctx.rotate(
-            troop.facing || 0
-        );
-
-
-        /*
-            Body
-        */
+        const bob =
+            troop.fighting
+            ? 0
+            : Math.sin(
+                troop.animTime * .012
+            ) * 2;
 
         ctx.fillStyle =
             troop.color;
 
-
         ctx.fillRect(
-            -7,
-            -9,
+            troop.x - 7,
+            troop.y - 9 + bob,
             14,
             18
         );
 
-
-        /*
-            Head
-        */
-
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = "#ddd";
 
         ctx.beginPath();
 
-
         ctx.arc(
-            0,
-            -14,
+            troop.x,
+            troop.y - 14 + bob,
             5,
             0,
             Math.PI * 2
         );
 
-
         ctx.fill();
 
-
         /*
-            Animated sword.
+            Animated weapon.
         */
 
-        ctx.strokeStyle =
-            "#111";
-
-
+        ctx.strokeStyle = "#111";
         ctx.lineWidth = 3;
-
 
         ctx.beginPath();
 
+        ctx.moveTo(
+            troop.x,
+            troop.y
+        );
+
+        let weaponX =
+            troop.x + 14;
+
+        let weaponY =
+            troop.y - 10;
 
         if (
-            troop.attackTimer > 0
+            troop.fighting
         ) {
 
-            const progress =
-                1 -
-                troop.attackTimer /
-                230;
-
             const swing =
-                Math.sin(
-                    progress *
-                    Math.PI
-                ) *
-                1.2;
+                troop.attackAnim > 0
+                ? Math.sin(
+                    troop.attackAnim * .05
+                ) * 14
+                : 0;
 
-
-            ctx.moveTo(
-                0,
-                0
-            );
-
-
-            ctx.lineTo(
-                14 * Math.cos(swing),
-                -14 * Math.sin(swing)
-            );
-
-        } else {
-
-            ctx.moveTo(
-                0,
-                0
-            );
-
-
-            ctx.lineTo(
-                14,
-                -10
-            );
+            weaponX += swing;
+            weaponY +=
+                Math.abs(swing) * .3;
         }
 
+        ctx.lineTo(
+            weaponX,
+            weaponY
+        );
 
         ctx.stroke();
 
-
-        ctx.restore();
-
-
         /*
-            Troop HP
+            Troop HP.
         */
 
-        ctx.fillStyle =
-            "#222";
-
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             troop.x - 12,
-            troop.y - 27,
+            troop.y + 12,
             24,
             3
         );
 
-
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = troop.color;
 
         ctx.fillRect(
             troop.x - 12,
-            troop.y - 27,
+            troop.y + 12,
             24 *
             Math.max(
                 0,
@@ -3543,6 +3266,26 @@ function drawTroops() {
             ),
             3
         );
+
+        /*
+            Fighting marker.
+        */
+
+        if (
+            troop.fighting
+        ) {
+
+            ctx.fillStyle = "#fff";
+
+            ctx.font =
+                "bold 9px Courier New";
+
+            ctx.fillText(
+                "!",
+                troop.x + 10,
+                troop.y - 15
+            );
+        }
     }
 }
 
@@ -3558,23 +3301,25 @@ function drawBullets() {
     ) {
 
         ctx.fillStyle =
-            bullet.type ===
-            "laser"
+            bullet.type === "laser"
             ? "#fff"
+            : bullet.type === "fire"
+            ? "#f75"
+            : bullet.type === "poison"
+            ? "#9c5"
             : "#ddd";
 
-
         ctx.beginPath();
-
 
         ctx.arc(
             bullet.x,
             bullet.y,
-            4,
+            bullet.type === "catapult"
+            ? 7
+            : 4,
             0,
             Math.PI * 2
         );
-
 
         ctx.fill();
     }
@@ -3595,15 +3340,11 @@ function updateEffects(dt) {
 
         effects[i].life -= dt;
 
-
         if (
             effects[i].life <= 0
         ) {
 
-            effects.splice(
-                i,
-                1
-            );
+            effects.splice(i, 1);
         }
     }
 }
@@ -3616,21 +3357,15 @@ function drawEffects() {
     ) {
 
         if (
-            effect.type ===
-            "unlock"
+            effect.type === "unlock"
         ) {
 
-            ctx.fillStyle =
-                "#fff";
-
+            ctx.fillStyle = "#fff";
 
             ctx.font =
                 "bold 22px Courier New";
 
-
-            ctx.textAlign =
-                "center";
-
+            ctx.textAlign = "center";
 
             ctx.fillText(
                 effect.text,
@@ -3638,49 +3373,35 @@ function drawEffects() {
                 110
             );
 
-
-            ctx.textAlign =
-                "left";
+            ctx.textAlign = "left";
 
         } else if (
-            effect.type ===
-            "payout"
+            effect.type === "reward"
         ) {
 
-            ctx.fillStyle =
-                "#ddd";
-
+            ctx.fillStyle = "#ddd";
 
             ctx.font =
                 "bold 18px Courier New";
 
-
-            ctx.textAlign =
-                "center";
-
+            ctx.textAlign = "center";
 
             ctx.fillText(
                 effect.text,
                 W / 2,
-                effect.y
+                145
             );
 
-
-            ctx.textAlign =
-                "left";
+            ctx.textAlign = "left";
 
         } else if (
-            effect.type ===
-            "fallen"
+            effect.type === "fallen"
         ) {
 
-            ctx.fillStyle =
-                "#e33";
-
+            ctx.fillStyle = "#e33";
 
             ctx.font =
                 "bold 11px Courier New";
-
 
             ctx.fillText(
                 "CASTLE FALLEN",
@@ -3692,7 +3413,6 @@ function drawEffects() {
 
             ctx.strokeStyle =
                 "rgba(255,255,255,.8)";
-
 
             ctx.strokeRect(
                 effect.x - 10,
@@ -3716,22 +3436,16 @@ function drawWaveText() {
     )
         return;
 
-
-    ctx.textAlign =
-        "center";
-
+    ctx.textAlign = "center";
 
     if (
         paused
     ) {
 
-        ctx.fillStyle =
-            "#fff";
-
+        ctx.fillStyle = "#fff";
 
         ctx.font =
             "bold 24px Courier New";
-
 
         ctx.fillText(
             "PAUSED",
@@ -3743,13 +3457,10 @@ function drawWaveText() {
         roadMode
     ) {
 
-        ctx.fillStyle =
-            "#fff";
-
+        ctx.fillStyle = "#fff";
 
         ctx.font =
             "bold 18px Courier New";
-
 
         ctx.fillText(
             "BUILD ROAD → CONNECT TO ENEMY GATE",
@@ -3761,13 +3472,10 @@ function drawWaveText() {
         !waveRunning
     ) {
 
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = "#ddd";
 
         ctx.font =
             "bold 20px Courier New";
-
 
         ctx.fillText(
             "NEXT WAVE IN " +
@@ -3783,13 +3491,10 @@ function drawWaveText() {
 
     } else {
 
-        ctx.fillStyle =
-            "#ddd";
-
+        ctx.fillStyle = "#ddd";
 
         ctx.font =
             "bold 18px Courier New";
-
 
         ctx.fillText(
             "WAVE " +
@@ -3804,9 +3509,7 @@ function drawWaveText() {
         );
     }
 
-
-    ctx.textAlign =
-        "left";
+    ctx.textAlign = "left";
 }
 
 
@@ -3820,7 +3523,6 @@ function updateStats() {
         castles.filter(
             c => c.alive
         ).length;
-
 
     document.getElementById(
         "stats"
@@ -3853,9 +3555,7 @@ function togglePause() {
     )
         return;
 
-
-    paused =
-        !paused;
+    paused = !paused;
 }
 
 
@@ -3869,7 +3569,6 @@ function saveGame(slot) {
         !running
     )
         return;
-
 
     const data = {
 
@@ -3890,14 +3589,11 @@ function saveGame(slot) {
         roadMode
     };
 
-
     localStorage.setItem(
         "kingdomWarSave" +
         slot,
 
-        JSON.stringify(
-            data
-        )
+        JSON.stringify(data)
     );
 }
 
@@ -3910,38 +3606,30 @@ function loadGame(slot) {
             slot
         );
 
-
     if (
         !raw
     )
         return;
 
-
     const data =
         JSON.parse(raw);
-
 
     money =
         data.money;
 
-
     wave =
         data.wave;
 
-
     kingdom =
         data.kingdom;
-
 
     castles =
         data.castles ||
         [];
 
-
     towers =
         data.towers ||
         [];
-
 
     unlockedTowers =
         data.unlockedTowers ||
@@ -3950,54 +3638,60 @@ function loadGame(slot) {
             "rapid"
         ];
 
-
     roadPoints =
         data.roadPoints ||
         [];
-
 
     waveRunning =
         data.waveRunning ||
         false;
 
-
     waveTimer =
         data.waveTimer ||
         5000;
 
-
     roadMode =
         data.roadMode ||
         false;
-
 
     enemies = [];
     troops = [];
     bullets = [];
     effects = [];
 
+    selectedTower = null;
 
-    selectedTower =
-        null;
+    paused = false;
 
+    running = true;
 
-    paused =
-        false;
+    /*
+        Restore missing troop animation
+        properties safely.
+    */
 
+    castles.forEach(c => {
 
-    running =
-        true;
+        if (!c.troop)
+            c.troop = "Swordsmen";
+    });
 
+    towers.forEach(t => {
+
+        if (!t.level)
+            t.level = 1;
+
+        if (!t.cooldown)
+            t.cooldown = 0;
+    });
 
     updateButtons();
     updateCastleButtons();
 
     hideOverlay();
 
-
     lastTime =
         performance.now();
-
 
     requestAnimationFrame(
         gameLoop
@@ -4011,25 +3705,19 @@ function loadGame(slot) {
 
 function endGame() {
 
-    running =
-        false;
+    running = false;
 
-
-    waveRunning =
-        false;
-
+    waveRunning = false;
 
     document.getElementById(
         "overlayTitle"
     ).textContent =
         "RETRY";
 
-
     document.getElementById(
         "overlayTitle"
     ).className =
         "retry";
-
 
     document.getElementById(
         "overlayText"
@@ -4050,31 +3738,25 @@ function endGame() {
 
         "YOUR SAVE SLOTS ARE SAFE.";
 
-
     const main =
         document.getElementById(
             "mainButton"
         );
 
-
     main.textContent =
         "RETRY";
-
 
     main.onclick =
         startGame;
 
-
     main.className =
         "retryButton";
-
 
     document.getElementById(
         "homeButton"
     ).classList.remove(
         "hidden"
     );
-
 
     document.getElementById(
         "overlay"
@@ -4110,7 +3792,7 @@ function hideOverlay() {
 
 
 /* =========================
-   RRR
+   RRR + KEYBOARD
 ========================= */
 
 document.addEventListener(
@@ -4120,18 +3802,15 @@ document.addEventListener(
         const key =
             e.key.toLowerCase();
 
-
         if (
             key === "r"
         ) {
 
             rCount++;
 
-
             clearTimeout(
                 rTimer
             );
-
 
             rTimer =
                 setTimeout(
@@ -4140,7 +3819,6 @@ document.addEventListener(
                     },
                     700
                 );
-
 
             if (
                 rCount === 3
@@ -4152,7 +3830,6 @@ document.addEventListener(
             }
         }
 
-
         const keys = {
 
             "1": "basic",
@@ -4161,9 +3838,13 @@ document.addEventListener(
             "4": "slow",
             "5": "splash",
             "6": "laser",
-            "7": "freeze"
+            "7": "freeze",
+            "8": "sniper",
+            "9": "poison",
+            "0": "ballista",
+            "-": "catapult",
+            "=": "fire"
         };
-
 
         if (
             keys[key]
