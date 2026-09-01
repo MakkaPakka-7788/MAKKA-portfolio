@@ -230,7 +230,7 @@ Conquer new kingdoms to unlock more towers and troops.
 
 <button id="mainButton" onclick="startGame()">START</button>
 
-<button id="homeButton" class="hidden" onclick="goHome()">
+<button id="homeButton" class="hidden" onclick="goHome">
 HOME
 </button>
 
@@ -674,11 +674,6 @@ function spawnEnemy() {
         wave * .025 +
         kingdom * .1;
 
-    /*
-        Enemies begin at the actual
-        enemy gate/road entrance.
-    */
-
     let spawnX = 1080;
     let spawnY = 325;
 
@@ -759,13 +754,6 @@ function updateEnemies(dt) {
             );
         }
 
-        /*
-            Enemy reaches a castle.
-
-            It deals damage equal to its
-            CURRENT HP and then dies.
-        */
-
         let reachedCastle = false;
 
         for (
@@ -799,11 +787,6 @@ function updateEnemies(dt) {
 
             continue;
         }
-
-        /*
-            Extra safety so enemies never
-            get stuck behind the castle.
-        */
 
         if (
             kingdom === 1 &&
@@ -840,12 +823,6 @@ function moveEnemyAlongRoad(
 
         return;
     }
-
-    /*
-        Enemies start from the gate
-        and work backwards through
-        the road points.
-    */
 
     let closestIndex = 0;
     let closestDistance = Infinity;
@@ -972,11 +949,6 @@ function damageCastle(enemy) {
             castle = c;
         }
     }
-
-    /*
-        Enemy's current HP becomes
-        the damage dealt to the castle.
-    */
 
     const damage =
         Math.max(
@@ -1747,10 +1719,6 @@ function updateTroops(dt) {
         const troop of troops
     ) {
 
-        /*
-            Find nearest enemy.
-        */
-
         let target = null;
         let closest =
             Infinity;
@@ -1773,11 +1741,6 @@ function updateTroops(dt) {
                 target = enemy;
             }
         }
-
-        /*
-            Move toward enemy when one
-            is nearby enough to engage.
-        */
 
         if (
             target &&
@@ -1817,21 +1780,12 @@ function updateTroops(dt) {
 
         } else {
 
-            /*
-                Otherwise keep moving toward
-                the enemy side of the field.
-            */
-
             troop.x +=
                 troop.speed *
                 dt;
         }
 
         troop.cooldown -= dt;
-
-        /*
-            Actual troop attack.
-        */
 
         if (
             target &&
@@ -1856,11 +1810,6 @@ function updateTroops(dt) {
                 type: "hit"
             });
         }
-
-        /*
-            Enemy attacks troops when
-            they are fighting.
-        */
 
         if (
             target &&
@@ -1902,10 +1851,6 @@ function updateTroops(dt) {
         }
     }
 
-    /*
-        Remove dead troops.
-    */
-
     for (
         let i = troops.length - 1;
         i >= 0;
@@ -1936,13 +1881,6 @@ function updateTroops(dt) {
 
 
 function getEnemyContactDamage(enemy) {
-
-    /*
-        Enemies don't instantly destroy
-        troops with their castle attack rule.
-        Their normal combat damage is used
-        while fighting troops.
-    */
 
     return Math.max(
         1,
@@ -2182,9 +2120,20 @@ function upgradeSelected() {
     )
         return;
 
+    /*
+        Medium expensive upgrade curve.
+        It gets harder at higher levels,
+        but does not become ridiculous.
+    */
+
     const cost =
-        selectedTower.level *
-        50;
+        Math.round(
+            100 *
+            Math.pow(
+                1.30,
+                selectedTower.level - 1
+            )
+        );
 
     if (
         money < cost
@@ -2195,21 +2144,27 @@ function upgradeSelected() {
 
     selectedTower.level++;
 
+    /*
+        Small 8% damage increase.
+        Prevents damage from exploding
+        into huge numbers at high levels.
+    */
+
     selectedTower.damage =
         Math.round(
             selectedTower.damage *
-            1.35
+            1.08
         );
 
     selectedTower.range +=
-        10;
+        7;
 
     selectedTower.fireRate =
         Math.max(
-            100,
+            180,
             Math.round(
                 selectedTower.fireRate *
-                .9
+                .96
             )
         );
 
@@ -2302,27 +2257,40 @@ function showTowerInfo() {
     const t =
         selectedTower;
 
+    /*
+        NEXT DAMAGE now uses only 8%.
+    */
+
     const nextDamage =
         Math.round(
             t.damage *
-            1.35
+            1.08
         );
 
     const nextRange =
-        t.range + 10;
+        t.range + 7;
 
     const nextRate =
         Math.max(
-            100,
+            180,
             Math.round(
                 t.fireRate *
-                .9
+                .96
             )
         );
 
+    /*
+        Medium upgrade cost.
+    */
+
     const cost =
-        t.level *
-        50;
+        Math.round(
+            100 *
+            Math.pow(
+                1.30,
+                t.level - 1
+            )
+        );
 
     document.getElementById(
         "infoTitle"
@@ -3076,10 +3044,6 @@ function drawTroops() {
         const troop of troops
     ) {
 
-        /*
-            Small walking animation.
-        */
-
         const walk =
             Math.sin(
                 performance.now() *
@@ -3131,10 +3095,6 @@ function drawTroops() {
 
         ctx.stroke();
 
-        /*
-            Attack animation.
-        */
-
         if (
             troop.attackFlash > 0
         ) {
@@ -3158,10 +3118,6 @@ function drawTroops() {
 
             ctx.stroke();
         }
-
-        /*
-            Troop HP bar.
-        */
 
         ctx.fillStyle =
             "#222";
