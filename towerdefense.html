@@ -6,9 +6,7 @@
 <title>Flashcard Creator</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -150,33 +148,13 @@ button.locked {
 
 <div id="toolbar">
 
-<button id="basicButton" onclick="selectTower('basic')">
-[1] CANNON
-</button>
-
-<button id="rapidButton" onclick="selectTower('rapid')">
-[2] RAPID
-</button>
-
-<button id="heavyButton" class="locked" onclick="selectTower('heavy')">
-[3] LOCKED
-</button>
-
-<button id="slowButton" class="locked" onclick="selectTower('slow')">
-[4] LOCKED
-</button>
-
-<button id="splashButton" class="locked" onclick="selectTower('splash')">
-[5] LOCKED
-</button>
-
-<button id="laserButton" class="locked" onclick="selectTower('laser')">
-[6] LOCKED
-</button>
-
-<button id="freezeButton" class="locked" onclick="selectTower('freeze')">
-[7] LOCKED
-</button>
+<button id="basicButton" onclick="selectTower('basic')">[1] CANNON</button>
+<button id="rapidButton" onclick="selectTower('rapid')">[2] RAPID</button>
+<button id="heavyButton" class="locked" onclick="selectTower('heavy')">[3] LOCKED</button>
+<button id="slowButton" class="locked" onclick="selectTower('slow')">[4] LOCKED</button>
+<button id="splashButton" class="locked" onclick="selectTower('splash')">[5] LOCKED</button>
+<button id="laserButton" class="locked" onclick="selectTower('laser')">[6] LOCKED</button>
+<button id="freezeButton" class="locked" onclick="selectTower('freeze')">[7] LOCKED</button>
 
 <button onclick="upgradeSelected()">UPGRADE</button>
 <button onclick="sellSelected()">DELETE / SELL</button>
@@ -198,30 +176,13 @@ button.locked {
 <button onclick="saveGame(3)">SAVE 3</button>
 <button onclick="loadGame(3)">LOAD 3</button>
 
-<button onclick="loadAutosave()">LOAD AUTOSAVE</button>
-
-<button onclick="copyAutosave(1)">
-AUTOSAVE → SLOT 1
-</button>
-
-<button onclick="copyAutosave(2)">
-AUTOSAVE → SLOT 2
-</button>
-
-<button onclick="copyAutosave(3)">
-AUTOSAVE → SLOT 3
-</button>
-
 </div>
 
 <div id="info">
-
 <div id="infoTitle">NO TOWER SELECTED</div>
-
 <div id="infoText">
 Choose a tower and click on empty land to place it.
 </div>
-
 </div>
 
 <div id="hint">
@@ -249,7 +210,6 @@ HOME
 </button>
 
 </div>
-
 </div>
 
 <script>
@@ -293,8 +253,6 @@ let spawnTimer = 0;
 
 let rCount = 0;
 let rTimer;
-
-let autosaveTimer = null;
 
 
 /* =========================
@@ -505,8 +463,6 @@ function startGame() {
     lastTime = performance.now();
 
     requestAnimationFrame(gameLoop);
-
-    startAutosave();
 }
 
 
@@ -519,11 +475,7 @@ function gameLoop(time) {
     if (!running)
         return;
 
-    const dt =
-        Math.min(
-            time - lastTime,
-            50
-        );
+    const dt = Math.min(time - lastTime, 50);
 
     lastTime = time;
 
@@ -532,7 +484,6 @@ function gameLoop(time) {
     }
 
     draw();
-
     updateStats();
 
     requestAnimationFrame(gameLoop);
@@ -572,7 +523,6 @@ function updateWaves(dt) {
             ) {
 
                 roadMode = true;
-
                 return;
             }
 
@@ -613,14 +563,10 @@ function updateWaves(dt) {
 
             conquerKingdom();
 
-            autosaveGame();
-
             return;
         }
 
         wave++;
-
-        autosaveGame();
 
         waveTimer = 5000;
     }
@@ -663,7 +609,6 @@ function startWave() {
 function spawnEnemy() {
 
     let type;
-
     const random = Math.random();
 
     if (wave < 10) {
@@ -688,8 +633,7 @@ function spawnEnemy() {
             : "Mages";
     }
 
-    const data =
-        troopTypes[type];
+    const data = troopTypes[type];
 
     const scale =
         1 +
@@ -715,7 +659,7 @@ function spawnEnemy() {
 
     enemies.push({
 
-        type: type,
+        type,
 
         x: spawnX,
         y: spawnY,
@@ -756,15 +700,12 @@ function updateEnemies(dt) {
         if (enemy.slow > 0) {
 
             speed *= .35;
-
             enemy.slow -= dt;
         }
 
         if (kingdom === 1) {
 
-            enemy.x -=
-                speed * dt;
-
+            enemy.x -= speed * dt;
             enemy.y = 325;
 
         } else {
@@ -795,18 +736,13 @@ function updateEnemies(dt) {
                 damageCastle(enemy);
 
                 reachedCastle = true;
-
                 break;
             }
         }
 
         if (reachedCastle) {
 
-            enemies.splice(
-                i,
-                1
-            );
-
+            enemies.splice(i, 1);
             continue;
         }
 
@@ -816,11 +752,7 @@ function updateEnemies(dt) {
         ) {
 
             damageCastle(enemy);
-
-            enemies.splice(
-                i,
-                1
-            );
+            enemies.splice(i, 1);
         }
     }
 }
@@ -840,9 +772,7 @@ function moveEnemyAlongRoad(
         roadPoints.length === 0
     ) {
 
-        enemy.x -=
-            speed * dt;
-
+        enemy.x -= speed * dt;
         return;
     }
 
@@ -855,8 +785,7 @@ function moveEnemyAlongRoad(
         i++
     ) {
 
-        const p =
-            roadPoints[i];
+        const p = roadPoints[i];
 
         const d =
             Math.hypot(
@@ -893,34 +822,25 @@ function moveEnemyAlongRoad(
     }
 
     const dx =
-        target.x -
-        enemy.x;
+        target.x - enemy.x;
 
     const dy =
-        target.y -
-        enemy.y;
+        target.y - enemy.y;
 
     const distance =
-        Math.hypot(
-            dx,
-            dy
-        );
+        Math.hypot(dx, dy);
 
     if (
         distance > 3
     ) {
 
         enemy.x +=
-            dx /
-            distance *
-            speed *
-            dt;
+            dx / distance *
+            speed * dt;
 
         enemy.y +=
-            dy /
-            distance *
-            speed *
-            dt;
+            dy / distance *
+            speed * dt;
     }
 }
 
@@ -941,7 +861,6 @@ function damageCastle(enemy) {
     ) {
 
         endGame();
-
         return;
     }
 
@@ -975,20 +894,15 @@ function damageCastle(enemy) {
     const damage =
         Math.max(
             1,
-            Math.round(
-                enemy.hp
-            )
+            Math.round(enemy.hp)
         );
 
     castle.hp -= damage;
 
     effects.push({
-
         x: castle.x,
         y: castle.y,
-
         life: 180,
-
         type: "hit"
     });
 
@@ -1000,12 +914,9 @@ function damageCastle(enemy) {
         castle.alive = false;
 
         effects.push({
-
             x: castle.x,
             y: castle.y,
-
             life: 1800,
-
             type: "fallen"
         });
 
@@ -1037,15 +948,8 @@ function drawRoad() {
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        105,
-        325
-    );
-
-    ctx.lineTo(
-        1080,
-        325
-    );
+    ctx.moveTo(105, 325);
+    ctx.lineTo(1080, 325);
 
     ctx.stroke();
 
@@ -1054,15 +958,8 @@ function drawRoad() {
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        105,
-        325
-    );
-
-    ctx.lineTo(
-        1080,
-        325
-    );
+    ctx.moveTo(105, 325);
+    ctx.lineTo(1080, 325);
 
     ctx.stroke();
 
@@ -1130,13 +1027,10 @@ function drawRoad() {
 
 function toggleRoadMode() {
 
-    if (
-        kingdom <= 1
-    )
+    if (kingdom <= 1)
         return;
 
-    roadMode =
-        !roadMode;
+    roadMode = !roadMode;
 }
 
 
@@ -1174,16 +1068,11 @@ function addRoadPoint() {
             return;
     }
 
-    roadPoints.push({
-        x,
-        y
-    });
+    roadPoints.push({ x, y });
 
     if (
         x > 1030 &&
-        Math.abs(
-            y - 325
-        ) < 75
+        Math.abs(y - 325) < 75
     ) {
 
         roadPoints.push({
@@ -1192,7 +1081,6 @@ function addRoadPoint() {
         });
 
         roadMode = false;
-
         waveTimer = 2000;
     }
 }
@@ -1200,14 +1088,10 @@ function addRoadPoint() {
 
 function roadConnected() {
 
-    if (
-        kingdom === 1
-    )
+    if (kingdom === 1)
         return true;
 
-    if (
-        roadPoints.length === 0
-    )
+    if (roadPoints.length === 0)
         return false;
 
     const last =
@@ -1217,9 +1101,7 @@ function roadConnected() {
 
     return (
         last.x >= 1070 &&
-        Math.abs(
-            last.y - 325
-        ) < 75
+        Math.abs(last.y - 325) < 75
     );
 }
 
@@ -1238,12 +1120,9 @@ canvas.addEventListener(
         )
             return;
 
-        if (
-            roadMode
-        ) {
+        if (roadMode) {
 
             addRoadPoint();
-
             return;
         }
 
@@ -1258,11 +1137,8 @@ canvas.addEventListener(
                 ) < 28
             ) {
 
-                selectedTower =
-                    tower;
-
+                selectedTower = tower;
                 showTowerInfo();
-
                 return;
             }
         }
@@ -1279,16 +1155,12 @@ canvas.addEventListener(
 function selectTower(type) {
 
     if (
-        !unlockedTowers.includes(
-            type
-        )
+        !unlockedTowers.includes(type)
     )
         return;
 
     selectedTower = null;
-
-    selectedTowerType =
-        type;
+    selectedTowerType = type;
 
     showBuildInfo(type);
 }
@@ -1318,30 +1190,21 @@ function buildTower() {
     )
         return;
 
-    money -=
-        data.cost;
+    money -= data.cost;
 
     towers.push({
 
         x: mouseX,
         y: mouseY,
 
-        type:
-            selectedTowerType,
+        type: selectedTowerType,
 
-        damage:
-            data.damage,
-
-        range:
-            data.range,
-
-        fireRate:
-            data.fireRate,
+        damage: data.damage,
+        range: data.range,
+        fireRate: data.fireRate,
 
         cooldown: 0,
-
         angle: 0,
-
         flash: 0,
 
         level: 1
@@ -1349,27 +1212,18 @@ function buildTower() {
 }
 
 
-function validTowerPlacement(
-    x,
-    y
-) {
+function validTowerPlacement(x, y) {
 
     if (
         kingdom === 1 &&
-        Math.abs(
-            y - 325
-        ) < 35
+        Math.abs(y - 325) < 35
     )
         return false;
 
-    if (
-        kingdom > 1
-    ) {
+    if (kingdom > 1) {
 
         if (
-            Math.abs(
-                y - 325
-            ) < 35 &&
+            Math.abs(y - 325) < 35 &&
             x > 80
         )
             return false;
@@ -1380,11 +1234,8 @@ function validTowerPlacement(
             i++
         ) {
 
-            const a =
-                roadPoints[i];
-
-            const b =
-                roadPoints[i + 1];
+            const a = roadPoints[i];
+            const b = roadPoints[i + 1];
 
             if (
                 pointNearLine(
@@ -1446,21 +1297,13 @@ function pointNearLine(
     distance
 ) {
 
-    const dx =
-        x2 - x1;
-
-    const dy =
-        y2 - y1;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
 
     const length =
-        Math.hypot(
-            dx,
-            dy
-        );
+        Math.hypot(dx, dy);
 
-    if (
-        length === 0
-    )
+    if (length === 0)
         return false;
 
     let t =
@@ -1473,19 +1316,11 @@ function pointNearLine(
     t =
         Math.max(
             0,
-            Math.min(
-                1,
-                t
-            )
+            Math.min(1, t)
         );
 
-    const cx =
-        x1 +
-        t * dx;
-
-    const cy =
-        y1 +
-        t * dy;
+    const cx = x1 + t * dx;
+    const cy = y1 + t * dy;
 
     return (
         Math.hypot(
@@ -1520,8 +1355,7 @@ function updateTowers(dt) {
             continue;
 
         let target = null;
-        let closest =
-            Infinity;
+        let closest = Infinity;
 
         for (
             const enemy of enemies
@@ -1543,9 +1377,7 @@ function updateTowers(dt) {
             }
         }
 
-        if (
-            !target
-        )
+        if (!target)
             continue;
 
         tower.angle =
@@ -1563,16 +1395,14 @@ function updateTowers(dt) {
 
             target,
 
-            damage:
-                tower.damage,
+            damage: tower.damage,
 
             speed:
                 tower.type === "laser"
                 ? 18
                 : 8,
 
-            type:
-                tower.type
+            type: tower.type
         });
 
         tower.cooldown =
@@ -1593,8 +1423,7 @@ function updateBullets(dt) {
         i--
     ) {
 
-        const bullet =
-            bullets[i];
+        const bullet = bullets[i];
 
         if (
             !enemies.includes(
@@ -1602,11 +1431,7 @@ function updateBullets(dt) {
             )
         ) {
 
-            bullets.splice(
-                i,
-                1
-            );
-
+            bullets.splice(i, 1);
             continue;
         }
 
@@ -1619,10 +1444,7 @@ function updateBullets(dt) {
             bullet.y;
 
         const d =
-            Math.hypot(
-                dx,
-                dy
-            );
+            Math.hypot(dx, dy);
 
         if (
             d <
@@ -1631,8 +1453,7 @@ function updateBullets(dt) {
         ) {
 
             if (
-                bullet.type ===
-                "splash"
+                bullet.type === "splash"
             ) {
 
                 for (
@@ -1643,7 +1464,6 @@ function updateBullets(dt) {
                         Math.hypot(
                             enemy.x -
                             bullet.target.x,
-
                             enemy.y -
                             bullet.target.y
                         ) < 65
@@ -1661,40 +1481,29 @@ function updateBullets(dt) {
             }
 
             if (
-                bullet.type ===
-                "slow"
+                bullet.type === "slow"
             ) {
 
-                bullet.target.slow =
-                    1000;
+                bullet.target.slow = 1000;
             }
 
             if (
-                bullet.type ===
-                "freeze"
+                bullet.type === "freeze"
             ) {
 
-                bullet.target.slow =
-                    2200;
+                bullet.target.slow = 2200;
             }
 
             effects.push({
 
-                x:
-                    bullet.target.x,
-
-                y:
-                    bullet.target.y,
+                x: bullet.target.x,
+                y: bullet.target.y,
 
                 life: 150,
-
                 type: "hit"
             });
 
-            bullets.splice(
-                i,
-                1
-            );
+            bullets.splice(i, 1);
 
         } else {
 
@@ -1722,10 +1531,7 @@ function updateBullets(dt) {
 
             money += 15;
 
-            enemies.splice(
-                i,
-                1
-            );
+            enemies.splice(i, 1);
         }
     }
 }
@@ -1742,8 +1548,7 @@ function updateTroops(dt) {
     ) {
 
         let target = null;
-        let closest =
-            Infinity;
+        let closest = Infinity;
 
         for (
             const enemy of enemies
@@ -1770,32 +1575,25 @@ function updateTroops(dt) {
         ) {
 
             const dx =
-                target.x -
-                troop.x;
+                target.x - troop.x;
 
             const dy =
-                target.y -
-                troop.y;
+                target.y - troop.y;
 
             const distance =
-                Math.hypot(
-                    dx,
-                    dy
-                );
+                Math.hypot(dx, dy);
 
             if (
                 distance > 48
             ) {
 
                 troop.x +=
-                    dx /
-                    distance *
+                    dx / distance *
                     troop.speed *
                     dt;
 
                 troop.y +=
-                    dy /
-                    distance *
+                    dy / distance *
                     troop.speed *
                     dt;
             }
@@ -1828,7 +1626,6 @@ function updateTroops(dt) {
                 y: target.y,
 
                 life: 120,
-
                 type: "hit"
             });
         }
@@ -1857,8 +1654,7 @@ function updateTroops(dt) {
             troop.enemyAttackCooldown
         ) {
 
-            troop.enemyAttackCooldown -=
-                dt;
+            troop.enemyAttackCooldown -= dt;
         }
 
         if (
@@ -1889,14 +1685,10 @@ function updateTroops(dt) {
                 y: troops[i].y,
 
                 life: 500,
-
                 type: "troopDead"
             });
 
-            troops.splice(
-                i,
-                1
-            );
+            troops.splice(i, 1);
         }
     }
 }
@@ -1928,9 +1720,7 @@ function updateCastleButtons() {
         const castle of castles
     ) {
 
-        if (
-            !castle.alive
-        )
+        if (!castle.alive)
             continue;
 
         const data =
@@ -1953,20 +1743,14 @@ function updateCastleButtons() {
 
         button.onclick =
             () =>
-                spawnTroop(
-                    castle
-                );
+                spawnTroop(castle);
 
-        bar.appendChild(
-            button
-        );
+        bar.appendChild(button);
     }
 }
 
 
-function spawnTroop(
-    castle
-) {
+function spawnTroop(castle) {
 
     const data =
         troopTypes[
@@ -1978,39 +1762,24 @@ function spawnTroop(
     )
         return;
 
-    money -=
-        data.cost;
+    money -= data.cost;
 
     troops.push({
 
-        x:
-            castle.x + 45,
+        x: castle.x + 45,
+        y: castle.y,
 
-        y:
-            castle.y,
+        hp: data.hp,
+        maxHp: data.hp,
 
-        hp:
-            data.hp,
+        damage: data.damage,
+        speed: data.speed,
 
-        maxHp:
-            data.hp,
-
-        damage:
-            data.damage,
-
-        speed:
-            data.speed,
-
-        color:
-            data.color,
-
-        type:
-            castle.troop,
+        color: data.color,
+        type: castle.troop,
 
         cooldown: 0,
-
         enemyAttackCooldown: 0,
-
         attackFlash: 0
     });
 }
@@ -2051,11 +1820,9 @@ function conquerKingdom() {
         id,
 
         x: 105,
-
         y: lane,
 
         hp: 1000,
-
         maxHp: 1000,
 
         alive: true,
@@ -2083,47 +1850,36 @@ function conquerKingdom() {
             ];
 
         if (
-            !unlockedTowers.includes(
-                type
-            )
+            !unlockedTowers.includes(type)
         ) {
 
-            unlockedTowers.push(
-                type
-            );
+            unlockedTowers.push(type);
 
             effects.push({
 
                 x: W / 2,
-
                 y: 110,
 
                 life: 3500,
-
                 type: "unlock",
 
                 text:
                     "UNLOCKED " +
-                    towerTypes[
-                        type
-                    ].name
+                    towerTypes[type].name
             });
         }
     }
 
     roadPoints = [
-
         {
             x: 105,
             y: lane
         }
-
     ];
 
     roadMode = true;
 
     waveRunning = false;
-
     waveTimer = 999999;
 
     updateButtons();
@@ -2135,6 +1891,21 @@ function conquerKingdom() {
    UPGRADE
 ========================= */
 
+function getUpgradeCost(level) {
+
+    /*
+        Moderate price increase.
+        More expensive than before,
+        but not ridiculously expensive.
+    */
+
+    return Math.round(
+        75 +
+        level * 35
+    );
+}
+
+
 function upgradeSelected() {
 
     if (
@@ -2143,8 +1914,9 @@ function upgradeSelected() {
         return;
 
     const cost =
-        selectedTower.level *
-        50;
+        getUpgradeCost(
+            selectedTower.level
+        );
 
     if (
         money < cost
@@ -2155,21 +1927,26 @@ function upgradeSelected() {
 
     selectedTower.level++;
 
+    /*
+        Reduced damage scaling so
+        high-level towers don't become
+        absurdly powerful.
+    */
+
     selectedTower.damage =
         Math.round(
             selectedTower.damage *
-            1.35
+            1.18
         );
 
-    selectedTower.range +=
-        10;
+    selectedTower.range += 7;
 
     selectedTower.fireRate =
         Math.max(
-            100,
+            130,
             Math.round(
                 selectedTower.fireRate *
-                .9
+                .94
             )
         );
 
@@ -2224,9 +2001,7 @@ function sellSelected() {
    INFO
 ========================= */
 
-function showBuildInfo(
-    type
-) {
+function showBuildInfo(type) {
 
     const data =
         towerTypes[type];
@@ -2254,35 +2029,33 @@ function showBuildInfo(
 
 function showTowerInfo() {
 
-    if (
-        !selectedTower
-    )
+    if (!selectedTower)
         return;
 
-    const t =
-        selectedTower;
+    const t = selectedTower;
 
     const nextDamage =
         Math.round(
             t.damage *
-            1.35
+            1.18
         );
 
     const nextRange =
-        t.range + 10;
+        t.range + 7;
 
     const nextRate =
         Math.max(
-            100,
+            130,
             Math.round(
                 t.fireRate *
-                .9
+                .94
             )
         );
 
     const cost =
-        t.level *
-        50;
+        getUpgradeCost(
+            t.level
+        );
 
     document.getElementById(
         "infoTitle"
@@ -2422,8 +2195,7 @@ canvas.addEventListener(
 
 function draw() {
 
-    ctx.fillStyle =
-        "#090909";
+    ctx.fillStyle = "#090909";
 
     ctx.fillRect(
         0,
@@ -2452,8 +2224,7 @@ function draw() {
 
 function drawLand() {
 
-    ctx.fillStyle =
-        "#111";
+    ctx.fillStyle = "#111";
 
     ctx.fillRect(
         20,
@@ -2466,8 +2237,7 @@ function drawLand() {
         kingdom > 1
     ) {
 
-        ctx.fillStyle =
-            "#141414";
+        ctx.fillStyle = "#141414";
 
         ctx.fillRect(
             20,
@@ -2485,8 +2255,7 @@ function drawLand() {
 
 function drawGate() {
 
-    ctx.fillStyle =
-        "#222";
+    ctx.fillStyle = "#222";
 
     ctx.fillRect(
         1070,
@@ -2495,8 +2264,7 @@ function drawGate() {
         70
     );
 
-    ctx.fillStyle =
-        "#ddd";
+    ctx.fillStyle = "#ddd";
 
     ctx.font =
         "bold 10px Courier New";
@@ -2581,8 +2349,7 @@ function drawCastles() {
             !castle.alive
         ) {
 
-            ctx.fillStyle =
-                "#252525";
+            ctx.fillStyle = "#252525";
 
             ctx.fillRect(
                 castle.x - 35,
@@ -2591,8 +2358,7 @@ function drawCastles() {
                 70
             );
 
-            ctx.fillStyle =
-                "#777";
+            ctx.fillStyle = "#777";
 
             ctx.font =
                 "bold 10px Courier New";
@@ -2606,8 +2372,7 @@ function drawCastles() {
             continue;
         }
 
-        ctx.fillStyle =
-            "#777";
+        ctx.fillStyle = "#777";
 
         ctx.fillRect(
             castle.x - 30,
@@ -2616,8 +2381,7 @@ function drawCastles() {
             60
         );
 
-        ctx.fillStyle =
-            "#aaa";
+        ctx.fillStyle = "#aaa";
 
         ctx.fillRect(
             castle.x - 40,
@@ -2633,8 +2397,7 @@ function drawCastles() {
             28
         );
 
-        ctx.fillStyle =
-            "#222";
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             castle.x - 8,
@@ -2643,8 +2406,7 @@ function drawCastles() {
             22
         );
 
-        ctx.strokeStyle =
-            "#ddd";
+        ctx.strokeStyle = "#ddd";
 
         ctx.beginPath();
 
@@ -2660,8 +2422,7 @@ function drawCastles() {
 
         ctx.stroke();
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.beginPath();
 
@@ -2682,8 +2443,7 @@ function drawCastles() {
 
         ctx.fill();
 
-        ctx.fillStyle =
-            "#111";
+        ctx.fillStyle = "#111";
 
         ctx.font =
             "bold 19px Courier New";
@@ -2694,8 +2454,7 @@ function drawCastles() {
             castle.y + 4
         );
 
-        ctx.fillStyle =
-            "#222";
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             castle.x - 42,
@@ -2704,8 +2463,7 @@ function drawCastles() {
             7
         );
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.fillRect(
             castle.x - 42,
@@ -2763,8 +2521,7 @@ function drawTowers() {
             ];
 
         if (
-            tower.type ===
-            "heavy"
+            tower.type === "heavy"
         ) {
 
             ctx.fillRect(
@@ -2775,8 +2532,7 @@ function drawTowers() {
             );
 
         } else if (
-            tower.type ===
-            "splash"
+            tower.type === "splash"
         ) {
 
             ctx.fillRect(
@@ -2802,8 +2558,7 @@ function drawTowers() {
         }
 
         if (
-            selectedTower ===
-            tower
+            selectedTower === tower
         ) {
 
             ctx.strokeStyle =
@@ -2833,8 +2588,7 @@ function drawTowers() {
             tower.angle
         );
 
-        ctx.fillStyle =
-            "#111";
+        ctx.fillStyle = "#111";
 
         ctx.fillRect(
             0,
@@ -2845,8 +2599,7 @@ function drawTowers() {
 
         ctx.restore();
 
-        ctx.fillStyle =
-            "#111";
+        ctx.fillStyle = "#111";
 
         ctx.beginPath();
 
@@ -2864,8 +2617,7 @@ function drawTowers() {
             tower.flash > 0
         ) {
 
-            ctx.fillStyle =
-                "#fff";
+            ctx.fillStyle = "#fff";
 
             ctx.beginPath();
 
@@ -2873,14 +2625,12 @@ function drawTowers() {
                 tower.x +
                 Math.cos(
                     tower.angle
-                ) *
-                34,
+                ) * 34,
 
                 tower.y +
                 Math.sin(
                     tower.angle
-                ) *
-                34,
+                ) * 34,
 
                 8,
                 0,
@@ -2890,8 +2640,7 @@ function drawTowers() {
             ctx.fill();
         }
 
-        ctx.fillStyle =
-            "#fff";
+        ctx.fillStyle = "#fff";
 
         ctx.font =
             "bold 9px Courier New";
@@ -2929,8 +2678,7 @@ function drawEnemies() {
             ];
 
         if (
-            enemy.type ===
-            "Spearmen"
+            enemy.type === "Spearmen"
         ) {
 
             ctx.fillRect(
@@ -2941,8 +2689,7 @@ function drawEnemies() {
             );
 
         } else if (
-            enemy.type ===
-            "Crossbowmen"
+            enemy.type === "Crossbowmen"
         ) {
 
             ctx.beginPath();
@@ -2972,8 +2719,7 @@ function drawEnemies() {
             ctx.fill();
 
         } else if (
-            enemy.type ===
-            "Guards"
+            enemy.type === "Guards"
         ) {
 
             ctx.fillRect(
@@ -2998,8 +2744,7 @@ function drawEnemies() {
             ctx.fill();
         }
 
-        ctx.fillStyle =
-            "#222";
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             enemy.x - 18,
@@ -3008,8 +2753,7 @@ function drawEnemies() {
             4
         );
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.fillRect(
             enemy.x - 18,
@@ -3053,8 +2797,7 @@ function drawTroops() {
             18
         );
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.beginPath();
 
@@ -3068,9 +2811,7 @@ function drawTroops() {
 
         ctx.fill();
 
-        ctx.strokeStyle =
-            "#111";
-
+        ctx.strokeStyle = "#111";
         ctx.lineWidth = 3;
 
         ctx.beginPath();
@@ -3091,9 +2832,7 @@ function drawTroops() {
             troop.attackFlash > 0
         ) {
 
-            ctx.strokeStyle =
-                "#fff";
-
+            ctx.strokeStyle = "#fff";
             ctx.lineWidth = 2;
 
             ctx.beginPath();
@@ -3111,8 +2850,7 @@ function drawTroops() {
             ctx.stroke();
         }
 
-        ctx.fillStyle =
-            "#222";
+        ctx.fillStyle = "#222";
 
         ctx.fillRect(
             troop.x - 14,
@@ -3121,8 +2859,7 @@ function drawTroops() {
             3
         );
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.fillRect(
             troop.x - 14,
@@ -3150,8 +2887,7 @@ function drawBullets() {
     ) {
 
         ctx.fillStyle =
-            bullet.type ===
-            "laser"
+            bullet.type === "laser"
             ? "#fff"
             : "#ddd";
 
@@ -3188,10 +2924,7 @@ function updateEffects(dt) {
             effects[i].life <= 0
         ) {
 
-            effects.splice(
-                i,
-                1
-            );
+            effects.splice(i, 1);
         }
     }
 }
@@ -3204,18 +2937,15 @@ function drawEffects() {
     ) {
 
         if (
-            effect.type ===
-            "unlock"
+            effect.type === "unlock"
         ) {
 
-            ctx.fillStyle =
-                "#fff";
+            ctx.fillStyle = "#fff";
 
             ctx.font =
                 "bold 22px Courier New";
 
-            ctx.textAlign =
-                "center";
+            ctx.textAlign = "center";
 
             ctx.fillText(
                 effect.text,
@@ -3223,16 +2953,13 @@ function drawEffects() {
                 110
             );
 
-            ctx.textAlign =
-                "left";
+            ctx.textAlign = "left";
 
         } else if (
-            effect.type ===
-            "fallen"
+            effect.type === "fallen"
         ) {
 
-            ctx.fillStyle =
-                "#e33";
+            ctx.fillStyle = "#e33";
 
             ctx.font =
                 "bold 11px Courier New";
@@ -3244,12 +2971,10 @@ function drawEffects() {
             );
 
         } else if (
-            effect.type ===
-            "troopDead"
+            effect.type === "troopDead"
         ) {
 
-            ctx.fillStyle =
-                "#777";
+            ctx.fillStyle = "#777";
 
             ctx.font =
                 "bold 9px Courier New";
@@ -3282,20 +3007,14 @@ function drawEffects() {
 
 function drawWaveText() {
 
-    if (
-        !running
-    )
+    if (!running)
         return;
 
-    ctx.textAlign =
-        "center";
+    ctx.textAlign = "center";
 
-    if (
-        paused
-    ) {
+    if (paused) {
 
-        ctx.fillStyle =
-            "#fff";
+        ctx.fillStyle = "#fff";
 
         ctx.font =
             "bold 24px Courier New";
@@ -3306,12 +3025,9 @@ function drawWaveText() {
             40
         );
 
-    } else if (
-        roadMode
-    ) {
+    } else if (roadMode) {
 
-        ctx.fillStyle =
-            "#fff";
+        ctx.fillStyle = "#fff";
 
         ctx.font =
             "bold 18px Courier New";
@@ -3322,12 +3038,9 @@ function drawWaveText() {
             40
         );
 
-    } else if (
-        !waveRunning
-    ) {
+    } else if (!waveRunning) {
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.font =
             "bold 20px Courier New";
@@ -3346,8 +3059,7 @@ function drawWaveText() {
 
     } else {
 
-        ctx.fillStyle =
-            "#ddd";
+        ctx.fillStyle = "#ddd";
 
         ctx.font =
             "bold 18px Courier New";
@@ -3365,8 +3077,7 @@ function drawWaveText() {
         );
     }
 
-    ctx.textAlign =
-        "left";
+    ctx.textAlign = "left";
 }
 
 
@@ -3407,13 +3118,10 @@ function updateStats() {
 
 function togglePause() {
 
-    if (
-        !running
-    )
+    if (!running)
         return;
 
-    paused =
-        !paused;
+    paused = !paused;
 }
 
 
@@ -3421,9 +3129,12 @@ function togglePause() {
    SAVE
 ========================= */
 
-function getSaveData() {
+function saveGame(slot) {
 
-    return {
+    if (!running)
+        return;
+
+    const data = {
 
         money,
         wave,
@@ -3441,137 +3152,33 @@ function getSaveData() {
 
         roadMode
     };
-}
-
-
-function saveGame(slot) {
-
-    if (
-        !running
-    )
-        return;
-
-    const data =
-        getSaveData();
 
     localStorage.setItem(
-        "kingdomWarSave" +
-        slot,
-
-        JSON.stringify(
-            data
-        )
+        "kingdomWarSave" + slot,
+        JSON.stringify(data)
     );
 }
 
 
-/* =========================
-   AUTOSAVE
-========================= */
-
-function autosaveGame() {
-
-    if (
-        !running
-    )
-        return;
-
-    const data =
-        getSaveData();
-
-    localStorage.setItem(
-        "kingdomWarAutosave",
-        JSON.stringify(
-            data
-        )
-    );
-}
-
-
-function startAutosave() {
-
-    clearInterval(
-        autosaveTimer
-    );
-
-    autosaveTimer =
-        setInterval(
-            function() {
-
-                if (
-                    running &&
-                    !paused
-                ) {
-
-                    autosaveGame();
-                }
-
-            },
-            30000
-        );
-}
-
-
-function loadAutosave() {
+function loadGame(slot) {
 
     const raw =
         localStorage.getItem(
-            "kingdomWarAutosave"
+            "kingdomWarSave" + slot
         );
 
-    if (
-        !raw
-    )
+    if (!raw)
         return;
 
-    loadSaveData(
-        JSON.parse(raw)
-    );
-}
+    const data =
+        JSON.parse(raw);
 
+    money = data.money;
+    wave = data.wave;
+    kingdom = data.kingdom;
 
-function copyAutosave(slot) {
-
-    const raw =
-        localStorage.getItem(
-            "kingdomWarAutosave"
-        );
-
-    if (
-        !raw
-    )
-        return;
-
-    localStorage.setItem(
-        "kingdomWarSave" +
-        slot,
-        raw
-    );
-}
-
-
-/* =========================
-   LOAD
-========================= */
-
-function loadSaveData(data) {
-
-    money =
-        data.money;
-
-    wave =
-        data.wave;
-
-    kingdom =
-        data.kingdom;
-
-    castles =
-        data.castles ||
-        [];
-
-    towers =
-        data.towers ||
-        [];
+    castles = data.castles || [];
+    towers = data.towers || [];
 
     unlockedTowers =
         data.unlockedTowers ||
@@ -3581,8 +3188,7 @@ function loadSaveData(data) {
         ];
 
     roadPoints =
-        data.roadPoints ||
-        [];
+        data.roadPoints || [];
 
     waveRunning =
         data.waveRunning ||
@@ -3601,18 +3207,13 @@ function loadSaveData(data) {
     bullets = [];
     effects = [];
 
-    selectedTower =
-        null;
+    selectedTower = null;
 
-    paused =
-        false;
-
-    running =
-        true;
+    paused = false;
+    running = true;
 
     updateButtons();
     updateCastleButtons();
-    updateStats();
 
     hideOverlay();
 
@@ -3622,49 +3223,7 @@ function loadSaveData(data) {
     requestAnimationFrame(
         gameLoop
     );
-
-    startAutosave();
 }
-
-
-function loadGame(slot) {
-
-    const raw =
-        localStorage.getItem(
-            "kingdomWarSave" +
-            slot
-        );
-
-    if (
-        !raw
-    )
-        return;
-
-    const data =
-        JSON.parse(raw);
-
-    loadSaveData(
-        data
-    );
-}
-
-
-/* =========================
-   AUTO SAVE ON LEAVE
-========================= */
-
-window.addEventListener(
-    "beforeunload",
-    function() {
-
-        if (
-            running
-        ) {
-
-            autosaveGame();
-        }
-    }
-);
 
 
 /* =========================
@@ -3673,27 +3232,16 @@ window.addEventListener(
 
 function endGame() {
 
-    autosaveGame();
-
-    running =
-        false;
-
-    waveRunning =
-        false;
-
-    clearInterval(
-        autosaveTimer
-    );
+    running = false;
+    waveRunning = false;
 
     document.getElementById(
         "overlayTitle"
-    ).textContent =
-        "RETRY";
+    ).textContent = "RETRY";
 
     document.getElementById(
         "overlayTitle"
-    ).className =
-        "retry";
+    ).className = "retry";
 
     document.getElementById(
         "overlayText"
@@ -3719,14 +3267,9 @@ function endGame() {
             "mainButton"
         );
 
-    main.textContent =
-        "RETRY";
-
-    main.onclick =
-        startGame;
-
-    main.className =
-        "retryButton";
+    main.textContent = "RETRY";
+    main.onclick = startGame;
+    main.className = "retryButton";
 
     document.getElementById(
         "homeButton"
@@ -3747,8 +3290,6 @@ function endGame() {
 ========================= */
 
 function goHome() {
-
-    autosaveGame();
 
     window.location.href =
         "index.html";
@@ -3780,15 +3321,11 @@ document.addEventListener(
         const key =
             e.key.toLowerCase();
 
-        if (
-            key === "r"
-        ) {
+        if (key === "r") {
 
             rCount++;
 
-            clearTimeout(
-                rTimer
-            );
+            clearTimeout(rTimer);
 
             rTimer =
                 setTimeout(
@@ -3798,12 +3335,9 @@ document.addEventListener(
                     700
                 );
 
-            if (
-                rCount === 3
-            ) {
+            if (rCount === 3) {
 
                 rCount = 0;
-
                 goHome();
             }
         }
@@ -3819,9 +3353,7 @@ document.addEventListener(
             "7": "freeze"
         };
 
-        if (
-            keys[key]
-        ) {
+        if (keys[key]) {
 
             selectTower(
                 keys[key]
