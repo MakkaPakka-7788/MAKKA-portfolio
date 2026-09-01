@@ -198,6 +198,20 @@ button.locked {
 <button onclick="saveGame(3)">SAVE 3</button>
 <button onclick="loadGame(3)">LOAD 3</button>
 
+<button onclick="loadAutosave()">LOAD AUTOSAVE</button>
+
+<button onclick="copyAutosave(1)">
+AUTOSAVE → SLOT 1
+</button>
+
+<button onclick="copyAutosave(2)">
+AUTOSAVE → SLOT 2
+</button>
+
+<button onclick="copyAutosave(3)">
+AUTOSAVE → SLOT 3
+</button>
+
 </div>
 
 <div id="info">
@@ -230,7 +244,7 @@ Conquer new kingdoms to unlock more towers and troops.
 
 <button id="mainButton" onclick="startGame()">START</button>
 
-<button id="homeButton" class="hidden" onclick="goHome">
+<button id="homeButton" class="hidden" onclick="goHome()">
 HOME
 </button>
 
@@ -279,6 +293,8 @@ let spawnTimer = 0;
 
 let rCount = 0;
 let rTimer;
+
+let autosaveTimer = null;
 
 
 /* =========================
@@ -489,6 +505,8 @@ function startGame() {
     lastTime = performance.now();
 
     requestAnimationFrame(gameLoop);
+
+    startAutosave();
 }
 
 
@@ -595,10 +613,14 @@ function updateWaves(dt) {
 
             conquerKingdom();
 
+            autosaveGame();
+
             return;
         }
 
         wave++;
+
+        autosaveGame();
 
         waveTimer = 5000;
     }
@@ -2120,20 +2142,9 @@ function upgradeSelected() {
     )
         return;
 
-    /*
-        Medium expensive upgrade curve.
-        It gets harder at higher levels,
-        but does not become ridiculous.
-    */
-
     const cost =
-        Math.round(
-            100 *
-            Math.pow(
-                1.30,
-                selectedTower.level - 1
-            )
-        );
+        selectedTower.level *
+        50;
 
     if (
         money < cost
@@ -2144,27 +2155,21 @@ function upgradeSelected() {
 
     selectedTower.level++;
 
-    /*
-        Small 8% damage increase.
-        Prevents damage from exploding
-        into huge numbers at high levels.
-    */
-
     selectedTower.damage =
         Math.round(
             selectedTower.damage *
-            1.08
+            1.35
         );
 
     selectedTower.range +=
-        7;
+        10;
 
     selectedTower.fireRate =
         Math.max(
-            180,
+            100,
             Math.round(
                 selectedTower.fireRate *
-                .96
+                .9
             )
         );
 
@@ -2257,40 +2262,27 @@ function showTowerInfo() {
     const t =
         selectedTower;
 
-    /*
-        NEXT DAMAGE now uses only 8%.
-    */
-
     const nextDamage =
         Math.round(
             t.damage *
-            1.08
+            1.35
         );
 
     const nextRange =
-        t.range + 7;
+        t.range + 10;
 
     const nextRate =
         Math.max(
-            180,
+            100,
             Math.round(
                 t.fireRate *
-                .96
+                .9
             )
         );
-
-    /*
-        Medium upgrade cost.
-    */
 
     const cost =
-        Math.round(
-            100 *
-            Math.pow(
-                1.30,
-                t.level - 1
-            )
-        );
+        t.level *
+        50;
 
     document.getElementById(
         "infoTitle"
@@ -3429,14 +3421,9 @@ function togglePause() {
    SAVE
 ========================= */
 
-function saveGame(slot) {
+function getSaveData() {
 
-    if (
-        !running
-    )
-        return;
-
-    const data = {
+    return {
 
         money,
         wave,
@@ -3454,6 +3441,18 @@ function saveGame(slot) {
 
         roadMode
     };
+}
+
+
+function saveGame(slot) {
+
+    if (
+        !running
+    )
+        return;
+
+    const data =
+        getSaveData();
 
     localStorage.setItem(
         "kingdomWarSave" +
@@ -3466,12 +3465,58 @@ function saveGame(slot) {
 }
 
 
-function loadGame(slot) {
+/* =========================
+   AUTOSAVE
+========================= */
+
+function autosaveGame() {
+
+    if (
+        !running
+    )
+        return;
+
+    const data =
+        getSaveData();
+
+    localStorage.setItem(
+        "kingdomWarAutosave",
+        JSON.stringify(
+            data
+        )
+    );
+}
+
+
+function startAutosave() {
+
+    clearInterval(
+        autosaveTimer
+    );
+
+    autosaveTimer =
+        setInterval(
+            function() {
+
+                if (
+                    running &&
+                    !paused
+                ) {
+
+                    autosaveGame();
+                }
+
+            },
+            30000
+        );
+}
+
+
+function loadAutosave() {
 
     const raw =
         localStorage.getItem(
-            "kingdomWarSave" +
-            slot
+            "kingdomWarAutosave"
         );
 
     if (
@@ -3479,8 +3524,37 @@ function loadGame(slot) {
     )
         return;
 
-    const data =
-        JSON.parse(raw);
+    loadSaveData(
+        JSON.parse(raw)
+    );
+}
+
+
+function copyAutosave(slot) {
+
+    const raw =
+        localStorage.getItem(
+            "kingdomWarAutosave"
+        );
+
+    if (
+        !raw
+    )
+        return;
+
+    localStorage.setItem(
+        "kingdomWarSave" +
+        slot,
+        raw
+    );
+}
+
+
+/* =========================
+   LOAD
+========================= */
+
+function loadSaveData(data) {
 
     money =
         data.money;
@@ -3538,6 +3612,7 @@ function loadGame(slot) {
 
     updateButtons();
     updateCastleButtons();
+    updateStats();
 
     hideOverlay();
 
@@ -3547,7 +3622,49 @@ function loadGame(slot) {
     requestAnimationFrame(
         gameLoop
     );
+
+    startAutosave();
 }
+
+
+function loadGame(slot) {
+
+    const raw =
+        localStorage.getItem(
+            "kingdomWarSave" +
+            slot
+        );
+
+    if (
+        !raw
+    )
+        return;
+
+    const data =
+        JSON.parse(raw);
+
+    loadSaveData(
+        data
+    );
+}
+
+
+/* =========================
+   AUTO SAVE ON LEAVE
+========================= */
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        if (
+            running
+        ) {
+
+            autosaveGame();
+        }
+    }
+);
 
 
 /* =========================
@@ -3556,11 +3673,17 @@ function loadGame(slot) {
 
 function endGame() {
 
+    autosaveGame();
+
     running =
         false;
 
     waveRunning =
         false;
+
+    clearInterval(
+        autosaveTimer
+    );
 
     document.getElementById(
         "overlayTitle"
@@ -3624,6 +3747,8 @@ function endGame() {
 ========================= */
 
 function goHome() {
+
+    autosaveGame();
 
     window.location.href =
         "index.html";
