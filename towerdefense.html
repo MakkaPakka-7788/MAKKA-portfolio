@@ -755,76 +755,12 @@ function addCastle(id){
 
 function addEnemyBaseForExpansion(){
 
-  if(!castles.length){
-    return;
-  }
-
-  const newest=
-    castles[
-      castles.length-1
-    ];
-
   /*
-    Put the new enemy base reasonably close
-    to the newest expansion while avoiding
-    existing bases.
+    Enemy bases no longer expand.
+    The enemy becomes stronger through
+    larger armies and stronger units.
   */
-
-  for(let attempt=0;attempt<200;attempt++){
-
-    const angle=
-      Math.random()*
-      Math.PI*2;
-
-    const radius=
-      550+
-      Math.random()*250;
-
-    const x=
-      newest.x+
-      Math.cos(angle)*radius;
-
-    const y=
-      newest.y+
-      Math.sin(angle)*radius;
-
-    let valid=true;
-
-    for(const base of enemyBases){
-
-      if(
-        distance(
-          {x,y},
-          base
-        )<300
-      ){
-
-        valid=false;
-        break;
-      }
-    }
-
-    if(!valid)continue;
-
-    enemyBases.push({
-
-      id:enemyBases.length+1,
-      x,
-      y
-
-    });
-
-    return;
-  }
-
-  enemyBases.push({
-
-    id:enemyBases.length+1,
-
-    x:newest.x+650,
-    y:newest.y
-
-  });
+  return;
 }
 
 function getNearestEnemyBase(castle){
@@ -1539,8 +1475,8 @@ function updateWaves(dt){
 
         spawnTimer=
           Math.max(
-            520,
-            1150-wave*1.5
+            360,
+            1050-wave*3
           );
       }
     }
@@ -1560,12 +1496,13 @@ function updateWaves(dt){
       money+=reward;
 
       /*
-        CONQUEST EVERY 40 WAVES.
+        NEW CASTLE EVERY 10 WAVES.
+        Enemy bases never increase.
       */
 
       if(
         wave>0 &&
-        wave%40===0
+        wave%10===0
       ){
 
         conquerKingdom();
@@ -1585,23 +1522,6 @@ function updateWaves(dt){
 
   if(waveTimer>0)return;
 
-  /*
-    After a kingdom expansion,
-    the player must connect the new
-    castle before waves continue.
-  */
-
-  if(
-    kingdom>1 &&
-    !roadConnected()
-  ){
-
-    roadMode=true;
-    waveTimer=999999;
-
-    return;
-  }
-
   startWave();
 }
 
@@ -1609,13 +1529,17 @@ function startWave(){
 
   waveRunning=true;
 
+  /*
+    The enemy army grows every wave.
+    There are no extra enemy bases.
+  */
   spawnLeft=
     Math.max(
-      6,
+      8,
       Math.floor(
-        8+
-        wave*.27+
-        kingdom*.8
+        10+
+        wave*1.25+
+        kingdom*2
       )
     );
 
@@ -2841,66 +2765,15 @@ function addRoadPoint(x,y){
 function conquerKingdom(){
 
   /*
-    Save the road belonging to the previous
-    expansion before creating the next castles.
+    A new castle is added every 10 waves.
+    Only ONE castle is added each time.
+    Enemy bases stay exactly the same.
   */
 
-  if(
-    currentRoadCastleId!==null &&
-    roadConnected() &&
-    roadPoints.length>1
-  ){
+  const id=
+    castles.length+1;
 
-    const savedPoints=
-      roadPoints.map(
-        p=>({
-          x:p.x,
-          y:p.y
-        })
-      );
-
-    const existing=
-      roadPaths.find(
-        p=>
-          p.castleId===
-          currentRoadCastleId
-      );
-
-    if(existing){
-
-      existing.points=
-        savedPoints;
-
-    }else{
-
-      roadPaths.push({
-
-        castleId:
-          currentRoadCastleId,
-
-        points:
-          savedPoints
-
-      });
-    }
-  }
-
-  /*
-    EVERY 40 WAVES:
-    ADD EXACTLY 3 CASTLES.
-  */
-
-  const newCastleIds=[];
-
-  for(let i=0;i<3;i++){
-
-    const id=
-      castles.length+1;
-
-    addCastle(id);
-
-    newCastleIds.push(id);
-  }
+  addCastle(id);
 
   kingdom++;
 
@@ -2911,69 +2784,33 @@ function conquerKingdom(){
   unlockTowerForKingdom();
 
   /*
-    Castle counts:
-    1 = starting castle
-    4 = second enemy base
-    7 = third enemy base
-    10 = fourth enemy base
-    13 = fifth enemy base
-    etc.
+    The new castle does not pause the wave system.
+    Roads can still be built whenever the player wants.
   */
 
-  if(
-    castles.length>=4 &&
-    (castles.length-1)%3===0
-  ){
-
-    addEnemyBaseForExpansion();
-  }
-
-  /*
-    The newest castle is the castle
-    that needs its road built.
-  */
-
-  const newestId=
-    newCastleIds[
-      newCastleIds.length-1
-    ];
-
-  currentRoadCastleId=
-    newestId;
+  currentRoadCastleId=id;
 
   const castle=
     castles.find(
-      c=>c.id===newestId
+      c=>c.id===id
     );
 
-  roadPoints=[{
+  if(castle){
 
-    x:castle.x,
-    y:castle.y
+    roadPoints=[{
+      x:castle.x,
+      y:castle.y
+    }];
+  }
 
-  }];
-
-  roadMode=true;
-
-  /*
-    CRITICAL BUG FIX:
-    Advance the wave here.
-
-    Without this, Wave 40 stays Wave 40
-    and the next completed wave triggers
-    another conquest immediately.
-  */
-
-  wave++;
-
+  roadMode=false;
   waveRunning=false;
 
   /*
-    Stop the next wave until the new
-    castle has a road.
+    Move to the next wave immediately.
   */
-
-  waveTimer=999999;
+  wave++;
+  waveTimer=5000;
 
   updateCastleButtons();
   moneyText();
@@ -4187,68 +4024,24 @@ function copyAutosave(slot){
 
 function rebuildMissingEnemyBases(){
 
-  if(
-    enemyBases.length===0
-  ){
-
-    enemyBases=[
-      {
-        id:1,
-        x:1050,
-        y:325
-      }
-    ];
-  }
-
   /*
-    Old saves may have castles but no
-    saved expansion bases.
-
-    Recreate the missing bases.
+    There is only ONE enemy base in the game.
+    Older saves that contain extra bases are
+    normalized back to the original base.
   */
 
-  const required=
-    castles.length>=4
-    ?1+
-      Math.floor(
-        (castles.length-1)/3
-      )
-    :1;
+  const first=
+    enemyBases[0]||{
+      id:1,
+      x:1050,
+      y:325
+    };
 
-  while(
-    enemyBases.length<
-    required
-  ){
-
-    const castleIndex=
-      Math.min(
-        castles.length-1,
-        3+
-        (
-          enemyBases.length-1
-        )*3
-      );
-
-    const castle=
-      castles[
-        castleIndex
-      ];
-
-    if(!castle)break;
-
-    enemyBases.push({
-
-      id:enemyBases.length+1,
-
-      x:
-        castle.x+
-        600,
-
-      y:
-        castle.y
-
-    });
-  }
+  enemyBases=[{
+    id:1,
+    x:first.x,
+    y:first.y
+  }];
 }
 
 function loadData(data){
