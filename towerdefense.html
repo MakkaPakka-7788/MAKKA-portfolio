@@ -243,7 +243,7 @@ let roadPaths=[];
 let currentRoadCastleId=null;
 
 /* =========================
-   NEW EXPANDING WORLD
+   EXPANDING WORLD
 ========================= */
 
 let enemyBases=[];
@@ -596,7 +596,7 @@ function getUpgradeCost(level){
 }
 
 /* =====================================================
-   EXPANDING MAP FUNCTIONS
+   EXPANDING WORLD
 ===================================================== */
 
 function createEnemyBase(id,x,y){
@@ -608,95 +608,131 @@ function createEnemyBase(id,x,y){
   });
 }
 
-function getCastlePosition(id){
+function getRandomCastlePosition(){
 
   /*
-    Castle layout:
-
-          4
-          |
-    1 --- 2
-
-    3 is below 1.
-
-    Further castles branch from the previous
-    castles so the world keeps expanding.
+    Pick a random enemy base.
+    New castles are kept reasonably close
+    to that base.
   */
 
-  if(id===1){
-    return {
-      x:250,
-      y:325
-    };
+  const base=
+    enemyBases[
+      Math.floor(
+        Math.random()*
+        enemyBases.length
+      )
+    ];
+
+  for(let attempt=0;attempt<600;attempt++){
+
+    const angle=
+      Math.random()*
+      Math.PI*2;
+
+    const radius=
+      300+
+      Math.random()*450;
+
+    const x=
+      base.x+
+      Math.cos(angle)*radius;
+
+    const y=
+      base.y+
+      Math.sin(angle)*radius;
+
+    /*
+      Large world limits.
+    */
+
+    if(
+      x<-3000||
+      x>6000||
+      y<-3000||
+      y>5000
+    ){
+      continue;
+    }
+
+    /*
+      Keep away from roads.
+    */
+
+    if(
+      pointNearRoad(
+        x,
+        y
+      )
+    ){
+      continue;
+    }
+
+    /*
+      Keep away from castles.
+    */
+
+    let castleTooClose=false;
+
+    for(const castle of castles){
+
+      if(
+        distance(
+          {x,y},
+          castle
+        )<180
+      ){
+
+        castleTooClose=true;
+        break;
+      }
+    }
+
+    if(castleTooClose){
+      continue;
+    }
+
+    /*
+      Keep away from enemy bases themselves.
+    */
+
+    let baseTooClose=false;
+
+    for(const enemyBase of enemyBases){
+
+      if(
+        distance(
+          {x,y},
+          enemyBase
+        )<140
+      ){
+
+        baseTooClose=true;
+        break;
+      }
+    }
+
+    if(baseTooClose){
+      continue;
+    }
+
+    return {x,y};
   }
 
-  if(id===2){
-    return {
-      x:650,
-      y:325
-    };
-  }
-
-  if(id===3){
-    return {
-      x:250,
-      y:725
-    };
-  }
-
-  if(id===4){
-    return {
-      x:650,
-      y:-75
-    };
-  }
-
-  const parent=
-    Math.floor((id-2)/2)+1;
-
-  const parentCastle=
-    castles.find(c=>c.id===parent);
-
-  if(!parentCastle){
-
-    return {
-      x:650+(id-4)*400,
-      y:325
-    };
-  }
-
-  const firstChild=
-    id%2===0;
-
-  let dx;
-  let dy;
-
-  if(parent===1){
-
-    dx=400;
-    dy=firstChild?0:400;
-
-  }else if(parent%2===0){
-
-    dx=firstChild?0:400;
-    dy=firstChild?-400:0;
-
-  }else{
-
-    dx=400;
-    dy=firstChild?0:400;
-  }
+  /*
+    Emergency fallback.
+  */
 
   return {
-    x:parentCastle.x+dx,
-    y:parentCastle.y+dy
+    x:base.x+350,
+    y:base.y+350
   };
 }
 
 function addCastle(id){
 
   const pos=
-    getCastlePosition(id);
+    getRandomCastlePosition();
 
   const hp=
     1000+
@@ -708,6 +744,7 @@ function addCastle(id){
   castles.push({
 
     id,
+
     x:pos.x,
     y:pos.y,
 
@@ -718,41 +755,76 @@ function addCastle(id){
 
 function addEnemyBaseForExpansion(){
 
-  const baseNumber=
-    enemyBases.length+1;
-
-  const newest=
-    castles[castles.length-1];
-
-  let x;
-  let y;
-
-  if(baseNumber===2){
-
-    x=1150;
-    y=-75;
-
-  }else{
-
-    const side=
-      baseNumber%2===0
-      ?1
-      :-1;
-
-    x=
-      newest.x+
-      500;
-
-    y=
-      newest.y+
-      side*250;
+  if(!castles.length){
+    return;
   }
 
-  createEnemyBase(
-    baseNumber,
-    x,
-    y
-  );
+  const newest=
+    castles[
+      castles.length-1
+    ];
+
+  /*
+    Put the new enemy base reasonably close
+    to the newest expansion while avoiding
+    existing bases.
+  */
+
+  for(let attempt=0;attempt<200;attempt++){
+
+    const angle=
+      Math.random()*
+      Math.PI*2;
+
+    const radius=
+      550+
+      Math.random()*250;
+
+    const x=
+      newest.x+
+      Math.cos(angle)*radius;
+
+    const y=
+      newest.y+
+      Math.sin(angle)*radius;
+
+    let valid=true;
+
+    for(const base of enemyBases){
+
+      if(
+        distance(
+          {x,y},
+          base
+        )<300
+      ){
+
+        valid=false;
+        break;
+      }
+    }
+
+    if(!valid)continue;
+
+    enemyBases.push({
+
+      id:enemyBases.length+1,
+      x,
+      y
+
+    });
+
+    return;
+  }
+
+  enemyBases.push({
+
+    id:enemyBases.length+1,
+
+    x:newest.x+650,
+    y:newest.y
+
+  });
 }
 
 function getNearestEnemyBase(castle){
@@ -796,12 +868,16 @@ function getRoadTarget(){
 
 function roadConnected(){
 
-  if(roadPoints.length<2)return false;
+  if(roadPoints.length<2){
+    return false;
+  }
 
   const target=
     getRoadTarget();
 
-  if(!target)return false;
+  if(!target){
+    return false;
+  }
 
   const p=
     roadPoints[
@@ -819,7 +895,9 @@ function getInitialRoad(){
   const base=
     enemyBases[0];
 
-  if(!base)return [];
+  if(!base){
+    return [];
+  }
 
   return [
     {
@@ -839,8 +917,9 @@ function getActiveRoadPaths(){
 
   if(
     castles.some(
-      c=>c.id===1 &&
-      c.hp>0
+      c=>
+        c.id===1 &&
+        c.hp>0
     )
   ){
 
@@ -850,8 +929,10 @@ function getActiveRoadPaths(){
     if(initial.length>1){
 
       paths.push({
+
         castleId:1,
         points:initial
+
       });
     }
   }
@@ -860,7 +941,9 @@ function getActiveRoadPaths(){
 
     const castle=
       castles.find(
-        c=>c.id===p.castleId
+        c=>
+          c.id===
+          p.castleId
       );
 
     if(
@@ -901,9 +984,13 @@ function getActiveRoadPaths(){
       ){
 
         paths.push({
+
           castleId:
             currentRoadCastleId,
-          points:roadPoints
+
+          points:
+            roadPoints
+
         });
       }
     }
@@ -915,7 +1002,6 @@ function getActiveRoadPaths(){
 function getRoadPathForCastle(id){
 
   if(id===1){
-
     return getInitialRoad();
   }
 
@@ -929,7 +1015,8 @@ function getRoadPathForCastle(id){
 
   const found=
     roadPaths.find(
-      p=>p.castleId===id
+      p=>
+        p.castleId===id
     );
 
   return found?
@@ -949,7 +1036,9 @@ function pointNearRoad(x,y){
   }
 
   for(const p of roadPaths){
-    all.push(p.points);
+    if(p.points.length>1){
+      all.push(p.points);
+    }
   }
 
   if(roadPoints.length>1){
@@ -979,13 +1068,19 @@ function pointNearRoad(x,y){
         )/
         len2;
 
-      t=clamp(t,0,1);
+      t=clamp(
+        t,
+        0,
+        1
+      );
 
       const px=
-        a.x+t*dx;
+        a.x+
+        t*dx;
 
       const py=
-        a.y+t*dy;
+        a.y+
+        t*dy;
 
       if(
         Math.hypot(
@@ -993,6 +1088,7 @@ function pointNearRoad(x,y){
           y-py
         )<27
       ){
+
         return true;
       }
     }
@@ -1009,6 +1105,7 @@ function validTowerPlacement(x,y){
     y<-10000||
     y>10000
   ){
+
     return false;
   }
 
@@ -1024,6 +1121,7 @@ function validTowerPlacement(x,y){
         y-tower.y
       )<48
     ){
+
       return false;
     }
   }
@@ -1037,6 +1135,20 @@ function validTowerPlacement(x,y){
         y-castle.y
       )<70
     ){
+
+      return false;
+    }
+  }
+
+  for(const base of enemyBases){
+
+    if(
+      Math.hypot(
+        x-base.x,
+        y-base.y
+      )<80
+    ){
+
       return false;
     }
   }
@@ -1075,7 +1187,9 @@ function addTower(type,x,y){
   });
 
   selectedTower=
-    towers[towers.length-1];
+    towers[
+      towers.length-1
+    ];
 
   moneyText();
   showTowerInfo();
@@ -1287,7 +1401,6 @@ function startGame(){
   kingdom=1;
 
   castles=[];
-  addCastle(1);
 
   towers=[];
   enemies=[];
@@ -1305,14 +1418,25 @@ function startGame(){
 
   enemyBases=[];
 
-  /* Original enemy gate, now on the expanded world */
+  /*
+    Start with the original castle
+    and original enemy base.
+  */
+
+  castles=[{
+    id:1,
+    x:250,
+    y:325,
+    hp:1000,
+    maxHp:1000
+  }];
+
   createEnemyBase(
     1,
     1050,
     325
   );
 
-  /* Center the starting area */
   cameraX=0;
   cameraY=0;
 
@@ -1435,7 +1559,14 @@ function updateWaves(dt){
 
       money+=reward;
 
-      if(wave%40===0){
+      /*
+        CONQUEST EVERY 40 WAVES.
+      */
+
+      if(
+        wave>0 &&
+        wave%40===0
+      ){
 
         conquerKingdom();
 
@@ -1453,6 +1584,12 @@ function updateWaves(dt){
   waveTimer-=dt;
 
   if(waveTimer>0)return;
+
+  /*
+    After a kingdom expansion,
+    the player must connect the new
+    castle before waves continue.
+  */
 
   if(
     kingdom>1 &&
@@ -1768,7 +1905,10 @@ function updateEnemies(dt){
         target.y-enemy.y;
 
       const d=
-        Math.hypot(dx,dy);
+        Math.hypot(
+          dx,
+          dy
+        );
 
       if(d<=remaining){
 
@@ -2642,6 +2782,26 @@ function addRoadPoint(x,y){
     return;
   }
 
+  /*
+    Don't let a road be built
+    directly through another castle.
+  */
+
+  for(const castle of castles){
+
+    if(
+      castle.id!==currentRoadCastleId &&
+      castle.hp>0 &&
+      distance(
+        {x,y},
+        castle
+      )<55
+    ){
+
+      return;
+    }
+  }
+
   roadPoints.push({
     x,
     y
@@ -2674,7 +2834,16 @@ function addRoadPoint(x,y){
   }
 }
 
+/* =====================================================
+   FIXED CONQUEST SYSTEM
+===================================================== */
+
 function conquerKingdom(){
+
+  /*
+    Save the road belonging to the previous
+    expansion before creating the next castles.
+  */
 
   if(
     currentRoadCastleId!==null &&
@@ -2711,14 +2880,27 @@ function conquerKingdom(){
 
         points:
           savedPoints
+
       });
     }
   }
 
-  const id=
-    castles.length+1;
+  /*
+    EVERY 40 WAVES:
+    ADD EXACTLY 3 CASTLES.
+  */
 
-  addCastle(id);
+  const newCastleIds=[];
+
+  for(let i=0;i<3;i++){
+
+    const id=
+      castles.length+1;
+
+    addCastle(id);
+
+    newCastleIds.push(id);
+  }
 
   kingdom++;
 
@@ -2729,28 +2911,39 @@ function conquerKingdom(){
   unlockTowerForKingdom();
 
   /*
-    Every 3 castle expansions adds
-    another enemy base.
-
-    Base 1 exists at the beginning.
-    After castles 2, 3 and 4,
-    the second enemy base appears.
-    Then after 7, 10, 13...
-    another base appears.
+    Castle counts:
+    1 = starting castle
+    4 = second enemy base
+    7 = third enemy base
+    10 = fourth enemy base
+    13 = fifth enemy base
+    etc.
   */
 
   if(
-    (id-1)%3===0
+    castles.length>=4 &&
+    (castles.length-1)%3===0
   ){
 
     addEnemyBaseForExpansion();
   }
 
-  currentRoadCastleId=id;
+  /*
+    The newest castle is the castle
+    that needs its road built.
+  */
+
+  const newestId=
+    newCastleIds[
+      newCastleIds.length-1
+    ];
+
+  currentRoadCastleId=
+    newestId;
 
   const castle=
     castles.find(
-      c=>c.id===id
+      c=>c.id===newestId
     );
 
   roadPoints=[{
@@ -2762,7 +2955,24 @@ function conquerKingdom(){
 
   roadMode=true;
 
+  /*
+    CRITICAL BUG FIX:
+    Advance the wave here.
+
+    Without this, Wave 40 stays Wave 40
+    and the next completed wave triggers
+    another conquest immediately.
+  */
+
+  wave++;
+
   waveRunning=false;
+
+  /*
+    Stop the next wave until the new
+    castle has a road.
+  */
+
   waveTimer=999999;
 
   updateCastleButtons();
@@ -2781,12 +2991,6 @@ function draw(){
     canvas.width,
     canvas.height
   );
-
-  /*
-    Everything below this point is WORLD space.
-    Camera movement only changes what part of the
-    world is visible.
-  */
 
   ctx.save();
 
@@ -2808,19 +3012,10 @@ function draw(){
 
   ctx.restore();
 
-  /*
-    UI text stays fixed on the screen.
-  */
-
   drawWaveText();
 }
 
 function drawLand(){
-
-  /*
-    Huge world grid.
-    It is intentionally much larger than the canvas.
-  */
 
   const left=
     Math.floor(
@@ -2911,12 +3106,16 @@ function drawRoad(){
   for(
     const p of roadPaths
   ){
-    paths.push(p.points);
+
+    if(p.points.length>1){
+      paths.push(p.points);
+    }
   }
 
   if(
     roadPoints.length>1
   ){
+
     paths.push(roadPoints);
   }
 
@@ -3876,10 +4075,6 @@ function drawWaveText(){
     }
   }
 
-  /*
-    Small map instruction.
-  */
-
   ctx.fillStyle="#666";
   ctx.font=
     "10px Courier New";
@@ -3990,6 +4185,72 @@ function copyAutosave(slot){
   }
 }
 
+function rebuildMissingEnemyBases(){
+
+  if(
+    enemyBases.length===0
+  ){
+
+    enemyBases=[
+      {
+        id:1,
+        x:1050,
+        y:325
+      }
+    ];
+  }
+
+  /*
+    Old saves may have castles but no
+    saved expansion bases.
+
+    Recreate the missing bases.
+  */
+
+  const required=
+    castles.length>=4
+    ?1+
+      Math.floor(
+        (castles.length-1)/3
+      )
+    :1;
+
+  while(
+    enemyBases.length<
+    required
+  ){
+
+    const castleIndex=
+      Math.min(
+        castles.length-1,
+        3+
+        (
+          enemyBases.length-1
+        )*3
+      );
+
+    const castle=
+      castles[
+        castleIndex
+      ];
+
+    if(!castle)break;
+
+    enemyBases.push({
+
+      id:enemyBases.length+1,
+
+      x:
+        castle.x+
+        600,
+
+      y:
+        castle.y
+
+    });
+  }
+}
+
 function loadData(data){
 
   running=true;
@@ -4036,22 +4297,7 @@ function loadData(data){
   enemyBases=
     data.enemyBases||[];
 
-  /*
-    Compatibility with old saves.
-  */
-
-  if(
-    enemyBases.length===0
-  ){
-
-    enemyBases=[
-      {
-        id:1,
-        x:1050,
-        y:325
-      }
-    ];
-  }
+  rebuildMissingEnemyBases();
 
   cameraX=
     data.cameraX??0;
@@ -4272,11 +4518,6 @@ canvas.addEventListener(
       "dragging"
     );
 
-    /*
-      Only treat it as a click if the
-      mouse did not actually drag.
-    */
-
     if(!wasDragged){
 
       handleWorldClick(
@@ -4291,6 +4532,7 @@ canvas.addEventListener(
   "mouseleave",
   ()=>{
     draggingMap=false;
+
     canvas.classList.remove(
       "dragging"
     );
