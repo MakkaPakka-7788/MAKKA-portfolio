@@ -1,1 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard Creator</title>
 
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #000;
+        color: white;
+        font-family: "Courier New", monospace;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    #gameWrap {
+        position: relative;
+        text-align: center;
+    }
+
+    canvas {
+        background: #000;
+        border: 4px solid #222;
+        image-rendering: pixelated;
+        display: block;
+        width: min(92vw, 720px);
+        height: auto;
+    }
+
+    #retryScreen {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.94);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+    }
+
+    #retryScreen h1 {
+        color: red;
+        font-size: clamp(55px, 12vw, 110px);
+        font-weight: 900;
+        letter-spacing: 5px;
+        margin-bottom: 20px;
+    }
+
+    #retryScreen p {
+        color: white;
+        font-size: 20px;
+        margin-bottom: 25px;
+    }
+
+    #retryButton {
+        background: red;
+        color: white;
+        border: 4px solid white;
+        padding: 15px 35px;
+        font-family: inherit;
+        font-weight: bold;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    #retryButton:hover {
+        background: white;
+        color: red;
+    }
+
+    #topInfo {
+        width: min(92vw, 720px);
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 4px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    #message {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: yellow;
+        font-size: 28px;
+        font-weight: bold;
+        pointer-events: none;
+        display: none;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="gameWrap">
+
+    <div id="topInfo">
+        <span id="score">SCORE: 0</span>
+        <span id="lives">LIVES: 3</span>
+    </div>
+
+    <canvas id="game" width="720" height="800"></canvas>
+
+    <div id="message">READY!</div>
+
+    <div id="retryScreen">
+        <h1>RETRY</h1>
+        <p id="finalScore">SCORE: 0</p>
+        <button id="retryButton">RETRY</button>
+    </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const scoreText = document.getElementById("score");
+const livesText = document.getElementById("lives");
+const retryScreen = document.getElementById("retryScreen");
+const retryButton = document.getElementById("retryButton");
+const finalScore = document.getElementById("finalScore");
+const message = document.getElementById("message");
+
+const TILE = 40;
+
+const map = [
+    "##################",
+    "#................#",
+    "#.####.#####.####.",
+    "#.####.#####.####.",
+    "#................#",
+    "#.####.##.##.####.",
+    "#......##.##......#",
+    "######.##.##.######",
+    "######.##.##.######",
+    "#......##.##......#",
+    "#.####.##.##.####.",
+    "#................#",
+    "#.####.#####.####.",
+    "#.####.#####.####.",
+    "#................#",
+    "##################"
+];
+
+const COLS = 18;
+const ROWS = 16;
+
+let score = 0;
+let lives = 3;
+let gameOver = false;
+let paused = false;
+
+let pacman;
+let ghosts = [];
+let pellets = [];
+
+let rPresses = [];
+let lastTime = 0;
+let moveTimer = 0;
+let ghostTimer = 0;
+
+const directions = {
+    left:  {x:-1, y:0},
+    right: {x:1, y:0},
+    up:    {x:0, y:-1},
+    down:  {x:0, y:1}
+};
+
+let requestedDirection = directions.left;
+
+function resetGame() {
+    score = 0;
+    lives = 3;
+    gameOver = false;
+    paused = false;
+
+    retryScreen.style.display = "none";
+
+    createPellets();
+    resetPositions();
+
+    updateUI();
+
+    message.style.display = "block";
+    message.textContent = "READY!";
+
+    setTimeout(() => {
+        if (!gameOver) message.style.display = "none";
+    }, 1200);
+}
+
+function createPellets() {
+    pellets = [];
+
+    for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+            if (map[y][x] === ".") {
+                pellets.push({
+                    x,
+                    y,
+                    eaten: false
+                });
+            }
+        }
+    }
+}
+
+function resetPositions() {
+    pacman = {
+        x: 9,
+        y: 11,
+        direction: directions.left,
+        nextDirection: directions.left
+    };
+
+    ghosts = [
+        {
+            x: 8,
+            y: 8,
+            color: "red",
+            direction: directions.left
+        },
+        {
+            x: 9,
+            y: 8,
+            color: "pink",
+            direction: directions.right
+        },
+        {
+            x: 8,
+            y: 9,
+            color: "cyan",
+            direction: directions.up
+        },
+        {
+            x: 9,
+            y: 9,
+            color: "orange",
+            direction: directions.down
+        }
+    ];
+}
+
+function isWall(x, y) {
+    if (x < 0 || x >= COLS || y < 0 || y >= ROWS) {
+        return true;
+    }
+
+    return map[y][x] === "#";
+}
+
+function canMove(x, y, direction) {
+    return !isWall(
+        x + direction.x,
+        y + direction.y
+    );
+}
+
+function movePacman() {
+    if (canMove(pacman.x, pacman.y, pacman.nextDirection)) {
+        pacman.direction = pacman.nextDirection;
+    }
+
+    if (canMove(pacman.x, pacman.y, pacman.direction)) {
+        pacman.x += pacman.direction.x;
+        pacman.y += pacman.direction.y;
+    }
+
+    eatPellet();
+    checkGhostCollision();
+}
+
+function eatPellet() {
+    for (const pellet of pellets) {
+        if (
+            !pellet.eaten &&
+            pellet.x === pacman.x &&
+            pellet.y === pacman.y
+        ) {
+            pellet.eaten = true;
+            score += 10;
+            updateUI();
+        }
+    }
+
+    if (pellets.every(p => p.eaten)) {
+        message.textContent = "YOU WIN!";
+        message.style.display = "block";
+
+        setTimeout(() => {
+            if (!gameOver) {
+                createPellets();
+                message.style.display = "none";
+            }
+        }, 1200);
+    }
+}
+
+function moveGhosts() {
+    for (const ghost of ghosts) {
+
+        const possible = [];
+
+        for (const dir of Object.values(directions)) {
+            if (canMove(ghost.x, ghost.y, dir)) {
+                possible.push(dir);
+            }
+        }
+
+        if (possible.length === 0) continue;
+
+        const reverse = {
+            x: -ghost.direction.x,
+            y: -ghost.direction.y
+        };
+
+        const choices = possible.filter(d =>
+            !(d.x === reverse.x && d.y === reverse.y)
+        );
+
+        const available = choices.length ? choices : possible;
+
+        let chosen;
+
+        if (Math.random() < 0.55) {
+            let bestDistance = Infinity;
+
+            for (const dir of available) {
+                const nx = ghost.x + dir.x;
+                const ny = ghost.y + dir.y;
+
+                const distance =
+                    Math.abs(nx - pacman.x) +
+                    Math.abs(ny - pacman.y);
+
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    chosen = dir;
+                }
+            }
+        } else {
+            chosen = available[
+                Math.floor(Math.random() * available.length)
+            ];
+        }
+
+        ghost.direction = chosen;
+
+        ghost.x += chosen.x;
+        ghost.y += chosen.y;
+    }
+
+    checkGhostCollision();
+}
+
+function checkGhostCollision() {
+    for (const ghost of ghosts) {
+        if (
+            ghost.x === pacman.x &&
+            ghost.y === pacman.y
+        ) {
+            loseLife();
+            return;
+        }
+    }
+}
+
+function loseLife() {
+    if (gameOver) return;
+
+    lives--;
+    updateUI();
+
+    if (lives <= 0) {
+        endGame();
+        return;
+    }
+
+    message.textContent = "OUCH!";
+    message.style.display = "block";
+
+    resetPositions();
+
+    setTimeout(() => {
+        if (!gameOver) {
+            message.style.display = "none";
+        }
+    }, 900);
+}
+
+function endGame() {
+    gameOver = true;
+
+    finalScore.textContent = "SCORE: " + score;
+
+    retryScreen.style.display = "flex";
+}
+
+function updateUI() {
+    scoreText.textContent = "SCORE: " + score;
+    livesText.textContent = "LIVES: " + lives;
+}
+
+function drawMaze() {
+    for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+
+            if (map[y][x] === "#") {
+
+                ctx.fillStyle = "#1010d0";
+                ctx.fillRect(
+                    x * TILE,
+                    y * TILE,
+                    TILE,
+                    TILE
+                );
+
+                ctx.strokeStyle = "#3030ff";
+                ctx.lineWidth = 2;
+
+                ctx.strokeRect(
+                    x * TILE + 3,
+                    y * TILE + 3,
+                    TILE - 6,
+                    TILE - 6
+                );
+            }
+        }
+    }
+}
+
+function drawPellets() {
+    for (const pellet of pellets) {
+        if (pellet.eaten) continue;
+
+        const cx = pellet.x * TILE + TILE / 2;
+        const cy = pellet.y * TILE + TILE / 2;
+
+        ctx.fillStyle = "#fff";
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawPacman() {
+    const cx = pacman.x * TILE + TILE / 2;
+    const cy = pacman.y * TILE + TILE / 2;
+
+    let angle = 0;
+
+    if (pacman.direction === directions.right) angle = 0;
+    if (pacman.direction === directions.down) angle = Math.PI / 2;
+    if (pacman.direction === directions.left) angle = Math.PI;
+    if (pacman.direction === directions.up) angle = Math.PI * 1.5;
+
+    const mouth = 0.28;
+
+    ctx.fillStyle = "yellow";
+
+    ctx.beginPath();
+
+    ctx.moveTo(cx, cy);
+
+    ctx.arc(
+        cx,
+        cy,
+        16,
+        angle + mouth,
+        angle + Math.PI * 2 - mouth
+    );
+
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawGhost(ghost) {
+    const cx = ghost.x * TILE + TILE / 2;
+    const cy = ghost.y * TILE + TILE / 2;
+
+    ctx.fillStyle = ghost.color;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        cx,
+        cy - 2,
+        15,
+        Math.PI,
+        0
+    );
+
+    ctx.lineTo(cx + 15, cy + 14);
+    ctx.lineTo(cx + 8, cy + 9);
+    ctx.lineTo(cx, cy + 14);
+    ctx.lineTo(cx - 8, cy + 9);
+    ctx.lineTo(cx - 15, cy + 14);
+    ctx.closePath();
+
+    ctx.fill();
+
+    ctx.fillStyle = "white";
+
+    ctx.beginPath();
+    ctx.arc(cx - 6, cy - 3, 5, 0, Math.PI * 2);
+    ctx.arc(cx + 6, cy - 3, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "blue";
+
+    ctx.beginPath();
+    ctx.arc(cx - 5, cy - 3, 2.5, 0, Math.PI * 2);
+    ctx.arc(cx + 7, cy - 3, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawMaze();
+    drawPellets();
+
+    for (const ghost of ghosts) {
+        drawGhost(ghost);
+    }
+
+    drawPacman();
+}
+
+function gameLoop(timestamp) {
+    const delta = timestamp - lastTime;
+    lastTime = timestamp;
+
+    if (!gameOver && !paused) {
+
+        moveTimer += delta;
+        ghostTimer += delta;
+
+        if (moveTimer >= 145) {
+            movePacman();
+            moveTimer = 0;
+        }
+
+        if (ghostTimer >= 190) {
+            moveGhosts();
+            ghostTimer = 0;
+        }
+    }
+
+    draw();
+
+    requestAnimationFrame(gameLoop);
+}
+
+document.addEventListener("keydown", e => {
+
+    if (
+        e.key === "ArrowUp" ||
+        e.key === "ArrowDown" ||
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight"
+    ) {
+        e.preventDefault();
+    }
+
+    if (e.key === "ArrowUp") {
+        pacman.nextDirection = directions.up;
+    }
+
+    if (e.key === "ArrowDown") {
+        pacman.nextDirection = directions.down;
+    }
+
+    if (e.key === "ArrowLeft") {
+        pacman.nextDirection = directions.left;
+    }
+
+    if (e.key === "ArrowRight") {
+        pacman.nextDirection = directions.right;
+    }
+
+    if (e.key.toLowerCase() === "r") {
+        const now = Date.now();
+
+        rPresses.push(now);
+
+        rPresses = rPresses.filter(
+            time => now - time < 700
+        );
+
+        if (rPresses.length >= 3) {
+            window.location.href = "index.html";
+        }
+    }
+});
+
+retryButton.addEventListener("click", () => {
+    resetGame();
+});
+
+resetGame();
+requestAnimationFrame(gameLoop);
+</script>
+
+</body>
+</html>
