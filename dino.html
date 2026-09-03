@@ -826,47 +826,42 @@ function drawStartScreen() {
 
 function drawGameOver() {
 
-  ctx.fillStyle = "rgba(0,0,0,0.55)";
-
-  ctx.fillRect(
-    0,
-    0,
-    GAME_WIDTH,
-    GAME_HEIGHT
-  );
+  // Iconic retro retry screen
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
   ctx.textAlign = "center";
 
-  ctx.fillStyle = "white";
-
-  ctx.font = "bold 60px Arial";
-
+  ctx.fillStyle = "#ff2b2b";
+  ctx.font = "bold 64px Courier New";
   ctx.fillText(
-    "GAME OVER",
+    "RETRY",
     GAME_WIDTH / 2,
-    185
+    190
   );
 
-  ctx.font = "30px Arial";
-
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 28px Courier New";
   ctx.fillText(
-    "Score: " + Math.floor(score),
+    "SCORE: " + Math.floor(score),
     GAME_WIDTH / 2,
-    240
+    255
   );
 
+  ctx.fillStyle = "#aaa";
+  ctx.font = "22px Courier New";
   ctx.fillText(
-    "Best: " + highScore,
+    "BEST: " + highScore,
     GAME_WIDTH / 2,
-    280
+    295
   );
 
-  ctx.font = "bold 26px Arial";
-
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 24px Courier New";
   ctx.fillText(
-    "Press SPACE or TAP to restart",
+    "PRESS SPACE OR TAP TO RETRY",
     GAME_WIDTH / 2,
-    340
+    360
   );
 
   ctx.textAlign = "left";
