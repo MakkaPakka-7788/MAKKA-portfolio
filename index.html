@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,13 +8,9 @@
 <title>Flashcard Creator</title>
 
 <script>
-    /*
-      Normal website opening → Flashcards
-      Games → index.html?games=true
-    */
-    if (!window.location.search.includes("games=true")) {
-        window.location.replace("flashcards.html");
-    }
+if (!window.location.search.includes("games=true")) {
+    window.location.replace("flashcards.html");
+}
 </script>
 
 <style>
@@ -154,6 +151,7 @@ header {
     font-size: 11px;
 }
 </style>
+
 </head>
 
 <body>
@@ -165,14 +163,14 @@ FLASHCARD<span>.COM</span>
 </div>
 
 <button
-    class="flashcardsButton"
-    onclick="openFlashcards()"
+class="flashcardsButton"
+onclick="openFlashcards()"
+
 >
-FLASHCARDS
-</button>
+
+FLASHCARDS </button>
 
 </header>
-
 
 <div class="container">
 
@@ -180,7 +178,6 @@ FLASHCARDS
 <h1>HOME</h1>
 <p>Choose a game.</p>
 </div>
-
 
 <div class="section">
 
@@ -200,7 +197,6 @@ GAMES
     </div>
 </a>
 
-
 <a class="game" href="tetris.html">
     <div class="icon">▦</div>
     <div>
@@ -210,7 +206,6 @@ GAMES
         </div>
     </div>
 </a>
-
 
 <a class="game" href="pong.html">
     <div class="icon">🏓</div>
@@ -222,7 +217,6 @@ GAMES
     </div>
 </a>
 
-
 <a class="game" href="flappybird.html">
     <div class="icon">🐦</div>
     <div>
@@ -232,7 +226,6 @@ GAMES
         </div>
     </div>
 </a>
-
 
 <a class="game" href="towerdefense.html">
     <div class="icon">🏰</div>
@@ -244,7 +237,6 @@ GAMES
     </div>
 </a>
 
-
 <a class="game" href="dino.html">
     <div class="icon">🦖</div>
     <div>
@@ -255,9 +247,18 @@ GAMES
     </div>
 </a>
 
-</div>
-</div>
+<a class="game" href="pacman.html">
+    <div class="icon">🟡</div>
+    <div>
+        <div class="name">PAC-MAN</div>
+        <div class="description">
+            Eat pellets and escape the ghosts.
+        </div>
+    </div>
+</a>
 
+</div>
+</div>
 
 <div class="flashcardBox">
 
@@ -273,22 +274,17 @@ OPEN FLASHCARDS
 
 </div>
 
-
 <div class="bottomText">
 RRR = SWITCH BETWEEN HOME AND FLASHCARDS
 </div>
 
 </div>
 
-
 <script>
 
 function openFlashcards() {
     window.location.href = "flashcards.html";
 }
-
-
-/* RRR → FLASHCARDS */
 
 let rCount = 0;
 let rTimer = null;
