@@ -7,8 +7,10 @@
 <title>Flashcard Creator</title>
 
 <script>
-    // Normal website opening → Flashcards
-    // RRR from Flashcards → index.html?games=true
+    /*
+      Normal website opening → Flashcards
+      Games → index.html?games=true
+    */
     if (!window.location.search.includes("games=true")) {
         window.location.replace("flashcards.html");
     }
@@ -100,6 +102,7 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: 0.15s;
 }
 
 .game:hover {
@@ -237,6 +240,17 @@ GAMES
         <div class="name">TOWER DEFENCE</div>
         <div class="description">
             Defend castles and conquer kingdoms.
+        </div>
+    </div>
+</a>
+
+
+<a class="game" href="dino.html">
+    <div class="icon">🦖</div>
+    <div>
+        <div class="name">DINO</div>
+        <div class="description">
+            Jump over obstacles and survive.
         </div>
     </div>
 </a>
