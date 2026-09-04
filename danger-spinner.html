@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcard Creator</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background: #111;
+        color: #eee;
+        font-family: "Courier New", monospace;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .game {
+        width: 900px;
+        max-width: 95vw;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 42px;
+        margin: 0 0 8px;
+        letter-spacing: 3px;
+    }
+
+    .subtitle {
+        color: #aaa;
+        margin-bottom: 25px;
+    }
+
+    .panel {
+        background: #1c1c1c;
+        border: 4px solid #555;
+        padding: 30px;
+        box-shadow: 8px 8px 0 #000;
+    }
+
+    .spinner-area {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0 30px;
+    }
+
+    .spinner {
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: #333;
+        border: 12px solid #777;
+        position: relative;
+        box-shadow: inset 0 0 0 8px #181818;
+        transition: transform 1s cubic-bezier(.17,.67,.19,1.2);
+    }
+
+    .spinner::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 70px;
+        height: 70px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: #111;
+        border: 6px solid #888;
+    }
+
+    .slot {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #111;
+        border: 4px solid #666;
+        left: 50%;
+        top: 50%;
+        transform-origin: 0 0;
+    }
+
+    .slot:nth-child(1) { transform: rotate(0deg) translateX(105px); }
+    .slot:nth-child(2) { transform: rotate(60deg) translateX(105px); }
+    .slot:nth-child(3) { transform: rotate(120deg) translateX(105px); }
+    .slot:nth-child(4) { transform: rotate(180deg) translateX(105px); }
+    .slot:nth-child(5) { transform: rotate(240deg) translateX(105px); }
+    .slot:nth-child(6) { transform: rotate(300deg) translateX(105px); }
+
+    .pointer {
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 18px solid transparent;
+        border-right: 18px solid transparent;
+        border-top: 35px solid #ddd;
+        z-index: 5;
+    }
+
+    .status {
+        min-height: 55px;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .normal {
+        color: #ddd;
+    }
+
+    .safe {
+        color: #7ee787;
+    }
+
+    .danger {
+        color: #ff6464;
+    }
+
+    .bonus {
+        color: #ffd866;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin: 20px 0;
+        font-size: 20px;
+    }
+
+    button {
+        border: 3px solid #888;
+        background: #ddd;
+        color: #111;
+        padding: 16px 30px;
+        font-family: inherit;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 5px 5px 0 #000;
+        margin: 8px;
+    }
+
+    button:hover {
+        background: #fff;
+    }
+
+    button:active {
+        transform: translate(4px, 4px);
+        box-shadow: 1px 1px 0 #000;
+    }
+
+    button:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+
+    .lives {
+        letter-spacing: 5px;
+        font-size: 25px;
+    }
+
+    .instructions {
+        margin-top: 25px;
+        color: #888;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .retry {
+        display: none;
+    }
+
+    .retry h2 {
+        font-size: 40px;
+        color: #ff5555;
+        margin: 10px;
+    }
+
+    .big-score {
+        font-size: 25px;
+        margin: 20px;
+    }
+
+    @media (max-width: 600px) {
+        h1 {
+            font-size: 30px;
+        }
+
+        .spinner {
+            width: 230px;
+            height: 230px;
+        }
+
+        .slot:nth-child(1) { transform: rotate(0deg) translateX(78px); }
+        .slot:nth-child(2) { transform: rotate(60deg) translateX(78px); }
+        .slot:nth-child(3) { transform: rotate(120deg) translateX(78px); }
+        .slot:nth-child(4) { transform: rotate(180deg) translateX(78px); }
+        .slot:nth-child(5) { transform: rotate(240deg) translateX(78px); }
+        .slot:nth-child(6) { transform: rotate(300deg) translateX(78px); }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <div class="panel" id="mainPanel">
+
+        <h1>DANGER SPINNER</h1>
+        <div class="subtitle">Test your luck.</div>
+
+        <div class="spinner-area">
+            <div class="pointer"></div>
+
+            <div class="spinner" id="spinner">
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+                <div class="slot"></div>
+            </div>
+        </div>
+
+        <div class="status normal" id="status">
+            Spin the chamber and take your chance.
+        </div>
+
+        <div class="stats">
+            <div>
+                SCORE
+                <br>
+                <span id="score">0</span>
+            </div>
+
+            <div>
+                STREAK
+                <br>
+                <span id="streak">0</span>
+            </div>
+
+            <div>
+                LIVES
+                <br>
+                <span class="lives" id="lives">♥ ♥ ♥</span>
+            </div>
+        </div>
+
+        <button id="spinButton" onclick="spin()">SPIN</button>
+
+        <div class="instructions">
+            Each spin has a random outcome.<br>
+            Survive as long as possible and build your streak.
+        </div>
+
+    </div>
+
+
+    <div class="panel retry" id="retryPanel">
+
+        <h2>RETRY</h2>
+
+        <div class="big-score">
+            Final Score: <span id="finalScore">0</span>
+            <br>
+            Best Streak: <span id="finalStreak">0</span>
+        </div>
+
+        <button onclick="restart()">PLAY AGAIN</button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let score = 0;
+let streak = 0;
+let lives = 3;
+let spinning = false;
+let rotation = 0;
+
+const spinner = document.getElementById("spinner");
+const statusText = document.getElementById("status");
+const scoreText = document.getElementById("score");
+const streakText = document.getElementById("streak");
+const livesText = document.getElementById("lives");
+const spinButton = document.getElementById("spinButton");
+
+function updateUI() {
+
+    scoreText.textContent = score;
+    streakText.textContent = streak;
+
+    let hearts = "";
+
+    for (let i = 0; i < lives; i++) {
+        hearts += "♥ ";
+    }
+
+    for (let i = lives; i < 3; i++) {
+        hearts += "♡ ";
+    }
+
+    livesText.textContent = hearts.trim();
+}
+
+
+function spin() {
+
+    if (spinning || lives <= 0) return;
+
+    spinning = true;
+    spinButton.disabled = true;
+
+    statusText.className = "status normal";
+    statusText.textContent = "SPINNING...";
+
+    rotation += 720 + Math.floor(Math.random() * 1080);
+
+    spinner.style.transform = `rotate(${rotation}deg)`;
+
+    setTimeout(() => {
+
+        const roll = Math.random();
+
+        if (roll < 0.18) {
+
+            lives--;
+            streak = 0;
+
+            statusText.className = "status danger";
+            statusText.textContent = "💥 BOOM! You lost a life!";
+
+        }
+
+        else if (roll < 0.35) {
+
+            score += 50;
+            streak++;
+
+            statusText.className = "status bonus";
+            statusText.textContent = "⭐ BONUS! +50 POINTS!";
+
+        }
+
+        else {
+
+            score += 10 + streak * 2;
+            streak++;
+
+            statusText.className = "status safe";
+            statusText.textContent = "✓ SAFE! Your streak continues!";
+
+        }
+
+        updateUI();
+
+        if (lives <= 0) {
+
+            setTimeout(gameOver, 900);
+
+        } else {
+
+            spinning = false;
+            spinButton.disabled = false;
+
+        }
+
+    }, 1200);
+}
+
+
+function gameOver() {
+
+    document.getElementById("mainPanel").style.display = "none";
+    document.getElementById("retryPanel").style.display = "block";
+
+    document.getElementById("finalScore").textContent = score;
+    document.getElementById("finalStreak").textContent = streak;
+}
+
+
+function restart() {
+
+    score = 0;
+    streak = 0;
+    lives = 3;
+    spinning = false;
+    rotation = 0;
+
+    spinner.style.transform = "rotate(0deg)";
+
+    document.getElementById("retryPanel").style.display = "none";
+    document.getElementById("mainPanel").style.display = "block";
+
+    statusText.className = "status normal";
+    statusText.textContent = "Spin the chamber and take your chance.";
+
+    spinButton.disabled = false;
+
+    updateUI();
+}
+
+
+updateUI();
+
+
+// RRR shortcut
+let rPresses = [];
+let lastRTime = 0;
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key.toLowerCase() !== "r") return;
+
+    const now = Date.now();
+
+    if (now - lastRTime > 1000) {
+        rPresses = [];
+    }
+
+    rPresses.push(now);
+    lastRTime = now;
+
+    if (rPresses.length >= 3) {
+
+        rPresses = [];
+
+        window.location.href = "flashcards.html";
+    }
+
+});
+
+</script>
+
+</body>
+</html>
