@@ -23,9 +23,8 @@ body {
 }
 
 #gameWrap {
-    position: relative;
     width: 96vw;
-    max-width: 1120px;
+    max-width: 1200px;
 }
 
 #topBar {
@@ -34,14 +33,14 @@ body {
     justify-content: space-between;
     align-items: center;
     color: white;
-    font-size: 19px;
     font-weight: bold;
+    font-size: 19px;
 }
 
 canvas {
-    display: block;
     width: 100%;
     height: auto;
+    display: block;
     background: #000;
     border: 4px solid #222;
     image-rendering: pixelated;
@@ -50,10 +49,10 @@ canvas {
 #message {
     position: absolute;
     left: 50%;
-    top: 52%;
+    top: 53%;
     transform: translate(-50%, -50%);
     color: yellow;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: bold;
     display: none;
     pointer-events: none;
@@ -67,18 +66,16 @@ canvas {
     bottom: 0;
     background: #000;
     display: none;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    z-index: 20;
+    align-items: center;
+    flex-direction: column;
 }
 
 #retryScreen h1 {
+    margin: 0;
     color: red;
     font-size: clamp(70px, 13vw, 150px);
-    margin: 0;
     letter-spacing: 8px;
-    font-weight: 900;
 }
 
 #finalScore {
@@ -91,7 +88,7 @@ canvas {
     background: red;
     color: white;
     border: 4px solid white;
-    padding: 14px 38px;
+    padding: 15px 40px;
     font-family: inherit;
     font-size: 24px;
     font-weight: bold;
@@ -129,7 +126,7 @@ canvas {
 <script>
 
 /* =========================================
-   PAC-MAN
+   SETTINGS
 ========================================= */
 
 const canvas = document.getElementById("game");
@@ -142,53 +139,15 @@ const retryScreen = document.getElementById("retryScreen");
 const retryButton = document.getElementById("retryButton");
 const finalScore = document.getElementById("finalScore");
 
-
-/* =========================================
-   BIGGER MAP
-========================================= */
-
-const MAP = [
-"###############################",
-"#o.........................o#.#",
-"#.#####.###########.#####.#.#",
-"#.#####.###########.#####.#.#",
-"#.............................#",
-"#.#####.###.#########.###.####",
-"#.......###...........###.....#",
-"#####.###.###.#####.###.######",
-"#####.###.###.....###.###.####",
-"#.....###.###.....###.###.....#",
-"#.###.###.###########.###.###.#",
-"#.###.....................###.#",
-"#.###.###.###########.###.###.#",
-"#.....###.....###.....###.....#",
-"#####.######.###.###.######.##",
-"#####.######.###.###.######.##",
-"#.........#...........#.......#",
-"#.#######.#.#########.#.#####.#",
-"#o.......#.....#.....#.......o#",
-"#########.#####.#####.#########",
-"#.............................#",
-"#.#####.###.#########.###.####",
-"#.......###.....###.....###...#",
-"#.#####.###.###.###.###.#####.#",
-"#.............................#",
-"###############################"
-];
-
 /*
-Fix the map to equal-width rows.
+   Bigger maze.
+
+   Odd numbers are used so the maze generator
+   can make a connected maze.
 */
-const WIDTH = Math.max(...MAP.map(row => row.length));
-
-const CLEAN_MAP = MAP.map(row => {
-    return row.padEnd(WIDTH, "#");
-});
-
-const ROWS = CLEAN_MAP.length;
-const COLS = WIDTH;
-
-const TILE = 32;
+const COLS = 39;
+const ROWS = 29;
+const TILE = 30;
 
 canvas.width = COLS * TILE;
 canvas.height = ROWS * TILE;
@@ -199,23 +158,32 @@ canvas.height = ROWS * TILE;
 ========================================= */
 
 const DIR = {
-    LEFT:  {x:-1, y:0},
-    RIGHT: {x:1, y:0},
-    UP:    {x:0, y:-1},
-    DOWN:  {x:0, y:1},
-    NONE:  {x:0, y:0}
+    LEFT:  { x:-1, y:0 },
+    RIGHT: { x:1, y:0 },
+    UP:    { x:0, y:-1 },
+    DOWN:  { x:0, y:1 },
+    NONE:  { x:0, y:0 }
 };
+
+const DIRS = [
+    DIR.LEFT,
+    DIR.RIGHT,
+    DIR.UP,
+    DIR.DOWN
+];
 
 
 /* =========================================
    GAME VARIABLES
 ========================================= */
 
-let pacman;
-let ghosts = [];
+let maze = [];
 
 let pellets = [];
 let powerPellets = [];
+
+let pacman;
+let ghosts = [];
 
 let score = 0;
 let lives = 3;
@@ -225,10 +193,11 @@ let ready = true;
 
 let powerMode = false;
 let powerTime = 0;
+
 let ghostCombo = 200;
 
-let pacmanAccumulator = 0;
-let ghostAccumulator = 0;
+let pacTimer = 0;
+let ghostTimer = 0;
 
 let lastTime = performance.now();
 
@@ -240,25 +209,181 @@ let rTimer = null;
 
 
 /* =========================================
-   MAP HELPERS
+   MAZE GENERATOR
+========================================= */
+
+function generateMaze() {
+
+    /*
+    Start with every cell as a wall.
+    */
+
+    maze = [];
+
+    for (let y = 0; y < ROWS; y++) {
+
+        maze[y] = [];
+
+        for (let x = 0; x < COLS; x++) {
+            maze[y][x] = "#";
+        }
+    }
+
+
+    /*
+    Recursive-backtracker maze.
+
+    This guarantees that every carved
+    corridor is connected.
+    */
+
+    const stack = [];
+
+    const startX = 1;
+    const startY = 1;
+
+    maze[startY][startX] = ".";
+
+    stack.push({
+        x: startX,
+        y: startY
+    });
+
+    while (stack.length) {
+
+        const current = stack[stack.length - 1];
+
+        const options = [];
+
+        for (const d of DIRS) {
+
+            const nx = current.x + d.x * 2;
+            const ny = current.y + d.y * 2;
+
+            if (
+                nx > 0 &&
+                nx < COLS - 1 &&
+                ny > 0 &&
+                ny < ROWS - 1 &&
+                maze[ny][nx] === "#"
+            ) {
+                options.push(d);
+            }
+        }
+
+        if (!options.length) {
+            stack.pop();
+            continue;
+        }
+
+        const d =
+            options[Math.floor(Math.random() * options.length)];
+
+        const wallX = current.x + d.x;
+        const wallY = current.y + d.y;
+
+        const nextX = current.x + d.x * 2;
+        const nextY = current.y + d.y * 2;
+
+        maze[wallY][wallX] = ".";
+        maze[nextY][nextX] = ".";
+
+        stack.push({
+            x: nextX,
+            y: nextY
+        });
+    }
+
+
+    /*
+    Add extra openings.
+
+    This creates loops so the maze feels
+    more like an arcade maze instead of
+    one giant winding path.
+    */
+
+    for (let i = 0; i < 100; i++) {
+
+        const x =
+            1 + Math.floor(Math.random() * (COLS - 2));
+
+        const y =
+            1 + Math.floor(Math.random() * (ROWS - 2));
+
+        if (maze[y][x] === "#") {
+
+            let openNeighbours = 0;
+
+            for (const d of DIRS) {
+
+                if (
+                    x + d.x >= 0 &&
+                    x + d.x < COLS &&
+                    y + d.y >= 0 &&
+                    y + d.y < ROWS &&
+                    maze[y + d.y][x + d.x] !== "#"
+                ) {
+                    openNeighbours++;
+                }
+            }
+
+            if (openNeighbours >= 2) {
+                maze[y][x] = ".";
+            }
+        }
+    }
+
+
+    /*
+    Make a large open ghost house in the middle.
+    */
+
+    const centerX = Math.floor(COLS / 2);
+    const centerY = Math.floor(ROWS / 2);
+
+    for (let y = centerY - 2; y <= centerY + 2; y++) {
+
+        for (let x = centerX - 4; x <= centerX + 4; x++) {
+
+            if (
+                x > 0 &&
+                x < COLS - 1 &&
+                y > 0 &&
+                y < ROWS - 1
+            ) {
+                maze[y][x] = ".";
+            }
+        }
+    }
+}
+
+
+/* =========================================
+   WALL CHECK
 ========================================= */
 
 function isWall(x, y) {
 
-    if (x < 0 || x >= COLS || y < 0 || y >= ROWS) {
+    if (
+        x < 0 ||
+        x >= COLS ||
+        y < 0 ||
+        y >= ROWS
+    ) {
         return true;
     }
 
-    return CLEAN_MAP[y][x] === "#";
+    return maze[y][x] === "#";
 }
 
 
 function canMove(entity, direction) {
 
-    const nx = entity.x + direction.x;
-    const ny = entity.y + direction.y;
-
-    return !isWall(nx, ny);
+    return !isWall(
+        entity.x + direction.x,
+        entity.y + direction.y
+    );
 }
 
 
@@ -271,106 +396,85 @@ function createPellets() {
     pellets = [];
     powerPellets = [];
 
-    for (let y = 0; y < ROWS; y++) {
+    const centerX = Math.floor(COLS / 2);
+    const centerY = Math.floor(ROWS / 2);
 
-        for (let x = 0; x < COLS; x++) {
 
-            const tile = CLEAN_MAP[y][x];
+    for (let y = 1; y < ROWS - 1; y++) {
 
-            if (tile === ".") {
+        for (let x = 1; x < COLS - 1; x++) {
 
-                pellets.push({
-                    x,
-                    y,
-                    eaten: false
-                });
+            if (maze[y][x] !== ".") {
+                continue;
             }
 
-            if (tile === "o") {
 
-                powerPellets.push({
-                    x,
-                    y,
-                    eaten: false
-                });
+            /*
+            Keep the ghost house mostly empty.
+            */
+
+            if (
+                Math.abs(x - centerX) <= 4 &&
+                Math.abs(y - centerY) <= 2
+            ) {
+                continue;
             }
+
+
+            pellets.push({
+                x,
+                y,
+                eaten: false
+            });
         }
     }
-}
 
-
-/* =========================================
-   RESET POSITIONS
-========================================= */
-
-function resetPositions() {
 
     /*
-    Find a safe open position near the
-    lower-middle area.
+    Many power pellets around the maze.
     */
 
-    let px = Math.floor(COLS / 2);
-    let py = ROWS - 4;
+    const possible = [];
 
-    while (isWall(px, py) && py > 1) {
-        py--;
+    for (let y = 1; y < ROWS - 1; y++) {
+
+        for (let x = 1; x < COLS - 1; x++) {
+
+            if (maze[y][x] !== ".") {
+                continue;
+            }
+
+            if (
+                Math.abs(x - centerX) <= 5 &&
+                Math.abs(y - centerY) <= 4
+            ) {
+                continue;
+            }
+
+            possible.push({
+                x,
+                y
+            });
+        }
     }
 
-    pacman = {
-        x: px,
-        y: py,
-        direction: DIR.LEFT,
-        nextDirection: DIR.LEFT
-    };
 
+    /*
+    Pick power pellets spread around the maze.
+    */
 
-    ghosts = [];
+    const wanted = 16;
 
-    const ghostColors = [
-        "#ff0000",
-        "#ffb8ff",
-        "#00ffff",
-        "#ffb852"
-    ];
+    for (let i = 0; i < wanted && possible.length; i++) {
 
-    const positions = [
-        {x:px - 2, y:py - 4},
-        {x:px - 1, y:py - 4},
-        {x:px + 1, y:py - 4},
-        {x:px + 2, y:py - 4}
-    ];
+        const index =
+            Math.floor(Math.random() * possible.length);
 
-    for (let i = 0; i < 4; i++) {
+        const p = possible.splice(index, 1)[0];
 
-        let gx = positions[i].x;
-        let gy = positions[i].y;
-
-        /*
-        If position is a wall, search nearby.
-        */
-
-        if (isWall(gx, gy)) {
-
-            for (let r = 1; r < 10; r++) {
-
-                if (!isWall(gx + r, gy)) {
-                    gx += r;
-                    break;
-                }
-
-                if (!isWall(gx - r, gy)) {
-                    gx -= r;
-                    break;
-                }
-            }
-        }
-
-        ghosts.push({
-            x: gx,
-            y: gy,
-            color: ghostColors[i],
-            direction: i % 2 === 0 ? DIR.LEFT : DIR.RIGHT,
+        powerPellets.push({
+            x: p.x,
+            y: p.y,
             eaten: false
         });
     }
@@ -378,7 +482,113 @@ function resetPositions() {
 
 
 /* =========================================
-   START GAME
+   START POSITIONS
+========================================= */
+
+function findOpenSpot(preferredX, preferredY) {
+
+    if (!isWall(preferredX, preferredY)) {
+        return {
+            x: preferredX,
+            y: preferredY
+        };
+    }
+
+
+    for (let radius = 1; radius < 15; radius++) {
+
+        for (let y = preferredY - radius; y <= preferredY + radius; y++) {
+
+            for (let x = preferredX - radius; x <= preferredX + radius; x++) {
+
+                if (!isWall(x, y)) {
+
+                    return {
+                        x,
+                        y
+                    };
+                }
+            }
+        }
+    }
+
+    return {
+        x: 1,
+        y: 1
+    };
+}
+
+
+function resetPositions() {
+
+    const centerX = Math.floor(COLS / 2);
+    const centerY = Math.floor(ROWS / 2);
+
+
+    const p = findOpenSpot(
+        centerX,
+        ROWS - 2
+    );
+
+    pacman = {
+        x: p.x,
+        y: p.y,
+        direction: DIR.LEFT,
+        nextDirection: DIR.LEFT
+    };
+
+
+    ghosts = [];
+
+    /*
+    8 ghosts.
+    */
+
+    const colors = [
+        "#ff0000",
+        "#ff69b4",
+        "#00ffff",
+        "#ff9f00",
+        "#9b59ff",
+        "#00ff66",
+        "#ff4f81",
+        "#ffffff"
+    ];
+
+
+    const spots = [
+        { x:centerX - 3, y:centerY },
+        { x:centerX - 2, y:centerY },
+        { x:centerX - 1, y:centerY },
+        { x:centerX,     y:centerY },
+        { x:centerX + 1, y:centerY },
+        { x:centerX + 2, y:centerY },
+        { x:centerX + 3, y:centerY },
+        { x:centerX,     y:centerY + 2 }
+    ];
+
+
+    for (let i = 0; i < 8; i++) {
+
+        const spot = findOpenSpot(
+            spots[i].x,
+            spots[i].y
+        );
+
+        ghosts.push({
+            x: spot.x,
+            y: spot.y,
+            color: colors[i],
+            direction:
+                DIRS[Math.floor(Math.random() * DIRS.length)],
+            eaten: false
+        });
+    }
+}
+
+
+/* =========================================
+   START / RESET
 ========================================= */
 
 function startGame() {
@@ -391,12 +601,16 @@ function startGame() {
 
     powerMode = false;
     powerTime = 0;
+
     ghostCombo = 200;
 
+    generateMaze();
     createPellets();
     resetPositions();
 
     updateUI();
+
+    retryScreen.style.display = "none";
 
     showMessage("READY!", 1200);
 
@@ -412,12 +626,15 @@ function startGame() {
 
 function updateUI() {
 
-    scoreEl.textContent = "SCORE: " + score;
-    livesEl.textContent = "LIVES: " + lives;
+    scoreEl.textContent =
+        "SCORE: " + score;
+
+    livesEl.textContent =
+        "LIVES: " + lives;
 }
 
 
-function showMessage(text, time) {
+function showMessage(text, duration) {
 
     messageEl.textContent = text;
     messageEl.style.display = "block";
@@ -428,7 +645,7 @@ function showMessage(text, time) {
             messageEl.style.display = "none";
         }
 
-    }, time);
+    }, duration);
 }
 
 
@@ -438,16 +655,43 @@ function showMessage(text, time) {
 
 function movePacman() {
 
-    if (canMove(pacman, pacman.nextDirection)) {
-        pacman.direction = pacman.nextDirection;
+    if (
+        canMove(
+            pacman,
+            pacman.nextDirection
+        )
+    ) {
+        pacman.direction =
+            pacman.nextDirection;
     }
 
-    if (!canMove(pacman, pacman.direction)) {
+
+    if (
+        !canMove(
+            pacman,
+            pacman.direction
+        )
+    ) {
         return;
     }
 
+
     pacman.x += pacman.direction.x;
     pacman.y += pacman.direction.y;
+
+
+    /*
+    Side tunnels.
+    */
+
+    if (pacman.x < 0) {
+        pacman.x = COLS - 1;
+    }
+
+    if (pacman.x >= COLS) {
+        pacman.x = 0;
+    }
+
 
     eatPellets();
 
@@ -456,14 +700,12 @@ function movePacman() {
 
 
 /* =========================================
-   EATING PELLETS
+   PELLET EATING
 ========================================= */
 
 function eatPellets() {
 
-    for (let i = 0; i < pellets.length; i++) {
-
-        const p = pellets[i];
+    for (const p of pellets) {
 
         if (
             !p.eaten &&
@@ -477,9 +719,7 @@ function eatPellets() {
     }
 
 
-    for (let i = 0; i < powerPellets.length; i++) {
-
-        const p = powerPellets[i];
+    for (const p of powerPellets) {
 
         if (
             !p.eaten &&
@@ -491,39 +731,44 @@ function eatPellets() {
 
             score += 50;
 
-            powerMode = true;
-            powerTime = 8000;
+            /*
+            POWER MODE.
+            */
 
+            powerMode = true;
+            powerTime = 9000;
             ghostCombo = 200;
         }
     }
 
+
     updateUI();
 
 
-    let pelletsLeft = false;
+    let remaining = false;
 
     for (const p of pellets) {
 
         if (!p.eaten) {
-            pelletsLeft = true;
+            remaining = true;
             break;
         }
     }
 
-    if (!pelletsLeft) {
+
+    if (!remaining) {
 
         for (const p of powerPellets) {
 
             if (!p.eaten) {
-                pelletsLeft = true;
+                remaining = true;
                 break;
             }
         }
     }
 
 
-    if (!pelletsLeft) {
+    if (!remaining) {
 
         ready = true;
 
@@ -533,8 +778,10 @@ function eatPellets() {
 
             if (!gameOver) {
 
+                generateMaze();
                 createPellets();
                 resetPositions();
+
                 ready = false;
             }
 
@@ -558,31 +805,24 @@ function moveGhosts() {
         }
 
 
-        const possible = [];
+        const choices = [];
 
-        if (canMove(ghost, DIR.LEFT)) {
-            possible.push(DIR.LEFT);
+
+        for (const d of DIRS) {
+
+            if (canMove(ghost, d)) {
+                choices.push(d);
+            }
         }
 
-        if (canMove(ghost, DIR.RIGHT)) {
-            possible.push(DIR.RIGHT);
-        }
 
-        if (canMove(ghost, DIR.UP)) {
-            possible.push(DIR.UP);
-        }
-
-        if (canMove(ghost, DIR.DOWN)) {
-            possible.push(DIR.DOWN);
-        }
-
-        if (possible.length === 0) {
+        if (!choices.length) {
             continue;
         }
 
 
         /*
-        Avoid immediately reversing.
+        Don't immediately reverse.
         */
 
         const reverse = {
@@ -590,26 +830,33 @@ function moveGhosts() {
             y: -ghost.direction.y
         };
 
-        let choices = possible.filter(d => {
+
+        let usable = choices.filter(d => {
+
             return !(
                 d.x === reverse.x &&
                 d.y === reverse.y
             );
         });
 
-        if (choices.length === 0) {
-            choices = possible;
+
+        if (!usable.length) {
+            usable = choices;
         }
 
 
         if (powerMode) {
 
             /*
-            Frightened ghosts choose randomly.
+            Blue ghosts move randomly.
             */
 
             ghost.direction =
-                choices[Math.floor(Math.random() * choices.length)];
+                usable[
+                    Math.floor(
+                        Math.random() * usable.length
+                    )
+                ];
 
         } else {
 
@@ -617,10 +864,11 @@ function moveGhosts() {
             Chase Pac-Man.
             */
 
-            let best = choices[0];
+            let best = usable[0];
             let bestDistance = Infinity;
 
-            for (const d of choices) {
+
+            for (const d of usable) {
 
                 const nx = ghost.x + d.x;
                 const ny = ghost.y + d.y;
@@ -629,6 +877,7 @@ function moveGhosts() {
                     Math.abs(nx - pacman.x) +
                     Math.abs(ny - pacman.y);
 
+
                 if (distance < bestDistance) {
 
                     bestDistance = distance;
@@ -636,15 +885,19 @@ function moveGhosts() {
                 }
             }
 
+
             /*
-            Small random chance keeps them
-            from all following the exact same path.
+            Different ghosts behave differently.
             */
 
-            if (Math.random() < 0.18) {
+            if (Math.random() < 0.25) {
 
                 ghost.direction =
-                    choices[Math.floor(Math.random() * choices.length)];
+                    usable[
+                        Math.floor(
+                            Math.random() * usable.length
+                        )
+                    ];
 
             } else {
 
@@ -656,52 +909,46 @@ function moveGhosts() {
         ghost.x += ghost.direction.x;
         ghost.y += ghost.direction.y;
 
+
         checkGhostCollisions();
     }
 }
 
 
 /* =========================================
-   EATEN GHOST MOVEMENT
+   EATEN GHOST
 ========================================= */
 
 function moveEatenGhost(ghost) {
 
-    /*
-    Return to the middle of the maze.
-    */
+    const targetX =
+        Math.floor(COLS / 2);
 
-    const targetX = Math.floor(COLS / 2);
-    const targetY = Math.floor(ROWS / 2);
+    const targetY =
+        Math.floor(ROWS / 2);
 
 
-    const possible = [];
+    const choices = [];
 
-    if (canMove(ghost, DIR.LEFT)) {
-        possible.push(DIR.LEFT);
+
+    for (const d of DIRS) {
+
+        if (canMove(ghost, d)) {
+            choices.push(d);
+        }
     }
 
-    if (canMove(ghost, DIR.RIGHT)) {
-        possible.push(DIR.RIGHT);
-    }
 
-    if (canMove(ghost, DIR.UP)) {
-        possible.push(DIR.UP);
-    }
-
-    if (canMove(ghost, DIR.DOWN)) {
-        possible.push(DIR.DOWN);
-    }
-
-    if (!possible.length) {
+    if (!choices.length) {
         return;
     }
 
 
-    let best = possible[0];
+    let best = choices[0];
     let bestDistance = Infinity;
 
-    for (const d of possible) {
+
+    for (const d of choices) {
 
         const nx = ghost.x + d.x;
         const ny = ghost.y + d.y;
@@ -710,12 +957,14 @@ function moveEatenGhost(ghost) {
             Math.abs(nx - targetX) +
             Math.abs(ny - targetY);
 
+
         if (distance < bestDistance) {
 
             bestDistance = distance;
             best = d;
         }
     }
+
 
     ghost.direction = best;
 
@@ -727,14 +976,13 @@ function moveEatenGhost(ghost) {
         Math.abs(ghost.x - targetX) <= 1 &&
         Math.abs(ghost.y - targetY) <= 1
     ) {
-
         ghost.eaten = false;
     }
 }
 
 
 /* =========================================
-   GHOST COLLISION
+   GHOST COLLISIONS
 ========================================= */
 
 function checkGhostCollisions() {
@@ -746,25 +994,39 @@ function checkGhostCollisions() {
             ghost.y === pacman.y
         ) {
 
+
             /*
-            THIS is the important fix:
-            If power mode is active, Pac-Man
-            eats the ghost.
+            POWER MODE:
+            PAC-MAN EATS THE GHOST.
             */
 
-            if (powerMode && !ghost.eaten) {
+            if (
+                powerMode &&
+                !ghost.eaten
+            ) {
 
                 ghost.eaten = true;
 
                 score += ghostCombo;
 
-                showMessage("+" + ghostCombo, 500);
+                showMessage(
+                    "+" + ghostCombo,
+                    500
+                );
 
                 ghostCombo *= 2;
 
                 updateUI();
 
-            } else if (!ghost.eaten) {
+                continue;
+            }
+
+
+            /*
+            Normal collision.
+            */
+
+            if (!ghost.eaten) {
 
                 loseLife();
 
@@ -785,11 +1047,13 @@ function loseLife() {
 
     updateUI();
 
+
     if (lives <= 0) {
 
         endGame();
         return;
     }
+
 
     powerMode = false;
     powerTime = 0;
@@ -800,8 +1064,11 @@ function loseLife() {
 
     showMessage("READY!", 900);
 
+
     setTimeout(() => {
+
         ready = false;
+
     }, 900);
 }
 
@@ -828,10 +1095,11 @@ function endGame() {
 function drawMaze() {
 
     /*
-    Grey outer background.
+    Grey background.
     */
 
     ctx.fillStyle = "#777";
+
     ctx.fillRect(
         0,
         0,
@@ -841,7 +1109,7 @@ function drawMaze() {
 
 
     /*
-    Black maze area.
+    Black corridors.
     */
 
     ctx.fillStyle = "#000";
@@ -850,7 +1118,7 @@ function drawMaze() {
 
         for (let x = 0; x < COLS; x++) {
 
-            if (!isWall(x, y)) {
+            if (maze[y][x] !== "#") {
 
                 ctx.fillRect(
                     x * TILE,
@@ -864,22 +1132,28 @@ function drawMaze() {
 
 
     /*
-    Yellow walls with black outlines.
+    Yellow Pac-Man-style walls.
     */
 
     for (let y = 0; y < ROWS; y++) {
 
         for (let x = 0; x < COLS; x++) {
 
-            if (!isWall(x, y)) {
+            if (maze[y][x] !== "#") {
                 continue;
             }
+
 
             const px = x * TILE;
             const py = y * TILE;
 
+
+            /*
+            Black outer line.
+            */
+
             ctx.strokeStyle = "#000";
-            ctx.lineWidth = 7;
+            ctx.lineWidth = 8;
 
             ctx.strokeRect(
                 px + 1,
@@ -887,6 +1161,11 @@ function drawMaze() {
                 TILE - 2,
                 TILE - 2
             );
+
+
+            /*
+            Yellow inner line.
+            */
 
             ctx.strokeStyle = "#ffff00";
             ctx.lineWidth = 3;
@@ -910,14 +1189,24 @@ function drawPellets() {
 
     ctx.fillStyle = "#fff";
 
+
+    /*
+    Normal pellets.
+    */
+
     for (const p of pellets) {
 
         if (p.eaten) {
             continue;
         }
 
-        const x = p.x * TILE + TILE / 2;
-        const y = p.y * TILE + TILE / 2;
+
+        const x =
+            p.x * TILE + TILE / 2;
+
+        const y =
+            p.y * TILE + TILE / 2;
+
 
         ctx.fillRect(
             x - 2,
@@ -933,7 +1222,9 @@ function drawPellets() {
     */
 
     const pulse =
-        7 + Math.sin(performance.now() / 120) * 2;
+        8 +
+        Math.sin(performance.now() / 120) * 2;
+
 
     for (const p of powerPellets) {
 
@@ -941,8 +1232,13 @@ function drawPellets() {
             continue;
         }
 
-        const x = p.x * TILE + TILE / 2;
-        const y = p.y * TILE + TILE / 2;
+
+        const x =
+            p.x * TILE + TILE / 2;
+
+        const y =
+            p.y * TILE + TILE / 2;
+
 
         ctx.beginPath();
 
@@ -974,6 +1270,7 @@ function drawPacman() {
 
     let angle = 0;
 
+
     if (pacman.direction === DIR.RIGHT) {
         angle = 0;
     }
@@ -991,7 +1288,8 @@ function drawPacman() {
     }
 
 
-    const mouth = mouthOpen ? 0.27 : 0.06;
+    const mouth =
+        mouthOpen ? 0.28 : 0.05;
 
 
     ctx.fillStyle = "yellow";
@@ -1003,7 +1301,7 @@ function drawPacman() {
     ctx.arc(
         cx,
         cy,
-        TILE * 0.42,
+        TILE * 0.43,
         angle + mouth,
         angle + Math.PI * 2 - mouth
     );
@@ -1028,7 +1326,7 @@ function drawGhost(ghost) {
 
 
     /*
-    Eaten ghosts are just eyes.
+    Eaten ghost = eyes only.
     */
 
     if (ghost.eaten) {
@@ -1041,20 +1339,19 @@ function drawGhost(ghost) {
     let color = ghost.color;
 
 
+    /*
+    Power mode makes all ghosts blue.
+    */
+
     if (powerMode) {
 
-        /*
-        Flash white when power mode
-        is about to end.
-        */
-
         if (
-            powerTime < 2000 &&
+            powerTime < 2200 &&
             Math.floor(powerTime / 150) % 2 === 0
         ) {
-            color = "#fff";
+            color = "white";
         } else {
-            color = "#183cff";
+            color = "#1748ff";
         }
     }
 
@@ -1111,7 +1408,7 @@ function drawGhost(ghost) {
 
 function drawEyes(cx, cy) {
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "#fff";
 
     ctx.beginPath();
 
@@ -1159,7 +1456,7 @@ function drawEyes(cx, cy) {
 
 
 /* =========================================
-   DRAW EVERYTHING
+   DRAW
 ========================================= */
 
 function draw() {
@@ -1209,7 +1506,7 @@ document.addEventListener("keydown", function(e) {
 
 
     /*
-    RRR → Games home
+    RRR → Games home.
     */
 
     if (e.key.toLowerCase() === "r") {
@@ -1242,8 +1539,6 @@ document.addEventListener("keydown", function(e) {
 
 retryButton.addEventListener("click", function() {
 
-    retryScreen.style.display = "none";
-
     startGame();
 });
 
@@ -1266,36 +1561,36 @@ function gameLoop(now) {
         Pac-Man movement.
         */
 
-        pacmanAccumulator += delta;
+        pacTimer += delta;
 
-        while (pacmanAccumulator >= 125) {
+        while (pacTimer >= 120) {
 
             movePacman();
 
-            pacmanAccumulator -= 125;
+            pacTimer -= 120;
         }
 
 
         /*
         Ghost movement.
-        Ghosts slow down during power mode.
         */
 
-        ghostAccumulator += delta;
+        ghostTimer += delta;
 
         const ghostSpeed =
-            powerMode ? 250 : 185;
+            powerMode ? 260 : 190;
 
-        while (ghostAccumulator >= ghostSpeed) {
+
+        while (ghostTimer >= ghostSpeed) {
 
             moveGhosts();
 
-            ghostAccumulator -= ghostSpeed;
+            ghostTimer -= ghostSpeed;
         }
 
 
         /*
-        Power mode timer.
+        Power mode.
         */
 
         if (powerMode) {
@@ -1312,7 +1607,7 @@ function gameLoop(now) {
 
 
         /*
-        Pac-Man mouth.
+        Pac-Man mouth animation.
         */
 
         mouthTimer += delta;
