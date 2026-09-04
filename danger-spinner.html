@@ -1,452 +1,938 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Flashcard Creator</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        background: #111;
-        color: #eee;
-        font-family: "Courier New", monospace;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    .game {
-        width: 900px;
-        max-width: 95vw;
-        text-align: center;
-    }
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #080808;
+    color: #eee;
+    font-family: "Courier New", monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game {
+    width: 900px;
+    max-width: 94%;
+}
+
+.panel {
+    background: #111;
+    border: 2px solid #333;
+    padding: 30px;
+    box-shadow: 8px 8px 0 #000;
+}
+
+h1 {
+    text-align: center;
+    margin: 0;
+    font-size: 42px;
+    letter-spacing: 3px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #777;
+    margin: 8px 0 25px;
+}
+
+.mode {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.mode button,
+.actionButton {
+    background: #eee;
+    color: #111;
+    border: 0;
+    padding: 12px 22px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mode button.active {
+    background: #777;
+    color: white;
+}
+
+.mode button:hover,
+.actionButton:hover {
+    background: white;
+}
+
+.turn {
+    text-align: center;
+    font-size: 23px;
+    margin-bottom: 15px;
+}
+
+.spinnerArea {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 35px 0;
+}
+
+.pointer {
+    position: absolute;
+    top: -25px;
+    z-index: 5;
+
+    width: 0;
+    height: 0;
+
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 32px solid #eee;
+}
+
+.spinner {
+    width: 280px;
+    height: 280px;
+
+    border-radius: 50%;
+
+    background: #292929;
+
+    border: 12px solid #666;
+
+    box-shadow:
+        inset 0 0 0 8px #111;
+
+    position: relative;
+
+    transition:
+        transform 1.3s cubic-bezier(.17,.67,.19,1.2);
+}
+
+.slot {
+    position: absolute;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 50%;
+
+    background: #080808;
+
+    border: 4px solid #666;
+
+    left: 50%;
+    top: 50%;
+
+    transform-origin: 0 0;
+}
+
+.slot:nth-child(1) {
+    transform: rotate(0deg) translateX(98px);
+}
+
+.slot:nth-child(2) {
+    transform: rotate(60deg) translateX(98px);
+}
+
+.slot:nth-child(3) {
+    transform: rotate(120deg) translateX(98px);
+}
+
+.slot:nth-child(4) {
+    transform: rotate(180deg) translateX(98px);
+}
+
+.slot:nth-child(5) {
+    transform: rotate(240deg) translateX(98px);
+}
+
+.slot:nth-child(6) {
+    transform: rotate(300deg) translateX(98px);
+}
+
+.center {
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #111;
+
+    border: 5px solid #777;
+}
+
+.status {
+    text-align: center;
+
+    min-height: 55px;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    margin: 15px 0;
+}
+
+.safe {
+    color: #7ee787;
+}
+
+.danger {
+    color: #ff6666;
+}
+
+.bonus {
+    color: #ffd866;
+}
+
+.normal {
+    color: #ddd;
+}
+
+.players {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+
+    margin: 25px 0;
+}
+
+.player {
+    background: #181818;
+
+    border: 2px solid #333;
+
+    padding: 18px;
+
+    text-align: center;
+}
+
+.player.active {
+    border-color: #aaa;
+}
+
+.playerName {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.stats {
+    color: #aaa;
+    line-height: 1.7;
+}
+
+.hearts {
+    letter-spacing: 4px;
+    color: #eee;
+}
+
+.controls {
+    text-align: center;
+}
+
+.actionButton {
+    font-size: 20px;
+    padding: 15px 35px;
+
+    box-shadow: 5px 5px 0 #000;
+}
+
+.actionButton:active {
+    transform: translate(4px, 4px);
+    box-shadow: 1px 1px 0 #000;
+}
+
+.actionButton:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.instructions {
+    text-align: center;
+
+    color: #555;
+
+    font-size: 12px;
+
+    margin-top: 25px;
+
+    line-height: 1.6;
+}
+
+.retry {
+    display: none;
+    text-align: center;
+}
+
+.retry h2 {
+    color: #ff6666;
+    font-size: 42px;
+    margin: 5px;
+}
+
+.finalResult {
+    font-size: 21px;
+    line-height: 2;
+    margin: 25px;
+}
+
+@media (max-width: 600px) {
 
     h1 {
-        font-size: 42px;
-        margin: 0 0 8px;
-        letter-spacing: 3px;
-    }
-
-    .subtitle {
-        color: #aaa;
-        margin-bottom: 25px;
-    }
-
-    .panel {
-        background: #1c1c1c;
-        border: 4px solid #555;
-        padding: 30px;
-        box-shadow: 8px 8px 0 #000;
-    }
-
-    .spinner-area {
-        display: flex;
-        justify-content: center;
-        margin: 20px 0 30px;
+        font-size: 30px;
     }
 
     .spinner {
-        width: 300px;
-        height: 300px;
-        border-radius: 50%;
-        background: #333;
-        border: 12px solid #777;
-        position: relative;
-        box-shadow: inset 0 0 0 8px #181818;
-        transition: transform 1s cubic-bezier(.17,.67,.19,1.2);
+        width: 220px;
+        height: 220px;
     }
 
-    .spinner::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 70px;
-        height: 70px;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        background: #111;
-        border: 6px solid #888;
-    }
-
-    .slot {
-        position: absolute;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #111;
-        border: 4px solid #666;
-        left: 50%;
-        top: 50%;
+    .slot:nth-child(1),
+    .slot:nth-child(2),
+    .slot:nth-child(3),
+    .slot:nth-child(4),
+    .slot:nth-child(5),
+    .slot:nth-child(6) {
         transform-origin: 0 0;
     }
 
-    .slot:nth-child(1) { transform: rotate(0deg) translateX(105px); }
-    .slot:nth-child(2) { transform: rotate(60deg) translateX(105px); }
-    .slot:nth-child(3) { transform: rotate(120deg) translateX(105px); }
-    .slot:nth-child(4) { transform: rotate(180deg) translateX(105px); }
-    .slot:nth-child(5) { transform: rotate(240deg) translateX(105px); }
-    .slot:nth-child(6) { transform: rotate(300deg) translateX(105px); }
-
-    .pointer {
-        position: absolute;
-        top: -35px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 18px solid transparent;
-        border-right: 18px solid transparent;
-        border-top: 35px solid #ddd;
-        z-index: 5;
+    .slot:nth-child(1) {
+        transform: rotate(0deg) translateX(75px);
     }
 
-    .status {
-        min-height: 55px;
-        font-size: 24px;
-        font-weight: bold;
-        margin: 15px 0;
+    .slot:nth-child(2) {
+        transform: rotate(60deg) translateX(75px);
     }
 
-    .normal {
-        color: #ddd;
+    .slot:nth-child(3) {
+        transform: rotate(120deg) translateX(75px);
     }
 
-    .safe {
-        color: #7ee787;
+    .slot:nth-child(4) {
+        transform: rotate(180deg) translateX(75px);
     }
 
-    .danger {
-        color: #ff6464;
+    .slot:nth-child(5) {
+        transform: rotate(240deg) translateX(75px);
     }
 
-    .bonus {
-        color: #ffd866;
+    .slot:nth-child(6) {
+        transform: rotate(300deg) translateX(75px);
     }
 
-    .stats {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        margin: 20px 0;
-        font-size: 20px;
+    .players {
+        grid-template-columns: 1fr;
     }
 
-    button {
-        border: 3px solid #888;
-        background: #ddd;
-        color: #111;
-        padding: 16px 30px;
-        font-family: inherit;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 5px 5px 0 #000;
-        margin: 8px;
-    }
+}
 
-    button:hover {
-        background: #fff;
-    }
-
-    button:active {
-        transform: translate(4px, 4px);
-        box-shadow: 1px 1px 0 #000;
-    }
-
-    button:disabled {
-        opacity: .45;
-        cursor: not-allowed;
-    }
-
-    .lives {
-        letter-spacing: 5px;
-        font-size: 25px;
-    }
-
-    .instructions {
-        margin-top: 25px;
-        color: #888;
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    .retry {
-        display: none;
-    }
-
-    .retry h2 {
-        font-size: 40px;
-        color: #ff5555;
-        margin: 10px;
-    }
-
-    .big-score {
-        font-size: 25px;
-        margin: 20px;
-    }
-
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 30px;
-        }
-
-        .spinner {
-            width: 230px;
-            height: 230px;
-        }
-
-        .slot:nth-child(1) { transform: rotate(0deg) translateX(78px); }
-        .slot:nth-child(2) { transform: rotate(60deg) translateX(78px); }
-        .slot:nth-child(3) { transform: rotate(120deg) translateX(78px); }
-        .slot:nth-child(4) { transform: rotate(180deg) translateX(78px); }
-        .slot:nth-child(5) { transform: rotate(240deg) translateX(78px); }
-        .slot:nth-child(6) { transform: rotate(300deg) translateX(78px); }
-    }
 </style>
 </head>
+
 
 <body>
 
 <div class="game">
 
-    <div class="panel" id="mainPanel">
+<div class="panel" id="gamePanel">
 
-        <h1>DANGER SPINNER</h1>
-        <div class="subtitle">Test your luck.</div>
+<h1>DANGER SPINNER</h1>
 
-        <div class="spinner-area">
-            <div class="pointer"></div>
-
-            <div class="spinner" id="spinner">
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-                <div class="slot"></div>
-            </div>
-        </div>
-
-        <div class="status normal" id="status">
-            Spin the chamber and take your chance.
-        </div>
-
-        <div class="stats">
-            <div>
-                SCORE
-                <br>
-                <span id="score">0</span>
-            </div>
-
-            <div>
-                STREAK
-                <br>
-                <span id="streak">0</span>
-            </div>
-
-            <div>
-                LIVES
-                <br>
-                <span class="lives" id="lives">♥ ♥ ♥</span>
-            </div>
-        </div>
-
-        <button id="spinButton" onclick="spin()">SPIN</button>
-
-        <div class="instructions">
-            Each spin has a random outcome.<br>
-            Survive as long as possible and build your streak.
-        </div>
-
-    </div>
+<div class="subtitle">
+YOU VS BOT
+</div>
 
 
-    <div class="panel retry" id="retryPanel">
+<div class="mode">
 
-        <h2>RETRY</h2>
+<button id="youMode" class="active" onclick="setMode('you')">
+YOU
+</button>
 
-        <div class="big-score">
-            Final Score: <span id="finalScore">0</span>
-            <br>
-            Best Streak: <span id="finalStreak">0</span>
-        </div>
+<button id="botMode" onclick="setMode('bot')">
+BOT
+</button>
 
-        <button onclick="restart()">PLAY AGAIN</button>
+</div>
 
-    </div>
+
+<div class="turn" id="turnText">
+YOUR TURN
+</div>
+
+
+<div class="spinnerArea">
+
+<div class="pointer"></div>
+
+<div class="spinner" id="spinner">
+
+<div class="slot"></div>
+<div class="slot"></div>
+<div class="slot"></div>
+<div class="slot"></div>
+<div class="slot"></div>
+<div class="slot"></div>
+
+<div class="center"></div>
+
+</div>
+
+</div>
+
+
+<div class="status normal" id="status">
+Choose who takes the next spin.
+</div>
+
+
+<div class="players">
+
+<div class="player active" id="youPlayer">
+
+<div class="playerName">
+YOU
+</div>
+
+<div class="stats">
+
+SCORE:
+<span id="youScore">0</span>
+
+<br>
+
+STREAK:
+<span id="youStreak">0</span>
+
+<br>
+
+LIVES:
+<span class="hearts" id="youLives">♥ ♥ ♥</span>
+
+</div>
+
+</div>
+
+
+<div class="player" id="botPlayer">
+
+<div class="playerName">
+BOT
+</div>
+
+<div class="stats">
+
+SCORE:
+<span id="botScore">0</span>
+
+<br>
+
+STREAK:
+<span id="botStreak">0</span>
+
+<br>
+
+LIVES:
+<span class="hearts" id="botLives">♥ ♥ ♥</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="controls">
+
+<button
+class="actionButton"
+id="spinButton"
+onclick="spin()"
+>
+SPIN
+</button>
+
+</div>
+
+
+<div class="instructions">
+
+Click YOU or BOT to choose who takes the next spin.<br>
+The fictional spinner randomly decides the outcome.
+
+</div>
+
+</div>
+
+
+<div class="panel retry" id="retryPanel">
+
+<h2>RETRY</h2>
+
+<div class="finalResult">
+
+YOU:
+<span id="finalYouScore">0</span>
+
+<br>
+
+BOT:
+<span id="finalBotScore">0</span>
+
+<br><br>
+
+WINNER:
+<span id="winner">—</span>
+
+</div>
+
+<button
+class="actionButton"
+onclick="restart()"
+>
+PLAY AGAIN
+</button>
+
+</div>
 
 </div>
 
 
 <script>
 
-let score = 0;
-let streak = 0;
-let lives = 3;
+let currentPlayer = "you";
+
 let spinning = false;
+
 let rotation = 0;
 
-const spinner = document.getElementById("spinner");
-const statusText = document.getElementById("status");
-const scoreText = document.getElementById("score");
-const streakText = document.getElementById("streak");
-const livesText = document.getElementById("lives");
-const spinButton = document.getElementById("spinButton");
+let youScore = 0;
+let youStreak = 0;
+let youLives = 3;
 
-function updateUI() {
+let botScore = 0;
+let botStreak = 0;
+let botLives = 3;
 
-    scoreText.textContent = score;
-    streakText.textContent = streak;
 
-    let hearts = "";
+const spinner =
+document.getElementById("spinner");
 
-    for (let i = 0; i < lives; i++) {
-        hearts += "♥ ";
+const statusText =
+document.getElementById("status");
+
+const spinButton =
+document.getElementById("spinButton");
+
+const turnText =
+document.getElementById("turnText");
+
+
+function setMode(player) {
+
+    if (spinning) return;
+
+    if (youLives <= 0 && player === "you") return;
+    if (botLives <= 0 && player === "bot") return;
+
+    currentPlayer = player;
+
+    updateTurn();
+
+}
+
+
+function updateTurn() {
+
+    if (currentPlayer === "you") {
+
+        turnText.textContent = "YOUR TURN";
+
+        document
+            .getElementById("youMode")
+            .classList.add("active");
+
+        document
+            .getElementById("botMode")
+            .classList.remove("active");
+
+        document
+            .getElementById("youPlayer")
+            .classList.add("active");
+
+        document
+            .getElementById("botPlayer")
+            .classList.remove("active");
+
+    } else {
+
+        turnText.textContent = "BOT'S TURN";
+
+        document
+            .getElementById("botMode")
+            .classList.add("active");
+
+        document
+            .getElementById("youMode")
+            .classList.remove("active");
+
+        document
+            .getElementById("botPlayer")
+            .classList.add("active");
+
+        document
+            .getElementById("youPlayer")
+            .classList.remove("active");
+
     }
 
-    for (let i = lives; i < 3; i++) {
-        hearts += "♡ ";
-    }
-
-    livesText.textContent = hearts.trim();
 }
 
 
 function spin() {
 
-    if (spinning || lives <= 0) return;
+    if (spinning) return;
+
+    if (youLives <= 0 || botLives <= 0) {
+
+        gameOver();
+
+        return;
+
+    }
 
     spinning = true;
+
     spinButton.disabled = true;
 
     statusText.className = "status normal";
-    statusText.textContent = "SPINNING...";
 
-    rotation += 720 + Math.floor(Math.random() * 1080);
+    statusText.textContent =
+        currentPlayer === "you"
+        ? "YOU ARE SPINNING..."
+        : "BOT IS SPINNING...";
 
-    spinner.style.transform = `rotate(${rotation}deg)`;
 
-    setTimeout(() => {
+    rotation +=
+        720 +
+        Math.floor(Math.random() * 1080);
 
-        const roll = Math.random();
+    spinner.style.transform =
+        `rotate(${rotation}deg)`;
+
+
+    setTimeout(function() {
+
+        let roll = Math.random();
+
+        let playerName =
+            currentPlayer === "you"
+            ? "YOU"
+            : "BOT";
+
 
         if (roll < 0.18) {
 
-            lives--;
-            streak = 0;
+            if (currentPlayer === "you") {
 
-            statusText.className = "status danger";
-            statusText.textContent = "💥 BOOM! You lost a life!";
+                youLives--;
+                youStreak = 0;
+
+            } else {
+
+                botLives--;
+                botStreak = 0;
+
+            }
+
+            statusText.className =
+                "status danger";
+
+            statusText.textContent =
+                "💥 " +
+                playerName +
+                " GOT BOOMED! -1 LIFE";
 
         }
+
 
         else if (roll < 0.35) {
 
-            score += 50;
-            streak++;
+            if (currentPlayer === "you") {
 
-            statusText.className = "status bonus";
-            statusText.textContent = "⭐ BONUS! +50 POINTS!";
+                youScore += 50;
+                youStreak++;
+
+            } else {
+
+                botScore += 50;
+                botStreak++;
+
+            }
+
+            statusText.className =
+                "status bonus";
+
+            statusText.textContent =
+                "⭐ " +
+                playerName +
+                " GOT A BONUS! +50";
 
         }
+
 
         else {
 
-            score += 10 + streak * 2;
-            streak++;
+            if (currentPlayer === "you") {
 
-            statusText.className = "status safe";
-            statusText.textContent = "✓ SAFE! Your streak continues!";
+                youScore +=
+                    10 +
+                    youStreak * 2;
+
+                youStreak++;
+
+            } else {
+
+                botScore +=
+                    10 +
+                    botStreak * 2;
+
+                botStreak++;
+
+            }
+
+            statusText.className =
+                "status safe";
+
+            statusText.textContent =
+                "✓ " +
+                playerName +
+                " IS SAFE!";
 
         }
 
-        updateUI();
 
-        if (lives <= 0) {
+        updateStats();
+
+
+        if (youLives <= 0 ||
+            botLives <= 0) {
 
             setTimeout(gameOver, 900);
 
-        } else {
-
-            spinning = false;
-            spinButton.disabled = false;
+            return;
 
         }
 
-    }, 1200);
+
+        currentPlayer =
+            currentPlayer === "you"
+            ? "bot"
+            : "you";
+
+
+        updateTurn();
+
+        spinning = false;
+
+        spinButton.disabled = false;
+
+
+    }, 1300);
+
+}
+
+
+function updateStats() {
+
+    document.getElementById("youScore")
+        .textContent = youScore;
+
+    document.getElementById("youStreak")
+        .textContent = youStreak;
+
+    document.getElementById("botScore")
+        .textContent = botScore;
+
+    document.getElementById("botStreak")
+        .textContent = botStreak;
+
+
+    document.getElementById("youLives")
+        .textContent = makeHearts(youLives);
+
+    document.getElementById("botLives")
+        .textContent = makeHearts(botLives);
+
+}
+
+
+function makeHearts(lives) {
+
+    let result = "";
+
+    for (let i = 0; i < 3; i++) {
+
+        result +=
+            i < lives
+            ? "♥ "
+            : "♡ ";
+
+    }
+
+    return result.trim();
+
 }
 
 
 function gameOver() {
 
-    document.getElementById("mainPanel").style.display = "none";
-    document.getElementById("retryPanel").style.display = "block";
+    spinning = true;
 
-    document.getElementById("finalScore").textContent = score;
-    document.getElementById("finalStreak").textContent = streak;
+    document.getElementById("gamePanel")
+        .style.display = "none";
+
+    document.getElementById("retryPanel")
+        .style.display = "block";
+
+
+    document.getElementById("finalYouScore")
+        .textContent = youScore;
+
+    document.getElementById("finalBotScore")
+        .textContent = botScore;
+
+
+    let winner;
+
+    if (youLives <= 0 &&
+        botLives <= 0) {
+
+        winner = "DRAW";
+
+    } else if (youLives <= 0) {
+
+        winner = "BOT";
+
+    } else {
+
+        winner = "YOU";
+
+    }
+
+    document.getElementById("winner")
+        .textContent = winner;
+
 }
 
 
 function restart() {
 
-    score = 0;
-    streak = 0;
-    lives = 3;
+    currentPlayer = "you";
+
     spinning = false;
+
     rotation = 0;
 
-    spinner.style.transform = "rotate(0deg)";
+    youScore = 0;
+    youStreak = 0;
+    youLives = 3;
 
-    document.getElementById("retryPanel").style.display = "none";
-    document.getElementById("mainPanel").style.display = "block";
+    botScore = 0;
+    botStreak = 0;
+    botLives = 3;
 
-    statusText.className = "status normal";
-    statusText.textContent = "Spin the chamber and take your chance.";
+
+    spinner.style.transform =
+        "rotate(0deg)";
+
+
+    document.getElementById("gamePanel")
+        .style.display = "block";
+
+    document.getElementById("retryPanel")
+        .style.display = "none";
+
+
+    statusText.className =
+        "status normal";
+
+    statusText.textContent =
+        "Choose who takes the next spin.";
+
 
     spinButton.disabled = false;
 
-    updateUI();
+    updateStats();
+
+    updateTurn();
+
 }
 
 
-updateUI();
+// RRR SHORTCUT
 
+let rCount = 0;
+let rTimer = null;
 
-// RRR shortcut
-let rPresses = [];
-let lastRTime = 0;
+document.addEventListener("keydown", function(e) {
 
-document.addEventListener("keydown", function(event) {
-
-    if (event.key.toLowerCase() !== "r") return;
-
-    const now = Date.now();
-
-    if (now - lastRTime > 1000) {
-        rPresses = [];
+    if (e.key.toLowerCase() !== "r") {
+        return;
     }
 
-    rPresses.push(now);
-    lastRTime = now;
+    rCount++;
 
-    if (rPresses.length >= 3) {
+    clearTimeout(rTimer);
 
-        rPresses = [];
+    rTimer = setTimeout(function() {
 
-        window.location.href = "flashcards.html";
+        rCount = 0;
+
+    }, 700);
+
+
+    if (rCount === 3) {
+
+        rCount = 0;
+
+        window.location.href =
+            "flashcards.html";
+
     }
 
 });
+
+
+updateStats();
+updateTurn();
 
 </script>
 
 </body>
 </html>
+```
