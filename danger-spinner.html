@@ -50,38 +50,43 @@ h1 {
     margin: 8px 0 25px;
 }
 
-.mode {
+.turn {
+    text-align: center;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.choose {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.choiceButtons {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 25px;
 }
 
-.mode button,
-.actionButton {
+button {
     background: #eee;
     color: #111;
     border: 0;
-    padding: 12px 22px;
+    padding: 13px 24px;
     font-family: inherit;
     font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
 }
 
-.mode button.active {
-    background: #777;
-    color: white;
-}
-
-.mode button:hover,
-.actionButton:hover {
+button:hover {
     background: white;
 }
 
-.turn {
-    text-align: center;
-    font-size: 23px;
-    margin-bottom: 15px;
+button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
 }
 
 .spinnerArea {
@@ -250,25 +255,24 @@ h1 {
     color: #eee;
 }
 
+.score {
+    font-size: 20px;
+    color: #eee;
+}
+
 .controls {
     text-align: center;
 }
 
-.actionButton {
-    font-size: 20px;
-    padding: 15px 35px;
-
+.spinButton {
+    font-size: 21px;
+    padding: 15px 40px;
     box-shadow: 5px 5px 0 #000;
 }
 
-.actionButton:active {
+.spinButton:active {
     transform: translate(4px, 4px);
     box-shadow: 1px 1px 0 #000;
-}
-
-.actionButton:disabled {
-    opacity: .4;
-    cursor: not-allowed;
 }
 
 .instructions {
@@ -311,15 +315,6 @@ h1 {
         height: 220px;
     }
 
-    .slot:nth-child(1),
-    .slot:nth-child(2),
-    .slot:nth-child(3),
-    .slot:nth-child(4),
-    .slot:nth-child(5),
-    .slot:nth-child(6) {
-        transform-origin: 0 0;
-    }
-
     .slot:nth-child(1) {
         transform: rotate(0deg) translateX(75px);
     }
@@ -348,6 +343,10 @@ h1 {
         grid-template-columns: 1fr;
     }
 
+    .choiceButtons {
+        flex-direction: column;
+    }
+
 }
 
 </style>
@@ -358,6 +357,7 @@ h1 {
 
 <div class="game">
 
+
 <div class="panel" id="gamePanel">
 
 <h1>DANGER SPINNER</h1>
@@ -367,21 +367,32 @@ YOU VS BOT
 </div>
 
 
-<div class="mode">
-
-<button id="youMode" class="active" onclick="setMode('you')">
-YOU
-</button>
-
-<button id="botMode" onclick="setMode('bot')">
-BOT
-</button>
-
+<div class="turn" id="turnText">
+YOUR TURN
 </div>
 
 
-<div class="turn" id="turnText">
-YOUR TURN
+<div class="choose" id="chooseText">
+Choose who spins.
+</div>
+
+
+<div class="choiceButtons">
+
+<button
+id="botChoice"
+onclick="chooseBot()"
+>
+BOT SPIN
+</button>
+
+<button
+id="youChoice"
+onclick="chooseYou()"
+>
+YOU SPIN
+</button>
+
 </div>
 
 
@@ -406,13 +417,14 @@ YOUR TURN
 
 
 <div class="status normal" id="status">
-Choose who takes the next spin.
+Choose who takes the spin.
 </div>
 
 
 <div class="players">
 
-<div class="player active" id="youPlayer">
+
+<div class="player" id="youPlayer">
 
 <div class="playerName">
 YOU
@@ -420,8 +432,8 @@ YOU
 
 <div class="stats">
 
-SCORE:
-<span id="youScore">0</span>
+POINTS:
+<span class="score" id="youScore">0</span>
 
 <br>
 
@@ -431,7 +443,9 @@ STREAK:
 <br>
 
 LIVES:
-<span class="hearts" id="youLives">♥ ♥ ♥</span>
+<span class="hearts" id="youLives">
+♥ ♥ ♥
+</span>
 
 </div>
 
@@ -446,8 +460,8 @@ BOT
 
 <div class="stats">
 
-SCORE:
-<span id="botScore">0</span>
+POINTS:
+<span class="score" id="botScore">0</span>
 
 <br>
 
@@ -457,11 +471,14 @@ STREAK:
 <br>
 
 LIVES:
-<span class="hearts" id="botLives">♥ ♥ ♥</span>
+<span class="hearts" id="botLives">
+♥ ♥ ♥
+</span>
 
 </div>
 
 </div>
+
 
 </div>
 
@@ -469,9 +486,10 @@ LIVES:
 <div class="controls">
 
 <button
-class="actionButton"
+class="spinButton"
 id="spinButton"
 onclick="spin()"
+disabled
 >
 SPIN
 </button>
@@ -481,10 +499,11 @@ SPIN
 
 <div class="instructions">
 
-Click YOU or BOT to choose who takes the next spin.<br>
-The fictional spinner randomly decides the outcome.
+BOT BOOMS → YOU GET A POINT<br>
+BOT DOESN'T BOOM → YOUR TURN
 
 </div>
+
 
 </div>
 
@@ -510,8 +529,9 @@ WINNER:
 
 </div>
 
+
 <button
-class="actionButton"
+class="spinButton"
 onclick="restart()"
 >
 PLAY AGAIN
@@ -519,12 +539,13 @@ PLAY AGAIN
 
 </div>
 
+
 </div>
 
 
 <script>
 
-let currentPlayer = "you";
+let selectedPlayer = null;
 
 let spinning = false;
 
@@ -545,68 +566,93 @@ document.getElementById("spinner");
 const statusText =
 document.getElementById("status");
 
-const spinButton =
-document.getElementById("spinButton");
-
 const turnText =
 document.getElementById("turnText");
 
+const chooseText =
+document.getElementById("chooseText");
 
-function setMode(player) {
+const spinButton =
+document.getElementById("spinButton");
+
+
+function chooseBot() {
 
     if (spinning) return;
 
-    if (youLives <= 0 && player === "you") return;
-    if (botLives <= 0 && player === "bot") return;
+    if (botLives <= 0) {
 
-    currentPlayer = player;
+        statusText.className = "status danger";
+        statusText.textContent = "THE BOT IS OUT OF LIVES!";
 
-    updateTurn();
+        return;
+    }
+
+    selectedPlayer = "bot";
+
+    turnText.textContent = "BOT'S TURN";
+
+    chooseText.textContent =
+        "You chose the BOT to spin.";
+
+    spinButton.disabled = false;
+
+    updateActivePlayer();
 
 }
 
 
-function updateTurn() {
+function chooseYou() {
 
-    if (currentPlayer === "you") {
+    if (spinning) return;
 
-        turnText.textContent = "YOUR TURN";
+    if (youLives <= 0) {
 
-        document
-            .getElementById("youMode")
-            .classList.add("active");
+        statusText.className = "status danger";
+        statusText.textContent = "YOU ARE OUT OF LIVES!";
 
-        document
-            .getElementById("botMode")
-            .classList.remove("active");
+        return;
+    }
+
+    selectedPlayer = "you";
+
+    turnText.textContent = "YOUR TURN";
+
+    chooseText.textContent =
+        "You chose to spin.";
+
+    spinButton.disabled = false;
+
+    updateActivePlayer();
+
+}
+
+
+function updateActivePlayer() {
+
+    document
+        .getElementById("youPlayer")
+        .classList.remove("active");
+
+    document
+        .getElementById("botPlayer")
+        .classList.remove("active");
+
+
+    if (selectedPlayer === "you") {
 
         document
             .getElementById("youPlayer")
             .classList.add("active");
 
-        document
-            .getElementById("botPlayer")
-            .classList.remove("active");
+    }
 
-    } else {
 
-        turnText.textContent = "BOT'S TURN";
-
-        document
-            .getElementById("botMode")
-            .classList.add("active");
-
-        document
-            .getElementById("youMode")
-            .classList.remove("active");
+    if (selectedPlayer === "bot") {
 
         document
             .getElementById("botPlayer")
             .classList.add("active");
-
-        document
-            .getElementById("youPlayer")
-            .classList.remove("active");
 
     }
 
@@ -615,31 +661,35 @@ function updateTurn() {
 
 function spin() {
 
-    if (spinning) return;
-
-    if (youLives <= 0 || botLives <= 0) {
-
-        gameOver();
-
+    if (spinning || !selectedPlayer) {
         return;
-
     }
 
     spinning = true;
 
     spinButton.disabled = true;
 
-    statusText.className = "status normal";
+    document.getElementById("botChoice").disabled = true;
+    document.getElementById("youChoice").disabled = true;
+
+
+    let playerName =
+        selectedPlayer === "you"
+        ? "YOU"
+        : "BOT";
+
+
+    statusText.className =
+        "status normal";
 
     statusText.textContent =
-        currentPlayer === "you"
-        ? "YOU ARE SPINNING..."
-        : "BOT IS SPINNING...";
+        playerName + " IS SPINNING...";
 
 
     rotation +=
         720 +
         Math.floor(Math.random() * 1080);
+
 
     spinner.style.transform =
         `rotate(${rotation}deg)`;
@@ -649,117 +699,210 @@ function spin() {
 
         let roll = Math.random();
 
-        let playerName =
-            currentPlayer === "you"
-            ? "YOU"
-            : "BOT";
 
+        /*
+        BOOM
+        */
 
         if (roll < 0.18) {
 
-            if (currentPlayer === "you") {
-
-                youLives--;
-                youStreak = 0;
-
-            } else {
+            if (selectedPlayer === "bot") {
 
                 botLives--;
                 botStreak = 0;
 
+                youScore++;
+                youStreak++;
+
+                statusText.className =
+                    "status bonus";
+
+                statusText.textContent =
+                    "💥 BOT BOOMED! YOU GET +1 POINT!";
+
+
+                if (botLives <= 0) {
+
+                    setTimeout(gameOver, 1000);
+
+                    return;
+                }
+
+
+                /*
+                BOT BOOMED:
+                PLAYER GETS TO CHOOSE AGAIN
+                */
+
+                setTimeout(function() {
+
+                    selectedPlayer = null;
+
+                    turnText.textContent =
+                        "YOUR CHOICE";
+
+                    chooseText.textContent =
+                        "Choose BOT SPIN or YOU SPIN.";
+
+                    spinButton.disabled = true;
+
+                    document.getElementById("botChoice").disabled = false;
+                    document.getElementById("youChoice").disabled = false;
+
+                    updateActivePlayer();
+
+                    spinning = false;
+
+                }, 700);
+
+
+                updateStats();
+
+                return;
+
             }
+
+
+            /*
+            YOU BOOMED
+            */
+
+            youLives--;
+            youStreak = 0;
+
+            botScore++;
+            botStreak++;
+
 
             statusText.className =
                 "status danger";
 
             statusText.textContent =
-                "💥 " +
-                playerName +
-                " GOT BOOMED! -1 LIFE";
-
-        }
+                "💥 YOU BOOMED! BOT GETS +1 POINT!";
 
 
-        else if (roll < 0.35) {
+            updateStats();
 
-            if (currentPlayer === "you") {
 
-                youScore += 50;
-                youStreak++;
+            if (youLives <= 0) {
 
-            } else {
+                setTimeout(gameOver, 1000);
 
-                botScore += 50;
-                botStreak++;
+                return;
 
             }
 
-            statusText.className =
-                "status bonus";
 
-            statusText.textContent =
-                "⭐ " +
-                playerName +
-                " GOT A BONUS! +50";
+            /*
+            AFTER YOU BOOM:
+            BOT GETS THE TURN
+            */
 
-        }
+            setTimeout(function() {
 
+                selectedPlayer = null;
 
-        else {
+                turnText.textContent =
+                    "BOT'S TURN";
 
-            if (currentPlayer === "you") {
+                chooseText.textContent =
+                    "Choose BOT SPIN or YOU SPIN.";
 
-                youScore +=
-                    10 +
-                    youStreak * 2;
+                spinButton.disabled = true;
 
-                youStreak++;
+                document.getElementById("botChoice").disabled = false;
+                document.getElementById("youChoice").disabled = false;
 
-            } else {
+                updateActivePlayer();
 
-                botScore +=
-                    10 +
-                    botStreak * 2;
+                spinning = false;
 
-                botStreak++;
+            }, 700);
 
-            }
-
-            statusText.className =
-                "status safe";
-
-            statusText.textContent =
-                "✓ " +
-                playerName +
-                " IS SAFE!";
-
-        }
-
-
-        updateStats();
-
-
-        if (youLives <= 0 ||
-            botLives <= 0) {
-
-            setTimeout(gameOver, 900);
 
             return;
 
         }
 
 
-        currentPlayer =
-            currentPlayer === "you"
-            ? "bot"
-            : "you";
+        /*
+        SAFE
+        */
+
+        if (selectedPlayer === "bot") {
+
+            botScore += 5 + botStreak;
+            botStreak++;
+
+            statusText.className =
+                "status safe";
+
+            statusText.textContent =
+                "✓ BOT IS SAFE! NOW IT'S YOUR TURN.";
 
 
-        updateTurn();
+            updateStats();
 
-        spinning = false;
 
-        spinButton.disabled = false;
+            setTimeout(function() {
+
+                selectedPlayer = null;
+
+                turnText.textContent =
+                    "YOUR TURN";
+
+                chooseText.textContent =
+                    "Choose BOT SPIN or YOU SPIN.";
+
+                spinButton.disabled = true;
+
+                document.getElementById("botChoice").disabled = false;
+                document.getElementById("youChoice").disabled = false;
+
+                updateActivePlayer();
+
+                spinning = false;
+
+            }, 700);
+
+
+        } else {
+
+            youScore += 5 + youStreak;
+            youStreak++;
+
+            statusText.className =
+                "status safe";
+
+            statusText.textContent =
+                "✓ YOU ARE SAFE!";
+
+
+            updateStats();
+
+
+            setTimeout(function() {
+
+                selectedPlayer = null;
+
+                turnText.textContent =
+                    "YOUR CHOICE";
+
+                chooseText.textContent =
+                    "Choose BOT SPIN or YOU SPIN.";
+
+                spinButton.disabled = true;
+
+                document.getElementById("botChoice").disabled = false;
+                document.getElementById("youChoice").disabled = false;
+
+                updateActivePlayer();
+
+                spinning = false;
+
+            }, 700);
+
+        }
 
 
     }, 1300);
@@ -829,6 +972,7 @@ function gameOver() {
 
     let winner;
 
+
     if (youLives <= 0 &&
         botLives <= 0) {
 
@@ -844,6 +988,7 @@ function gameOver() {
 
     }
 
+
     document.getElementById("winner")
         .textContent = winner;
 
@@ -852,15 +997,17 @@ function gameOver() {
 
 function restart() {
 
-    currentPlayer = "you";
+    selectedPlayer = null;
 
     spinning = false;
 
     rotation = 0;
 
+
     youScore = 0;
     youStreak = 0;
     youLives = 3;
+
 
     botScore = 0;
     botStreak = 0;
@@ -882,14 +1029,26 @@ function restart() {
         "status normal";
 
     statusText.textContent =
-        "Choose who takes the next spin.";
+        "Choose who takes the spin.";
 
 
-    spinButton.disabled = false;
+    turnText.textContent =
+        "YOUR TURN";
+
+
+    chooseText.textContent =
+        "Choose BOT SPIN or YOU SPIN.";
+
+
+    spinButton.disabled = true;
+
+    document.getElementById("botChoice").disabled = false;
+    document.getElementById("youChoice").disabled = false;
+
 
     updateStats();
 
-    updateTurn();
+    updateActivePlayer();
 
 }
 
@@ -899,15 +1058,18 @@ function restart() {
 let rCount = 0;
 let rTimer = null;
 
+
 document.addEventListener("keydown", function(e) {
 
     if (e.key.toLowerCase() !== "r") {
         return;
     }
 
+
     rCount++;
 
     clearTimeout(rTimer);
+
 
     rTimer = setTimeout(function() {
 
@@ -929,7 +1091,6 @@ document.addEventListener("keydown", function(e) {
 
 
 updateStats();
-updateTurn();
 
 </script>
 
