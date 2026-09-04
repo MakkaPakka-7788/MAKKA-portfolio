@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 
 <html lang="en">
@@ -14,6 +15,7 @@ if (!window.location.search.includes("games=true")) {
 </script>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -150,6 +152,7 @@ header {
     color: #555;
     font-size: 11px;
 }
+
 </style>
 
 </head>
@@ -165,19 +168,23 @@ FLASHCARD<span>.COM</span>
 <button
 class="flashcardsButton"
 onclick="openFlashcards()"
-
 >
-
-FLASHCARDS </button>
+FLASHCARDS
+</button>
 
 </header>
+
 
 <div class="container">
 
 <div class="title">
+
 <h1>HOME</h1>
+
 <p>Choose a game.</p>
+
 </div>
+
 
 <div class="section">
 
@@ -185,80 +192,150 @@ FLASHCARDS </button>
 GAMES
 </div>
 
+
 <div class="games">
 
+
 <a class="game" href="snake.html">
+
     <div class="icon">🐍</div>
+
     <div>
+
         <div class="name">SNAKE</div>
+
         <div class="description">
             Eat food, use portals and avoid obstacles.
         </div>
+
     </div>
+
 </a>
 
+
 <a class="game" href="tetris.html">
+
     <div class="icon">▦</div>
+
     <div>
+
         <div class="name">TETRIS</div>
+
         <div class="description">
             Classic falling blocks.
         </div>
+
     </div>
+
 </a>
 
+
 <a class="game" href="pong.html">
+
     <div class="icon">🏓</div>
+
     <div>
+
         <div class="name">PONG</div>
+
         <div class="description">
             Battle the computer.
         </div>
+
     </div>
+
 </a>
 
+
 <a class="game" href="flappybird.html">
+
     <div class="icon">🐦</div>
+
     <div>
+
         <div class="name">FLAPPY BIRD</div>
+
         <div class="description">
             Fly through the pipes.
         </div>
+
     </div>
+
 </a>
 
+
 <a class="game" href="towerdefense.html">
+
     <div class="icon">🏰</div>
+
     <div>
+
         <div class="name">TOWER DEFENCE</div>
+
         <div class="description">
             Defend castles and conquer kingdoms.
         </div>
+
     </div>
+
 </a>
 
+
 <a class="game" href="dino.html">
+
     <div class="icon">🦖</div>
+
     <div>
+
         <div class="name">DINO</div>
+
         <div class="description">
             Jump over obstacles and survive.
         </div>
+
     </div>
+
 </a>
 
+
 <a class="game" href="pacman.html">
+
     <div class="icon">🟡</div>
+
     <div>
+
         <div class="name">PAC-MAN</div>
+
         <div class="description">
             Eat pellets and escape the ghosts.
         </div>
+
     </div>
+
 </a>
 
+
+<a class="game" href="danger-spinner.html">
+
+    <div class="icon">🎰</div>
+
+    <div>
+
+        <div class="name">DANGER SPINNER</div>
+
+        <div class="description">
+            Spin the wheel, test your luck and build a streak.
+        </div>
+
+    </div>
+
+</a>
+
+
 </div>
+
 </div>
+
 
 <div class="flashcardBox">
 
@@ -274,20 +351,27 @@ OPEN FLASHCARDS
 
 </div>
 
+
 <div class="bottomText">
 RRR = SWITCH BETWEEN HOME AND FLASHCARDS
 </div>
 
+
 </div>
+
 
 <script>
 
 function openFlashcards() {
+
     window.location.href = "flashcards.html";
+
 }
+
 
 let rCount = 0;
 let rTimer = null;
+
 
 document.addEventListener("keydown", function(e) {
 
@@ -300,18 +384,24 @@ document.addEventListener("keydown", function(e) {
     clearTimeout(rTimer);
 
     rTimer = setTimeout(function() {
+
         rCount = 0;
+
     }, 700);
+
 
     if (rCount === 3) {
 
         rCount = 0;
 
         openFlashcards();
+
     }
+
 });
 
 </script>
 
 </body>
 </html>
+```
