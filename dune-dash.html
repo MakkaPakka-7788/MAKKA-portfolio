@@ -3,182 +3,151 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Dune Dash</title>
+<title>flashcards.com</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
 
-html,
 body {
     margin: 0;
-    width: 100%;
-    height: 100%;
     overflow: hidden;
-    background: #e5bd70;
-    font-family: "Courier New", monospace;
+    background: #e8c889;
+    font-family: Arial, sans-serif;
+    user-select: none;
 }
 
 canvas {
     display: block;
-    width: 100%;
-    height: 100%;
-}
-
-#menu {
-    position: fixed;
-    inset: 0;
-    background: rgba(45, 28, 10, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-}
-
-.menuBox {
-    width: min(440px, 90%);
-    background: #f4d89a;
-    border: 4px solid #5b3b1d;
-    box-shadow: 8px 8px 0 rgba(60, 35, 10, 0.35);
-    padding: 28px;
-    text-align: center;
-}
-
-.menuBox h1 {
-    margin: 0;
-    font-size: 42px;
-    color: #4d3218;
-}
-
-.menuBox p {
-    color: #76532c;
-}
-
-button {
-    font-family: inherit;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.mainButton {
-    width: 100%;
-    border: 3px solid #4f3319;
-    background: #fff3cf;
-    color: #4f3319;
-    padding: 15px;
-    margin-top: 12px;
-    font-size: 20px;
-}
-
-.mainButton:hover {
-    background: #ffffff;
-}
-
-#customizeButton {
-    margin-top: 10px;
-}
-
-#customize {
-    display: none;
-    text-align: left;
-    margin-top: 20px;
-    border-top: 2px solid #9c7845;
-    padding-top: 18px;
-}
-
-.setting {
-    margin-bottom: 15px;
-}
-
-.setting label {
-    display: block;
-    font-weight: bold;
-    color: #57391b;
-    margin-bottom: 5px;
-}
-
-input[type="range"] {
-    width: 100%;
-}
-
-input[type="color"] {
-    width: 60px;
-    height: 35px;
-    border: 2px solid #5b3b1d;
-    background: none;
 }
 
 #ui {
     position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 5;
-    color: white;
-    text-shadow: 2px 2px 3px #513517;
-    font-weight: bold;
+    top: 18px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     pointer-events: none;
-}
-
-#level {
-    font-size: 25px;
-}
-
-#pauseButton {
-    position: fixed;
-    right: 15px;
-    top: 15px;
-    z-index: 6;
-    display: none;
-    border: 2px solid #513517;
-    background: rgba(255,255,255,.8);
-    color: #513517;
-    padding: 8px 12px;
-}
-
-#controls {
-    position: fixed;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    text-shadow: 2px 2px 3px #513517;
     z-index: 5;
-    text-align: center;
-    pointer-events: none;
 }
 
-#gameOver {
-    position: fixed;
-    inset: 0;
-    background: rgba(45,28,10,.4);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 15;
+.panel {
+    background: rgba(255,255,255,0.85);
+    border: 2px solid rgba(0,0,0,0.25);
+    border-radius: 14px;
+    padding: 12px 16px;
+    color: #222;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
 }
 
-.gameOverBox {
-    background: #f4d89a;
-    border: 4px solid #5b3b1d;
-    padding: 30px;
-    width: min(400px,90%);
-    text-align: center;
-}
-
-.gameOverBox h1 {
-    margin: 0 0 10px;
-    color: #513517;
-    font-size: 42px;
+#stats {
+    min-width: 170px;
 }
 
 .stat {
-    margin: 7px;
-    color: #76532c;
+    font-size: 14px;
+    margin: 4px 0;
 }
 
+.stat strong {
+    font-size: 20px;
+}
+
+#controls {
+    text-align: center;
+    font-size: 13px;
+}
+
+#startScreen,
+#customScreen,
+#gameOver {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    background: rgba(232,200,137,0.94);
+}
+
+.menu {
+    width: min(460px, 90%);
+    background: white;
+    border-radius: 22px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+
+h1 {
+    margin: 0 0 8px;
+    font-size: 48px;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+button {
+    border: 0;
+    border-radius: 12px;
+    padding: 13px 22px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #222;
+    color: white;
+    margin: 6px;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+.secondary {
+    background: #ddd;
+    color: #222;
+}
+
+.customRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.customRow input[type="color"] {
+    width: 60px;
+    height: 38px;
+    border: 0;
+    background: none;
+}
+
+.customRow input[type="range"] {
+    width: 180px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#launchHint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.9);
+    border-radius: 30px;
+    padding: 12px 22px;
+    font-weight: bold;
+    color: #222;
+    z-index: 4;
+}
 </style>
 </head>
 
@@ -186,1542 +155,704 @@ input[type="color"] {
 
 <canvas id="canvas"></canvas>
 
-
 <div id="ui">
-
-    <div id="level">
-        LEVEL 1
+    <div id="stats" class="panel">
+        <div class="stat">LEVEL <strong id="level">1</strong></div>
+        <div class="stat">HEIGHT <strong id="height">0</strong>m</div>
+        <div class="stat">DISTANCE <strong id="distance">0</strong>m</div>
     </div>
 
-    <div>
-        DISTANCE:
-        <span id="distance">0</span>m
+    <div id="controls" class="panel">
+        <b>HOLD SPACE / MOUSE</b><br>
+        Release to launch
     </div>
-
-    <div>
-        COINS:
-        <span id="coins">0</span>
-    </div>
-
 </div>
 
-
-<button id="pauseButton">
-    PAUSE
-</button>
-
-
-<div id="controls">
-    ← → / A D &nbsp; • &nbsp; SPACE = JUMP &nbsp; • &nbsp; RRR = FLASHCARDS
+<div id="launchHint">
+    Hold SPACE to charge your launch
 </div>
 
-
-<div id="menu">
-
-    <div class="menuBox">
-
+<div id="startScreen">
+    <div class="menu">
         <h1>DUNE DASH</h1>
-
-        <p>
-            Ride the endless dunes with your music disc.
-        </p>
-
-        <button
-            class="mainButton"
-            id="startButton"
-        >
-            ▶ START
-        </button>
-
-        <button
-            class="mainButton"
-            id="customizeButton"
-        >
-            ⚙ CUSTOMIZE
-        </button>
-
-
-        <div id="customize">
-
-            <div class="setting">
-
-                <label>
-                    MUSIC DISC COLOR
-                </label>
-
-                <input
-                    type="color"
-                    id="discColor"
-                    value="#315b38"
-                >
-
-            </div>
-
-
-            <div class="setting">
-
-                <label>
-                    MUSIC AURA COLOR
-                </label>
-
-                <input
-                    type="color"
-                    id="auraColor"
-                    value="#ffd84d"
-                >
-
-            </div>
-
-
-            <div class="setting">
-
-                <label>
-                    AURA SIZE
-                    <span id="auraValue">35</span>
-                </label>
-
-                <input
-                    type="range"
-                    id="auraSize"
-                    min="10"
-                    max="80"
-                    value="35"
-                >
-
-            </div>
-
-
-            <div class="setting">
-
-                <label>
-                    RUN SPEED
-                    <span id="speedValue">5</span>
-                </label>
-
-                <input
-                    type="range"
-                    id="speedSetting"
-                    min="3"
-                    max="9"
-                    step="0.5"
-                    value="5"
-                >
-
-            </div>
-
-
-            <div class="setting">
-
-                <label>
-                    JUMP POWER
-                    <span id="jumpValue">12</span>
-                </label>
-
-                <input
-                    type="range"
-                    id="jumpSetting"
-                    min="9"
-                    max="16"
-                    value="12"
-                >
-
-            </div>
-
+        <div class="subtitle">
+            Roll down the dune. Launch into the sky. Go higher.
         </div>
 
+        <button onclick="startGame()">START</button>
+        <button class="secondary" onclick="openCustom()">CUSTOMIZE</button>
     </div>
-
 </div>
 
+<div id="customScreen" class="hidden">
+    <div class="menu">
+        <h2>CUSTOMIZE</h2>
 
-<div id="gameOver">
-
-    <div class="gameOverBox">
-
-        <h1>RETRY</h1>
-
-        <div class="stat">
-            DISTANCE:
-            <span id="finalDistance">0</span>m
+        <div class="customRow">
+            <span>Disc</span>
+            <input id="discColor" type="color" value="#202020">
         </div>
 
-        <div class="stat">
-            LEVEL:
-            <span id="finalLevel">1</span>
+        <div class="customRow">
+            <span>Music Aura</span>
+            <input id="auraColor" type="color" value="#ffffff">
         </div>
 
-        <div class="stat">
-            COINS:
-            <span id="finalCoins">0</span>
+        <div class="customRow">
+            <span>Launch Power</span>
+            <input id="powerRange" type="range" min="70" max="150" value="100">
         </div>
 
-        <button
-            class="mainButton"
-            id="retryButton"
-        >
-            RETRY
-        </button>
+        <div class="customRow">
+            <span>Gravity</span>
+            <input id="gravityRange" type="range" min="60" max="130" value="100">
+        </div>
 
+        <button onclick="saveCustom()">SAVE</button>
+        <button class="secondary" onclick="closeCustom()">BACK</button>
     </div>
-
 </div>
 
+<div id="gameOver" class="hidden">
+    <div class="menu">
+        <h1>TRY AGAIN</h1>
+        <div class="subtitle" id="finalStats"></div>
+        <button onclick="restartGame()">RETRY</button>
+        <button class="secondary" onclick="goHome()">HOME</button>
+    </div>
+</div>
 
 <script>
-
-/* =========================
-   CANVAS
-========================= */
-
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let W = window.innerWidth;
-let H = window.innerHeight;
+let W = innerWidth;
+let H = innerHeight;
 
 canvas.width = W;
 canvas.height = H;
 
 window.addEventListener("resize", () => {
-
-    W = window.innerWidth;
-    H = window.innerHeight;
-
+    W = innerWidth;
+    H = innerHeight;
+    canvas.width = W;
+    canvas.height = H;
 });
-
-
-/* =========================
-   SETTINGS
-========================= */
-
-let settings = {
-
-    discColor: "#315b38",
-    auraColor: "#ffd84d",
-    auraSize: 35,
-    speed: 5,
-    jump: 12
-
-};
-
-
-/* =========================
-   INPUT
-========================= */
-
-const keys = {};
-
-document.addEventListener("keydown", e => {
-
-    keys[e.key.toLowerCase()] = true;
-
-    if (e.code === "Space") {
-
-        e.preventDefault();
-
-        jump();
-
-    }
-
-});
-
-document.addEventListener("keyup", e => {
-
-    keys[e.key.toLowerCase()] = false;
-
-});
-
-
-/* =========================
-   RRR
-========================= */
-
-let rCount = 0;
-let rTimer = null;
-
-document.addEventListener("keydown", e => {
-
-    if (e.key.toLowerCase() !== "r") {
-        return;
-    }
-
-    rCount++;
-
-    clearTimeout(rTimer);
-
-    rTimer = setTimeout(() => {
-
-        rCount = 0;
-
-    }, 700);
-
-    if (rCount >= 3) {
-
-        rCount = 0;
-
-        window.location.href = "flashcards.html";
-
-    }
-
-});
-
-
-/* =========================
-   GAME VARIABLES
-========================= */
 
 let running = false;
-let paused = false;
+let airborne = false;
+let charging = false;
+let gameStarted = false;
 
+let worldX = 0;
 let cameraX = 0;
+let cameraY = 0;
 
+let highestY = 0;
 let distance = 0;
-let coins = 0;
 let level = 1;
 
-let platforms = [];
-let coinList = [];
-let obstacles = [];
+let launchPower = 1;
+let gravityMultiplier = 1;
 
-let worldEnd = 0;
+let discColor = "#202020";
+let auraColor = "#ffffff";
 
-
-/* =========================
-   PLAYER
-========================= */
+let musicStarted = false;
+let audioCtx;
+let oscillator;
+let gainNode;
 
 const player = {
-
     x: 180,
     y: 0,
-
-    radius: 22,
-
     vx: 0,
     vy: 0,
-
-    grounded: false
-
+    radius: 24,
+    rotation: 0,
+    spin: 0
 };
 
+let charge = 0;
+let chargeDirection = 1;
 
-/* =========================
-   MUSIC
-========================= */
+let dunes = [];
 
-let audioContext = null;
-let musicTimer = null;
-let musicStep = 0;
+function duneHeight(x) {
+    const a = Math.sin(x * 0.0022) * 130;
+    const b = Math.sin(x * 0.0008 + 1.5) * 220;
+    const c = Math.sin(x * 0.0047) * 35;
 
-function startMusic() {
-
-    if (!audioContext) {
-
-        audioContext =
-            new (window.AudioContext ||
-            window.webkitAudioContext)();
-
-    }
-
-    if (audioContext.state === "suspended") {
-
-        audioContext.resume();
-
-    }
-
-    clearInterval(musicTimer);
-
-    musicStep = 0;
-
-    musicTimer = setInterval(() => {
-
-        if (!running || paused) return;
-
-        playNote();
-
-    }, 330);
-
+    return H * 0.72 + a + b + c;
 }
 
+function generateDunes() {
+    dunes = [];
 
-function playNote() {
-
-    if (!audioContext) return;
-
-    const notes = [
-        261.63,
-        329.63,
-        392.00,
-        523.25,
-        392.00,
-        329.63
-    ];
-
-    const frequency =
-        notes[musicStep % notes.length];
-
-    musicStep++;
-
-    const oscillator =
-        audioContext.createOscillator();
-
-    const gain =
-        audioContext.createGain();
-
-    oscillator.type = "triangle";
-
-    oscillator.frequency.value = frequency;
-
-    gain.gain.setValueAtTime(
-        0.0001,
-        audioContext.currentTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.035,
-        audioContext.currentTime + 0.02
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        audioContext.currentTime + 0.25
-    );
-
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-
-    oscillator.start();
-
-    oscillator.stop(
-        audioContext.currentTime + 0.26
-    );
-
+    for (let x = -1000; x < 20000; x += 20) {
+        dunes.push({
+            x,
+            y: duneHeight(x)
+        });
+    }
 }
 
+generateDunes();
 
-/* =========================
-   START
-========================= */
+function getGroundY(x) {
+    return duneHeight(x);
+}
 
 function startGame() {
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("gameOver").classList.add("hidden");
+
+    resetGame();
 
     running = true;
-    paused = false;
-
-    distance = 0;
-    coins = 0;
-    level = 1;
-
-    cameraX = 0;
-
-    platforms = [];
-    coinList = [];
-    obstacles = [];
-
-    player.x = 180;
-    player.y = H - 160;
-
-    player.vx = 0;
-    player.vy = 0;
-
-    createStartingWorld();
-
-    document.getElementById("menu").style.display = "none";
-
-    document.getElementById("gameOver").style.display = "none";
-
-    document.getElementById("pauseButton").style.display = "block";
+    gameStarted = true;
 
     startMusic();
-
-    updateUI();
-
 }
 
+function resetGame() {
+    worldX = 120;
+    cameraX = 0;
+    cameraY = 0;
 
-/* =========================
-   WORLD GENERATION
-========================= */
+    highestY = 0;
+    distance = 0;
+    level = 1;
 
-function createStartingWorld() {
+    airborne = false;
+    charging = false;
 
-    platforms.push({
+    charge = 0;
 
-        x: -500,
-        y: H - 90,
-        w: 1000,
-        h: 200
-
-    });
-
-    worldEnd = 500;
-
-    generateWorld();
-
+    player.x = worldX;
+    player.y = getGroundY(player.x) - player.radius;
+    player.vx = 3;
+    player.vy = 0;
+    player.rotation = 0;
+    player.spin = 0;
 }
 
+function restartGame() {
+    document.getElementById("gameOver").classList.add("hidden");
+    resetGame();
+    running = true;
+    startMusic();
+}
 
-function generateWorld() {
+function openCustom() {
+    document.getElementById("startScreen").classList.add("hidden");
+    document.getElementById("customScreen").classList.remove("hidden");
+}
 
-    while (worldEnd < player.x + 3000) {
+function closeCustom() {
+    document.getElementById("customScreen").classList.add("hidden");
+    document.getElementById("startScreen").classList.remove("hidden");
+}
 
-        let gap =
-            80 + Math.random() * 100;
+function saveCustom() {
+    discColor = document.getElementById("discColor").value;
+    auraColor = document.getElementById("auraColor").value;
 
-        let width =
-            180 + Math.random() * 230;
+    launchPower =
+        Number(document.getElementById("powerRange").value) / 100;
 
-        let y =
-            H - 120 -
-            Math.random() * 170;
+    gravityMultiplier =
+        Number(document.getElementById("gravityRange").value) / 100;
 
-        let platform = {
+    closeCustom();
+}
 
-            x: worldEnd + gap,
+function launch() {
+    if (!running || airborne) return;
 
-            y: y,
+    airborne = true;
 
-            w: width,
+    const power = 7 + charge * 9;
 
-            h: 100
+    player.vx += power * launchPower;
+    player.vy = -power * 1.25 * launchPower;
 
-        };
+    player.spin = player.vx * 0.045;
 
-        platforms.push(platform);
+    charge = 0;
+}
 
-        worldEnd =
-            platform.x + platform.w;
+function updateCharge() {
+    if (!charging || airborne) return;
 
+    charge += 0.018 * chargeDirection;
 
-        /* coins */
-
-        if (Math.random() < 0.8) {
-
-            coinList.push({
-
-                x:
-                    platform.x +
-                    50 +
-                    Math.random() *
-                    Math.max(40, platform.w - 80),
-
-                y:
-                    platform.y - 42,
-
-                taken: false
-
-            });
-
-        }
-
-
-        /* occasional obstacle */
-
-        if (
-            Math.random() < 0.25 &&
-            distance > 150
-        ) {
-
-            obstacles.push({
-
-                x:
-                    platform.x +
-                    platform.w / 2,
-
-                y:
-                    platform.y - 32,
-
-                w: 28,
-
-                h: 32
-
-            });
-
-        }
-
+    if (charge >= 1) {
+        charge = 1;
+        chargeDirection = -1;
     }
 
-}
-
-
-/* =========================
-   JUMP
-========================= */
-
-function jump() {
-
-    if (
-        running &&
-        !paused &&
-        player.grounded
-    ) {
-
-        player.vy =
-            -settings.jump;
-
-        player.grounded = false;
-
+    if (charge <= 0) {
+        charge = 0;
+        chargeDirection = 1;
     }
-
 }
-
-
-/* =========================
-   UPDATE
-========================= */
 
 function update() {
+    if (!running) return;
 
-    if (!running || paused) {
-        return;
-    }
+    updateCharge();
 
+    if (!airborne) {
+        player.x += player.vx;
 
-    /* movement */
+        const ground = getGroundY(player.x);
 
-    if (
-        keys["arrowleft"] ||
-        keys["a"]
-    ) {
+        player.y = ground - player.radius;
 
-        player.vx -= 0.5;
+        const slopeAhead =
+            getGroundY(player.x + 30) -
+            getGroundY(player.x - 30);
 
-    }
+        player.vx += -slopeAhead * 0.00035;
 
-    if (
-        keys["arrowright"] ||
-        keys["d"]
-    ) {
+        player.vx *= 0.997;
 
-        player.vx += 0.5;
+        if (player.vx < 2.2) player.vx = 2.2;
 
-    }
+        player.rotation += player.vx * 0.035;
 
-    player.vx *= 0.88;
+        if (charging) {
+            player.vx *= 0.996;
+        }
+    } else {
+        player.x += player.vx;
 
-    player.x += settings.speed;
+        player.vy += 0.28 * gravityMultiplier;
 
-    player.x += player.vx;
+        player.y += player.vy;
 
+        player.vx *= 0.998;
 
-    /* gravity */
+        player.rotation += player.spin;
 
-    player.vy += 0.55;
-
-    player.y += player.vy;
-
-    player.grounded = false;
-
-
-    /* platforms */
-
-    for (const p of platforms) {
-
-        const left =
-            player.x - player.radius;
-
-        const right =
-            player.x + player.radius;
-
-        const bottom =
-            player.y + player.radius;
+        const ground = getGroundY(player.x);
 
         if (
-
-            right > p.x &&
-
-            left < p.x + p.w &&
-
-            bottom >= p.y &&
-
-            bottom <= p.y + 25 &&
-
-            player.vy >= 0
-
+            player.y + player.radius >= ground &&
+            player.vy > 0
         ) {
+            player.y = ground - player.radius;
 
-            player.y =
-                p.y - player.radius;
+            airborne = false;
 
             player.vy = 0;
 
-            player.grounded = true;
+            player.vx *= 0.86;
 
+            if (player.vx < 2.5) {
+                player.vx = 2.5;
+            }
         }
-
     }
 
-
-    /* coins */
-
-    for (const c of coinList) {
-
-        if (c.taken) continue;
-
-        const dx =
-            player.x - c.x;
-
-        const dy =
-            player.y - c.y;
-
-        const d =
-            Math.sqrt(dx * dx + dy * dy);
-
-        if (d < 35) {
-
-            c.taken = true;
-
-            coins++;
-
-        }
-
-    }
-
-
-    /* obstacles */
-
-    for (const o of obstacles) {
-
-        if (
-
-            player.x + player.radius > o.x &&
-
-            player.x - player.radius < o.x + o.w &&
-
-            player.y + player.radius > o.y &&
-
-            player.y - player.radius < o.y + o.h
-
-        ) {
-
-            endGame();
-
-        }
-
-    }
-
-
-    /* camera */
-
-    cameraX =
-        player.x - W * 0.28;
-
-
-    /* distance */
-
-    distance =
-        Math.max(
-            distance,
-            Math.floor(player.x / 10)
-        );
-
-
-    /* levels */
-
-    level =
-        Math.floor(distance / 500) + 1;
-
-
-    /* more world */
-
-    if (
-        player.x >
-        worldEnd - 1800
-    ) {
-
-        generateWorld();
-
-    }
-
-
-    /* remove old objects */
-
-    platforms =
-        platforms.filter(
-            p => p.x + p.w > cameraX - 1000
-        );
-
-    coinList =
-        coinList.filter(
-            c => c.x > cameraX - 1000
-        );
-
-    obstacles =
-        obstacles.filter(
-            o => o.x + o.w > cameraX - 1000
-        );
-
-
-    /* fell */
-
-    if (player.y > H + 200) {
-
-        endGame();
-
-    }
-
-    updateUI();
-
-}
-
-
-/* =========================
-   UI
-========================= */
-
-function updateUI() {
-
-    document.getElementById(
-        "distance"
-    ).textContent = distance;
-
-    document.getElementById(
-        "coins"
-    ).textContent = coins;
-
-    document.getElementById(
-        "level"
-    ).textContent =
-        "LEVEL " + level;
-
-}
-
-
-/* =========================
-   BACKGROUND
-========================= */
-
-function drawBackground() {
-
-    /* sky */
-
-    ctx.fillStyle = "#e8c984";
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
+    distance = Math.max(
+        distance,
+        Math.floor((player.x - 120) / 10)
     );
 
+    const currentHeight =
+        Math.max(
+            0,
+            Math.floor(
+                (getGroundY(player.x) - player.y) / 5
+            )
+        );
 
-    /* sun */
+    highestY = Math.max(highestY, currentHeight);
 
-    ctx.fillStyle = "#fff0ad";
+    level = Math.max(
+        1,
+        Math.floor(
+            Math.max(distance, highestY) / 250
+        ) + 1
+    );
+
+    cameraX +=
+        (player.x - W * 0.32 - cameraX) * 0.08;
+
+    const targetCameraY =
+        player.y - H * 0.45;
+
+    cameraY +=
+        (targetCameraY - cameraY) * 0.08;
+
+    document.getElementById("level").textContent = level;
+    document.getElementById("height").textContent = highestY;
+    document.getElementById("distance").textContent = distance;
+}
+
+function drawSky() {
+    ctx.fillStyle = "#e8c889";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
 
     ctx.beginPath();
-
     ctx.arc(
-        W - 120,
-        100,
+        W * 0.78,
+        H * 0.18 - cameraY * 0.05,
         55,
         0,
         Math.PI * 2
     );
-
     ctx.fill();
 
+    for (let i = 0; i < 7; i++) {
+        const x =
+            ((i * 330 - cameraX * 0.12) % (W + 400)) - 200;
 
-    /* distant dunes */
+        const y =
+            100 + i * 45 - cameraY * 0.08;
 
-    ctx.fillStyle = "#d5aa5f";
+        ctx.fillStyle = "rgba(255,255,255,0.2)";
 
+        ctx.beginPath();
+        ctx.ellipse(x, y, 70, 18, 0, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawDune() {
     ctx.beginPath();
 
     ctx.moveTo(0, H);
 
-    for (
-        let x = 0;
-        x <= W;
-        x += 60
-    ) {
+    for (let sx = 0; sx <= W + 30; sx += 10) {
+        const wx = cameraX + sx;
+        const y = getGroundY(wx) - cameraY;
 
-        const y =
-            H - 170 -
-            Math.sin(
-                (x + cameraX * 0.12) / 180
-            ) * 40;
-
-        ctx.lineTo(x, y);
-
+        ctx.lineTo(sx, y);
     }
 
     ctx.lineTo(W, H);
     ctx.closePath();
 
+    ctx.fillStyle = "#d7a85d";
     ctx.fill();
 
+    ctx.beginPath();
 
-    /* clouds */
+    for (let sx = 0; sx <= W + 30; sx += 10) {
+        const wx = cameraX + sx;
+        const y = getGroundY(wx) - cameraY;
 
-    ctx.fillStyle =
-        "rgba(255,245,210,.5)";
+        if (sx === 0) {
+            ctx.moveTo(sx, y);
+        } else {
+            ctx.lineTo(sx, y);
+        }
+    }
 
-    for (let i = 0; i < 4; i++) {
+    ctx.strokeStyle = "#f0ce8b";
+    ctx.lineWidth = 7;
+    ctx.stroke();
 
-        let x =
-            ((i * 350 -
-            cameraX * 0.06) %
-            (W + 500)) - 200;
+    for (let i = 0; i < 18; i++) {
+        const x =
+            ((i * 180 - cameraX * 0.4) %
+                (W + 300)) - 150;
 
-        let y =
-            80 + i * 50;
+        const y =
+            getGroundY(cameraX + x) -
+            cameraY +
+            35;
 
+        ctx.strokeStyle = "rgba(150,100,45,0.18)";
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 80, y + 18);
+        ctx.stroke();
+    }
+}
+
+function drawAura() {
+    const screenX = player.x - cameraX;
+    const screenY = player.y - cameraY;
+
+    const pulse =
+        1 +
+        Math.sin(performance.now() * 0.008) * 0.08;
+
+    for (let i = 3; i >= 1; i--) {
         ctx.beginPath();
 
         ctx.arc(
-            x,
-            y,
-            25,
+            screenX,
+            screenY,
+            (player.radius + i * 12) * pulse,
             0,
             Math.PI * 2
         );
 
-        ctx.arc(
-            x + 30,
-            y - 8,
-            32,
-            0,
-            Math.PI * 2
-        );
+        ctx.strokeStyle =
+            hexToRgba(auraColor, 0.14 / i);
 
-        ctx.arc(
-            x + 65,
-            y,
-            23,
-            0,
-            Math.PI * 2
-        );
+        ctx.lineWidth = 4;
 
-        ctx.fill();
-
+        ctx.stroke();
     }
 
+    const bars = 8;
+
+    for (let i = 0; i < bars; i++) {
+        const angle =
+            (Math.PI * 2 / bars) * i +
+            performance.now() * 0.0005;
+
+        const wave =
+            Math.sin(
+                performance.now() * 0.006 +
+                i
+            ) * 5;
+
+        const r1 = 34 + wave;
+        const r2 = 48 + wave;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            screenX + Math.cos(angle) * r1,
+            screenY + Math.sin(angle) * r1
+        );
+
+        ctx.lineTo(
+            screenX + Math.cos(angle) * r2,
+            screenY + Math.sin(angle) * r2
+        );
+
+        ctx.strokeStyle = auraColor;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
 }
 
+function drawDisc() {
+    const screenX = player.x - cameraX;
+    const screenY = player.y - cameraY;
 
-/* =========================
-   DUNES
-========================= */
+    ctx.save();
 
-function drawPlatform(p) {
+    ctx.translate(screenX, screenY);
+    ctx.rotate(player.rotation);
 
-    const x =
-        p.x - cameraX;
-
-    ctx.fillStyle = "#c88f40";
+    drawAura();
 
     ctx.beginPath();
+    ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
 
-    ctx.moveTo(
-        x,
-        p.y
-    );
-
-    ctx.quadraticCurveTo(
-
-        x + p.w * 0.25,
-        p.y - 30,
-
-        x + p.w * 0.5,
-        p.y
-
-    );
-
-    ctx.quadraticCurveTo(
-
-        x + p.w * 0.75,
-        p.y + 25,
-
-        x + p.w,
-        p.y
-
-    );
-
-    ctx.lineTo(
-        x + p.w,
-        H + 100
-    );
-
-    ctx.lineTo(
-        x,
-        H + 100
-    );
-
-    ctx.closePath();
-
+    ctx.fillStyle = discColor;
     ctx.fill();
-
-
-    /* sand line */
-
-    ctx.strokeStyle = "#e6bc70";
 
     ctx.lineWidth = 3;
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x,
-        p.y
-    );
-
-    ctx.quadraticCurveTo(
-
-        x + p.w * 0.25,
-        p.y - 30,
-
-        x + p.w * 0.5,
-        p.y
-
-    );
-
-    ctx.quadraticCurveTo(
-
-        x + p.w * 0.75,
-        p.y + 25,
-
-        x + p.w,
-        p.y
-
-    );
-
+    ctx.strokeStyle = "#111";
     ctx.stroke();
 
-}
-
-
-/* =========================
-   COINS
-========================= */
-
-function drawCoin(c) {
-
-    if (c.taken) return;
-
-    const x =
-        c.x - cameraX;
-
-    ctx.fillStyle = "#f4c542";
-
     ctx.beginPath();
+    ctx.arc(0, 0, 8, 0, Math.PI * 2);
 
-    ctx.arc(
-        x,
-        c.y,
-        10,
-        0,
-        Math.PI * 2
-    );
-
+    ctx.fillStyle = auraColor;
     ctx.fill();
 
-    ctx.strokeStyle = "#9a671e";
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
 
-    ctx.lineWidth = 2;
+    ctx.fillStyle = discColor;
+    ctx.fill();
 
-    ctx.stroke();
+    for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
 
-    ctx.fillStyle = "#fff2a5";
+        ctx.arc(
+            0,
+            0,
+            13 + i * 5,
+            -0.7,
+            0.7
+        );
 
+        ctx.strokeStyle = auraColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+function drawCharge() {
+    if (!charging || airborne) return;
+
+    const x = W / 2;
+    const y = H - 55;
+
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.fillRect(x - 120, y, 240, 12);
+
+    ctx.fillStyle = "#222";
     ctx.fillRect(
-        x - 2,
-        c.y - 6,
-        4,
+        x - 120,
+        y,
+        240 * charge,
         12
     );
 
-}
-
-
-/* =========================
-   OBSTACLES
-========================= */
-
-function drawObstacle(o) {
-
-    const x =
-        o.x - cameraX;
-
-    ctx.fillStyle = "#70451f";
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x,
-        o.y + o.h
-    );
-
-    ctx.lineTo(
-        x + o.w / 2,
-        o.y
-    );
-
-    ctx.lineTo(
-        x + o.w,
-        o.y + o.h
-    );
-
-    ctx.closePath();
-
-    ctx.fill();
-
-}
-
-
-/* =========================
-   MUSIC DISC PLAYER
-========================= */
-
-function drawPlayer() {
-
-    const x =
-        player.x - cameraX;
-
-    const y =
-        player.y;
-
-    const pulse =
-        Math.sin(
-            performance.now() / 110
-        ) * 5;
-
-
-    /* aura */
-
-    const auraRadius =
-        settings.auraSize +
-        pulse;
-
-    ctx.globalAlpha = 0.22;
-
-    ctx.fillStyle =
-        settings.auraColor;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        auraRadius + 15,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.globalAlpha = 0.12;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        auraRadius + 28,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-    ctx.globalAlpha = 1;
-
-
-    /* music waves */
-
-    ctx.strokeStyle =
-        settings.auraColor;
-
+    ctx.strokeStyle = "#222";
     ctx.lineWidth = 2;
-
-    ctx.globalAlpha = 0.65;
-
-    for (let i = 0; i < 3; i++) {
-
-        const wave =
-            (
-                performance.now() / 500 +
-                i * 0.33
-            ) % 1;
-
-        ctx.beginPath();
-
-        ctx.arc(
-            x,
-            y,
-            28 + wave * 45,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.globalAlpha =
-            0.5 * (1 - wave);
-
-        ctx.stroke();
-
-    }
-
-    ctx.globalAlpha = 1;
-
-
-    /* shadow */
-
-    if (player.grounded) {
-
-        ctx.fillStyle =
-            "rgba(70,40,15,.25)";
-
-        ctx.beginPath();
-
-        ctx.ellipse(
-            x,
-            y + 27,
-            28,
-            7,
-            0,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fill();
-
-    }
-
-
-    /* MUSIC DISC */
-
-    ctx.fillStyle =
-        settings.discColor;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        player.radius,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-
-    /* disc rings */
-
-    ctx.strokeStyle =
-        settings.auraColor;
-
-    ctx.lineWidth = 2;
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        15,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.stroke();
-
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        8,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.stroke();
-
-
-    /* center */
-
-    ctx.fillStyle = "#eee";
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        4,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fill();
-
-
-    /* music note */
-
-    ctx.fillStyle =
-        settings.auraColor;
-
-    ctx.font =
-        "bold 15px Arial";
-
-    ctx.fillText(
-        "♪",
-        x + 13,
-        y - 15
-    );
-
+    ctx.strokeRect(x - 120, y, 240, 12);
 }
-
-
-/* =========================
-   DRAW
-========================= */
 
 function draw() {
-
-    drawBackground();
-
-
-    for (const p of platforms) {
-
-        if (
-
-            p.x + p.w - cameraX > -100 &&
-
-            p.x - cameraX < W + 100
-
-        ) {
-
-            drawPlatform(p);
-
-        }
-
-    }
-
-
-    for (const c of coinList) {
-
-        if (
-            c.x - cameraX > -50 &&
-            c.x - cameraX < W + 50
-        ) {
-
-            drawCoin(c);
-
-        }
-
-    }
-
-
-    for (const o of obstacles) {
-
-        if (
-            o.x - cameraX > -50 &&
-            o.x - cameraX < W + 50
-        ) {
-
-            drawObstacle(o);
-
-        }
-
-    }
-
-
-    drawPlayer();
-
+    drawSky();
+    drawDune();
+    drawDisc();
+    drawCharge();
 }
-
-
-/* =========================
-   GAME OVER
-========================= */
-
-function endGame() {
-
-    if (!running) return;
-
-    running = false;
-
-    clearInterval(musicTimer);
-
-    document.getElementById(
-        "finalDistance"
-    ).textContent = distance;
-
-    document.getElementById(
-        "finalLevel"
-    ).textContent = level;
-
-    document.getElementById(
-        "finalCoins"
-    ).textContent = coins;
-
-    document.getElementById(
-        "gameOver"
-    ).style.display = "flex";
-
-    document.getElementById(
-        "pauseButton"
-    ).style.display = "none";
-
-}
-
-
-/* =========================
-   PAUSE
-========================= */
-
-document.getElementById(
-    "pauseButton"
-).addEventListener("click", () => {
-
-    paused = !paused;
-
-    document.getElementById(
-        "pauseButton"
-    ).textContent =
-        paused ? "RESUME" : "PAUSE";
-
-});
-
-
-/* =========================
-   CUSTOMIZE
-========================= */
-
-const customizeButton =
-    document.getElementById(
-        "customizeButton"
-    );
-
-const customize =
-    document.getElementById(
-        "customize"
-    );
-
-customizeButton.addEventListener(
-    "click",
-    () => {
-
-        if (
-            customize.style.display === "block"
-        ) {
-
-            customize.style.display =
-                "none";
-
-        } else {
-
-            customize.style.display =
-                "block";
-
-        }
-
-    }
-);
-
-
-document.getElementById(
-    "discColor"
-).addEventListener("input", e => {
-
-    settings.discColor =
-        e.target.value;
-
-});
-
-
-document.getElementById(
-    "auraColor"
-).addEventListener("input", e => {
-
-    settings.auraColor =
-        e.target.value;
-
-});
-
-
-document.getElementById(
-    "auraSize"
-).addEventListener("input", e => {
-
-    settings.auraSize =
-        Number(e.target.value);
-
-    document.getElementById(
-        "auraValue"
-    ).textContent =
-        settings.auraSize;
-
-});
-
-
-document.getElementById(
-    "speedSetting"
-).addEventListener("input", e => {
-
-    settings.speed =
-        Number(e.target.value);
-
-    document.getElementById(
-        "speedValue"
-    ).textContent =
-        settings.speed;
-
-});
-
-
-document.getElementById(
-    "jumpSetting"
-).addEventListener("input", e => {
-
-    settings.jump =
-        Number(e.target.value);
-
-    document.getElementById(
-        "jumpValue"
-    ).textContent =
-        settings.jump;
-
-});
-
-
-/* =========================
-   BUTTONS
-========================= */
-
-document.getElementById(
-    "startButton"
-).addEventListener(
-    "click",
-    startGame
-);
-
-
-document.getElementById(
-    "retryButton"
-).addEventListener(
-    "click",
-    startGame
-);
-
-
-/* =========================
-   LOOP
-========================= */
 
 function loop() {
-
     update();
-
     draw();
-
     requestAnimationFrame(loop);
-
 }
 
 loop();
 
+function hexToRgba(hex, alpha) {
+    hex = hex.replace("#", "");
+
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function startMusic() {
+    if (musicStarted) return;
+
+    musicStarted = true;
+
+    try {
+        audioCtx =
+            new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+        oscillator =
+            audioCtx.createOscillator();
+
+        gainNode =
+            audioCtx.createGain();
+
+        oscillator.type = "sine";
+        oscillator.frequency.value = 220;
+
+        gainNode.gain.value = 0.025;
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+    } catch (e) {}
+}
+
+function changeMusicPitch() {
+    if (!oscillator) return;
+
+    oscillator.frequency.value =
+        180 + player.vx * 20 + level * 8;
+}
+
+setInterval(changeMusicPitch, 100);
+
+function pressStart() {
+    if (!gameStarted) return;
+
+    if (!airborne) {
+        charging = true;
+    }
+}
+
+function releaseStart() {
+    if (!gameStarted) return;
+
+    if (charging && !airborne) {
+        charging = false;
+        launch();
+    }
+}
+
+window.addEventListener("keydown", e => {
+    if (
+        e.code === "Space" ||
+        e.code === "ArrowUp"
+    ) {
+        e.preventDefault();
+
+        if (!e.repeat) {
+            pressStart();
+        }
+    }
+
+    if (e.key.toLowerCase() === "r") {
+        handleRRR();
+    }
+});
+
+window.addEventListener("keyup", e => {
+    if (
+        e.code === "Space" ||
+        e.code === "ArrowUp"
+    ) {
+        e.preventDefault();
+        releaseStart();
+    }
+});
+
+canvas.addEventListener("mousedown", pressStart);
+window.addEventListener("mouseup", releaseStart);
+
+canvas.addEventListener("touchstart", e => {
+    e.preventDefault();
+    pressStart();
+}, {passive:false});
+
+window.addEventListener("touchend", e => {
+    e.preventDefault();
+    releaseStart();
+}, {passive:false});
+
+let rCount = 0;
+let rTimer = null;
+
+function handleRRR() {
+    rCount++;
+
+    clearTimeout(rTimer);
+
+    rTimer = setTimeout(() => {
+        rCount = 0;
+    }, 700);
+
+    if (rCount === 3) {
+        rCount = 0;
+        window.location.href = "flashcards.html";
+    }
+}
+
+function goHome() {
+    window.location.href = "index.html?games=true";
+}
 </script>
 
 </body>
