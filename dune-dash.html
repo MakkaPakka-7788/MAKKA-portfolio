@@ -2,92 +2,183 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Dune Dash</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+
+* {
+    box-sizing: border-box;
 }
 
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#d9b36a;
-    font-family:Arial,sans-serif;
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #e5bd70;
+    font-family: "Courier New", monospace;
 }
 
-canvas{
-    display:block;
-    width:100%;
-    height:100%;
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
-#ui{
-    position:fixed;
-    top:15px;
-    left:15px;
-    color:white;
-    font-weight:bold;
-    font-size:18px;
-    text-shadow:2px 2px 3px #593b1b;
-    pointer-events:none;
-    line-height:1.5;
+#menu {
+    position: fixed;
+    inset: 0;
+    background: rgba(45, 28, 10, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
 }
 
-#level{
-    font-size:27px;
+.menuBox {
+    width: min(440px, 90%);
+    background: #f4d89a;
+    border: 4px solid #5b3b1d;
+    box-shadow: 8px 8px 0 rgba(60, 35, 10, 0.35);
+    padding: 28px;
+    text-align: center;
 }
 
-#message{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    text-align:center;
-    color:white;
-    text-shadow:3px 3px 4px #593b1b;
-    display:none;
+.menuBox h1 {
+    margin: 0;
+    font-size: 42px;
+    color: #4d3218;
 }
 
-#message h1{
-    font-size:52px;
-    margin-bottom:10px;
+.menuBox p {
+    color: #76532c;
 }
 
-#message p{
-    font-size:20px;
+button {
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-#start{
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    border:0;
-    border-radius:10px;
-    padding:15px 35px;
-    font-size:22px;
-    font-weight:bold;
-    color:#70491e;
-    background:white;
-    cursor:pointer;
-    box-shadow:0 5px 0 #a87532;
+.mainButton {
+    width: 100%;
+    border: 3px solid #4f3319;
+    background: #fff3cf;
+    color: #4f3319;
+    padding: 15px;
+    margin-top: 12px;
+    font-size: 20px;
 }
 
-#controls{
-    position:fixed;
-    bottom:15px;
-    left:50%;
-    transform:translateX(-50%);
-    color:white;
-    text-shadow:2px 2px 3px #593b1b;
-    font-size:15px;
-    text-align:center;
+.mainButton:hover {
+    background: #ffffff;
 }
+
+#customizeButton {
+    margin-top: 10px;
+}
+
+#customize {
+    display: none;
+    text-align: left;
+    margin-top: 20px;
+    border-top: 2px solid #9c7845;
+    padding-top: 18px;
+}
+
+.setting {
+    margin-bottom: 15px;
+}
+
+.setting label {
+    display: block;
+    font-weight: bold;
+    color: #57391b;
+    margin-bottom: 5px;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+input[type="color"] {
+    width: 60px;
+    height: 35px;
+    border: 2px solid #5b3b1d;
+    background: none;
+}
+
+#ui {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 5;
+    color: white;
+    text-shadow: 2px 2px 3px #513517;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+#level {
+    font-size: 25px;
+}
+
+#pauseButton {
+    position: fixed;
+    right: 15px;
+    top: 15px;
+    z-index: 6;
+    display: none;
+    border: 2px solid #513517;
+    background: rgba(255,255,255,.8);
+    color: #513517;
+    padding: 8px 12px;
+}
+
+#controls {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    text-shadow: 2px 2px 3px #513517;
+    z-index: 5;
+    text-align: center;
+    pointer-events: none;
+}
+
+#gameOver {
+    position: fixed;
+    inset: 0;
+    background: rgba(45,28,10,.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+}
+
+.gameOverBox {
+    background: #f4d89a;
+    border: 4px solid #5b3b1d;
+    padding: 30px;
+    width: min(400px,90%);
+    text-align: center;
+}
+
+.gameOverBox h1 {
+    margin: 0 0 10px;
+    color: #513517;
+    font-size: 42px;
+}
+
+.stat {
+    margin: 7px;
+    color: #76532c;
+}
+
 </style>
 </head>
 
@@ -95,594 +186,1542 @@ canvas{
 
 <canvas id="canvas"></canvas>
 
+
 <div id="ui">
-    <div id="level">LEVEL 1</div>
-    <div>Height: <span id="height">0</span>m</div>
-    <div>Coins: <span id="coins">0</span></div>
+
+    <div id="level">
+        LEVEL 1
+    </div>
+
+    <div>
+        DISTANCE:
+        <span id="distance">0</span>m
+    </div>
+
+    <div>
+        COINS:
+        <span id="coins">0</span>
+    </div>
+
 </div>
 
-<div id="message">
-    <h1 id="messageTitle">DUNE DASH</h1>
-    <p id="messageText">Reach higher levels!</p>
-</div>
 
-<button id="start">START</button>
+<button id="pauseButton">
+    PAUSE
+</button>
+
 
 <div id="controls">
-    ← → / A D &nbsp; • &nbsp; SPACE to jump &nbsp; • &nbsp; RRR = Flashcards
+    ← → / A D &nbsp; • &nbsp; SPACE = JUMP &nbsp; • &nbsp; RRR = FLASHCARDS
 </div>
 
+
+<div id="menu">
+
+    <div class="menuBox">
+
+        <h1>DUNE DASH</h1>
+
+        <p>
+            Ride the endless dunes with your music disc.
+        </p>
+
+        <button
+            class="mainButton"
+            id="startButton"
+        >
+            ▶ START
+        </button>
+
+        <button
+            class="mainButton"
+            id="customizeButton"
+        >
+            ⚙ CUSTOMIZE
+        </button>
+
+
+        <div id="customize">
+
+            <div class="setting">
+
+                <label>
+                    MUSIC DISC COLOR
+                </label>
+
+                <input
+                    type="color"
+                    id="discColor"
+                    value="#315b38"
+                >
+
+            </div>
+
+
+            <div class="setting">
+
+                <label>
+                    MUSIC AURA COLOR
+                </label>
+
+                <input
+                    type="color"
+                    id="auraColor"
+                    value="#ffd84d"
+                >
+
+            </div>
+
+
+            <div class="setting">
+
+                <label>
+                    AURA SIZE
+                    <span id="auraValue">35</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="auraSize"
+                    min="10"
+                    max="80"
+                    value="35"
+                >
+
+            </div>
+
+
+            <div class="setting">
+
+                <label>
+                    RUN SPEED
+                    <span id="speedValue">5</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="speedSetting"
+                    min="3"
+                    max="9"
+                    step="0.5"
+                    value="5"
+                >
+
+            </div>
+
+
+            <div class="setting">
+
+                <label>
+                    JUMP POWER
+                    <span id="jumpValue">12</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="jumpSetting"
+                    min="9"
+                    max="16"
+                    value="12"
+                >
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="gameOver">
+
+    <div class="gameOverBox">
+
+        <h1>RETRY</h1>
+
+        <div class="stat">
+            DISTANCE:
+            <span id="finalDistance">0</span>m
+        </div>
+
+        <div class="stat">
+            LEVEL:
+            <span id="finalLevel">1</span>
+        </div>
+
+        <div class="stat">
+            COINS:
+            <span id="finalCoins">0</span>
+        </div>
+
+        <button
+            class="mainButton"
+            id="retryButton"
+        >
+            RETRY
+        </button>
+
+    </div>
+
+</div>
+
+
 <script>
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
 
-let W=innerWidth;
-let H=innerHeight;
+/* =========================
+   CANVAS
+========================= */
 
-canvas.width=W;
-canvas.height=H;
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-window.addEventListener("resize",()=>{
-    W=innerWidth;
-    H=innerHeight;
-    canvas.width=W;
-    canvas.height=H;
-});
+let W = window.innerWidth;
+let H = window.innerHeight;
 
-const keys={};
+canvas.width = W;
+canvas.height = H;
 
-document.addEventListener("keydown",e=>{
-    keys[e.key.toLowerCase()]=true;
+window.addEventListener("resize", () => {
 
-    if(e.code==="Space"){
-        e.preventDefault();
-        jump();
-    }
-});
+    W = window.innerWidth;
+    H = window.innerHeight;
 
-document.addEventListener("keyup",e=>{
-    keys[e.key.toLowerCase()]=false;
 });
 
 
-/* RRR SHORTCUT */
+/* =========================
+   SETTINGS
+========================= */
 
-let rPresses=[];
-let lastR=0;
+let settings = {
 
-document.addEventListener("keydown",e=>{
-    if(e.key.toLowerCase()!=="r") return;
+    discColor: "#315b38",
+    auraColor: "#ffd84d",
+    auraSize: 35,
+    speed: 5,
+    jump: 12
 
-    const now=Date.now();
-
-    if(now-lastR>1000){
-        rPresses=[];
-    }
-
-    rPresses.push(now);
-    lastR=now;
-
-    if(rPresses.length>=3){
-        rPresses=[];
-        window.location.href="flashcards.html";
-    }
-});
-
-
-/* GAME */
-
-let running=false;
-let gameOver=false;
-
-let cameraX=0;
-let worldX=0;
-
-let distance=0;
-let height=0;
-let coins=0;
-let level=1;
-
-let speed=4;
-
-let platforms=[];
-let coinList=[];
-let obstacles=[];
-
-const player={
-    x:180,
-    y:0,
-    w:38,
-    h:48,
-    vx:0,
-    vy:0,
-    grounded:false
 };
 
-function resetGame(){
 
-    running=true;
-    gameOver=false;
+/* =========================
+   INPUT
+========================= */
 
-    cameraX=0;
-    worldX=0;
+const keys = {};
 
-    distance=0;
-    height=0;
-    coins=0;
-    level=1;
+document.addEventListener("keydown", e => {
 
-    speed=4;
+    keys[e.key.toLowerCase()] = true;
 
-    platforms=[];
-    coinList=[];
-    obstacles=[];
+    if (e.code === "Space") {
 
-    player.x=180;
-    player.y=H-180;
-    player.vx=0;
-    player.vy=0;
+        e.preventDefault();
 
-    createWorld();
+        jump();
 
-    startButton.style.display="none";
-    message.style.display="none";
+    }
+
+});
+
+document.addEventListener("keyup", e => {
+
+    keys[e.key.toLowerCase()] = false;
+
+});
+
+
+/* =========================
+   RRR
+========================= */
+
+let rCount = 0;
+let rTimer = null;
+
+document.addEventListener("keydown", e => {
+
+    if (e.key.toLowerCase() !== "r") {
+        return;
+    }
+
+    rCount++;
+
+    clearTimeout(rTimer);
+
+    rTimer = setTimeout(() => {
+
+        rCount = 0;
+
+    }, 700);
+
+    if (rCount >= 3) {
+
+        rCount = 0;
+
+        window.location.href = "flashcards.html";
+
+    }
+
+});
+
+
+/* =========================
+   GAME VARIABLES
+========================= */
+
+let running = false;
+let paused = false;
+
+let cameraX = 0;
+
+let distance = 0;
+let coins = 0;
+let level = 1;
+
+let platforms = [];
+let coinList = [];
+let obstacles = [];
+
+let worldEnd = 0;
+
+
+/* =========================
+   PLAYER
+========================= */
+
+const player = {
+
+    x: 180,
+    y: 0,
+
+    radius: 22,
+
+    vx: 0,
+    vy: 0,
+
+    grounded: false
+
+};
+
+
+/* =========================
+   MUSIC
+========================= */
+
+let audioContext = null;
+let musicTimer = null;
+let musicStep = 0;
+
+function startMusic() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (window.AudioContext ||
+            window.webkitAudioContext)();
+
+    }
+
+    if (audioContext.state === "suspended") {
+
+        audioContext.resume();
+
+    }
+
+    clearInterval(musicTimer);
+
+    musicStep = 0;
+
+    musicTimer = setInterval(() => {
+
+        if (!running || paused) return;
+
+        playNote();
+
+    }, 330);
+
 }
 
-function createWorld(){
+
+function playNote() {
+
+    if (!audioContext) return;
+
+    const notes = [
+        261.63,
+        329.63,
+        392.00,
+        523.25,
+        392.00,
+        329.63
+    ];
+
+    const frequency =
+        notes[musicStep % notes.length];
+
+    musicStep++;
+
+    const oscillator =
+        audioContext.createOscillator();
+
+    const gain =
+        audioContext.createGain();
+
+    oscillator.type = "triangle";
+
+    oscillator.frequency.value = frequency;
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        audioContext.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.035,
+        audioContext.currentTime + 0.02
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContext.currentTime + 0.25
+    );
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioContext.currentTime + 0.26
+    );
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+function startGame() {
+
+    running = true;
+    paused = false;
+
+    distance = 0;
+    coins = 0;
+    level = 1;
+
+    cameraX = 0;
+
+    platforms = [];
+    coinList = [];
+    obstacles = [];
+
+    player.x = 180;
+    player.y = H - 160;
+
+    player.vx = 0;
+    player.vy = 0;
+
+    createStartingWorld();
+
+    document.getElementById("menu").style.display = "none";
+
+    document.getElementById("gameOver").style.display = "none";
+
+    document.getElementById("pauseButton").style.display = "block";
+
+    startMusic();
+
+    updateUI();
+
+}
+
+
+/* =========================
+   WORLD GENERATION
+========================= */
+
+function createStartingWorld() {
 
     platforms.push({
-        x:-300,
-        y:H-100,
-        w:900,
-        h:150
+
+        x: -500,
+        y: H - 90,
+        w: 1000,
+        h: 200
+
     });
 
-    let x=500;
+    worldEnd = 500;
 
-    for(let i=0;i<150;i++){
+    generateWorld();
 
-        let gap=80+Math.random()*110;
-
-        x+=gap;
-
-        let y=H-130-Math.random()*160;
-
-        platforms.push({
-            x:x,
-            y:y,
-            w:180+Math.random()*180,
-            h:30
-        });
-
-        if(Math.random()<0.75){
-
-            coinList.push({
-                x:x+70+Math.random()*70,
-                y:y-45,
-                r:9,
-                taken:false
-            });
-
-        }
-
-        if(i>3 && Math.random()<0.3){
-
-            obstacles.push({
-                x:x+80+Math.random()*70,
-                y:y-30,
-                w:25,
-                h:30
-            });
-
-        }
-    }
 }
 
-function extendWorld(){
 
-    let last=platforms[platforms.length-1];
+function generateWorld() {
 
-    for(let i=0;i<50;i++){
+    while (worldEnd < player.x + 3000) {
 
-        let x=last.x+last.w+80+Math.random()*130;
+        let gap =
+            80 + Math.random() * 100;
 
-        let y=H-130-Math.random()*180;
+        let width =
+            180 + Math.random() * 230;
 
-        let p={
-            x:x,
-            y:y,
-            w:170+Math.random()*200,
-            h:30
+        let y =
+            H - 120 -
+            Math.random() * 170;
+
+        let platform = {
+
+            x: worldEnd + gap,
+
+            y: y,
+
+            w: width,
+
+            h: 100
+
         };
 
-        platforms.push(p);
+        platforms.push(platform);
 
-        if(Math.random()<0.8){
+        worldEnd =
+            platform.x + platform.w;
+
+
+        /* coins */
+
+        if (Math.random() < 0.8) {
 
             coinList.push({
-                x:x+50+Math.random()*100,
-                y:y-45,
-                r:9,
-                taken:false
+
+                x:
+                    platform.x +
+                    50 +
+                    Math.random() *
+                    Math.max(40, platform.w - 80),
+
+                y:
+                    platform.y - 42,
+
+                taken: false
+
             });
 
         }
 
-        if(Math.random()<0.35){
+
+        /* occasional obstacle */
+
+        if (
+            Math.random() < 0.25 &&
+            distance > 150
+        ) {
 
             obstacles.push({
-                x:x+70+Math.random()*90,
-                y:y-30,
-                w:25,
-                h:30
+
+                x:
+                    platform.x +
+                    platform.w / 2,
+
+                y:
+                    platform.y - 32,
+
+                w: 28,
+
+                h: 32
+
             });
 
         }
 
-        last=p;
     }
+
 }
 
-function jump(){
 
-    if(!running) return;
+/* =========================
+   JUMP
+========================= */
 
-    if(player.grounded){
+function jump() {
 
-        player.vy=-12;
-        player.grounded=false;
+    if (
+        running &&
+        !paused &&
+        player.grounded
+    ) {
+
+        player.vy =
+            -settings.jump;
+
+        player.grounded = false;
+
     }
+
 }
 
-function update(){
 
-    if(!running) return;
+/* =========================
+   UPDATE
+========================= */
+
+function update() {
+
+    if (!running || paused) {
+        return;
+    }
+
 
     /* movement */
 
-    if(keys["arrowleft"]||keys["a"]){
-        player.vx-=0.5;
+    if (
+        keys["arrowleft"] ||
+        keys["a"]
+    ) {
+
+        player.vx -= 0.5;
+
     }
 
-    if(keys["arrowright"]||keys["d"]){
-        player.vx+=0.5;
+    if (
+        keys["arrowright"] ||
+        keys["d"]
+    ) {
+
+        player.vx += 0.5;
+
     }
 
-    player.vx*=0.88;
+    player.vx *= 0.88;
 
-    player.x+=player.vx;
+    player.x += settings.speed;
 
-    /* automatic forward movement */
+    player.x += player.vx;
 
-    player.x+=speed;
 
-    player.vy+=0.55;
+    /* gravity */
 
-    player.y+=player.vy;
+    player.vy += 0.55;
 
-    player.grounded=false;
+    player.y += player.vy;
+
+    player.grounded = false;
+
 
     /* platforms */
 
-    for(const p of platforms){
+    for (const p of platforms) {
 
-        if(
-            player.x+player.w>p.x &&
-            player.x<p.x+p.w &&
-            player.y+player.h>=p.y &&
-            player.y+player.h<=p.y+25 &&
-            player.vy>=0
-        ){
+        const left =
+            player.x - player.radius;
 
-            player.y=p.y-player.h;
-            player.vy=0;
-            player.grounded=true;
+        const right =
+            player.x + player.radius;
+
+        const bottom =
+            player.y + player.radius;
+
+        if (
+
+            right > p.x &&
+
+            left < p.x + p.w &&
+
+            bottom >= p.y &&
+
+            bottom <= p.y + 25 &&
+
+            player.vy >= 0
+
+        ) {
+
+            player.y =
+                p.y - player.radius;
+
+            player.vy = 0;
+
+            player.grounded = true;
+
         }
+
     }
+
 
     /* coins */
 
-    for(const c of coinList){
+    for (const c of coinList) {
 
-        if(c.taken) continue;
+        if (c.taken) continue;
 
-        const dx=(player.x+player.w/2)-c.x;
-        const dy=(player.y+player.h/2)-c.y;
+        const dx =
+            player.x - c.x;
 
-        if(Math.sqrt(dx*dx+dy*dy)<28){
+        const dy =
+            player.y - c.y;
 
-            c.taken=true;
+        const d =
+            Math.sqrt(dx * dx + dy * dy);
+
+        if (d < 35) {
+
+            c.taken = true;
+
             coins++;
+
         }
+
     }
+
 
     /* obstacles */
 
-    for(const o of obstacles){
+    for (const o of obstacles) {
 
-        if(
-            player.x+player.w>o.x &&
-            player.x<o.x+o.w &&
-            player.y+player.h>o.y &&
-            player.y<o.y+o.h
-        ){
+        if (
+
+            player.x + player.radius > o.x &&
+
+            player.x - player.radius < o.x + o.w &&
+
+            player.y + player.radius > o.y &&
+
+            player.y - player.radius < o.y + o.h
+
+        ) {
 
             endGame();
+
         }
+
     }
+
 
     /* camera */
 
-    cameraX=player.x-W*0.3;
+    cameraX =
+        player.x - W * 0.28;
+
 
     /* distance */
 
-    distance=Math.max(distance,Math.floor(player.x/10));
+    distance =
+        Math.max(
+            distance,
+            Math.floor(player.x / 10)
+        );
 
-    height=Math.floor(distance);
 
     /* levels */
 
-    let newLevel=Math.floor(height/500)+1;
+    level =
+        Math.floor(distance / 500) + 1;
 
-    if(newLevel>level){
 
-        level=newLevel;
-        speed=Math.min(9,4+(level-1)*0.5);
+    /* more world */
+
+    if (
+        player.x >
+        worldEnd - 1800
+    ) {
+
+        generateWorld();
+
     }
 
-    if(player.x>platforms[platforms.length-20].x){
 
-        extendWorld();
-    }
+    /* remove old objects */
+
+    platforms =
+        platforms.filter(
+            p => p.x + p.w > cameraX - 1000
+        );
+
+    coinList =
+        coinList.filter(
+            c => c.x > cameraX - 1000
+        );
+
+    obstacles =
+        obstacles.filter(
+            o => o.x + o.w > cameraX - 1000
+        );
+
 
     /* fell */
 
-    if(player.y>H+150){
+    if (player.y > H + 200) {
 
         endGame();
+
     }
 
     updateUI();
-}
 
-function updateUI(){
-
-    document.getElementById("height").textContent=height;
-    document.getElementById("coins").textContent=coins;
-    document.getElementById("level").textContent="LEVEL "+level;
-}
-
-function endGame(){
-
-    if(!running) return;
-
-    running=false;
-    gameOver=true;
-
-    messageTitle.textContent="RETRY";
-    messageText.textContent=
-        "You reached "+height+"m • Level "+level+
-        " • Coins "+coins;
-
-    message.style.display="block";
-    startButton.textContent="RETRY";
-    startButton.style.display="block";
 }
 
 
-/* DRAW */
+/* =========================
+   UI
+========================= */
 
-function drawBackground(){
+function updateUI() {
+
+    document.getElementById(
+        "distance"
+    ).textContent = distance;
+
+    document.getElementById(
+        "coins"
+    ).textContent = coins;
+
+    document.getElementById(
+        "level"
+    ).textContent =
+        "LEVEL " + level;
+
+}
+
+
+/* =========================
+   BACKGROUND
+========================= */
+
+function drawBackground() {
 
     /* sky */
 
-    ctx.fillStyle="#e8c77e";
-    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = "#e8c984";
+
+    ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+    );
+
 
     /* sun */
 
-    ctx.fillStyle="#fff1b0";
+    ctx.fillStyle = "#fff0ad";
+
     ctx.beginPath();
-    ctx.arc(W-120,100,55,0,Math.PI*2);
+
+    ctx.arc(
+        W - 120,
+        100,
+        55,
+        0,
+        Math.PI * 2
+    );
+
     ctx.fill();
+
 
     /* distant dunes */
 
-    ctx.fillStyle="#d5aa5e";
+    ctx.fillStyle = "#d5aa5f";
 
     ctx.beginPath();
-    ctx.moveTo(0,H-190);
 
-    for(let x=0;x<=W;x+=80){
+    ctx.moveTo(0, H);
 
-        let y=H-190-
-            Math.sin((x+cameraX*0.15)/160)*45;
+    for (
+        let x = 0;
+        x <= W;
+        x += 60
+    ) {
 
-        ctx.lineTo(x,y);
+        const y =
+            H - 170 -
+            Math.sin(
+                (x + cameraX * 0.12) / 180
+            ) * 40;
+
+        ctx.lineTo(x, y);
+
     }
 
-    ctx.lineTo(W,H);
-    ctx.lineTo(0,H);
+    ctx.lineTo(W, H);
     ctx.closePath();
+
     ctx.fill();
+
 
     /* clouds */
 
-    ctx.fillStyle="rgba(255,245,210,.45)";
+    ctx.fillStyle =
+        "rgba(255,245,210,.5)";
 
-    for(let i=0;i<4;i++){
+    for (let i = 0; i < 4; i++) {
 
-        let x=((i*320-cameraX*0.08)%(W+400))-200;
-        let y=80+i*45;
+        let x =
+            ((i * 350 -
+            cameraX * 0.06) %
+            (W + 500)) - 200;
+
+        let y =
+            80 + i * 50;
 
         ctx.beginPath();
-        ctx.arc(x,y,25,0,Math.PI*2);
-        ctx.arc(x+30,y-8,32,0,Math.PI*2);
-        ctx.arc(x+65,y,23,0,Math.PI*2);
+
+        ctx.arc(
+            x,
+            y,
+            25,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.arc(
+            x + 30,
+            y - 8,
+            32,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.arc(
+            x + 65,
+            y,
+            23,
+            0,
+            Math.PI * 2
+        );
+
         ctx.fill();
+
     }
+
 }
 
-function drawDune(p){
 
-    ctx.fillStyle="#c68d3d";
+/* =========================
+   DUNES
+========================= */
+
+function drawPlatform(p) {
+
+    const x =
+        p.x - cameraX;
+
+    ctx.fillStyle = "#c88f40";
 
     ctx.beginPath();
 
-    ctx.moveTo(p.x-cameraX,p.y);
-
-    ctx.quadraticCurveTo(
-        p.x+p.w*0.25-cameraX,
-        p.y-25,
-        p.x+p.w*0.5-cameraX,
+    ctx.moveTo(
+        x,
         p.y
     );
 
     ctx.quadraticCurveTo(
-        p.x+p.w*0.75-cameraX,
-        p.y+25,
-        p.x+p.w-cameraX,
+
+        x + p.w * 0.25,
+        p.y - 30,
+
+        x + p.w * 0.5,
         p.y
+
     );
 
-    ctx.lineTo(p.x+p.w-cameraX,H+100);
-    ctx.lineTo(p.x-cameraX,H+100);
+    ctx.quadraticCurveTo(
+
+        x + p.w * 0.75,
+        p.y + 25,
+
+        x + p.w,
+        p.y
+
+    );
+
+    ctx.lineTo(
+        x + p.w,
+        H + 100
+    );
+
+    ctx.lineTo(
+        x,
+        H + 100
+    );
 
     ctx.closePath();
+
     ctx.fill();
-}
 
-function drawCoin(c){
 
-    if(c.taken) return;
+    /* sand line */
 
-    let x=c.x-cameraX;
+    ctx.strokeStyle = "#e6bc70";
 
-    ctx.fillStyle="#f5c542";
+    ctx.lineWidth = 3;
 
     ctx.beginPath();
-    ctx.arc(x,c.y,c.r,0,Math.PI*2);
-    ctx.fill();
 
-    ctx.strokeStyle="#a86b20";
-    ctx.lineWidth=2;
+    ctx.moveTo(
+        x,
+        p.y
+    );
+
+    ctx.quadraticCurveTo(
+
+        x + p.w * 0.25,
+        p.y - 30,
+
+        x + p.w * 0.5,
+        p.y
+
+    );
+
+    ctx.quadraticCurveTo(
+
+        x + p.w * 0.75,
+        p.y + 25,
+
+        x + p.w,
+        p.y
+
+    );
+
     ctx.stroke();
 
-    ctx.fillStyle="#fff0a0";
-    ctx.fillRect(x-2,c.y-5,4,10);
 }
 
-function drawObstacle(o){
 
-    let x=o.x-cameraX;
+/* =========================
+   COINS
+========================= */
 
-    ctx.fillStyle="#70431e";
+function drawCoin(c) {
+
+    if (c.taken) return;
+
+    const x =
+        c.x - cameraX;
+
+    ctx.fillStyle = "#f4c542";
 
     ctx.beginPath();
-    ctx.moveTo(x,o.y+o.h);
-    ctx.lineTo(x+o.w/2,o.y);
-    ctx.lineTo(x+o.w,o.y+o.h);
-    ctx.closePath();
+
+    ctx.arc(
+        x,
+        c.y,
+        10,
+        0,
+        Math.PI * 2
+    );
+
     ctx.fill();
+
+    ctx.strokeStyle = "#9a671e";
+
+    ctx.lineWidth = 2;
+
+    ctx.stroke();
+
+    ctx.fillStyle = "#fff2a5";
+
+    ctx.fillRect(
+        x - 2,
+        c.y - 6,
+        4,
+        12
+    );
+
 }
 
-function drawPlayer(){
 
-    let x=player.x-cameraX;
-    let y=player.y;
+/* =========================
+   OBSTACLES
+========================= */
+
+function drawObstacle(o) {
+
+    const x =
+        o.x - cameraX;
+
+    ctx.fillStyle = "#70451f";
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x,
+        o.y + o.h
+    );
+
+    ctx.lineTo(
+        x + o.w / 2,
+        o.y
+    );
+
+    ctx.lineTo(
+        x + o.w,
+        o.y + o.h
+    );
+
+    ctx.closePath();
+
+    ctx.fill();
+
+}
+
+
+/* =========================
+   MUSIC DISC PLAYER
+========================= */
+
+function drawPlayer() {
+
+    const x =
+        player.x - cameraX;
+
+    const y =
+        player.y;
+
+    const pulse =
+        Math.sin(
+            performance.now() / 110
+        ) * 5;
+
+
+    /* aura */
+
+    const auraRadius =
+        settings.auraSize +
+        pulse;
+
+    ctx.globalAlpha = 0.22;
+
+    ctx.fillStyle =
+        settings.auraColor;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        auraRadius + 15,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.globalAlpha = 0.12;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        auraRadius + 28,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+
+
+    /* music waves */
+
+    ctx.strokeStyle =
+        settings.auraColor;
+
+    ctx.lineWidth = 2;
+
+    ctx.globalAlpha = 0.65;
+
+    for (let i = 0; i < 3; i++) {
+
+        const wave =
+            (
+                performance.now() / 500 +
+                i * 0.33
+            ) % 1;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            28 + wave * 45,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.globalAlpha =
+            0.5 * (1 - wave);
+
+        ctx.stroke();
+
+    }
+
+    ctx.globalAlpha = 1;
+
 
     /* shadow */
 
-    if(player.grounded){
+    if (player.grounded) {
 
-        ctx.fillStyle="rgba(70,40,15,.25)";
+        ctx.fillStyle =
+            "rgba(70,40,15,.25)";
+
         ctx.beginPath();
+
         ctx.ellipse(
-            x+player.w/2,
-            y+player.h+5,
-            25,
+            x,
+            y + 27,
+            28,
             7,
             0,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
+
         ctx.fill();
+
     }
 
-    /* body */
 
-    ctx.fillStyle="#315b38";
-    ctx.fillRect(x+7,y+15,25,28);
+    /* MUSIC DISC */
 
-    /* head */
+    ctx.fillStyle =
+        settings.discColor;
 
-    ctx.fillStyle="#e8a86b";
     ctx.beginPath();
-    ctx.arc(x+19,y+12,13,0,Math.PI*2);
+
+    ctx.arc(
+        x,
+        y,
+        player.radius,
+        0,
+        Math.PI * 2
+    );
+
     ctx.fill();
 
-    /* helmet */
 
-    ctx.fillStyle="#4e7c42";
-    ctx.fillRect(x+6,y,27,8);
+    /* disc rings */
 
-    /* eye */
+    ctx.strokeStyle =
+        settings.auraColor;
 
-    ctx.fillStyle="#222";
-    ctx.fillRect(x+24,y+10,3,3);
+    ctx.lineWidth = 2;
 
-    /* legs */
+    ctx.beginPath();
 
-    ctx.fillStyle="#493621";
-    ctx.fillRect(x+9,y+40,7,8);
-    ctx.fillRect(x+23,y+40,7,8);
+    ctx.arc(
+        x,
+        y,
+        15,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.stroke();
+
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        8,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.stroke();
+
+
+    /* center */
+
+    ctx.fillStyle = "#eee";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        4,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fill();
+
+
+    /* music note */
+
+    ctx.fillStyle =
+        settings.auraColor;
+
+    ctx.font =
+        "bold 15px Arial";
+
+    ctx.fillText(
+        "♪",
+        x + 13,
+        y - 15
+    );
+
 }
 
-function draw(){
+
+/* =========================
+   DRAW
+========================= */
+
+function draw() {
 
     drawBackground();
 
-    for(const p of platforms){
 
-        if(
-            p.x+p.w-cameraX>-100 &&
-            p.x-cameraX<W+100
-        ){
-            drawDune(p);
+    for (const p of platforms) {
+
+        if (
+
+            p.x + p.w - cameraX > -100 &&
+
+            p.x - cameraX < W + 100
+
+        ) {
+
+            drawPlatform(p);
+
         }
+
     }
 
-    for(const c of coinList){
 
-        if(c.x-cameraX>-50&&c.x-cameraX<W+50){
+    for (const c of coinList) {
+
+        if (
+            c.x - cameraX > -50 &&
+            c.x - cameraX < W + 50
+        ) {
+
             drawCoin(c);
+
         }
+
     }
 
-    for(const o of obstacles){
 
-        if(o.x-cameraX>-50&&o.x-cameraX<W+50){
+    for (const o of obstacles) {
+
+        if (
+            o.x - cameraX > -50 &&
+            o.x - cameraX < W + 50
+        ) {
+
             drawObstacle(o);
+
         }
+
     }
+
 
     drawPlayer();
+
 }
 
-function loop(){
+
+/* =========================
+   GAME OVER
+========================= */
+
+function endGame() {
+
+    if (!running) return;
+
+    running = false;
+
+    clearInterval(musicTimer);
+
+    document.getElementById(
+        "finalDistance"
+    ).textContent = distance;
+
+    document.getElementById(
+        "finalLevel"
+    ).textContent = level;
+
+    document.getElementById(
+        "finalCoins"
+    ).textContent = coins;
+
+    document.getElementById(
+        "gameOver"
+    ).style.display = "flex";
+
+    document.getElementById(
+        "pauseButton"
+    ).style.display = "none";
+
+}
+
+
+/* =========================
+   PAUSE
+========================= */
+
+document.getElementById(
+    "pauseButton"
+).addEventListener("click", () => {
+
+    paused = !paused;
+
+    document.getElementById(
+        "pauseButton"
+    ).textContent =
+        paused ? "RESUME" : "PAUSE";
+
+});
+
+
+/* =========================
+   CUSTOMIZE
+========================= */
+
+const customizeButton =
+    document.getElementById(
+        "customizeButton"
+    );
+
+const customize =
+    document.getElementById(
+        "customize"
+    );
+
+customizeButton.addEventListener(
+    "click",
+    () => {
+
+        if (
+            customize.style.display === "block"
+        ) {
+
+            customize.style.display =
+                "none";
+
+        } else {
+
+            customize.style.display =
+                "block";
+
+        }
+
+    }
+);
+
+
+document.getElementById(
+    "discColor"
+).addEventListener("input", e => {
+
+    settings.discColor =
+        e.target.value;
+
+});
+
+
+document.getElementById(
+    "auraColor"
+).addEventListener("input", e => {
+
+    settings.auraColor =
+        e.target.value;
+
+});
+
+
+document.getElementById(
+    "auraSize"
+).addEventListener("input", e => {
+
+    settings.auraSize =
+        Number(e.target.value);
+
+    document.getElementById(
+        "auraValue"
+    ).textContent =
+        settings.auraSize;
+
+});
+
+
+document.getElementById(
+    "speedSetting"
+).addEventListener("input", e => {
+
+    settings.speed =
+        Number(e.target.value);
+
+    document.getElementById(
+        "speedValue"
+    ).textContent =
+        settings.speed;
+
+});
+
+
+document.getElementById(
+    "jumpSetting"
+).addEventListener("input", e => {
+
+    settings.jump =
+        Number(e.target.value);
+
+    document.getElementById(
+        "jumpValue"
+    ).textContent =
+        settings.jump;
+
+});
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+document.getElementById(
+    "startButton"
+).addEventListener(
+    "click",
+    startGame
+);
+
+
+document.getElementById(
+    "retryButton"
+).addEventListener(
+    "click",
+    startGame
+);
+
+
+/* =========================
+   LOOP
+========================= */
+
+function loop() {
 
     update();
+
     draw();
 
     requestAnimationFrame(loop);
+
 }
 
-startButton.addEventListener("click",()=>{
-    resetGame();
-});
-
 loop();
+
 </script>
 
 </body>
