@@ -3,150 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>flashcards.com</title>
+<title>Dune Dash</title>
 
 <style>
 * {
     box-sizing: border-box;
+    user-select: none;
 }
 
-body {
+html, body {
     margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    background: #e8c889;
+    background: #87ceeb;
     font-family: Arial, sans-serif;
-    user-select: none;
 }
 
 canvas {
     display: block;
+    width: 100%;
+    height: 100%;
 }
 
-#ui {
+#hud {
     position: fixed;
     top: 18px;
     left: 18px;
-    right: 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    pointer-events: none;
-    z-index: 5;
-}
-
-.panel {
-    background: rgba(255,255,255,0.85);
-    border: 2px solid rgba(0,0,0,0.25);
-    border-radius: 14px;
-    padding: 12px 16px;
     color: #222;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    background: rgba(255,255,255,0.8);
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 17px;
+    z-index: 5;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-#stats {
-    min-width: 170px;
-}
-
-.stat {
+#level {
+    margin-top: 5px;
     font-size: 14px;
-    margin: 4px 0;
 }
 
-.stat strong {
-    font-size: 20px;
-}
-
-#controls {
-    text-align: center;
-    font-size: 13px;
+#help {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.75);
+    padding: 9px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #333;
 }
 
 #startScreen,
-#customScreen,
 #gameOver {
     position: fixed;
     inset: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgba(0,0,0,0.3);
     z-index: 10;
-    background: rgba(232,200,137,0.94);
 }
 
-.menu {
-    width: min(460px, 90%);
+.panel {
     background: white;
-    border-radius: 22px;
-    padding: 30px;
+    padding: 35px;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    width: min(90%, 420px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
 
-h1 {
-    margin: 0 0 8px;
-    font-size: 48px;
-    letter-spacing: 2px;
+.panel h1 {
+    font-size: 45px;
+    margin: 0 0 10px;
 }
 
-.subtitle {
-    color: #666;
-    margin-bottom: 25px;
+.panel p {
+    color: #555;
+    line-height: 1.5;
 }
 
 button {
-    border: 0;
-    border-radius: 12px;
-    padding: 13px 22px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    background: #222;
+    border: none;
+    background: #e5a83a;
     color: white;
-    margin: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 13px 25px;
+    border-radius: 12px;
+    cursor: pointer;
 }
 
 button:hover {
-    transform: translateY(-1px);
-}
-
-.secondary {
-    background: #ddd;
-    color: #222;
-}
-
-.customRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 15px 0;
-}
-
-.customRow input[type="color"] {
-    width: 60px;
-    height: 38px;
-    border: 0;
-    background: none;
-}
-
-.customRow input[type="range"] {
-    width: 180px;
+    background: #d39220;
 }
 
 .hidden {
     display: none !important;
-}
-
-#launchHint {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,0.9);
-    border-radius: 30px;
-    padding: 12px 22px;
-    font-weight: bold;
-    color: #222;
-    z-index: 4;
 }
 </style>
 </head>
@@ -155,70 +113,35 @@ button:hover {
 
 <canvas id="canvas"></canvas>
 
-<div id="ui">
-    <div id="stats" class="panel">
-        <div class="stat">LEVEL <strong id="level">1</strong></div>
-        <div class="stat">HEIGHT <strong id="height">0</strong>m</div>
-        <div class="stat">DISTANCE <strong id="distance">0</strong>m</div>
-    </div>
-
-    <div id="controls" class="panel">
-        <b>HOLD SPACE / MOUSE</b><br>
-        Release to launch
-    </div>
+<div id="hud">
+    Height: <span id="height">0</span> m<br>
+    Best: <span id="best">0</span> m
+    <div id="level">Level 1</div>
 </div>
 
-<div id="launchHint">
-    Hold SPACE to charge your launch
+<div id="help">
+    ← → / A D &nbsp; Move &nbsp; • &nbsp; R Restart
 </div>
 
 <div id="startScreen">
-    <div class="menu">
-        <h1>DUNE DASH</h1>
-        <div class="subtitle">
-            Roll down the dune. Launch into the sky. Go higher.
-        </div>
-
-        <button onclick="startGame()">START</button>
-        <button class="secondary" onclick="openCustom()">CUSTOMIZE</button>
-    </div>
-</div>
-
-<div id="customScreen" class="hidden">
-    <div class="menu">
-        <h2>CUSTOMIZE</h2>
-
-        <div class="customRow">
-            <span>Disc</span>
-            <input id="discColor" type="color" value="#202020">
-        </div>
-
-        <div class="customRow">
-            <span>Music Aura</span>
-            <input id="auraColor" type="color" value="#ffffff">
-        </div>
-
-        <div class="customRow">
-            <span>Launch Power</span>
-            <input id="powerRange" type="range" min="70" max="150" value="100">
-        </div>
-
-        <div class="customRow">
-            <span>Gravity</span>
-            <input id="gravityRange" type="range" min="60" max="130" value="100">
-        </div>
-
-        <button onclick="saveCustom()">SAVE</button>
-        <button class="secondary" onclick="closeCustom()">BACK</button>
+    <div class="panel">
+        <h1>🏜️ Dune Dash</h1>
+        <p>
+            Roll down the dunes, build speed,<br>
+            launch into the air and climb as high as possible.
+        </p>
+        <button id="startButton">START</button>
     </div>
 </div>
 
 <div id="gameOver" class="hidden">
-    <div class="menu">
-        <h1>TRY AGAIN</h1>
-        <div class="subtitle" id="finalStats"></div>
-        <button onclick="restartGame()">RETRY</button>
-        <button class="secondary" onclick="goHome()">HOME</button>
+    <div class="panel">
+        <h1>🏜️ Landed!</h1>
+        <p>
+            Height reached:
+            <strong><span id="finalHeight">0</span> m</strong>
+        </p>
+        <button id="retryButton">RETRY</button>
     </div>
 </div>
 
@@ -226,633 +149,602 @@ button:hover {
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-let W = innerWidth;
-let H = innerHeight;
+let W = window.innerWidth;
+let H = window.innerHeight;
 
-canvas.width = W;
-canvas.height = H;
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
 
-window.addEventListener("resize", () => {
-    W = innerWidth;
-    H = innerHeight;
-    canvas.width = W;
-    canvas.height = H;
-});
+window.addEventListener("resize", resize);
+resize();
 
+const heightText = document.getElementById("height");
+const bestText = document.getElementById("best");
+const levelText = document.getElementById("level");
+
+let keys = {};
 let running = false;
-let airborne = false;
-let charging = false;
 let gameStarted = false;
 
-let worldX = 0;
 let cameraX = 0;
 let cameraY = 0;
 
 let highestY = 0;
-let distance = 0;
-let level = 1;
+let bestHeight = Number(localStorage.getItem("duneBest") || 0);
 
-let launchPower = 1;
-let gravityMultiplier = 1;
+bestText.textContent = bestHeight;
 
-let discColor = "#202020";
-let auraColor = "#ffffff";
+const gravity = 0.42;
+const airGravity = 0.30;
+const groundFriction = 0.985;
+const airFriction = 0.998;
 
-let musicStarted = false;
-let audioCtx;
-let oscillator;
-let gainNode;
+let terrain = [];
 
-const player = {
-    x: 180,
-    y: 0,
-    vx: 0,
-    vy: 0,
-    radius: 24,
-    rotation: 0,
-    spin: 0
-};
+const segmentWidth = 80;
 
-let charge = 0;
-let chargeDirection = 1;
+function makeTerrain() {
+    terrain = [];
 
-let dunes = [];
+    let x = -1000;
+    let y = H * 0.72;
 
-function duneHeight(x) {
-    const a = Math.sin(x * 0.0022) * 130;
-    const b = Math.sin(x * 0.0008 + 1.5) * 220;
-    const c = Math.sin(x * 0.0047) * 35;
+    while (x < 100000) {
 
-    return H * 0.72 + a + b + c;
+        let wave =
+            Math.sin(x * 0.004) * 130 +
+            Math.sin(x * 0.009) * 70 +
+            Math.sin(x * 0.018) * 30;
+
+        let newY = H * 0.70 + wave;
+
+        terrain.push({
+            x: x,
+            y: newY
+        });
+
+        x += segmentWidth;
+    }
 }
 
-function generateDunes() {
-    dunes = [];
+makeTerrain();
 
-    for (let x = -1000; x < 20000; x += 20) {
-        dunes.push({
+function terrainY(x) {
+
+    let index = Math.floor((x + 1000) / segmentWidth);
+
+    if (index < 0) return H * 0.7;
+
+    while (index >= terrain.length - 1) {
+        generateMoreTerrain();
+    }
+
+    const a = terrain[index];
+    const b = terrain[index + 1];
+
+    const t = (x - a.x) / (b.x - a.x);
+
+    return a.y + (b.y - a.y) * t;
+}
+
+function generateMoreTerrain() {
+
+    let last = terrain[terrain.length - 1];
+
+    for (let i = 1; i <= 100; i++) {
+
+        let x = last.x + i * segmentWidth;
+
+        let wave =
+            Math.sin(x * 0.004) * 130 +
+            Math.sin(x * 0.009) * 70 +
+            Math.sin(x * 0.018) * 30;
+
+        terrain.push({
             x,
-            y: duneHeight(x)
+            y: H * 0.70 + wave
         });
     }
 }
 
-generateDunes();
+let player = {
+    x: 300,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    radius: 20,
+    grounded: false,
+    rotation: 0
+};
 
-function getGroundY(x) {
-    return duneHeight(x);
+function resetPlayer() {
+
+    player.x = 300;
+    player.y = terrainY(player.x) - player.radius - 2;
+
+    player.vx = 0;
+    player.vy = 0;
+
+    player.grounded = true;
+    player.rotation = 0;
+
+    cameraX = player.x - W * 0.35;
+    cameraY = 0;
+
+    highestY = player.y;
 }
 
 function startGame() {
+
     document.getElementById("startScreen").classList.add("hidden");
     document.getElementById("gameOver").classList.add("hidden");
 
-    resetGame();
+    resetPlayer();
 
     running = true;
     gameStarted = true;
-
-    startMusic();
-}
-
-function resetGame() {
-    worldX = 120;
-    cameraX = 0;
-    cameraY = 0;
-
-    highestY = 0;
-    distance = 0;
-    level = 1;
-
-    airborne = false;
-    charging = false;
-
-    charge = 0;
-
-    player.x = worldX;
-    player.y = getGroundY(player.x) - player.radius;
-    player.vx = 3;
-    player.vy = 0;
-    player.rotation = 0;
-    player.spin = 0;
 }
 
 function restartGame() {
-    document.getElementById("gameOver").classList.add("hidden");
-    resetGame();
-    running = true;
-    startMusic();
+    startGame();
 }
 
-function openCustom() {
-    document.getElementById("startScreen").classList.add("hidden");
-    document.getElementById("customScreen").classList.remove("hidden");
-}
+document.getElementById("startButton").onclick = startGame;
+document.getElementById("retryButton").onclick = restartGame;
 
-function closeCustom() {
-    document.getElementById("customScreen").classList.add("hidden");
-    document.getElementById("startScreen").classList.remove("hidden");
-}
+window.addEventListener("keydown", e => {
 
-function saveCustom() {
-    discColor = document.getElementById("discColor").value;
-    auraColor = document.getElementById("auraColor").value;
+    keys[e.key.toLowerCase()] = true;
 
-    launchPower =
-        Number(document.getElementById("powerRange").value) / 100;
-
-    gravityMultiplier =
-        Number(document.getElementById("gravityRange").value) / 100;
-
-    closeCustom();
-}
-
-function launch() {
-    if (!running || airborne) return;
-
-    airborne = true;
-
-    const power = 7 + charge * 9;
-
-    player.vx += power * launchPower;
-    player.vy = -power * 1.25 * launchPower;
-
-    player.spin = player.vx * 0.045;
-
-    charge = 0;
-}
-
-function updateCharge() {
-    if (!charging || airborne) return;
-
-    charge += 0.018 * chargeDirection;
-
-    if (charge >= 1) {
-        charge = 1;
-        chargeDirection = -1;
+    if (
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight" ||
+        e.key === " "
+    ) {
+        e.preventDefault();
     }
+});
 
-    if (charge <= 0) {
-        charge = 0;
-        chargeDirection = 1;
+window.addEventListener("keyup", e => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+let rTimer = null;
+let firstR = false;
+
+window.addEventListener("keydown", e => {
+
+    if (e.key.toLowerCase() !== "r") return;
+
+    if (firstR) {
+
+        clearTimeout(rTimer);
+
+        window.location.href = "flashcards.html";
+
+        firstR = false;
+
+    } else {
+
+        firstR = true;
+
+        rTimer = setTimeout(() => {
+            firstR = false;
+            restartGame();
+        }, 450);
     }
-}
+});
 
 function update() {
+
     if (!running) return;
 
-    updateCharge();
+    let left =
+        keys["arrowleft"] ||
+        keys["a"];
 
-    if (!airborne) {
+    let right =
+        keys["arrowright"] ||
+        keys["d"];
+
+    if (left) {
+        player.vx -= player.grounded ? 0.10 : 0.055;
+    }
+
+    if (right) {
+        player.vx += player.grounded ? 0.10 : 0.055;
+    }
+
+    if (player.grounded) {
+
+        player.vx *= groundFriction;
+
+        player.vy += gravity;
+
         player.x += player.vx;
 
-        const ground = getGroundY(player.x);
+        let ground = terrainY(player.x);
 
-        player.y = ground - player.radius;
+        if (player.y + player.radius >= ground) {
 
-        const slopeAhead =
-            getGroundY(player.x + 30) -
-            getGroundY(player.x - 30);
-
-        player.vx += -slopeAhead * 0.00035;
-
-        player.vx *= 0.997;
-
-        if (player.vx < 2.2) player.vx = 2.2;
-
-        player.rotation += player.vx * 0.035;
-
-        if (charging) {
-            player.vx *= 0.996;
-        }
-    } else {
-        player.x += player.vx;
-
-        player.vy += 0.28 * gravityMultiplier;
-
-        player.y += player.vy;
-
-        player.vx *= 0.998;
-
-        player.rotation += player.spin;
-
-        const ground = getGroundY(player.x);
-
-        if (
-            player.y + player.radius >= ground &&
-            player.vy > 0
-        ) {
             player.y = ground - player.radius;
-
-            airborne = false;
 
             player.vy = 0;
 
-            player.vx *= 0.86;
+        }
 
-            if (player.vx < 2.5) {
-                player.vx = 2.5;
+        /*
+        Automatic dune launch.
+
+        If the ground suddenly falls away beneath the ball,
+        the ball keeps its horizontal momentum and flies upward.
+        */
+
+        let frontGround = terrainY(player.x + 45);
+        let currentGround = terrainY(player.x);
+
+        let slope = frontGround - currentGround;
+
+        if (slope > 18 && Math.abs(player.vx) > 3) {
+
+            player.grounded = false;
+
+            player.vy = -Math.abs(player.vx) * 0.55;
+
+            player.vx *= 1.05;
+        }
+
+    } else {
+
+        player.vy += airGravity;
+
+        player.vx *= airFriction;
+
+        player.x += player.vx;
+        player.y += player.vy;
+
+        player.rotation += player.vx * 0.035;
+
+        let ground = terrainY(player.x);
+
+        if (player.y + player.radius >= ground) {
+
+            player.y = ground - player.radius;
+
+            if (Math.abs(player.vy) > 5) {
+
+                player.vy *= -0.45;
+
+            } else {
+
+                player.vy = 0;
+                player.grounded = true;
+
             }
         }
     }
 
-    distance = Math.max(
-        distance,
-        Math.floor((player.x - 120) / 10)
-    );
+    if (player.y < highestY) {
+        highestY = player.y;
+    }
 
-    const currentHeight =
+    let currentHeight =
         Math.max(
             0,
-            Math.floor(
-                (getGroundY(player.x) - player.y) / 5
-            )
+            Math.floor((terrainY(300) - highestY) / 10)
         );
 
-    highestY = Math.max(highestY, currentHeight);
+    heightText.textContent = currentHeight;
 
-    level = Math.max(
-        1,
-        Math.floor(
-            Math.max(distance, highestY) / 250
-        ) + 1
-    );
+    if (currentHeight > bestHeight) {
 
-    cameraX +=
-        (player.x - W * 0.32 - cameraX) * 0.08;
+        bestHeight = currentHeight;
 
-    const targetCameraY =
+        bestText.textContent = bestHeight;
+
+        localStorage.setItem(
+            "duneBest",
+            bestHeight
+        );
+    }
+
+    let level = Math.floor(currentHeight / 100) + 1;
+
+    levelText.textContent =
+        "Level " + level;
+
+    /*
+    Camera follows player vertically.
+    */
+
+    let targetCameraY =
         player.y - H * 0.45;
 
     cameraY +=
         (targetCameraY - cameraY) * 0.08;
 
-    document.getElementById("level").textContent = level;
-    document.getElementById("height").textContent = highestY;
-    document.getElementById("distance").textContent = distance;
-}
+    let targetCameraX =
+        player.x - W * 0.35;
 
-function drawSky() {
-    ctx.fillStyle = "#e8c889";
-    ctx.fillRect(0, 0, W, H);
+    cameraX +=
+        (targetCameraX - cameraX) * 0.08;
 
-    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    /*
+    If the ball somehow falls far below the world,
+    reset it.
+    */
 
-    ctx.beginPath();
-    ctx.arc(
-        W * 0.78,
-        H * 0.18 - cameraY * 0.05,
-        55,
-        0,
-        Math.PI * 2
-    );
-    ctx.fill();
+    if (player.y > cameraY + H + 500) {
 
-    for (let i = 0; i < 7; i++) {
-        const x =
-            ((i * 330 - cameraX * 0.12) % (W + 400)) - 200;
+        running = false;
 
-        const y =
-            100 + i * 45 - cameraY * 0.08;
+        document.getElementById("finalHeight").textContent =
+            currentHeight;
 
-        ctx.fillStyle = "rgba(255,255,255,0.2)";
-
-        ctx.beginPath();
-        ctx.ellipse(x, y, 70, 18, 0, 0, Math.PI * 2);
-        ctx.fill();
+        document.getElementById("gameOver")
+            .classList.remove("hidden");
     }
 }
 
-function drawDune() {
+function drawSky() {
+
+    let gradient =
+        ctx.createLinearGradient(
+            0,
+            0,
+            0,
+            H
+        );
+
+    gradient.addColorStop(0, "#78c8e8");
+    gradient.addColorStop(1, "#d8f0f4");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+}
+
+function drawSun() {
+
+    let x =
+        W - 130;
+
+    let y =
+        100 - cameraY * 0.04;
+
+    ctx.beginPath();
+
+    ctx.arc(
+        x,
+        y,
+        45,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle = "#fff2b2";
+    ctx.fill();
+}
+
+function drawDistantDunes() {
+
     ctx.beginPath();
 
     ctx.moveTo(0, H);
 
-    for (let sx = 0; sx <= W + 30; sx += 10) {
-        const wx = cameraX + sx;
-        const y = getGroundY(wx) - cameraY;
+    for (let x = 0; x <= W; x += 10) {
 
-        ctx.lineTo(sx, y);
+        let worldX =
+            cameraX + x;
+
+        let y =
+            H * 0.65 -
+            cameraY * 0.15 +
+            Math.sin(worldX * 0.002) * 70 +
+            Math.sin(worldX * 0.006) * 30;
+
+        ctx.lineTo(x, y);
     }
 
     ctx.lineTo(W, H);
     ctx.closePath();
 
-    ctx.fillStyle = "#d7a85d";
+    ctx.fillStyle = "#e7bd6e";
     ctx.fill();
+}
+
+function drawTerrain() {
 
     ctx.beginPath();
 
-    for (let sx = 0; sx <= W + 30; sx += 10) {
-        const wx = cameraX + sx;
-        const y = getGroundY(wx) - cameraY;
+    ctx.moveTo(0, H);
 
-        if (sx === 0) {
-            ctx.moveTo(sx, y);
+    let start =
+        Math.floor(cameraX / segmentWidth) - 2;
+
+    let end =
+        Math.ceil(
+            (cameraX + W) /
+            segmentWidth
+        ) + 2;
+
+    for (
+        let i = start;
+        i <= end;
+        i++
+    ) {
+
+        if (i < 0) continue;
+
+        while (i >= terrain.length) {
+            generateMoreTerrain();
+        }
+
+        let point = terrain[i];
+
+        let sx =
+            point.x - cameraX;
+
+        let sy =
+            point.y - cameraY;
+
+        if (i === start) {
+            ctx.moveTo(sx, sy);
         } else {
-            ctx.lineTo(sx, y);
+            ctx.lineTo(sx, sy);
         }
     }
 
-    ctx.strokeStyle = "#f0ce8b";
-    ctx.lineWidth = 7;
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+
+    ctx.fillStyle = "#e4ae55";
+    ctx.fill();
+
+    /*
+    Light top edge.
+    */
+
+    ctx.beginPath();
+
+    for (
+        let i = start;
+        i <= end;
+        i++
+    ) {
+
+        if (i < 0) continue;
+
+        let point = terrain[i];
+
+        let sx =
+            point.x - cameraX;
+
+        let sy =
+            point.y - cameraY;
+
+        if (i === start) {
+            ctx.moveTo(sx, sy);
+        } else {
+            ctx.lineTo(sx, sy);
+        }
+    }
+
+    ctx.strokeStyle = "#f4d48a";
+    ctx.lineWidth = 5;
     ctx.stroke();
-
-    for (let i = 0; i < 18; i++) {
-        const x =
-            ((i * 180 - cameraX * 0.4) %
-                (W + 300)) - 150;
-
-        const y =
-            getGroundY(cameraX + x) -
-            cameraY +
-            35;
-
-        ctx.strokeStyle = "rgba(150,100,45,0.18)";
-        ctx.lineWidth = 2;
-
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + 80, y + 18);
-        ctx.stroke();
-    }
 }
 
-function drawAura() {
-    const screenX = player.x - cameraX;
-    const screenY = player.y - cameraY;
+function drawPlayer() {
 
-    const pulse =
-        1 +
-        Math.sin(performance.now() * 0.008) * 0.08;
+    let x =
+        player.x - cameraX;
 
-    for (let i = 3; i >= 1; i--) {
-        ctx.beginPath();
-
-        ctx.arc(
-            screenX,
-            screenY,
-            (player.radius + i * 12) * pulse,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.strokeStyle =
-            hexToRgba(auraColor, 0.14 / i);
-
-        ctx.lineWidth = 4;
-
-        ctx.stroke();
-    }
-
-    const bars = 8;
-
-    for (let i = 0; i < bars; i++) {
-        const angle =
-            (Math.PI * 2 / bars) * i +
-            performance.now() * 0.0005;
-
-        const wave =
-            Math.sin(
-                performance.now() * 0.006 +
-                i
-            ) * 5;
-
-        const r1 = 34 + wave;
-        const r2 = 48 + wave;
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            screenX + Math.cos(angle) * r1,
-            screenY + Math.sin(angle) * r1
-        );
-
-        ctx.lineTo(
-            screenX + Math.cos(angle) * r2,
-            screenY + Math.sin(angle) * r2
-        );
-
-        ctx.strokeStyle = auraColor;
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    }
-}
-
-function drawDisc() {
-    const screenX = player.x - cameraX;
-    const screenY = player.y - cameraY;
+    let y =
+        player.y - cameraY;
 
     ctx.save();
 
-    ctx.translate(screenX, screenY);
+    ctx.translate(x, y);
+
     ctx.rotate(player.rotation);
 
-    drawAura();
+    /*
+    Shadow.
+    */
 
     ctx.beginPath();
-    ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
 
-    ctx.fillStyle = discColor;
+    ctx.ellipse(
+        0,
+        player.radius + 5,
+        player.radius * 0.9,
+        6,
+        0,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle =
+        "rgba(80,50,20,0.18)";
+
     ctx.fill();
 
+    /*
+    Ball.
+    */
+
+    ctx.beginPath();
+
+    ctx.arc(
+        0,
+        0,
+        player.radius,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.fillStyle = "#f4f0df";
+    ctx.fill();
+
+    ctx.strokeStyle = "#594d3d";
     ctx.lineWidth = 3;
-    ctx.strokeStyle = "#111";
+    ctx.stroke();
+
+    /*
+    Simple ball markings.
+    */
+
+    ctx.beginPath();
+
+    ctx.arc(
+        0,
+        0,
+        10,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.strokeStyle = "#8c806b";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(0, 0, 8, 0, Math.PI * 2);
 
-    ctx.fillStyle = auraColor;
-    ctx.fill();
+    ctx.moveTo(-17, -5);
+    ctx.lineTo(17, 5);
 
-    ctx.beginPath();
-    ctx.arc(0, 0, 4, 0, Math.PI * 2);
-
-    ctx.fillStyle = discColor;
-    ctx.fill();
-
-    for (let i = 0; i < 3; i++) {
-        ctx.beginPath();
-
-        ctx.arc(
-            0,
-            0,
-            13 + i * 5,
-            -0.7,
-            0.7
-        );
-
-        ctx.strokeStyle = auraColor;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
+    ctx.strokeStyle = "#8c806b";
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
     ctx.restore();
 }
 
-function drawCharge() {
-    if (!charging || airborne) return;
-
-    const x = W / 2;
-    const y = H - 55;
-
-    ctx.fillStyle = "rgba(255,255,255,0.7)";
-    ctx.fillRect(x - 120, y, 240, 12);
-
-    ctx.fillStyle = "#222";
-    ctx.fillRect(
-        x - 120,
-        y,
-        240 * charge,
-        12
-    );
-
-    ctx.strokeStyle = "#222";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x - 120, y, 240, 12);
-}
-
 function draw() {
+
     drawSky();
-    drawDune();
-    drawDisc();
-    drawCharge();
+    drawSun();
+    drawDistantDunes();
+    drawTerrain();
+
+    if (gameStarted) {
+        drawPlayer();
+    }
 }
 
 function loop() {
+
     update();
     draw();
+
     requestAnimationFrame(loop);
 }
 
 loop();
 
-function hexToRgba(hex, alpha) {
-    hex = hex.replace("#", "");
-
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-
-    return `rgba(${r},${g},${b},${alpha})`;
-}
-
-function startMusic() {
-    if (musicStarted) return;
-
-    musicStarted = true;
-
-    try {
-        audioCtx =
-            new (window.AudioContext ||
-            window.webkitAudioContext)();
-
-        oscillator =
-            audioCtx.createOscillator();
-
-        gainNode =
-            audioCtx.createGain();
-
-        oscillator.type = "sine";
-        oscillator.frequency.value = 220;
-
-        gainNode.gain.value = 0.025;
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        oscillator.start();
-    } catch (e) {}
-}
-
-function changeMusicPitch() {
-    if (!oscillator) return;
-
-    oscillator.frequency.value =
-        180 + player.vx * 20 + level * 8;
-}
-
-setInterval(changeMusicPitch, 100);
-
-function pressStart() {
-    if (!gameStarted) return;
-
-    if (!airborne) {
-        charging = true;
-    }
-}
-
-function releaseStart() {
-    if (!gameStarted) return;
-
-    if (charging && !airborne) {
-        charging = false;
-        launch();
-    }
-}
-
-window.addEventListener("keydown", e => {
-    if (
-        e.code === "Space" ||
-        e.code === "ArrowUp"
-    ) {
-        e.preventDefault();
-
-        if (!e.repeat) {
-            pressStart();
-        }
-    }
-
-    if (e.key.toLowerCase() === "r") {
-        handleRRR();
-    }
-});
-
-window.addEventListener("keyup", e => {
-    if (
-        e.code === "Space" ||
-        e.code === "ArrowUp"
-    ) {
-        e.preventDefault();
-        releaseStart();
-    }
-});
-
-canvas.addEventListener("mousedown", pressStart);
-window.addEventListener("mouseup", releaseStart);
-
-canvas.addEventListener("touchstart", e => {
-    e.preventDefault();
-    pressStart();
-}, {passive:false});
-
-window.addEventListener("touchend", e => {
-    e.preventDefault();
-    releaseStart();
-}, {passive:false});
-
-let rCount = 0;
-let rTimer = null;
-
-function handleRRR() {
-    rCount++;
-
-    clearTimeout(rTimer);
-
-    rTimer = setTimeout(() => {
-        rCount = 0;
-    }, 700);
-
-    if (rCount === 3) {
-        rCount = 0;
-        window.location.href = "flashcards.html";
-    }
-}
-
-function goHome() {
-    window.location.href = "index.html?games=true";
-}
 </script>
 
 </body>
