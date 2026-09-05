@@ -1,110 +1,104 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Dune Dash</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    user-select: none;
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#f4c96b;
+    font-family:Arial,sans-serif;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #87ceeb;
-    font-family: Arial, sans-serif;
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
 }
 
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
+#ui{
+    position:fixed;
+    top:18px;
+    left:20px;
+    z-index:5;
+    color:#3d2918;
+    font-weight:bold;
+    font-size:18px;
+    line-height:1.5;
+    text-shadow:0 1px rgba(255,255,255,.35);
 }
 
-#hud {
-    position: fixed;
-    top: 18px;
-    left: 18px;
-    color: #222;
-    background: rgba(255,255,255,0.8);
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 17px;
-    z-index: 5;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+#level{
+    font-size:15px;
 }
 
-#level {
-    margin-top: 5px;
-    font-size: 14px;
+#instructions{
+    position:fixed;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(255,255,255,.7);
+    padding:9px 15px;
+    border-radius:20px;
+    color:#4b341e;
+    font-size:14px;
+    z-index:5;
 }
 
-#help {
-    position: fixed;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,0.75);
-    padding: 9px 15px;
-    border-radius: 10px;
-    font-size: 14px;
-    color: #333;
+#start,#retry{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(238,190,94,.25);
 }
 
-#startScreen,
-#gameOver {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,0,0,0.3);
-    z-index: 10;
+.box{
+    background:rgba(255,248,222,.95);
+    border-radius:18px;
+    padding:35px 45px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(80,45,10,.25);
 }
 
-.panel {
-    background: white;
-    padding: 35px;
-    border-radius: 20px;
-    text-align: center;
-    width: min(90%, 420px);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+.box h1{
+    margin:0 0 8px;
+    font-size:45px;
+    color:#50351c;
 }
 
-.panel h1 {
-    font-size: 45px;
-    margin: 0 0 10px;
+.box p{
+    color:#735735;
+    line-height:1.5;
 }
 
-.panel p {
-    color: #555;
-    line-height: 1.5;
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 28px;
+    background:#d99532;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-button {
-    border: none;
-    background: #e5a83a;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 13px 25px;
-    border-radius: 12px;
-    cursor: pointer;
+button:hover{
+    background:#c78325;
 }
 
-button:hover {
-    background: #d39220;
-}
-
-.hidden {
-    display: none !important;
+.hidden{
+    display:none!important;
 }
 </style>
 </head>
@@ -113,543 +107,590 @@ button:hover {
 
 <canvas id="canvas"></canvas>
 
-<div id="hud">
-    Height: <span id="height">0</span> m<br>
-    Best: <span id="best">0</span> m
-    <div id="level">Level 1</div>
+<div id="ui">
+    HEIGHT: <span id="height">0</span>m
+    <div id="level">LEVEL 1</div>
 </div>
 
-<div id="help">
-    ← → / A D &nbsp; Move &nbsp; • &nbsp; R Restart
+<div id="instructions">
+    HOLD SPACE / CLICK TO BUILD MOMENTUM • RELEASE TO LAUNCH
 </div>
 
-<div id="startScreen">
-    <div class="panel">
-        <h1>🏜️ Dune Dash</h1>
+<div id="start">
+    <div class="box">
+        <h1>DUNE DASH</h1>
         <p>
-            Roll down the dunes, build speed,<br>
-            launch into the air and climb as high as possible.
+            Build speed as you roll down the dunes.<br>
+            Release at the right moment to launch high.
         </p>
-        <button id="startButton">START</button>
+        <button id="startBtn">START</button>
     </div>
 </div>
 
-<div id="gameOver" class="hidden">
-    <div class="panel">
-        <h1>🏜️ Landed!</h1>
+<div id="retry" class="hidden">
+    <div class="box">
+        <h1>RUN OVER</h1>
         <p>
-            Height reached:
-            <strong><span id="finalHeight">0</span> m</strong>
+            HEIGHT: <span id="finalHeight">0</span>m
         </p>
-        <button id="retryButton">RETRY</button>
+        <button id="retryBtn">RETRY</button>
     </div>
 </div>
 
 <script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
 
-let W = window.innerWidth;
-let H = window.innerHeight;
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+let W=innerWidth;
+let H=innerHeight;
+
+function resize(){
+    W=canvas.width=innerWidth;
+    H=canvas.height=innerHeight;
 }
 
-window.addEventListener("resize", resize);
+addEventListener("resize",resize);
 resize();
 
-const heightText = document.getElementById("height");
-const bestText = document.getElementById("best");
-const levelText = document.getElementById("level");
 
-let keys = {};
-let running = false;
-let gameStarted = false;
+/* -------------------------
+   GAME SETTINGS
+------------------------- */
 
-let cameraX = 0;
-let cameraY = 0;
+const gravity=.42;
+const airGravity=.27;
 
-let highestY = 0;
-let bestHeight = Number(localStorage.getItem("duneBest") || 0);
+let running=false;
+let holding=false;
 
-bestText.textContent = bestHeight;
+let cameraX=0;
+let cameraY=0;
 
-const gravity = 0.42;
-const airGravity = 0.30;
-const groundFriction = 0.985;
-const airFriction = 0.998;
+let distance=0;
+let highestY=0;
 
-let terrain = [];
+let terrain=[];
+const STEP=55;
 
-const segmentWidth = 80;
 
-function makeTerrain() {
-    terrain = [];
+/* -------------------------
+   TERRAIN
+------------------------- */
 
-    let x = -1000;
-    let y = H * 0.72;
+function duneHeight(x){
 
-    while (x < 100000) {
+    return H*.72
+        + Math.sin(x*.0032)*125
+        + Math.sin(x*.0071)*55
+        + Math.sin(x*.014)*22;
+}
 
-        let wave =
-            Math.sin(x * 0.004) * 130 +
-            Math.sin(x * 0.009) * 70 +
-            Math.sin(x * 0.018) * 30;
+function createTerrain(){
 
-        let newY = H * 0.70 + wave;
+    terrain=[];
+
+    for(let x=-1000;x<120000;x+=STEP){
 
         terrain.push({
-            x: x,
-            y: newY
+            x:x,
+            y:duneHeight(x)
         });
 
-        x += segmentWidth;
     }
 }
 
-makeTerrain();
+createTerrain();
 
-function terrainY(x) {
+function getGround(x){
 
-    let index = Math.floor((x + 1000) / segmentWidth);
+    let i=Math.floor((x+1000)/STEP);
 
-    if (index < 0) return H * 0.7;
+    if(i<0)return H*.72;
 
-    while (index >= terrain.length - 1) {
-        generateMoreTerrain();
+    if(i>=terrain.length-1){
+
+        for(let n=0;n<500;n++){
+
+            let xx=terrain[terrain.length-1].x+STEP;
+
+            terrain.push({
+                x:xx,
+                y:duneHeight(xx)
+            });
+        }
     }
 
-    const a = terrain[index];
-    const b = terrain[index + 1];
+    let a=terrain[i];
+    let b=terrain[i+1];
 
-    const t = (x - a.x) / (b.x - a.x);
+    let t=(x-a.x)/(b.x-a.x);
 
-    return a.y + (b.y - a.y) * t;
+    return a.y+(b.y-a.y)*t;
 }
 
-function generateMoreTerrain() {
+function getSlope(x){
 
-    let last = terrain[terrain.length - 1];
-
-    for (let i = 1; i <= 100; i++) {
-
-        let x = last.x + i * segmentWidth;
-
-        let wave =
-            Math.sin(x * 0.004) * 130 +
-            Math.sin(x * 0.009) * 70 +
-            Math.sin(x * 0.018) * 30;
-
-        terrain.push({
-            x,
-            y: H * 0.70 + wave
-        });
-    }
+    return getGround(x+20)-getGround(x-20);
 }
 
-let player = {
-    x: 300,
-    y: 0,
-    vx: 0,
-    vy: 0,
-    radius: 20,
-    grounded: false,
-    rotation: 0
+
+/* -------------------------
+   PLAYER
+------------------------- */
+
+const ball={
+    x:300,
+    y:0,
+    vx:0,
+    vy:0,
+    r:19,
+    grounded:true,
+    rotation:0
 };
 
-function resetPlayer() {
+function reset(){
 
-    player.x = 300;
-    player.y = terrainY(player.x) - player.radius - 2;
+    ball.x=300;
+    ball.y=getGround(ball.x)-ball.r;
+    ball.vx=0;
+    ball.vy=0;
+    ball.grounded=true;
+    ball.rotation=0;
 
-    player.vx = 0;
-    player.vy = 0;
+    cameraX=0;
+    cameraY=0;
 
-    player.grounded = true;
-    player.rotation = 0;
-
-    cameraX = player.x - W * 0.35;
-    cameraY = 0;
-
-    highestY = player.y;
+    highestY=ball.y;
+    distance=0;
 }
 
-function startGame() {
 
-    document.getElementById("startScreen").classList.add("hidden");
-    document.getElementById("gameOver").classList.add("hidden");
+/* -------------------------
+   INPUT
+------------------------- */
 
-    resetPlayer();
+addEventListener("keydown",e=>{
 
-    running = true;
-    gameStarted = true;
-}
-
-function restartGame() {
-    startGame();
-}
-
-document.getElementById("startButton").onclick = startGame;
-document.getElementById("retryButton").onclick = restartGame;
-
-window.addEventListener("keydown", e => {
-
-    keys[e.key.toLowerCase()] = true;
-
-    if (
-        e.key === "ArrowLeft" ||
-        e.key === "ArrowRight" ||
-        e.key === " "
-    ) {
+    if(e.code==="Space"){
         e.preventDefault();
+        holding=true;
     }
+
+    if(e.key==="ArrowLeft"||e.key==="a"){
+        ball.vx-=.08;
+    }
+
+    if(e.key==="ArrowRight"||e.key==="d"){
+        ball.vx+=.08;
+    }
+
 });
 
-window.addEventListener("keyup", e => {
-    keys[e.key.toLowerCase()] = false;
+addEventListener("keyup",e=>{
+
+    if(e.code==="Space"){
+        holding=false;
+    }
+
 });
 
-let rTimer = null;
-let firstR = false;
-
-window.addEventListener("keydown", e => {
-
-    if (e.key.toLowerCase() !== "r") return;
-
-    if (firstR) {
-
-        clearTimeout(rTimer);
-
-        window.location.href = "flashcards.html";
-
-        firstR = false;
-
-    } else {
-
-        firstR = true;
-
-        rTimer = setTimeout(() => {
-            firstR = false;
-            restartGame();
-        }, 450);
-    }
+canvas.addEventListener("mousedown",()=>{
+    holding=true;
 });
 
-function update() {
+addEventListener("mouseup",()=>{
+    holding=false;
+});
 
-    if (!running) return;
 
-    let left =
-        keys["arrowleft"] ||
-        keys["a"];
+/* -------------------------
+   RR SHORTCUT
+------------------------- */
 
-    let right =
-        keys["arrowright"] ||
-        keys["d"];
+let rCount=0;
+let rTimer=null;
 
-    if (left) {
-        player.vx -= player.grounded ? 0.10 : 0.055;
+addEventListener("keydown",e=>{
+
+    if(e.key.toLowerCase()!=="r")return;
+
+    rCount++;
+
+    clearTimeout(rTimer);
+
+    rTimer=setTimeout(()=>{
+        rCount=0;
+    },500);
+
+    if(rCount===2){
+
+        rCount=0;
+        window.location.href="flashcards.html";
+
     }
 
-    if (right) {
-        player.vx += player.grounded ? 0.10 : 0.055;
-    }
+});
 
-    if (player.grounded) {
 
-        player.vx *= groundFriction;
+/* -------------------------
+   PHYSICS
+------------------------- */
 
-        player.vy += gravity;
+function update(){
 
-        player.x += player.vx;
+    if(!running)return;
 
-        let ground = terrainY(player.x);
 
-        if (player.y + player.radius >= ground) {
-
-            player.y = ground - player.radius;
-
-            player.vy = 0;
-
-        }
+    if(ball.grounded){
 
         /*
-        Automatic dune launch.
-
-        If the ground suddenly falls away beneath the ball,
-        the ball keeps its horizontal momentum and flies upward.
+        Gravity pulls the ball along
+        the slope. Downhill = speed.
         */
 
-        let frontGround = terrainY(player.x + 45);
-        let currentGround = terrainY(player.x);
+        let slope=getSlope(ball.x);
 
-        let slope = frontGround - currentGround;
+        ball.vx+=slope*.018;
 
-        if (slope > 18 && Math.abs(player.vx) > 3) {
+        /*
+        Holding adds extra control/momentum.
+        */
 
-            player.grounded = false;
+        if(holding){
 
-            player.vy = -Math.abs(player.vx) * 0.55;
+            ball.vx+=.045;
 
-            player.vx *= 1.05;
         }
 
-    } else {
+        ball.vx*=.992;
 
-        player.vy += airGravity;
+        ball.x+=ball.vx;
 
-        player.vx *= airFriction;
+        let ground=getGround(ball.x);
 
-        player.x += player.vx;
-        player.y += player.vy;
+        ball.y=ground-ball.r;
 
-        player.rotation += player.vx * 0.035;
+        ball.rotation+=ball.vx*.04;
 
-        let ground = terrainY(player.x);
 
-        if (player.y + player.radius >= ground) {
+        /*
+        The crest launches the ball.
+        */
 
-            player.y = ground - player.radius;
+        let ahead=getGround(ball.x+55);
+        let behind=getGround(ball.x-55);
 
-            if (Math.abs(player.vy) > 5) {
+        let crest=behind>ground && ahead>ground;
 
-                player.vy *= -0.45;
+        if(crest && Math.abs(ball.vx)>2.2){
 
-            } else {
+            ball.grounded=false;
 
-                player.vy = 0;
-                player.grounded = true;
+            /*
+            The faster the ball is moving,
+            the higher the launch.
+            */
+
+            ball.vy=-Math.min(
+                13,
+                3.5+Math.abs(ball.vx)*.75
+            );
+
+            ball.vx*=1.04;
+        }
+
+    }else{
+
+        /*
+        Air physics.
+        */
+
+        ball.vy+=airGravity;
+
+        ball.x+=ball.vx;
+        ball.y+=ball.vy;
+
+        ball.vx*=.998;
+
+        ball.rotation+=ball.vx*.035;
+
+
+        /*
+        Landing.
+        */
+
+        let ground=getGround(ball.x);
+
+        if(ball.y+ball.r>=ground){
+
+            ball.y=ground-ball.r;
+
+            /*
+            Soft landing.
+            */
+
+            if(Math.abs(ball.vy)<6){
+
+                ball.vy=0;
+                ball.grounded=true;
+
+            }else{
+
+                /*
+                Bounce if landing hard.
+                */
+
+                ball.vy*=-.25;
 
             }
         }
     }
 
-    if (player.y < highestY) {
-        highestY = player.y;
-    }
-
-    let currentHeight =
-        Math.max(
-            0,
-            Math.floor((terrainY(300) - highestY) / 10)
-        );
-
-    heightText.textContent = currentHeight;
-
-    if (currentHeight > bestHeight) {
-
-        bestHeight = currentHeight;
-
-        bestText.textContent = bestHeight;
-
-        localStorage.setItem(
-            "duneBest",
-            bestHeight
-        );
-    }
-
-    let level = Math.floor(currentHeight / 100) + 1;
-
-    levelText.textContent =
-        "Level " + level;
 
     /*
-    Camera follows player vertically.
+    Release gives a little extra
+    launch impulse when climbing.
     */
 
-    let targetCameraY =
-        player.y - H * 0.45;
+    if(
+        !holding &&
+        ball.grounded &&
+        ball.vx>4
+    ){
 
-    cameraY +=
-        (targetCameraY - cameraY) * 0.08;
+        let slope=getSlope(ball.x);
 
-    let targetCameraX =
-        player.x - W * 0.35;
+        if(slope<0){
 
-    cameraX +=
-        (targetCameraX - cameraX) * 0.08;
+            ball.grounded=false;
+
+            ball.vy=-Math.min(
+                15,
+                4+ball.vx*.9
+            );
+        }
+    }
+
+
+    if(ball.y<highestY){
+        highestY=ball.y;
+    }
+
+
+    distance=Math.max(
+        0,
+        Math.floor(
+            (getGround(300)-highestY)/8
+        )
+    );
+
+
+    document.getElementById("height")
+        .textContent=distance;
+
+
+    let level=Math.floor(distance/100)+1;
+
+    document.getElementById("level")
+        .textContent="LEVEL "+level;
+
 
     /*
-    If the ball somehow falls far below the world,
-    reset it.
+    Smooth camera.
     */
 
-    if (player.y > cameraY + H + 500) {
+    let targetX=ball.x-W*.32;
 
-        running = false;
+    cameraX+=(targetX-cameraX)*.09;
 
-        document.getElementById("finalHeight").textContent =
-            currentHeight;
 
-        document.getElementById("gameOver")
-            .classList.remove("hidden");
+    let targetY=ball.y-H*.42;
+
+    cameraY+=(targetY-cameraY)*.08;
+
+
+    /*
+    Endless world.
+    */
+
+    if(ball.x>terrain[terrain.length-300].x){
+
+        for(let n=0;n<500;n++){
+
+            let xx=
+                terrain[terrain.length-1].x+STEP;
+
+            terrain.push({
+                x:xx,
+                y:duneHeight(xx)
+            });
+        }
+    }
+
+
+    /*
+    Falling too far means run ends.
+    */
+
+    if(ball.y>cameraY+H+500){
+
+        endGame();
     }
 }
 
-function drawSky() {
 
-    let gradient =
-        ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            H
-        );
+/* -------------------------
+   DRAW SKY
+------------------------- */
 
-    gradient.addColorStop(0, "#78c8e8");
-    gradient.addColorStop(1, "#d8f0f4");
+function drawSky(){
 
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, W, H);
-}
+    let sky=ctx.createLinearGradient(
+        0,0,0,H
+    );
 
-function drawSun() {
+    sky.addColorStop(0,"#72c7e8");
+    sky.addColorStop(.55,"#c9e8df");
+    sky.addColorStop(1,"#f2c66b");
 
-    let x =
-        W - 130;
+    ctx.fillStyle=sky;
+    ctx.fillRect(0,0,W,H);
 
-    let y =
-        100 - cameraY * 0.04;
+
+    /*
+    Sun.
+    */
 
     ctx.beginPath();
 
     ctx.arc(
-        x,
-        y,
-        45,
+        W*.82,
+        100-cameraY*.03,
+        48,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
-    ctx.fillStyle = "#fff2b2";
+    ctx.fillStyle="#ffeaa5";
     ctx.fill();
 }
 
-function drawDistantDunes() {
+
+/* -------------------------
+   DISTANT DUNES
+------------------------- */
+
+function drawBackgroundDunes(){
 
     ctx.beginPath();
 
-    ctx.moveTo(0, H);
+    ctx.moveTo(0,H);
 
-    for (let x = 0; x <= W; x += 10) {
+    for(let x=0;x<=W;x+=10){
 
-        let worldX =
-            cameraX + x;
+        let wx=x+cameraX;
 
-        let y =
-            H * 0.65 -
-            cameraY * 0.15 +
-            Math.sin(worldX * 0.002) * 70 +
-            Math.sin(worldX * 0.006) * 30;
+        let y=
+            H*.67-cameraY*.1+
+            Math.sin(wx*.002)*70+
+            Math.sin(wx*.005)*30;
 
-        ctx.lineTo(x, y);
+        ctx.lineTo(x,y);
     }
 
-    ctx.lineTo(W, H);
+    ctx.lineTo(W,H);
     ctx.closePath();
 
-    ctx.fillStyle = "#e7bd6e";
+    ctx.fillStyle="#e2b45d";
     ctx.fill();
 }
 
-function drawTerrain() {
+
+/* -------------------------
+   MAIN DUNES
+------------------------- */
+
+function drawTerrain(){
 
     ctx.beginPath();
 
-    ctx.moveTo(0, H);
+    ctx.moveTo(0,H);
 
-    let start =
-        Math.floor(cameraX / segmentWidth) - 2;
+    let start=
+        Math.floor((cameraX+1000)/STEP)-2;
 
-    let end =
-        Math.ceil(
-            (cameraX + W) /
-            segmentWidth
-        ) + 2;
+    let end=start+
+        Math.ceil(W/STEP)+6;
 
-    for (
-        let i = start;
-        i <= end;
-        i++
-    ) {
+    for(let i=start;i<=end;i++){
 
-        if (i < 0) continue;
+        if(i<0)continue;
 
-        while (i >= terrain.length) {
-            generateMoreTerrain();
-        }
+        if(i>=terrain.length)break;
 
-        let point = terrain[i];
+        let p=terrain[i];
 
-        let sx =
-            point.x - cameraX;
+        let x=p.x-cameraX;
+        let y=p.y-cameraY;
 
-        let sy =
-            point.y - cameraY;
-
-        if (i === start) {
-            ctx.moveTo(sx, sy);
-        } else {
-            ctx.lineTo(sx, sy);
+        if(i===start){
+            ctx.moveTo(x,y);
+        }else{
+            ctx.lineTo(x,y);
         }
     }
 
-    ctx.lineTo(W, H);
-    ctx.lineTo(0, H);
+    ctx.lineTo(W,H);
+    ctx.lineTo(0,H);
     ctx.closePath();
 
-    ctx.fillStyle = "#e4ae55";
+    ctx.fillStyle="#dba84e";
     ctx.fill();
+
 
     /*
-    Light top edge.
+    Light sand crest.
     */
 
     ctx.beginPath();
 
-    for (
-        let i = start;
-        i <= end;
-        i++
-    ) {
+    for(let i=start;i<=end;i++){
 
-        if (i < 0) continue;
+        if(i<0||i>=terrain.length)continue;
 
-        let point = terrain[i];
+        let p=terrain[i];
 
-        let sx =
-            point.x - cameraX;
+        let x=p.x-cameraX;
+        let y=p.y-cameraY;
 
-        let sy =
-            point.y - cameraY;
-
-        if (i === start) {
-            ctx.moveTo(sx, sy);
-        } else {
-            ctx.lineTo(sx, sy);
+        if(i===start){
+            ctx.moveTo(x,y);
+        }else{
+            ctx.lineTo(x,y);
         }
     }
 
-    ctx.strokeStyle = "#f4d48a";
-    ctx.lineWidth = 5;
+    ctx.lineWidth=5;
+    ctx.strokeStyle="#f2d17c";
     ctx.stroke();
 }
 
-function drawPlayer() {
 
-    let x =
-        player.x - cameraX;
+/* -------------------------
+   BALL
+------------------------- */
 
-    let y =
-        player.y - cameraY;
+function drawBall(){
+
+    let x=ball.x-cameraX;
+    let y=ball.y-cameraY;
 
     ctx.save();
 
-    ctx.translate(x, y);
+    ctx.translate(x,y);
+    ctx.rotate(ball.rotation);
 
-    ctx.rotate(player.rotation);
 
     /*
     Shadow.
@@ -659,18 +700,17 @@ function drawPlayer() {
 
     ctx.ellipse(
         0,
-        player.radius + 5,
-        player.radius * 0.9,
-        6,
+        ball.r+5,
+        ball.r*.8,
+        5,
         0,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
-    ctx.fillStyle =
-        "rgba(80,50,20,0.18)";
-
+    ctx.fillStyle="rgba(70,45,20,.18)";
     ctx.fill();
+
 
     /*
     Ball.
@@ -681,20 +721,21 @@ function drawPlayer() {
     ctx.arc(
         0,
         0,
-        player.radius,
+        ball.r,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
-    ctx.fillStyle = "#f4f0df";
+    ctx.fillStyle="#f4ead0";
     ctx.fill();
 
-    ctx.strokeStyle = "#594d3d";
-    ctx.lineWidth = 3;
+    ctx.lineWidth=3;
+    ctx.strokeStyle="#66533b";
     ctx.stroke();
 
+
     /*
-    Simple ball markings.
+    Ball markings.
     */
 
     ctx.beginPath();
@@ -702,40 +743,84 @@ function drawPlayer() {
     ctx.arc(
         0,
         0,
-        10,
+        11,
         0,
-        Math.PI * 2
+        Math.PI*2
     );
 
-    ctx.strokeStyle = "#8c806b";
-    ctx.lineWidth = 2;
+    ctx.lineWidth=2;
+    ctx.strokeStyle="#a18b68";
     ctx.stroke();
+
 
     ctx.beginPath();
 
-    ctx.moveTo(-17, -5);
-    ctx.lineTo(17, 5);
+    ctx.moveTo(-16,-5);
+    ctx.lineTo(16,5);
 
-    ctx.strokeStyle = "#8c806b";
-    ctx.lineWidth = 2;
     ctx.stroke();
+
 
     ctx.restore();
 }
 
-function draw() {
+
+/* -------------------------
+   DRAW
+------------------------- */
+
+function draw(){
 
     drawSky();
-    drawSun();
-    drawDistantDunes();
+    drawBackgroundDunes();
     drawTerrain();
 
-    if (gameStarted) {
-        drawPlayer();
+    if(running){
+        drawBall();
     }
 }
 
-function loop() {
+
+/* -------------------------
+   GAME CONTROL
+------------------------- */
+
+function startGame(){
+
+    document.getElementById("start")
+        .classList.add("hidden");
+
+    document.getElementById("retry")
+        .classList.add("hidden");
+
+    reset();
+
+    running=true;
+}
+
+function endGame(){
+
+    running=false;
+
+    document.getElementById("finalHeight")
+        .textContent=distance;
+
+    document.getElementById("retry")
+        .classList.remove("hidden");
+}
+
+document.getElementById("startBtn")
+    .onclick=startGame;
+
+document.getElementById("retryBtn")
+    .onclick=startGame;
+
+
+/* -------------------------
+   LOOP
+------------------------- */
+
+function loop(){
 
     update();
     draw();
@@ -749,3 +834,4 @@ loop();
 
 </body>
 </html>
+```
