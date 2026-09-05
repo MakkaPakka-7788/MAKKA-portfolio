@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dune Dash</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#d9b36a;
+    font-family:Arial,sans-serif;
+}
+
+canvas{
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+#ui{
+    position:fixed;
+    top:15px;
+    left:15px;
+    color:white;
+    font-weight:bold;
+    font-size:18px;
+    text-shadow:2px 2px 3px #593b1b;
+    pointer-events:none;
+    line-height:1.5;
+}
+
+#level{
+    font-size:27px;
+}
+
+#message{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    color:white;
+    text-shadow:3px 3px 4px #593b1b;
+    display:none;
+}
+
+#message h1{
+    font-size:52px;
+    margin-bottom:10px;
+}
+
+#message p{
+    font-size:20px;
+}
+
+#start{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    border:0;
+    border-radius:10px;
+    padding:15px 35px;
+    font-size:22px;
+    font-weight:bold;
+    color:#70491e;
+    background:white;
+    cursor:pointer;
+    box-shadow:0 5px 0 #a87532;
+}
+
+#controls{
+    position:fixed;
+    bottom:15px;
+    left:50%;
+    transform:translateX(-50%);
+    color:white;
+    text-shadow:2px 2px 3px #593b1b;
+    font-size:15px;
+    text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="ui">
+    <div id="level">LEVEL 1</div>
+    <div>Height: <span id="height">0</span>m</div>
+    <div>Coins: <span id="coins">0</span></div>
+</div>
+
+<div id="message">
+    <h1 id="messageTitle">DUNE DASH</h1>
+    <p id="messageText">Reach higher levels!</p>
+</div>
+
+<button id="start">START</button>
+
+<div id="controls">
+    ← → / A D &nbsp; • &nbsp; SPACE to jump &nbsp; • &nbsp; RRR = Flashcards
+</div>
+
+<script>
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+let W=innerWidth;
+let H=innerHeight;
+
+canvas.width=W;
+canvas.height=H;
+
+window.addEventListener("resize",()=>{
+    W=innerWidth;
+    H=innerHeight;
+    canvas.width=W;
+    canvas.height=H;
+});
+
+const keys={};
+
+document.addEventListener("keydown",e=>{
+    keys[e.key.toLowerCase()]=true;
+
+    if(e.code==="Space"){
+        e.preventDefault();
+        jump();
+    }
+});
+
+document.addEventListener("keyup",e=>{
+    keys[e.key.toLowerCase()]=false;
+});
+
+
+/* RRR SHORTCUT */
+
+let rPresses=[];
+let lastR=0;
+
+document.addEventListener("keydown",e=>{
+    if(e.key.toLowerCase()!=="r") return;
+
+    const now=Date.now();
+
+    if(now-lastR>1000){
+        rPresses=[];
+    }
+
+    rPresses.push(now);
+    lastR=now;
+
+    if(rPresses.length>=3){
+        rPresses=[];
+        window.location.href="flashcards.html";
+    }
+});
+
+
+/* GAME */
+
+let running=false;
+let gameOver=false;
+
+let cameraX=0;
+let worldX=0;
+
+let distance=0;
+let height=0;
+let coins=0;
+let level=1;
+
+let speed=4;
+
+let platforms=[];
+let coinList=[];
+let obstacles=[];
+
+const player={
+    x:180,
+    y:0,
+    w:38,
+    h:48,
+    vx:0,
+    vy:0,
+    grounded:false
+};
+
+function resetGame(){
+
+    running=true;
+    gameOver=false;
+
+    cameraX=0;
+    worldX=0;
+
+    distance=0;
+    height=0;
+    coins=0;
+    level=1;
+
+    speed=4;
+
+    platforms=[];
+    coinList=[];
+    obstacles=[];
+
+    player.x=180;
+    player.y=H-180;
+    player.vx=0;
+    player.vy=0;
+
+    createWorld();
+
+    startButton.style.display="none";
+    message.style.display="none";
+}
+
+function createWorld(){
+
+    platforms.push({
+        x:-300,
+        y:H-100,
+        w:900,
+        h:150
+    });
+
+    let x=500;
+
+    for(let i=0;i<150;i++){
+
+        let gap=80+Math.random()*110;
+
+        x+=gap;
+
+        let y=H-130-Math.random()*160;
+
+        platforms.push({
+            x:x,
+            y:y,
+            w:180+Math.random()*180,
+            h:30
+        });
+
+        if(Math.random()<0.75){
+
+            coinList.push({
+                x:x+70+Math.random()*70,
+                y:y-45,
+                r:9,
+                taken:false
+            });
+
+        }
+
+        if(i>3 && Math.random()<0.3){
+
+            obstacles.push({
+                x:x+80+Math.random()*70,
+                y:y-30,
+                w:25,
+                h:30
+            });
+
+        }
+    }
+}
+
+function extendWorld(){
+
+    let last=platforms[platforms.length-1];
+
+    for(let i=0;i<50;i++){
+
+        let x=last.x+last.w+80+Math.random()*130;
+
+        let y=H-130-Math.random()*180;
+
+        let p={
+            x:x,
+            y:y,
+            w:170+Math.random()*200,
+            h:30
+        };
+
+        platforms.push(p);
+
+        if(Math.random()<0.8){
+
+            coinList.push({
+                x:x+50+Math.random()*100,
+                y:y-45,
+                r:9,
+                taken:false
+            });
+
+        }
+
+        if(Math.random()<0.35){
+
+            obstacles.push({
+                x:x+70+Math.random()*90,
+                y:y-30,
+                w:25,
+                h:30
+            });
+
+        }
+
+        last=p;
+    }
+}
+
+function jump(){
+
+    if(!running) return;
+
+    if(player.grounded){
+
+        player.vy=-12;
+        player.grounded=false;
+    }
+}
+
+function update(){
+
+    if(!running) return;
+
+    /* movement */
+
+    if(keys["arrowleft"]||keys["a"]){
+        player.vx-=0.5;
+    }
+
+    if(keys["arrowright"]||keys["d"]){
+        player.vx+=0.5;
+    }
+
+    player.vx*=0.88;
+
+    player.x+=player.vx;
+
+    /* automatic forward movement */
+
+    player.x+=speed;
+
+    player.vy+=0.55;
+
+    player.y+=player.vy;
+
+    player.grounded=false;
+
+    /* platforms */
+
+    for(const p of platforms){
+
+        if(
+            player.x+player.w>p.x &&
+            player.x<p.x+p.w &&
+            player.y+player.h>=p.y &&
+            player.y+player.h<=p.y+25 &&
+            player.vy>=0
+        ){
+
+            player.y=p.y-player.h;
+            player.vy=0;
+            player.grounded=true;
+        }
+    }
+
+    /* coins */
+
+    for(const c of coinList){
+
+        if(c.taken) continue;
+
+        const dx=(player.x+player.w/2)-c.x;
+        const dy=(player.y+player.h/2)-c.y;
+
+        if(Math.sqrt(dx*dx+dy*dy)<28){
+
+            c.taken=true;
+            coins++;
+        }
+    }
+
+    /* obstacles */
+
+    for(const o of obstacles){
+
+        if(
+            player.x+player.w>o.x &&
+            player.x<o.x+o.w &&
+            player.y+player.h>o.y &&
+            player.y<o.y+o.h
+        ){
+
+            endGame();
+        }
+    }
+
+    /* camera */
+
+    cameraX=player.x-W*0.3;
+
+    /* distance */
+
+    distance=Math.max(distance,Math.floor(player.x/10));
+
+    height=Math.floor(distance);
+
+    /* levels */
+
+    let newLevel=Math.floor(height/500)+1;
+
+    if(newLevel>level){
+
+        level=newLevel;
+        speed=Math.min(9,4+(level-1)*0.5);
+    }
+
+    if(player.x>platforms[platforms.length-20].x){
+
+        extendWorld();
+    }
+
+    /* fell */
+
+    if(player.y>H+150){
+
+        endGame();
+    }
+
+    updateUI();
+}
+
+function updateUI(){
+
+    document.getElementById("height").textContent=height;
+    document.getElementById("coins").textContent=coins;
+    document.getElementById("level").textContent="LEVEL "+level;
+}
+
+function endGame(){
+
+    if(!running) return;
+
+    running=false;
+    gameOver=true;
+
+    messageTitle.textContent="RETRY";
+    messageText.textContent=
+        "You reached "+height+"m • Level "+level+
+        " • Coins "+coins;
+
+    message.style.display="block";
+    startButton.textContent="RETRY";
+    startButton.style.display="block";
+}
+
+
+/* DRAW */
+
+function drawBackground(){
+
+    /* sky */
+
+    ctx.fillStyle="#e8c77e";
+    ctx.fillRect(0,0,W,H);
+
+    /* sun */
+
+    ctx.fillStyle="#fff1b0";
+    ctx.beginPath();
+    ctx.arc(W-120,100,55,0,Math.PI*2);
+    ctx.fill();
+
+    /* distant dunes */
+
+    ctx.fillStyle="#d5aa5e";
+
+    ctx.beginPath();
+    ctx.moveTo(0,H-190);
+
+    for(let x=0;x<=W;x+=80){
+
+        let y=H-190-
+            Math.sin((x+cameraX*0.15)/160)*45;
+
+        ctx.lineTo(x,y);
+    }
+
+    ctx.lineTo(W,H);
+    ctx.lineTo(0,H);
+    ctx.closePath();
+    ctx.fill();
+
+    /* clouds */
+
+    ctx.fillStyle="rgba(255,245,210,.45)";
+
+    for(let i=0;i<4;i++){
+
+        let x=((i*320-cameraX*0.08)%(W+400))-200;
+        let y=80+i*45;
+
+        ctx.beginPath();
+        ctx.arc(x,y,25,0,Math.PI*2);
+        ctx.arc(x+30,y-8,32,0,Math.PI*2);
+        ctx.arc(x+65,y,23,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function drawDune(p){
+
+    ctx.fillStyle="#c68d3d";
+
+    ctx.beginPath();
+
+    ctx.moveTo(p.x-cameraX,p.y);
+
+    ctx.quadraticCurveTo(
+        p.x+p.w*0.25-cameraX,
+        p.y-25,
+        p.x+p.w*0.5-cameraX,
+        p.y
+    );
+
+    ctx.quadraticCurveTo(
+        p.x+p.w*0.75-cameraX,
+        p.y+25,
+        p.x+p.w-cameraX,
+        p.y
+    );
+
+    ctx.lineTo(p.x+p.w-cameraX,H+100);
+    ctx.lineTo(p.x-cameraX,H+100);
+
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawCoin(c){
+
+    if(c.taken) return;
+
+    let x=c.x-cameraX;
+
+    ctx.fillStyle="#f5c542";
+
+    ctx.beginPath();
+    ctx.arc(x,c.y,c.r,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle="#a86b20";
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    ctx.fillStyle="#fff0a0";
+    ctx.fillRect(x-2,c.y-5,4,10);
+}
+
+function drawObstacle(o){
+
+    let x=o.x-cameraX;
+
+    ctx.fillStyle="#70431e";
+
+    ctx.beginPath();
+    ctx.moveTo(x,o.y+o.h);
+    ctx.lineTo(x+o.w/2,o.y);
+    ctx.lineTo(x+o.w,o.y+o.h);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawPlayer(){
+
+    let x=player.x-cameraX;
+    let y=player.y;
+
+    /* shadow */
+
+    if(player.grounded){
+
+        ctx.fillStyle="rgba(70,40,15,.25)";
+        ctx.beginPath();
+        ctx.ellipse(
+            x+player.w/2,
+            y+player.h+5,
+            25,
+            7,
+            0,
+            0,
+            Math.PI*2
+        );
+        ctx.fill();
+    }
+
+    /* body */
+
+    ctx.fillStyle="#315b38";
+    ctx.fillRect(x+7,y+15,25,28);
+
+    /* head */
+
+    ctx.fillStyle="#e8a86b";
+    ctx.beginPath();
+    ctx.arc(x+19,y+12,13,0,Math.PI*2);
+    ctx.fill();
+
+    /* helmet */
+
+    ctx.fillStyle="#4e7c42";
+    ctx.fillRect(x+6,y,27,8);
+
+    /* eye */
+
+    ctx.fillStyle="#222";
+    ctx.fillRect(x+24,y+10,3,3);
+
+    /* legs */
+
+    ctx.fillStyle="#493621";
+    ctx.fillRect(x+9,y+40,7,8);
+    ctx.fillRect(x+23,y+40,7,8);
+}
+
+function draw(){
+
+    drawBackground();
+
+    for(const p of platforms){
+
+        if(
+            p.x+p.w-cameraX>-100 &&
+            p.x-cameraX<W+100
+        ){
+            drawDune(p);
+        }
+    }
+
+    for(const c of coinList){
+
+        if(c.x-cameraX>-50&&c.x-cameraX<W+50){
+            drawCoin(c);
+        }
+    }
+
+    for(const o of obstacles){
+
+        if(o.x-cameraX>-50&&o.x-cameraX<W+50){
+            drawObstacle(o);
+        }
+    }
+
+    drawPlayer();
+}
+
+function loop(){
+
+    update();
+    draw();
+
+    requestAnimationFrame(loop);
+}
+
+startButton.addEventListener("click",()=>{
+    resetGame();
+});
+
+loop();
+</script>
+
+</body>
+</html>
