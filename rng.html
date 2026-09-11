@@ -4,382 +4,241 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>flashcard.com</title>
+<title>RNG</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{
+box-sizing:border-box;
 }
 
-body {
-    margin: 0;
-    background: #080808;
-    color: #eeeeee;
-    font-family: "Courier New", monospace;
+body{
+margin:0;
+background:#080808;
+color:#eee;
+font-family:"Courier New",monospace;
 }
 
-header {
-    height: 70px;
-    background: #101010;
-    border-bottom: 2px solid #292929;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 25px;
+button{
+font-family:inherit;
+font-weight:bold;
+cursor:pointer;
 }
 
-.logo {
-    font-size: 26px;
-    font-weight: bold;
+header{
+padding:18px 25px;
+background:#101010;
+border-bottom:2px solid #333;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:10;
 }
 
-.cash {
-    color: #76e38b;
-    font-size: 22px;
-    font-weight: bold;
+.logo{
+font-size:28px;
+font-weight:bold;
 }
 
-.container {
-    width: min(1200px, 94%);
-    margin: auto;
-    padding: 25px 0 60px;
+.cash{
+font-size:22px;
+color:#7cff7c;
 }
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
+main{
+max-width:1300px;
+margin:auto;
+padding:25px;
 }
 
-.stat {
-    background: #111111;
-    border: 1px solid #292929;
-    border-radius: 10px;
-    padding: 14px;
+.stats{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:12px;
+margin-bottom:20px;
 }
 
-.statTitle {
-    color: #777777;
-    font-size: 11px;
+.stat{
+background:#111;
+border:1px solid #333;
+padding:15px;
+text-align:center;
 }
 
-.statValue {
-    margin-top: 6px;
-    font-size: 18px;
-    font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.stat b{
+display:block;
+font-size:20px;
+margin-top:7px;
 }
 
-.main {
-    display: grid;
-    grid-template-columns: 1fr 330px;
-    gap: 18px;
-    margin-top: 18px;
+.rollArea{
+background:#101010;
+border:2px solid #333;
+padding:30px;
+text-align:center;
+margin-bottom:20px;
 }
 
-.panel {
-    background: #101010;
-    border: 1px solid #292929;
-    border-radius: 14px;
-    padding: 20px;
+.rngDisplay{
+min-height:180px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 }
 
-.rollArea {
-    min-height: 520px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.rngName{
+font-size:34px;
+font-weight:bold;
+margin-bottom:12px;
 }
 
-.rollDisplay {
-    width: min(650px, 92%);
-    height: 250px;
-    background: #151515;
-    border: 2px solid #333333;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    overflow: hidden;
+.rarity{
+font-size:20px;
+margin-bottom:8px;
 }
 
-.rollName {
-    font-size: 40px;
-    font-weight: bold;
-    padding: 0 20px;
+.details{
+color:#aaa;
 }
 
-.rollRarity {
-    margin-top: 12px;
-    font-size: 19px;
+.rollBtn{
+margin-top:20px;
+background:#fff;
+color:#000;
+border:0;
+padding:16px 35px;
+font-size:20px;
 }
 
-.rollInfo {
-    margin-top: 8px;
-    color: #777777;
-    font-size: 12px;
+.rollBtn:disabled{
+opacity:.4;
+cursor:not-allowed;
 }
 
-button {
-    border: 0;
-    border-radius: 8px;
-    padding: 11px 16px;
-    font-family: inherit;
-    font-weight: bold;
-    cursor: pointer;
+.actions{
+display:flex;
+justify-content:center;
+gap:12px;
+margin-top:15px;
 }
 
-button:hover {
-    filter: brightness(0.88);
+.actionBtn{
+padding:12px 25px;
+border:1px solid #555;
+background:#181818;
+color:#fff;
 }
 
-button:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
+.actionBtn:disabled{
+opacity:.3;
+cursor:not-allowed;
 }
 
-.rollButton {
-    width: 250px;
-    margin-top: 25px;
-    font-size: 20px;
+.panels{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
 }
 
-.keepButton {
-    background: #76e38b;
-    color: #081009;
-    margin-top: 10px;
-    width: 250px;
+.panel{
+background:#101010;
+border:1px solid #333;
+padding:20px;
 }
 
-.sellButton {
-    background: #333333;
-    color: #eeeeee;
-    margin-top: 10px;
-    width: 250px;
+.panel h2{
+margin-top:0;
 }
 
-.message {
-    height: 22px;
-    margin-top: 13px;
-    color: #aaaaaa;
-    text-align: center;
-    font-size: 12px;
+.upgrade{
+width:100%;
+padding:13px;
+background:#181818;
+color:#fff;
+border:1px solid #555;
+margin-top:10px;
 }
 
-.sideTitle {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 13px;
+.inventory{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+gap:12px;
 }
 
-.box {
-    background: #171717;
-    border: 1px solid #292929;
-    border-radius: 10px;
-    padding: 13px;
-    margin-bottom: 10px;
+.card{
+background:#151515;
+border:1px solid #333;
+padding:15px;
 }
 
-.boxTitle {
-    font-weight: bold;
+.card h3{
+margin:0 0 8px;
 }
 
-.boxInfo {
-    color: #777777;
-    font-size: 11px;
-    margin: 7px 0 12px;
-    line-height: 1.5;
+.card p{
+margin:5px 0;
+color:#aaa;
 }
 
-.box button {
-    width: 100%;
-    background: #eeeeee;
-    color: #111111;
+.card button{
+width:100%;
+margin-top:8px;
+padding:9px;
+background:#222;
+color:#fff;
+border:1px solid #555;
 }
 
-.storageBar {
-    width: 100%;
-    height: 8px;
-    background: #292929;
-    border-radius: 20px;
-    overflow: hidden;
-    margin: 9px 0;
+.active{
+border:2px solid #fff;
 }
 
-.storageFill {
-    height: 100%;
-    width: 0%;
-    background: #76e38b;
-    transition: 0.2s;
+.collection{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:8px;
+max-height:600px;
+overflow:auto;
 }
 
-.activeBox {
-    background: #111111;
-    border: 1px solid #76e38b;
+.collectionCard{
+background:#111;
+border:1px solid #292929;
+padding:10px;
+text-align:center;
+min-height:75px;
 }
 
-.activeName {
-    font-size: 17px;
-    font-weight: bold;
+.unknown{
+color:#555;
 }
 
-.activeInfo {
-    color: #777777;
-    font-size: 11px;
-    margin-top: 7px;
+.reset{
+background:#300;
+color:#fff;
+border:1px solid #900;
+padding:12px 20px;
+margin-top:15px;
+width:100%;
 }
 
-.activeIncome {
-    color: #76e38b;
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 10px;
+.cost{
+color:#aaa;
+margin-top:8px;
 }
 
-.inventory {
-    margin-top: 18px;
+@media(max-width:800px){
+
+.stats{
+grid-template-columns:repeat(2,1fr);
 }
 
-.inventoryGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-    gap: 10px;
-    margin-top: 14px;
+.panels{
+grid-template-columns:1fr;
 }
 
-.item {
-    background: #111111;
-    border: 1px solid #292929;
-    border-radius: 10px;
-    padding: 13px;
-}
-
-.item.active {
-    border: 2px solid #76e38b;
-}
-
-.itemName {
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.itemRarity {
-    margin-top: 5px;
-    font-size: 11px;
-}
-
-.itemInfo {
-    margin-top: 8px;
-    color: #777777;
-    font-size: 10px;
-    line-height: 1.6;
-}
-
-.item button {
-    width: 100%;
-    margin-top: 8px;
-    padding: 8px;
-    font-size: 10px;
-    background: #292929;
-    color: #eeeeee;
-}
-
-.item .activate {
-    background: #76e38b;
-    color: #081009;
-}
-
-.collection {
-    margin-top: 18px;
-}
-
-.collectionGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 9px;
-    margin-top: 14px;
-}
-
-.collectionCard {
-    background: #111111;
-    border: 1px solid #292929;
-    border-radius: 9px;
-    padding: 11px;
-}
-
-.collectionCard.locked {
-    opacity: 0.25;
-}
-
-.collectionName {
-    font-size: 13px;
-    font-weight: bold;
-}
-
-.collectionRarity {
-    font-size: 10px;
-    margin-top: 5px;
-}
-
-.collectionInfo {
-    color: #666666;
-    font-size: 9px;
-    margin-top: 5px;
-}
-
-.reset {
-    background: #252525 !important;
-    color: #aaaaaa !important;
-}
-
-.rareFlash {
-    animation: rareFlash 0.8s ease;
-}
-
-@keyframes rareFlash {
-    0% {
-        transform: scale(0.85);
-    }
-    50% {
-        transform: scale(1.08);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.rolling {
-    animation: rolling 0.13s infinite;
-}
-
-@keyframes rolling {
-    0% {
-        transform: scale(0.94);
-        opacity: 0.55;
-    }
-    50% {
-        transform: scale(1.04);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0.94);
-        opacity: 0.55;
-    }
-}
-
-@media(max-width:900px) {
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .main {
-        grid-template-columns: 1fr;
-    }
 }
 </style>
 </head>
@@ -389,314 +248,192 @@ button:disabled {
 <header>
 
 <div class="logo">
-🎲 RNG
+RNG
 </div>
 
-<div class="cash">
-$<span id="cash">100</span>
+<div class="cash" id="cash">
+$100
 </div>
 
 </header>
 
-
-<div class="container">
-
+<main>
 
 <div class="stats">
 
 <div class="stat">
-<div class="statTitle">LUCK</div>
-<div class="statValue" id="luck">1.00x</div>
+Luck
+<b id="luck">0</b>
 </div>
 
 <div class="stat">
-<div class="statTitle">ROLLS</div>
-<div class="statValue" id="rolls">0</div>
+Rolls
+<b id="rolls">0</b>
 </div>
 
 <div class="stat">
-<div class="statTitle">STORAGE</div>
-<div class="statValue">
-<span id="storage">0</span>/<span id="storageMax">5</span>
-</div>
+Storage
+<b id="storage">0/5</b>
 </div>
 
 <div class="stat">
-<div class="statTitle">ACTIVE INCOME</div>
-<div class="statValue">
-$<span id="income">0</span>/s
-</div>
+Income
+<b id="income">$0/s</b>
 </div>
 
 <div class="stat">
-<div class="statTitle">DISCOVERED</div>
-<div class="statValue">
-<span id="discovered">0</span>/1000
-</div>
+Discovered
+<b id="discovered">0/1000</b>
 </div>
 
 </div>
 
+<div class="rollArea">
 
-<div class="main">
+<div class="rngDisplay">
 
-
-<div class="panel rollArea">
-
-
-<div class="rollDisplay" id="rollDisplay">
-
-<div class="rollName" id="rollName">
+<div class="rngName" id="rngName">
 READY?
 </div>
 
-<div class="rollRarity" id="rollRarity">
-Roll to discover an RNG
+<div class="rarity" id="rarity">
+Roll to generate an RNG
 </div>
 
-<div class="rollInfo" id="rollInfo">
-Roll cost: $10
+<div class="details" id="details">
+The RNG itself generates your money.
 </div>
 
 </div>
-
 
 <button
-class="rollButton"
-id="rollButton"
-onclick="roll()">
-
-ROLL — $<span id="rollCost">10</span>
-
+class="rollBtn"
+id="rollBtn"
+onclick="roll()"
+>
+ROLL $10
 </button>
 
+<div class="actions">
 
 <button
-class="keepButton"
-id="keepButton"
-onclick="keepCurrent()"
-disabled>
-
-KEEP RNG
-
+class="actionBtn"
+id="keepBtn"
+onclick="keepRNG()"
+disabled
+>
+KEEP
 </button>
 
-
 <button
-class="sellButton"
-id="sellButton"
+class="actionBtn"
+id="sellBtn"
 onclick="sellCurrent()"
-disabled>
-
-SELL RNG
-
+disabled
+>
+SELL
 </button>
 
-
-<div
-class="message"
-id="message">
 </div>
-
 
 </div>
 
-
-<div>
-
+<div class="panels">
 
 <div class="panel">
 
-<div class="sideTitle">
-⚡ ACTIVE RNG
-</div>
+<h2>
+Active RNG
+</h2>
 
-<div class="box activeBox">
-
-<div
-class="activeName"
-id="activeName">
-
-No RNG selected
-
-</div>
-
-<div
-class="activeInfo"
-id="activeInfo">
-
-Keep an RNG and select it to start generating money.
-
-</div>
-
-<div
-class="activeIncome"
-id="activeIncome">
-
-$0/sec
-
+<div id="activePanel">
+No RNG selected.
 </div>
 
 </div>
 
-</div>
+<div class="panel">
 
+<h2>
+Upgrades
+</h2>
 
-<div
-class="panel"
-style="margin-top:18px">
-
-<div class="sideTitle">
-📦 STORAGE
-</div>
-
-<div class="box">
-
-<div class="boxTitle">
-Storage Slots
-</div>
-
-<div class="storageBar">
-
-<div
-class="storageFill"
-id="storageFill">
-</div>
-
-</div>
-
-<div class="boxInfo">
-
-<span id="storageText">0 / 5</span>
-RNGs stored
-
-</div>
-
-<button onclick="buyStorage()">
-
-BUY SLOT — $<span id="storageCost">250</span>
-
+<button
+class="upgrade"
+onclick="upgradeLuck()"
+>
+Upgrade Luck
 </button>
 
-</div>
-
-</div>
-
-
 <div
-class="panel"
-style="margin-top:18px">
-
-<div class="sideTitle">
-🍀 LUCK
+class="cost"
+id="luckCost"
+>
 </div>
 
-<div class="box">
-
-<div class="boxTitle">
-
-Luck Level
-<span id="luckLevel">0</span>
-
-</div>
-
-<div class="boxInfo">
-
-Upgrade your luck to improve the chance of finding higher rarity RNGs.
-
-</div>
-
-<button onclick="buyLuck()">
-
-UPGRADE — $<span id="luckUpgradeCost">100</span>
-
+<button
+class="upgrade"
+onclick="upgradeStorage()"
+>
+Upgrade Storage
 </button>
 
-</div>
-
-</div>
-
-
 <div
-class="panel"
-style="margin-top:18px">
-
-<div class="sideTitle">
-💾 SAVE
-</div>
-
-<div class="box">
-
-<div class="boxInfo">
-
-Your cash, RNGs, active RNG, storage, luck and collection save automatically.
-
+class="cost"
+id="storageCost"
+>
 </div>
 
 <button
 class="reset"
-onclick="resetSave()">
-
-RESET ALL PROGRESS
-
+onclick="resetGame()"
+>
+RESET EVERYTHING
 </button>
 
 </div>
 
 </div>
 
+<div
+class="panel"
+style="margin-top:20px"
+>
 
+<h2>
+Kept RNGs
+</h2>
+
+<div
+class="inventory"
+id="inventory"
+>
 </div>
-
-</div>
-
-
-<div class="panel inventory">
-
-<div class="sideTitle">
-🎒 KEPT RNGs
-</div>
-
-<div class="boxInfo">
-
-Keep rare RNGs here. Only one kept RNG can generate money at a time.
 
 </div>
 
 <div
-class="inventoryGrid"
-id="inventoryGrid">
-</div>
+class="panel"
+style="margin-top:20px"
+>
 
-</div>
-
-
-<div class="panel collection">
-
-<div class="sideTitle">
-📚 COLLECTION
-</div>
-
-<div class="boxInfo">
-
-Discover RNGs to permanently add them to your collection. Selling them does not remove them from the collection.
-
-</div>
+<h2>
+Collection
+</h2>
 
 <div
-class="collectionGrid"
-id="collectionGrid">
+class="collection"
+id="collection"
+>
 </div>
 
 </div>
 
-
-</div>
-
+</main>
 
 <script>
 
-const rarityData = [
+const rarityData=[
 
 {
 name:"Common",
@@ -812,8 +549,7 @@ income:500000000
 
 ];
 
-
-const themes = [
+const themes=[
 
 "Orchestra",
 "Galaxy",
@@ -902,205 +638,87 @@ const themes = [
 
 ];
 
+let rngs=[];
 
-const colors = [
+let game={
+cash:100,
+rolls:0,
+luckLevel:0,
+storageMax:5,
+inventory:[],
+activeId:null,
+discovered:[]
+};
 
-"#aaaaaa",
-"#72d28b",
-"#4ea7ff",
-"#7f78ff",
-"#c96cff",
-"#ff55df",
-"#ffd34e",
-"#ff7a35",
-"#ff4545",
-"#64f5ff",
-"#f8f8f8",
-"#d879ff",
-"#7cf7ff",
-"#ffffff",
-"#ff4444",
-"#ffcf3f"
+let current=null;
+let rolling=false;
 
-];
+function generateRNGs(){
 
-
-let rngs = [];
-
-
-function generateRNGs() {
-
-rngs = [];
-
-let id = 1;
+let id=0;
 
 for(
-let r = 0;
-r < rarityData.length;
+let r=0;
+r<rarityData.length && id<1000;
 r++
-) {
-
-let data = rarityData[r];
+){
 
 let amount;
 
-if(r < 4) {
+if(r<4){
 
-amount = 100;
+amount=100;
 
-}
+}else if(r<8){
 
-else if(r < 8) {
+amount=80;
 
-amount = 80;
+}else if(r<12){
 
-}
+amount=60;
 
-else if(r < 12) {
+}else{
 
-amount = 60;
-
-}
-
-else {
-
-amount = 40;
+amount=40;
 
 }
-
 
 for(
-let i = 0;
-i < amount;
+let i=0;
+i<amount && id<1000;
 i++
-) {
+){
 
-let theme =
-themes[
-(id * 13 + i * 3) %
-themes.length
-];
-
+let theme=
+themes[(id+i+r)%themes.length];
 
 rngs.push({
 
 id:id,
 
-name:
-theme +
-" " +
-data.name,
+name:theme+" RNG",
 
-rarity:
-data.name,
+rarity:rarityData[r].name,
 
 rarityIndex:r,
 
-chance:
-data.chance,
+chance:rarityData[r].chance,
 
-value:
-Math.floor(
-data.value *
-(1 + (i % 10) * .05)
-),
+value:rarityData[r].value,
 
-income:
-Math.floor(
-data.income *
-(1 + (i % 8) * .1)
-)
+income:rarityData[r].income
 
 });
 
-
 id++;
 
-if(id > 1000) {
-
-return;
-
 }
 
 }
 
 }
 
-}
-
-
-generateRNGs();
-
-
-let game = {
-
-cash:100,
-
-rolls:0,
-
-luckLevel:0,
-
-storageMax:5,
-
-discovered:[],
-
-inventory:[],
-
-activeId:null,
-
-current:null
-
-};
-
-
-function loadSave() {
-
-const saved =
-localStorage.getItem(
-"rngGameSave"
-);
-
-if(!saved) {
-
-return;
-
-}
-
-try {
-
-const data =
-JSON.parse(saved);
-
-game = {
-
-...game,
-
-...data
-
-};
-
-if(!Array.isArray(game.inventory)) {
-
-game.inventory = [];
-
-}
-
-if(!Array.isArray(game.discovered)) {
-
-game.discovered = [];
-
-}
-
-}
-
-catch(e) {
-
-}
-
-}
-
-
-function save() {
+function saveGame(){
 
 localStorage.setItem(
 "rngGameSave",
@@ -1109,65 +727,98 @@ JSON.stringify(game)
 
 }
 
+function loadGame(){
 
-loadSave();
+let saved=
+localStorage.getItem("rngGameSave");
 
+if(!saved){
+return;
+}
 
-function formatMoney(number) {
+try{
 
-if(number < 1000) {
+let data=JSON.parse(saved);
 
-return Math.floor(number);
+game={
+
+cash:
+Number.isFinite(data.cash)
+?data.cash
+:100,
+
+rolls:
+Number.isFinite(data.rolls)
+?data.rolls
+:0,
+
+luckLevel:
+Number.isFinite(data.luckLevel)
+?data.luckLevel
+:0,
+
+storageMax:
+Number.isFinite(data.storageMax)
+?data.storageMax
+:5,
+
+inventory:
+Array.isArray(data.inventory)
+?data.inventory
+:[],
+
+activeId:
+data.activeId??null,
+
+discovered:
+Array.isArray(data.discovered)
+?data.discovered
+:[]
+
+};
+
+}catch(e){
+
+resetVariables();
 
 }
 
-if(number < 1000000) {
+}
 
-return (
-number / 1000
-).toFixed(1) + "K";
+function resetVariables(){
+
+game={
+
+cash:100,
+rolls:0,
+luckLevel:0,
+storageMax:5,
+inventory:[],
+activeId:null,
+discovered:[]
+
+};
+
+current=null;
+rolling=false;
 
 }
 
-if(number < 1000000000) {
+function getLuck(){
 
-return (
-number / 1000000
-).toFixed(1) + "M";
-
-}
-
-if(number < 1000000000000) {
-
-return (
-number / 1000000000
-).toFixed(1) + "B";
-
-}
-
-return (
-number / 1000000000000
-).toFixed(1) + "T";
-
-}
-
-
-function getLuck() {
-
-return 1 +
-game.luckLevel * .25 +
+return 1+
+game.luckLevel*.25+
 Math.pow(
 game.luckLevel,
 1.5
-) * .04;
+)*.04;
 
 }
 
-
-function getLuckCost() {
+function getLuckCost(){
 
 return Math.floor(
-100 *
+100*
 Math.pow(
 2.25,
 game.luckLevel
@@ -1176,24 +827,22 @@ game.luckLevel
 
 }
 
-
-function getStorageCost() {
+function getStorageCost(){
 
 return Math.floor(
-250 *
+250*
 Math.pow(
 2.05,
-game.storageMax - 5
+game.storageMax-5
 )
 );
 
 }
 
-
-function getRollCost() {
+function getRollCost(){
 
 return Math.floor(
-10 *
+10*
 Math.pow(
 1.08,
 game.rolls
@@ -1202,518 +851,375 @@ game.rolls
 
 }
 
+function weightedRoll(){
 
-function weightedRoll() {
+let weights=rngs.map(r=>{
 
-let total = 0;
+let weight=
+1/r.chance;
 
+if(r.rarityIndex>=3){
 
-for(const rng of rngs) {
-
-let weight = rng.chance;
-
-
-if(rng.rarityIndex >= 3) {
-
-weight *= getLuck();
+weight*=getLuck();
 
 }
 
+return weight;
 
-total += weight;
+});
 
-}
+let total=
+weights.reduce(
+(a,b)=>a+b,
+0
+);
 
+let pick=
+Math.random()*total;
 
-let random =
-Math.random() * total;
+for(
+let i=0;
+i<rngs.length;
+i++
+){
 
+pick-=weights[i];
 
-for(const rng of rngs) {
+if(pick<=0){
 
-let weight = rng.chance;
-
-
-if(rng.rarityIndex >= 3) {
-
-weight *= getLuck();
-
-}
-
-
-random -= weight;
-
-
-if(random <= 0) {
-
-return rng;
+return rngs[i];
 
 }
 
 }
-
 
 return rngs[0];
 
 }
 
+function formatMoney(n){
 
-let rolling = false;
+if(n>=1000000000){
 
-
-function roll() {
-
-if(rolling) {
-
-return;
+return "$"+
+(n/1000000000)
+.toFixed(2)+
+"B";
 
 }
 
+if(n>=1000000){
 
-const cost =
+return "$"+
+(n/1000000)
+.toFixed(2)+
+"M";
+
+}
+
+if(n>=1000){
+
+return "$"+
+(n/1000)
+.toFixed(2)+
+"K";
+
+}
+
+return "$"+
+Math.floor(n);
+
+}
+
+function roll(){
+
+if(rolling){
+return;
+}
+
+let cost=
 getRollCost();
 
+if(game.cash<cost){
 
-if(game.cash < cost) {
-
-showMessage(
-"Not enough cash for this roll."
+alert(
+"Not enough cash."
 );
 
 return;
 
 }
 
+game.cash-=cost;
 
-game.cash -= cost;
+game.rolls++;
 
-game.current = null;
+saveGame();
 
-rolling = true;
+update();
 
-
-const display =
-document.getElementById(
-"rollDisplay"
-);
-
-const name =
-document.getElementById(
-"rollName"
-);
-
-const rarity =
-document.getElementById(
-"rollRarity"
-);
-
-const info =
-document.getElementById(
-"rollInfo"
-);
-
+rolling=true;
 
 document.getElementById(
-"rollButton"
-).disabled = true;
-
-
-document.getElementById(
-"keepButton"
-).disabled = true;
-
+"rollBtn"
+).disabled=true;
 
 document.getElementById(
-"sellButton"
-).disabled = true;
+"keepBtn"
+).disabled=true;
 
+document.getElementById(
+"sellBtn"
+).disabled=true;
 
-display.classList.add(
-"rolling"
-);
+let count=0;
 
+let animation=
+setInterval(()=>{
 
-let animation =
-setInterval(() => {
-
-const fake =
+let fake=
 rngs[
 Math.floor(
-Math.random() *
+Math.random()*
 rngs.length
 )
 ];
 
-
-name.textContent =
+document.getElementById(
+"rngName"
+).textContent=
 fake.name;
 
-
-rarity.textContent =
-fake.rarity;
-
-
-rarity.style.color =
-colors[
-fake.rarityIndex
-];
-
-
-info.textContent =
+document.getElementById(
+"rarity"
+).textContent=
 "ROLLING...";
 
-},70);
+document.getElementById(
+"details"
+).textContent=
+"Generating...";
 
+count++;
 
-setTimeout(() => {
+if(count>=24){
 
-clearInterval(animation);
+clearInterval(
+animation
+);
 
+finishRoll();
 
-const result =
+}
+
+},100);
+
+}
+
+function finishRoll(){
+
+current=
 weightedRoll();
 
-
-game.current =
-result;
-
-
-game.rolls++;
-
-
 if(
-!game.discovered.includes(
-result.id
-)
-) {
+!game.discovered
+.includes(current.id)
+){
 
 game.discovered.push(
-result.id
-);
-
-showMessage(
-"✨ NEW RNG DISCOVERED!"
+current.id
 );
 
 }
 
-else {
-
-showMessage(
-"DUPLICATE RNG!"
-);
-
-}
-
-
-display.classList.remove(
-"rolling"
-);
-
-display.classList.add(
-"rareFlash"
-);
-
-
-setTimeout(() => {
-
-display.classList.remove(
-"rareFlash"
-);
-
-},800);
-
-
-name.textContent =
-result.name;
-
-
-rarity.textContent =
-result.rarity +
-" • SELL $" +
-formatMoney(
-result.value
-);
-
-
-rarity.style.color =
-colors[
-result.rarityIndex
-];
-
-
-info.textContent =
-"$" +
-formatMoney(
-result.income
-) +
-"/sec when selected";
-
+document.getElementById(
+"rngName"
+).textContent=
+current.name;
 
 document.getElementById(
-"sellButton"
-).disabled = false;
-
+"rarity"
+).textContent=
+current.rarity;
 
 document.getElementById(
-"keepButton"
-).disabled =
-game.inventory.length >=
+"details"
+).textContent=
+"1 in "+
+current.chance.toLocaleString()+
+" • Sell: "+
+formatMoney(current.value)+
+" • Income: "+
+formatMoney(current.income)+
+"/s";
+
+document.getElementById(
+"keepBtn"
+).disabled=
+game.inventory.length>=
 game.storageMax;
 
-
-if(
-game.inventory.length >=
-game.storageMax
-) {
-
-showMessage(
-"STORAGE FULL — SELL OR UPGRADE STORAGE"
-);
-
-}
-
-
 document.getElementById(
-"rollButton"
-).disabled = false;
+"sellBtn"
+).disabled=false;
 
+rolling=false;
 
-rolling = false;
+saveGame();
 
-
-updateUI();
-
-save();
-
-},2400);
+update();
 
 }
 
+function keepRNG(){
 
-function keepCurrent() {
-
-if(!game.current) {
-
+if(!current){
 return;
-
 }
-
 
 if(
-game.inventory.length >=
+game.inventory.length>=
 game.storageMax
-) {
+){
 
-showMessage(
-"Storage is full!"
+alert(
+"Storage is full."
 );
 
 return;
 
 }
-
 
 game.inventory.push(
-game.current
+current
 );
 
-
-showMessage(
-game.current.name +
-" added to storage!"
-);
-
-
-game.current = null;
-
+current=null;
 
 document.getElementById(
-"keepButton"
-).disabled = true;
-
+"keepBtn"
+).disabled=true;
 
 document.getElementById(
-"sellButton"
-).disabled = true;
+"sellBtn"
+).disabled=true;
 
+document.getElementById(
+"rngName"
+).textContent=
+"KEPT";
 
-updateUI();
+document.getElementById(
+"rarity"
+).textContent=
+"";
 
-save();
+document.getElementById(
+"details"
+).textContent=
+"Choose an RNG from your storage to activate it.";
+
+saveGame();
+
+update();
 
 }
 
+function sellCurrent(){
 
-function sellCurrent() {
-
-if(!game.current) {
-
+if(!current){
 return;
+}
+
+game.cash+=
+current.value;
+
+current=null;
+
+document.getElementById(
+"keepBtn"
+).disabled=true;
+
+document.getElementById(
+"sellBtn"
+).disabled=true;
+
+document.getElementById(
+"rngName"
+).textContent=
+"SOLD";
+
+document.getElementById(
+"rarity"
+).textContent=
+"";
+
+document.getElementById(
+"details"
+).textContent=
+"Cash added.";
+
+saveGame();
+
+update();
 
 }
 
+function activateRNG(index){
 
-const value =
-game.current.value;
+if(!game.inventory[index]){
+return;
+}
 
+game.activeId=
+game.inventory[index].id;
 
-game.cash += value;
+saveGame();
 
-
-showMessage(
-"Sold for $" +
-formatMoney(value) +
-"!"
-);
-
-
-game.current = null;
-
-
-document.getElementById(
-"keepButton"
-).disabled = true;
-
-
-document.getElementById(
-"sellButton"
-).disabled = true;
-
-
-updateUI();
-
-save();
+update();
 
 }
 
+function sellInventory(index){
 
-function sellInventory(index) {
-
-const item =
+let item=
 game.inventory[index];
 
-
-if(!item) {
-
+if(!item){
 return;
-
 }
 
-
-if(
-item.id ===
-game.activeId
-) {
-
-game.activeId = null;
-
-}
-
-
-game.cash +=
+game.cash+=
 item.value;
 
+if(
+game.activeId===
+item.id
+){
+
+game.activeId=null;
+
+}
 
 game.inventory.splice(
 index,
 1
 );
 
+saveGame();
 
-showMessage(
-"Sold " +
-item.name +
-" for $" +
-formatMoney(
-item.value
-) +
-"!"
-);
-
-
-updateUI();
-
-save();
+update();
 
 }
 
+function upgradeLuck(){
 
-function activateRNG(index) {
-
-const item =
-game.inventory[index];
-
-
-if(!item) {
-
-return;
-
-}
-
-
-game.activeId =
-item.id;
-
-
-showMessage(
-item.name +
-" is now generating money!"
-);
-
-
-updateUI();
-
-save();
-
-}
-
-
-function buyStorage() {
-
-const cost =
-getStorageCost();
-
-
-if(game.cash < cost) {
-
-showMessage(
-"Not enough cash."
-);
-
-return;
-
-}
-
-
-game.cash -= cost;
-
-game.storageMax++;
-
-
-showMessage(
-"Storage increased to " +
-game.storageMax +
-" slots!"
-);
-
-
-updateUI();
-
-save();
-
-}
-
-
-function buyLuck() {
-
-const cost =
+let cost=
 getLuckCost();
 
+if(game.cash<cost){
 
-if(game.cash < cost) {
-
-showMessage(
+alert(
 "Not enough cash."
 );
 
@@ -1721,383 +1227,122 @@ return;
 
 }
 
-
-game.cash -= cost;
+game.cash-=cost;
 
 game.luckLevel++;
 
+saveGame();
 
-showMessage(
-"Luck increased to " +
-getLuck().toFixed(2) +
-"x!"
-);
-
-
-updateUI();
-
-save();
+update();
 
 }
 
+function upgradeStorage(){
 
-function getActiveRNG() {
+let cost=
+getStorageCost();
 
-return game.inventory.find(
-item =>
-item.id ===
-game.activeId
+if(game.cash<cost){
+
+alert(
+"Not enough cash."
 );
-
-}
-
-
-function renderInventory() {
-
-const grid =
-document.getElementById(
-"inventoryGrid"
-);
-
-grid.innerHTML = "";
-
-
-if(game.inventory.length === 0) {
-
-grid.innerHTML =
-'<div style="color:#666">No RNGs kept yet.</div>';
 
 return;
 
 }
 
+game.cash-=cost;
 
-game.inventory.forEach(
-(item,index) => {
+game.storageMax++;
 
-const active =
-item.id ===
-game.activeId;
+saveGame();
 
-
-const card =
-document.createElement(
-"div"
-);
-
-
-card.className =
-"item" +
-(active ? " active" : "");
-
-
-card.innerHTML = `
-
-<div class="itemName">
-${item.name}
-</div>
-
-<div
-class="itemRarity"
-style="color:${colors[item.rarityIndex]}"
->
-${item.rarity}
-</div>
-
-<div class="itemInfo">
-
-Sell value:
-$${formatMoney(item.value)}
-<br>
-
-Generates:
-$${formatMoney(item.income)}/sec
-
-${active
-?
-"<br><br>⚡ ACTIVE"
-:
-""}
-
-</div>
-
-<button
-class="activate"
-onclick="activateRNG(${index})"
-${active ? "disabled" : ""}
->
-
-${active
-?
-"ACTIVE"
-:
-"SELECT RNG"
-}
-
-</button>
-
-<button
-onclick="sellInventory(${index})"
->
-
-SELL FOR
-$${formatMoney(item.value)}
-
-</button>
-
-`;
-
-
-grid.appendChild(card);
-
-}
-);
+update();
 
 }
 
+function getActive(){
 
-function renderCollection() {
-
-const grid =
-document.getElementById(
-"collectionGrid"
-);
-
-grid.innerHTML = "";
-
-
-rngs.forEach(
-rng => {
-
-const found =
-game.discovered.includes(
-rng.id
-);
-
-
-const card =
-document.createElement(
-"div"
-);
-
-
-card.className =
-"collectionCard" +
-(found ? "" : " locked");
-
-
-card.innerHTML = `
-
-<div class="collectionName">
-
-${found
-?
-rng.name
-:
-"???"}
-
-</div>
-
-<div
-class="collectionRarity"
-style="color:${
-found
-?
-colors[rng.rarityIndex]
-:
-"#666"
-}"
->
-
-${found
-?
-rng.rarity
-:
-"Undiscovered"}
-
-</div>
-
-<div class="collectionInfo">
-
-${found
-?
-"$" +
-formatMoney(
-rng.income
-) +
-"/sec"
-:
-"Keep rolling to discover"}
-
-</div>
-
-`;
-
-
-grid.appendChild(card);
-
-}
-);
+return game.inventory.find(
+r=>r.id===game.activeId
+)||null;
 
 }
 
-
-function updateUI() {
+function update(){
 
 document.getElementById(
 "cash"
-).textContent =
-formatMoney(
-game.cash
-);
-
+).textContent=
+formatMoney(game.cash);
 
 document.getElementById(
 "luck"
-).textContent =
-getLuck().toFixed(2) +
-"x";
-
+).textContent=
+game.luckLevel+
+" ("+
+getLuck().toFixed(2)+
+"x)";
 
 document.getElementById(
 "rolls"
-).textContent =
+).textContent=
 game.rolls;
-
 
 document.getElementById(
 "storage"
-).textContent =
-game.inventory.length;
-
-
-document.getElementById(
-"storageMax"
-).textContent =
+).textContent=
+game.inventory.length+
+"/"+
 game.storageMax;
 
+let active=
+getActive();
 
 document.getElementById(
-"storageText"
-).textContent =
-game.inventory.length +
-" / " +
-game.storageMax;
-
-
-document.getElementById(
-"storageCost"
-).textContent =
-formatMoney(
-getStorageCost()
-);
-
+"income"
+).textContent=
+active
+?formatMoney(active.income)+"/s"
+:"$0/s";
 
 document.getElementById(
-"luckLevel"
-).textContent =
-game.luckLevel;
-
-
-document.getElementById(
-"luckUpgradeCost"
-).textContent =
-formatMoney(
-getLuckCost()
-);
-
+"discovered"
+).textContent=
+game.discovered.length+
+"/1000";
 
 document.getElementById(
-"rollCost"
-).textContent =
+"rollBtn"
+).textContent=
+"ROLL "+
 formatMoney(
 getRollCost()
 );
 
+document.getElementById(
+"rollBtn"
+).disabled=
+rolling;
 
 document.getElementById(
-"discovered"
-).textContent =
-game.discovered.length;
-
-
-document.getElementById(
-"storageFill"
-).style.width =
-Math.min(
-100,
-game.inventory.length /
-game.storageMax *
-100
-) +
-"%";
-
-
-const active =
-getActiveRNG();
-
-
-if(active) {
-
-document.getElementById(
-"activeName"
-).textContent =
-active.name;
-
-
-document.getElementById(
-"activeInfo"
-).textContent =
-active.rarity +
-" • Selected RNG";
-
-
-document.getElementById(
-"activeIncome"
-).textContent =
-"$" +
+"luckCost"
+).textContent=
+"Cost: "+
 formatMoney(
-active.income
-) +
-"/sec";
-
-
-document.getElementById(
-"income"
-).textContent =
-formatMoney(
-active.income
+getLuckCost()
 );
 
-}
-
-else {
-
 document.getElementById(
-"activeName"
-).textContent =
-"No RNG selected";
+"storageCost"
+).textContent=
+"Cost: "+
+formatMoney(
+getStorageCost()
+);
 
-
-document.getElementById(
-"activeInfo"
-).textContent =
-"Keep an RNG and select it to start generating money.";
-
-
-document.getElementById(
-"activeIncome"
-).textContent =
-"$0/sec";
-
-
-document.getElementById(
-"income"
-).textContent =
-"0";
-
-}
-
+renderActive();
 
 renderInventory();
 
@@ -2105,106 +1350,276 @@ renderCollection();
 
 }
 
+function renderActive(){
 
-function showMessage(text) {
-
+let panel=
 document.getElementById(
-"message"
-).textContent =
-text;
-
-}
-
-
-setInterval(() => {
-
-const active =
-getActiveRNG();
-
-
-if(active) {
-
-game.cash +=
-active.income;
-
-
-updateUI();
-
-save();
-
-}
-
-},1000);
-
-
-function resetSave() {
-
-const confirmed =
-confirm(
-"Reset ALL RNG progress? This cannot be undone."
+"activePanel"
 );
 
+let active=
+getActive();
 
-if(!confirmed) {
+if(!active){
+
+panel.innerHTML=
+"No RNG selected.";
 
 return;
 
 }
 
+panel.innerHTML=`
+
+<div class="card active">
+
+<h3>
+${active.name}
+</h3>
+
+<p>
+${active.rarity}
+</p>
+
+<p>
+Chance:
+1/${active.chance.toLocaleString()}
+</p>
+
+<p>
+Income:
+${formatMoney(active.income)}/s
+</p>
+
+<p>
+Sell value:
+${formatMoney(active.value)}
+</p>
+
+</div>
+
+`;
+
+}
+
+function renderInventory(){
+
+let box=
+document.getElementById(
+"inventory"
+);
+
+if(
+game.inventory.length===0
+){
+
+box.innerHTML=
+"<div>No RNGs kept yet.</div>";
+
+return;
+
+}
+
+box.innerHTML=
+game.inventory.map(
+(r,i)=>{
+
+let isActive=
+game.activeId===r.id;
+
+return`
+
+<div class="card ${
+isActive?"active":""
+}">
+
+<h3>
+${r.name}
+</h3>
+
+<p>
+${r.rarity}
+</p>
+
+<p>
+1/${r.chance.toLocaleString()}
+</p>
+
+<p>
+${formatMoney(r.income)}/s
+</p>
+
+<button
+onclick="activateRNG(${i})"
+>
+${
+isActive
+?"ACTIVE"
+:"SELECT RNG"
+}
+</button>
+
+<button
+onclick="sellInventory(${i})"
+>
+SELL FOR
+${formatMoney(r.value)}
+</button>
+
+</div>
+
+`;
+
+}
+).join("");
+
+}
+
+function renderCollection(){
+
+let box=
+document.getElementById(
+"collection"
+);
+
+box.innerHTML=
+rngs.map(r=>{
+
+let found=
+game.discovered.includes(
+r.id
+);
+
+if(!found){
+
+return`
+
+<div class="collectionCard unknown">
+???
+</div>
+
+`;
+
+}
+
+return`
+
+<div class="collectionCard">
+
+<strong>
+${r.name}
+</strong>
+
+<br>
+
+<small>
+${r.rarity}
+</small>
+
+</div>
+
+`;
+
+}).join("");
+
+}
+
+function resetGame(){
+
+if(
+!confirm(
+"RESET EVERYTHING? This will erase ALL RNG progress."
+)
+){
+
+return;
+
+}
 
 localStorage.removeItem(
 "rngGameSave"
 );
 
+resetVariables();
 
-location.reload();
+document.getElementById(
+"rngName"
+).textContent=
+"READY?";
+
+document.getElementById(
+"rarity"
+).textContent=
+"Roll to generate an RNG";
+
+document.getElementById(
+"details"
+).textContent=
+"The RNG itself generates your money.";
+
+document.getElementById(
+"keepBtn"
+).disabled=true;
+
+document.getElementById(
+"sellBtn"
+).disabled=true;
+
+update();
 
 }
 
+setInterval(()=>{
 
-let rCount = 0;
+let active=
+getActive();
 
-let rTimer = null;
+if(active){
 
+game.cash+=
+active.income;
+
+update();
+
+saveGame();
+
+}
+
+},1000);
+
+let rCount=0;
+
+let rTimer=null;
 
 document.addEventListener(
 "keydown",
-e => {
+e=>{
 
 if(
-e.key.toLowerCase() !==
-"r"
-) {
+e.key.toLowerCase()!=="r"
+){
 
 return;
 
 }
 
-
 rCount++;
-
 
 clearTimeout(
 rTimer
 );
 
-
-rTimer =
+rTimer=
 setTimeout(
-() => {
-
-rCount = 0;
-
+()=>{
+rCount=0;
 },
 500
 );
 
+if(rCount>=2){
 
-if(rCount === 2) {
-
-rCount = 0;
-
-window.location.href =
+window.location.href=
 "flashcards.html";
 
 }
@@ -2212,8 +1627,11 @@ window.location.href =
 }
 );
 
+generateRNGs();
 
-updateUI();
+loadGame();
+
+update();
 
 </script>
 
