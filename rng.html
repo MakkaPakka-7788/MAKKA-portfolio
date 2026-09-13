@@ -1,556 +1,456 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RNG</title>
-
 <style>
-*{
-box-sizing:border-box;
-}
-
+*{box-sizing:border-box}
 body{
 margin:0;
 background:#080808;
 color:#eee;
 font-family:"Courier New",monospace;
+min-height:100vh
 }
-
-button{
-font-family:inherit;
-font-weight:bold;
-cursor:pointer;
-}
-
 header{
-padding:18px 25px;
+height:70px;
 background:#101010;
-border-bottom:2px solid #333;
+border-bottom:1px solid #333;
 display:flex;
-justify-content:space-between;
 align-items:center;
+justify-content:space-between;
+padding:0 24px;
 position:sticky;
 top:0;
-z-index:10;
+z-index:10
 }
-
 .logo{
-font-size:28px;
+font-size:32px;
 font-weight:bold;
+letter-spacing:4px
 }
-
 .cash{
-font-size:22px;
-color:#7cff7c;
+font-size:20px;
+font-weight:bold
 }
-
-main{
+.container{
 max-width:1300px;
 margin:auto;
-padding:25px;
+padding:25px
 }
-
 .stats{
 display:grid;
 grid-template-columns:repeat(5,1fr);
 gap:12px;
-margin-bottom:20px;
+margin-bottom:20px
 }
-
 .stat{
 background:#111;
 border:1px solid #333;
 padding:15px;
 text-align:center;
+border-radius:8px
 }
-
-.stat b{
+.stat span{
 display:block;
-font-size:20px;
-margin-top:7px;
+font-size:12px;
+color:#888;
+margin-bottom:6px
 }
-
-.rollArea{
-background:#101010;
-border:2px solid #333;
-padding:30px;
-text-align:center;
-margin-bottom:20px;
+.stat strong{
+font-size:20px
 }
-
-.rngDisplay{
-min-height:180px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-}
-
-.rngName{
-font-size:34px;
-font-weight:bold;
-margin-bottom:12px;
-}
-
-.rarity{
-font-size:20px;
-margin-bottom:8px;
-}
-
-.details{
-color:#aaa;
-}
-
-.rollBtn{
-margin-top:20px;
-background:#fff;
-color:#000;
-border:0;
-padding:16px 35px;
-font-size:20px;
-}
-
-.rollBtn:disabled{
-opacity:.4;
-cursor:not-allowed;
-}
-
-.actions{
-display:flex;
-justify-content:center;
-gap:12px;
-margin-top:15px;
-}
-
-.actionBtn{
-padding:12px 25px;
-border:1px solid #555;
-background:#181818;
-color:#fff;
-}
-
-.actionBtn:disabled{
-opacity:.3;
-cursor:not-allowed;
-}
-
-.panels{
+.main{
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
+grid-template-columns:1.5fr .8fr;
+gap:20px
 }
-
 .panel{
 background:#101010;
 border:1px solid #333;
-padding:20px;
+border-radius:10px;
+padding:22px
 }
-
-.panel h2{
-margin-top:0;
+.rollPanel{
+text-align:center
 }
-
-.upgrade{
-width:100%;
-padding:13px;
+.sectionTitle{
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px
+}
+#rngName{
+font-size:38px;
+font-weight:bold;
+min-height:48px;
+margin-top:20px
+}
+#rarity{
+font-size:22px;
+margin-top:10px
+}
+#details{
+color:#aaa;
+margin:15px 0;
+min-height:25px
+}
+button{
+font-family:inherit;
+font-weight:bold;
+border:1px solid #555;
 background:#181818;
 color:#fff;
-border:1px solid #555;
-margin-top:10px;
+padding:13px 20px;
+border-radius:7px;
+cursor:pointer;
+font-size:15px
 }
-
-.inventory{
+button:hover{
+background:#252525
+}
+button:disabled{
+opacity:.35;
+cursor:not-allowed
+}
+.rollButton{
+font-size:24px;
+padding:18px 60px;
+margin-top:15px
+}
+.actions{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:15px
+}
+.sell{
+border-color:#d88
+}
+.upgrade{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+padding:15px 0;
+border-bottom:1px solid #292929
+}
+.upgrade:last-child{
+border-bottom:0
+}
+.upgradeInfo strong{
+display:block;
+font-size:17px
+}
+.upgradeInfo small{
+color:#888
+}
+.bestBox{
+margin-top:20px
+}
+.bestName{
+font-size:21px;
+font-weight:bold;
+margin-bottom:10px
+}
+.notice{
+margin-top:15px;
+color:#888;
+font-size:12px;
+line-height:1.5
+}
+.mergePanel{
+margin-top:20px
+}
+.mergeList{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
-gap:12px;
-}
-
-.card{
-background:#151515;
-border:1px solid #333;
-padding:15px;
-}
-
-.card h3{
-margin:0 0 8px;
-}
-
-.card p{
-margin:5px 0;
-color:#aaa;
-}
-
-.card button{
-width:100%;
-margin-top:8px;
-padding:9px;
-background:#222;
-color:#fff;
-border:1px solid #555;
-}
-
-.active{
-border:2px solid #fff;
-}
-
-.collection{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:8px;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
 max-height:600px;
-overflow:auto;
+overflow-y:auto
 }
-
-.collectionCard{
+.mergeCard{
+background:#151515;
+border:1px solid #292929;
+padding:12px;
+border-radius:7px
+}
+.mergeCard.ready{
+border-color:#4caf50
+}
+.mergeCard.made{
+border-color:#d7b84b
+}
+.mergeName{
+font-weight:bold;
+margin-bottom:7px
+}
+.mergeParts{
+font-size:12px;
+color:#999;
+line-height:1.5
+}
+.mergeStatus{
+margin-top:8px;
+font-size:12px
+}
+.collection{
+margin-top:20px
+}
+.collectionInfo{
+color:#888;
+font-size:12px;
+margin-bottom:15px
+}
+.collectionGrid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
+gap:8px
+}
+.card{
 background:#111;
 border:1px solid #292929;
-padding:10px;
-text-align:center;
-min-height:75px;
+border-radius:7px;
+padding:12px;
+min-height:85px
 }
-
-.unknown{
-color:#555;
+.card.known{
+border-color:#444
 }
-
-.reset{
-background:#300;
-color:#fff;
-border:1px solid #900;
-padding:12px 20px;
-margin-top:15px;
-width:100%;
+.card.unknown{
+opacity:.4
 }
-
-.cost{
+.card.best{
+border-color:#d7b84b
+}
+.cardName{
+font-weight:bold;
+font-size:14px
+}
+.cardRarity{
+font-size:11px;
+color:#888;
+margin-top:5px
+}
+.cardValue{
+font-size:11px;
 color:#aaa;
-margin-top:8px;
+margin-top:6px
 }
-
-@media(max-width:800px){
-
+.slotBar{
+height:8px;
+background:#222;
+border-radius:10px;
+overflow:hidden;
+margin-top:10px
+}
+.slotFill{
+height:100%;
+width:0%;
+background:#aaa
+}
+@media(max-width:900px){
 .stats{
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:repeat(2,1fr)
 }
-
-.panels{
-grid-template-columns:1fr;
+.main{
+grid-template-columns:1fr
 }
-
+}
+@media(max-width:600px){
+.container{
+padding:12px
+}
+header{
+padding:0 12px
+}
+.logo{
+font-size:24px
+}
+#rngName{
+font-size:28px
+}
+.mergeList{
+grid-template-columns:1fr
+}
 }
 </style>
 </head>
-
 <body>
 
 <header>
-
-<div class="logo">
-RNG
-</div>
-
-<div class="cash" id="cash">
-$100
-</div>
-
+<div class="logo">RNG</div>
+<div class="cash" id="cash">$100</div>
 </header>
 
-<main>
+<div class="container">
 
 <div class="stats">
 
 <div class="stat">
-Luck
-<b id="luck">0</b>
+<span>LUCK</span>
+<strong id="luck">1.00x</strong>
 </div>
 
 <div class="stat">
-Rolls
-<b id="rolls">0</b>
+<span>ROLLS</span>
+<strong id="rolls">0</strong>
 </div>
 
 <div class="stat">
-Storage
-<b id="storage">0/5</b>
+<span>ROLL COST</span>
+<strong id="rollCost">$10</strong>
 </div>
 
 <div class="stat">
-Income
-<b id="income">$0/s</b>
+<span>INCOME</span>
+<strong id="income">$0/s</strong>
 </div>
 
 <div class="stat">
-Discovered
-<b id="discovered">0/1000</b>
+<span>DISCOVERED</span>
+<strong id="discovered">0/1200</strong>
 </div>
 
 </div>
 
-<div class="rollArea">
+<div class="main">
 
-<div class="rngDisplay">
+<div>
 
-<div class="rngName" id="rngName">
-READY?
+<div class="panel rollPanel">
+
+<div class="sectionTitle">RNG ROLL</div>
+
+<div id="rngName">READY?</div>
+
+<div id="rarity">Roll to generate an RNG</div>
+
+<div id="details">
+Your best RNG automatically generates money.
 </div>
 
-<div class="rarity" id="rarity">
-Roll to generate an RNG
-</div>
-
-<div class="details" id="details">
-The RNG itself generates your money.
-</div>
-
-</div>
-
-<button
-class="rollBtn"
-id="rollBtn"
-onclick="roll()"
->
-ROLL $10
-</button>
+<button class="rollButton" id="rollBtn" onclick="roll()">ROLL</button>
 
 <div class="actions">
+<button class="sell" id="sellBtn" onclick="sellCurrent()" disabled>SELL</button>
+</div>
 
-<button
-class="actionBtn"
-id="keepBtn"
-onclick="keepRNG()"
-disabled
->
-KEEP
-</button>
+<div class="notice">
+1,000 RNGs can be rolled directly.<br>
+200 RNGs can only be created by merging.<br>
+The best 400 rollable RNGs are used as merge ingredients.
+</div>
 
-<button
-class="actionBtn"
-id="sellBtn"
-onclick="sellCurrent()"
-disabled
->
-SELL
-</button>
+</div>
+
+<div class="panel mergePanel">
+
+<div class="sectionTitle">MERGE RNGs</div>
+
+<div class="notice">
+The 200 merge RNGs cannot be rolled directly. You need the exact two RNGs shown for each merge.
+</div>
+
+<div class="mergeList" id="mergeList"></div>
+
+</div>
+
+<div class="panel collection">
+
+<div class="sectionTitle">RNG COLLECTION</div>
+
+<div class="collectionInfo">
+Every discovered or merged RNG is permanently recorded here.
+</div>
+
+<div class="collectionGrid" id="collectionGrid"></div>
 
 </div>
 
 </div>
 
-<div class="panels">
+<div>
 
 <div class="panel">
 
-<h2>
-Active RNG
-</h2>
+<div class="sectionTitle">UPGRADES</div>
 
-<div id="activePanel">
-No RNG selected.
+<div class="upgrade">
+
+<div class="upgradeInfo">
+<strong>Luck</strong>
+<small id="luckText">Level 0</small>
 </div>
 
+<button id="luckBtn" onclick="upgradeLuck">$100</button>
+
 </div>
 
-<div class="panel">
+<div class="upgrade">
 
-<h2>
-Upgrades
-</h2>
-
-<button
-class="upgrade"
-onclick="upgradeLuck()"
->
-Upgrade Luck
-</button>
-
-<div
-class="cost"
-id="luckCost"
->
+<div class="upgradeInfo">
+<strong>Inventory Slots</strong>
+<small id="slotText">Slots: 5/200</small>
 </div>
 
-<button
-class="upgrade"
-onclick="upgradeStorage()"
->
-Upgrade Storage
-</button>
+<button id="slotBtn" onclick="buySlot()">$250</button>
 
-<div
-class="cost"
-id="storageCost"
->
 </div>
 
-<button
-class="reset"
-onclick="resetGame()"
->
-RESET EVERYTHING
-</button>
+<div class="upgrade">
+
+<div class="upgradeInfo">
+<strong>Reset</strong>
+<small>Erase all progress</small>
+</div>
+
+<button onclick="resetGame()">RESET</button>
 
 </div>
 
 </div>
 
-<div
-class="panel"
-style="margin-top:20px"
->
+<div class="panel bestBox">
 
-<h2>
-Kept RNGs
-</h2>
+<div class="sectionTitle">BEST RNG</div>
 
-<div
-class="inventory"
-id="inventory"
->
+<div class="bestName" id="bestRng">None</div>
+
+<div id="bestIncome" class="notice">
+Roll an RNG to begin.
 </div>
 
 </div>
 
-<div
-class="panel"
-style="margin-top:20px"
->
-
-<h2>
-Collection
-</h2>
-
-<div
-class="collection"
-id="collection"
->
 </div>
 
 </div>
 
-</main>
+</div>
 
 <script>
 
 const rarityData=[
-
-{
-name:"Common",
-chance:500000,
-value:2,
-income:0.1
-},
-
-{
-name:"Uncommon",
-chance:250000,
-value:5,
-income:0.25
-},
-
-{
-name:"Rare",
-chance:120000,
-value:20,
-income:1
-},
-
-{
-name:"Super Rare",
-chance:60000,
-value:50,
-income:3
-},
-
-{
-name:"Epic",
-chance:30000,
-value:150,
-income:8
-},
-
-{
-name:"Ultra",
-chance:15000,
-value:400,
-income:20
-},
-
-{
-name:"Legendary",
-chance:7000,
-value:1200,
-income:60
-},
-
-{
-name:"Mythic",
-chance:3000,
-value:4000,
-income:200
-},
-
-{
-name:"Divine",
-chance:1200,
-value:15000,
-income:750
-},
-
-{
-name:"Celestial",
-chance:500,
-value:50000,
-income:2500
-},
-
-{
-name:"Eternal",
-chance:200,
-value:200000,
-income:10000
-},
-
-{
-name:"Cosmic",
-chance:80,
-value:800000,
-income:40000
-},
-
-{
-name:"Astral",
-chance:30,
-value:3000000,
-income:150000
-},
-
-{
-name:"Infinity",
-chance:10,
-value:10000000,
-income:500000
-},
-
-{
-name:"Glitched",
-chance:4,
-value:40000000,
-income:2000000
-},
-
-{
-name:"SECRET",
-chance:1,
-value:200000000,
-income:10000000
-}
-
+{name:"Common",chance:500000,value:2},
+{name:"Uncommon",chance:250000,value:5},
+{name:"Rare",chance:120000,value:20},
+{name:"Super Rare",chance:60000,value:50},
+{name:"Epic",chance:30000,value:150},
+{name:"Ultra",chance:15000,value:400},
+{name:"Legendary",chance:7000,value:1200},
+{name:"Mythic",chance:3000,value:4000},
+{name:"Divine",chance:1200,value:15000},
+{name:"Celestial",chance:500,value:50000},
+{name:"Eternal",chance:200,value:200000},
+{name:"Cosmic",chance:80,value:800000},
+{name:"Astral",chance:30,value:3000000},
+{name:"Infinity",chance:10,value:10000000},
+{name:"Glitched",chance:4,value:40000000},
+{name:"SECRET",chance:1,value:200000000}
 ];
 
 const themes=[
-
 "Orchestra",
 "Galaxy",
 "Thunder",
@@ -635,86 +535,86 @@ const themes=[
 "Golden Note",
 "Silent Note",
 "Final Note"
-
 ];
 
 let rngs=[];
+let mergeRngs=[];
 
 let game={
 cash:100,
 rolls:0,
 luckLevel:0,
-storageMax:5,
-inventory:[],
-activeId:null,
-discovered:[]
+collectionSlots:5,
+discovered:[],
+owned:[],
+current:null
 };
 
-let current=null;
 let rolling=false;
 
-function generateRNGs(){
+function formatMoney(n){
 
-let id=0;
+if(n>=1000000000){
+return "$"+(n/1000000000).toFixed(2)+"B";
+}
 
-for(
-let r=0;
-r<rarityData.length && id<1000;
-r++
-){
+if(n>=1000000){
+return "$"+(n/1000000).toFixed(2)+"M";
+}
 
-let amount;
+if(n>=1000){
+return "$"+(n/1000).toFixed(2)+"K";
+}
 
-if(r<4){
+if(n<1){
+return "$"+n.toFixed(2);
+}
 
-amount=100;
+return "$"+Math.floor(n);
+}
 
-}else if(r<8){
+function formatNumber(n){
 
-amount=80;
+if(n>=1000000000){
+return (n/1000000000).toFixed(2)+"B";
+}
 
-}else if(r<12){
+if(n>=1000000){
+return (n/1000000).toFixed(2)+"M";
+}
 
-amount=60;
+if(n>=1000){
+return (n/1000).toFixed(2)+"K";
+}
 
-}else{
+return Math.floor(n).toString();
+}
 
-amount=40;
+function incomeFrom(rng){
+return rng.value*0.005;
+}
+
+function getRollCost(){
+return Math.floor(10*Math.pow(1.08,game.rolls));
+}
+
+function getLuck(){
+
+return 1+
+game.luckLevel*.25+
+Math.pow(game.luckLevel,1.5)*.04;
 
 }
 
-for(
-let i=0;
-i<amount && id<1000;
-i++
-){
-
-let theme=
-themes[(id+i+r)%themes.length];
-
-rngs.push({
-
-id:id,
-
-name:theme+" RNG",
-
-rarity:rarityData[r].name,
-
-rarityIndex:r,
-
-chance:rarityData[r].chance,
-
-value:rarityData[r].value,
-
-income:rarityData[r].income
-
-});
-
-id++;
-
+function getLuckCost(){
+return Math.floor(100*Math.pow(2.25,game.luckLevel));
 }
 
-}
+function getSlotCost(){
+
+return Math.floor(
+250*Math.pow(2.05,game.collectionSlots-5)
+);
 
 }
 
@@ -729,177 +629,193 @@ JSON.stringify(game)
 
 function loadGame(){
 
-let saved=
-localStorage.getItem(
-"rngGameSave"
-);
+const saved=localStorage.getItem("rngGameSave");
 
-if(!saved){
-return;
-}
+if(!saved)return;
 
 try{
 
-let data=
-JSON.parse(saved);
+const data=JSON.parse(saved);
 
-game={
+if(typeof data.cash==="number"){
+game.cash=data.cash;
+}
 
-cash:
-Number.isFinite(data.cash)
-?data.cash
-:100,
+if(typeof data.rolls==="number"){
+game.rolls=data.rolls;
+}
 
-rolls:
-Number.isFinite(data.rolls)
-?data.rolls
-:0,
+if(typeof data.luckLevel==="number"){
+game.luckLevel=data.luckLevel;
+}
 
-luckLevel:
-Number.isFinite(data.luckLevel)
-?data.luckLevel
-:0,
+if(typeof data.collectionSlots==="number"){
+game.collectionSlots=data.collectionSlots;
+}
 
-storageMax:
-Number.isFinite(data.storageMax)
-?data.storageMax
-:5,
+if(Array.isArray(data.discovered)){
+game.discovered=data.discovered;
+}
 
-inventory:
-Array.isArray(data.inventory)
-?data.inventory
-:[],
+if(Array.isArray(data.owned)){
+game.owned=data.owned;
+}
 
-activeId:
-data.activeId??null,
+if(data.current){
+game.current=data.current;
+}
 
-discovered:
-Array.isArray(data.discovered)
-?data.discovered
-:[]
-
-};
-
-}catch(e){
-
-resetVariables();
+}catch(e){}
 
 }
 
+function buildRNGs(){
+
+rngs=[];
+mergeRngs=[];
+
+for(let i=0;i<1000;i++){
+
+let rarityIndex;
+
+if(i<100){
+rarityIndex=0;
+}else if(i<200){
+rarityIndex=1;
+}else if(i<300){
+rarityIndex=2;
+}else if(i<400){
+rarityIndex=3;
+}else if(i<500){
+rarityIndex=4;
+}else if(i<600){
+rarityIndex=5;
+}else if(i<700){
+rarityIndex=6;
+}else if(i<780){
+rarityIndex=7;
+}else if(i<850){
+rarityIndex=8;
+}else if(i<910){
+rarityIndex=9;
+}else if(i<950){
+rarityIndex=10;
+}else if(i<970){
+rarityIndex=11;
+}else if(i<985){
+rarityIndex=12;
+}else if(i<995){
+rarityIndex=13;
+}else if(i<999){
+rarityIndex=14;
+}else{
+rarityIndex=15;
 }
 
-function resetVariables(){
+const rarity=rarityData[rarityIndex];
 
-game={
+const theme=themes[i%themes.length];
 
-cash:100,
+const variation=Math.floor(i/themes.length)+1;
 
-rolls:0,
+let name=theme+" RNG";
 
-luckLevel:0,
+if(variation>1){
+name=theme+" "+variation+" RNG";
+}
 
-storageMax:5,
+rngs.push({
 
-inventory:[],
+id:"r"+i,
 
-activeId:null,
+name:name,
 
-discovered:[]
+rarity:rarity.name,
 
-};
+rarityIndex:rarityIndex,
 
-current=null;
+chance:rarity.chance,
 
-rolling=false;
+value:rarity.value
+
+});
 
 }
 
-function getLuck(){
+const best400=rngs
+.slice()
+.sort((a,b)=>b.value-a.value)
+.slice(0,400);
 
-return 1+
-game.luckLevel*.25+
-Math.pow(
-game.luckLevel,
-1.5
-)*.04;
+for(let i=0;i<200;i++){
 
-}
+const a=best400[(i*2)%400];
 
-function getLuckCost(){
+const b=best400[(i*2+1)%400];
 
-return Math.floor(
-100*
-Math.pow(
-2.25,
-game.luckLevel
-)
+const rarityIndex=Math.min(
+15,
+Math.floor(i/13)+5
 );
 
+const rarity=rarityData[rarityIndex];
+
+mergeRngs.push({
+
+id:"m"+i,
+
+name:"Merged "+themes[(i+17)%themes.length]+" RNG",
+
+rarity:rarity.name,
+
+rarityIndex:rarityIndex,
+
+chance:0,
+
+value:Math.floor((a.value+b.value)*3),
+
+requires:[a.id,b.id]
+
+});
+
 }
 
-function getStorageCost(){
-
-return Math.floor(
-250*
-Math.pow(
-2.05,
-game.storageMax-5
-)
-);
-
 }
 
-function getRollCost(){
+function getById(id){
 
-return Math.floor(
-10*
-Math.pow(
-1.08,
-game.rolls
-)
-);
+return rngs.find(r=>r.id===id)
+||
+mergeRngs.find(r=>r.id===id);
 
 }
 
 function weightedRoll(){
 
-let weights=
-rngs.map(r=>{
+let total=0;
+let weights=[];
 
-let weight=
-1/r.chance;
+for(const rng of rngs){
 
-if(r.rarityIndex>=3){
+let weight=1/rng.chance;
 
+if(rng.rarityIndex>=3){
 weight*=getLuck();
+}
+
+weights.push(weight);
+total+=weight;
 
 }
 
-return weight;
+let random=Math.random()*total;
 
-});
+for(let i=0;i<rngs.length;i++){
 
-let total=
-weights.reduce(
-(a,b)=>a+b,
-0
-);
+random-=weights[i];
 
-let pick=
-Math.random()*total;
-
-for(
-let i=0;
-i<rngs.length;
-i++
-){
-
-pick-=weights[i];
-
-if(pick<=0){
-
+if(random<=0){
 return rngs[i];
-
 }
 
 }
@@ -908,65 +824,99 @@ return rngs[0];
 
 }
 
-function formatMoney(n){
+function discover(id){
 
-if(n>=1000000000){
-
-return "$"+
-(n/1000000000)
-.toFixed(2)+
-"B";
+if(!game.discovered.includes(id)){
+game.discovered.push(id);
+}
 
 }
 
-if(n>=1000000){
+function hasRNG(id){
 
-return "$"+
-(n/1000000)
-.toFixed(2)+
-"M";
+return game.owned.includes(id);
 
 }
 
-if(n>=1000){
+function addOwned(id){
 
-return "$"+
-(n/1000)
-.toFixed(2)+
-"K";
+if(hasRNG(id)){
+return;
+}
+
+if(game.owned.length>=game.collectionSlots){
+
+return;
 
 }
 
-if(n<1){
+game.owned.push(id);
 
-return "$"+
-n.toFixed(2);
+attemptMerge();
 
 }
 
-return "$"+
-Math.floor(n);
+function attemptMerge(){
+
+let changed=true;
+
+while(changed){
+
+changed=false;
+
+for(const merged of mergeRngs){
+
+if(hasRNG(merged.id)){
+continue;
+}
+
+const aIndex=game.owned.indexOf(
+merged.requires[0]
+);
+
+const bIndex=game.owned.indexOf(
+merged.requires[1]
+);
+
+if(aIndex!==-1&&bIndex!==-1){
+
+const first=Math.max(aIndex,bIndex);
+const second=Math.min(aIndex,bIndex);
+
+game.owned.splice(first,1);
+game.owned.splice(second,1);
+
+game.owned.push(merged.id);
+
+discover(merged.id);
+
+changed=true;
+
+break;
+
+}
+
+}
+
+}
 
 }
 
 function roll(){
 
-if(rolling){
-return;
-}
+if(rolling)return;
 
-let cost=
-getRollCost();
+const cost=getRollCost();
 
 if(game.cash<cost){
 
-alert(
-"Not enough cash."
-);
+alert("Not enough cash.");
 
 return;
 
 }
+
+rolling=true;
 
 game.cash-=cost;
 
@@ -976,112 +926,57 @@ saveGame();
 
 update();
 
-rolling=true;
-
-document.getElementById(
-"rollBtn"
-).disabled=true;
-
-document.getElementById(
-"keepBtn"
-).disabled=true;
-
-document.getElementById(
-"sellBtn"
-).disabled=true;
+const fakeNames=rngs
+.slice()
+.sort(()=>Math.random()-.5)
+.slice(0,24);
 
 let count=0;
 
-let animation=
-setInterval(()=>{
+const interval=setInterval(()=>{
 
-let fake=
-rngs[
-Math.floor(
-Math.random()*
-rngs.length
-)
-];
+document.getElementById("rngName").textContent=
+fakeNames[count].name;
 
-document.getElementById(
-"rngName"
-).textContent=
-fake.name;
-
-document.getElementById(
-"rarity"
-).textContent=
-"ROLLING...";
-
-document.getElementById(
-"details"
-).textContent=
-"Generating...";
+document.getElementById("rarity").textContent=
+fakeNames[count].rarity;
 
 count++;
 
-if(count>=24){
+if(count>=fakeNames.length){
 
-clearInterval(
-animation
-);
+clearInterval(interval);
 
-finishRoll();
+setTimeout(()=>{
 
-}
+const result=weightedRoll();
 
-},100);
+game.current=result;
 
-}
+discover(result.id);
 
-function finishRoll(){
+if(game.owned.length<game.collectionSlots){
 
-current=
-weightedRoll();
+addOwned(result.id);
 
-if(
-!game.discovered
-.includes(
-current.id
-)
-){
-
-game.discovered.push(
-current.id
-);
+}else if(!hasRNG(result.id)){
 
 }
 
-document.getElementById(
-"rngName"
-).textContent=
-current.name;
+document.getElementById("rngName").textContent=
+result.name;
 
-document.getElementById(
-"rarity"
-).textContent=
-current.rarity;
+document.getElementById("rarity").textContent=
+result.rarity;
 
-document.getElementById(
-"details"
-).textContent=
-"1 in "+
-current.chance.toLocaleString()+
-" • Sell: "+
-formatMoney(current.value)+
-" • Income: "+
-formatMoney(current.income)+
+document.getElementById("details").textContent=
+"Sell: "+
+formatMoney(result.value)+
+" | Income: "+
+formatMoney(incomeFrom(result))+
 "/s";
 
-document.getElementById(
-"keepBtn"
-).disabled=
-game.inventory.length>=
-game.storageMax;
-
-document.getElementById(
-"sellBtn"
-).disabled=false;
+document.getElementById("sellBtn").disabled=false;
 
 rolling=false;
 
@@ -1089,142 +984,41 @@ saveGame();
 
 update();
 
-}
-
-function keepRNG(){
-
-if(!current){
-return;
-}
-
-if(
-game.inventory.length>=
-game.storageMax
-){
-
-alert(
-"Storage is full."
-);
-
-return;
+},250);
 
 }
 
-game.inventory.push(
-current
-);
-
-current=null;
-
-document.getElementById(
-"keepBtn"
-).disabled=true;
-
-document.getElementById(
-"sellBtn"
-).disabled=true;
-
-document.getElementById(
-"rngName"
-).textContent=
-"KEPT";
-
-document.getElementById(
-"rarity"
-).textContent=
-"";
-
-document.getElementById(
-"details"
-).textContent=
-"Choose an RNG from your storage to activate it.";
-
-saveGame();
-
-update();
+},100);
 
 }
 
 function sellCurrent(){
 
-if(!current){
-return;
+if(!game.current)return;
+
+const id=game.current.id;
+
+const index=game.owned.indexOf(id);
+
+if(index!==-1){
+
+game.owned.splice(index,1);
+
 }
 
-game.cash+=
-current.value;
+game.cash+=game.current.value;
 
-current=null;
+game.current=null;
 
-document.getElementById(
-"keepBtn"
-).disabled=true;
+document.getElementById("sellBtn").disabled=true;
 
-document.getElementById(
-"sellBtn"
-).disabled=true;
-
-document.getElementById(
-"rngName"
-).textContent=
+document.getElementById("rngName").textContent=
 "SOLD";
 
-document.getElementById(
-"rarity"
-).textContent=
-"";
+document.getElementById("rarity").textContent=
+"Roll again";
 
-document.getElementById(
-"details"
-).textContent=
-"Cash added.";
-
-saveGame();
-
-update();
-
-}
-
-function activateRNG(index){
-
-if(!game.inventory[index]){
-return;
-}
-
-game.activeId=
-game.inventory[index].id;
-
-saveGame();
-
-update();
-
-}
-
-function sellInventory(index){
-
-let item=
-game.inventory[index];
-
-if(!item){
-return;
-}
-
-game.cash+=
-item.value;
-
-if(
-game.activeId===
-item.id
-){
-
-game.activeId=null;
-
-}
-
-game.inventory.splice(
-index,
-1
-);
+document.getElementById("details").textContent="";
 
 saveGame();
 
@@ -1234,14 +1028,11 @@ update();
 
 function upgradeLuck(){
 
-let cost=
-getLuckCost();
+const cost=getLuckCost();
 
 if(game.cash<cost){
 
-alert(
-"Not enough cash."
-);
+alert("Not enough cash.");
 
 return;
 
@@ -1257,16 +1048,21 @@ update();
 
 }
 
-function upgradeStorage(){
+function buySlot(){
 
-let cost=
-getStorageCost();
+if(game.collectionSlots>=200){
+
+alert("You already have 200 slots.");
+
+return;
+
+}
+
+const cost=getSlotCost();
 
 if(game.cash<cost){
 
-alert(
-"Not enough cash."
-);
+alert("Not enough cash.");
 
 return;
 
@@ -1274,7 +1070,7 @@ return;
 
 game.cash-=cost;
 
-game.storageMax++;
+game.collectionSlots++;
 
 saveGame();
 
@@ -1282,286 +1078,237 @@ update();
 
 }
 
-function getActive(){
+function getBestOwned(){
 
-return game.inventory.find(
-r=>r.id===game.activeId
-)||null;
+let best=null;
 
-}
+for(const id of game.owned){
 
-function update(){
+const rng=getById(id);
 
-document.getElementById(
-"cash"
-).textContent=
-formatMoney(
-game.cash
-);
+if(!rng)continue;
 
-document.getElementById(
-"luck"
-).textContent=
-game.luckLevel+
-" ("+
-getLuck().toFixed(2)+
-"x)";
+if(!best||rng.value>best.value){
 
-document.getElementById(
-"rolls"
-).textContent=
-game.rolls;
-
-document.getElementById(
-"storage"
-).textContent=
-game.inventory.length+
-"/"+
-game.storageMax;
-
-let active=
-getActive();
-
-document.getElementById(
-"income"
-).textContent=
-active
-?formatMoney(active.income)+"/s"
-:"$0/s";
-
-document.getElementById(
-"discovered"
-).textContent=
-game.discovered.length+
-"/1000";
-
-document.getElementById(
-"rollBtn"
-).textContent=
-"ROLL "+
-formatMoney(
-getRollCost()
-);
-
-document.getElementById(
-"rollBtn"
-).disabled=
-rolling;
-
-document.getElementById(
-"luckCost"
-).textContent=
-"Cost: "+
-formatMoney(
-getLuckCost()
-);
-
-document.getElementById(
-"storageCost"
-).textContent=
-"Cost: "+
-formatMoney(
-getStorageCost()
-);
-
-renderActive();
-
-renderInventory();
-
-renderCollection();
+best=rng;
 
 }
 
-function renderActive(){
-
-let panel=
-document.getElementById(
-"activePanel"
-);
-
-let active=
-getActive();
-
-if(!active){
-
-panel.innerHTML=
-"No RNG selected.";
-
-return;
-
 }
 
-panel.innerHTML=`
-
-<div class="card active">
-
-<h3>
-${active.name}
-</h3>
-
-<p>
-${active.rarity}
-</p>
-
-<p>
-Chance:
-1/${active.chance.toLocaleString()}
-</p>
-
-<p>
-Income:
-${formatMoney(active.income)}/s
-</p>
-
-<p>
-Sell value:
-${formatMoney(active.value)}
-</p>
-
-</div>
-
-`;
-
-}
-
-function renderInventory(){
-
-let box=
-document.getElementById(
-"inventory"
-);
-
-if(
-game.inventory.length===0
-){
-
-box.innerHTML=
-"<div>No RNGs kept yet.</div>";
-
-return;
-
-}
-
-box.innerHTML=
-game.inventory.map(
-(r,i)=>{
-
-let isActive=
-game.activeId===
-r.id;
-
-return`
-
-<div class="card ${
-isActive?"active":""
-}">
-
-<h3>
-${r.name}
-</h3>
-
-<p>
-${r.rarity}
-</p>
-
-<p>
-1/${r.chance.toLocaleString()}
-</p>
-
-<p>
-${formatMoney(r.income)}/s
-</p>
-
-<button
-onclick="activateRNG(${i})"
->
-${
-isActive
-?"ACTIVE"
-:"SELECT RNG"
-}
-</button>
-
-<button
-onclick="sellInventory(${i})"
->
-SELL FOR
-${formatMoney(r.value)}
-</button>
-
-</div>
-
-`;
-
-}
-).join("");
+return best;
 
 }
 
 function renderCollection(){
 
-let box=
-document.getElementById(
-"collection"
+const box=document.getElementById(
+"collectionGrid"
 );
 
-box.innerHTML=
-rngs.map(r=>{
+box.innerHTML="";
 
-let found=
-game.discovered.includes(
-r.id
-);
+const best=getBestOwned();
 
-if(!found){
+for(let i=0;i<1200;i++){
 
-return`
+let rng;
 
-<div class="collectionCard unknown">
-???
-</div>
+if(i<1000){
 
-`;
+rng=rngs[i];
+
+}else{
+
+rng=mergeRngs[i-1000];
 
 }
 
-return`
+const known=
+game.discovered.includes(rng.id);
 
-<div class="collectionCard">
+const div=document.createElement("div");
 
-<strong>
-${r.name}
-</strong>
+div.className=
+"card "+
+(known?"known":"unknown");
 
-<br>
+if(best&&best.id===rng.id){
 
-<small>
-${r.rarity}
-</small>
+div.classList.add("best");
 
-</div>
+}
 
-`;
+div.innerHTML=
 
-}).join("");
+'<div class="cardName">'+
+(known?rng.name:"???")+
+'</div>'+
+
+'<div class="cardRarity">'+
+(known?rng.rarity:"Undiscovered")+
+'</div>'+
+
+'<div class="cardValue">'+
+(known?formatMoney(rng.value):"???")+
+'</div>';
+
+box.appendChild(div);
+
+}
+
+}
+
+function renderMergeList(){
+
+const box=document.getElementById(
+"mergeList"
+);
+
+box.innerHTML="";
+
+for(const merged of mergeRngs){
+
+const a=getById(
+merged.requires[0]
+);
+
+const b=getById(
+merged.requires[1]
+);
+
+const hasA=hasRNG(a.id);
+const hasB=hasRNG(b.id);
+const made=game.discovered.includes(
+merged.id
+);
+
+const ready=
+hasA&&hasB&&!made;
+
+const div=document.createElement("div");
+
+div.className=
+"mergeCard "+
+(ready?"ready ":"")+
+(made?"made":"");
+
+div.innerHTML=
+
+'<div class="mergeName">'+
+(made?merged.name:"???")+
+'</div>'+
+
+'<div class="mergeParts">'+
+a.name+
+" + "+
+b.name+
+'</div>'+
+
+'<div class="mergeStatus">'+
+(
+made
+?"MERGED"
+:
+ready
+?"READY"
+:
+"Need both RNGs"
+)+
+'</div>';
+
+box.appendChild(div);
+
+}
+
+}
+
+function update(){
+
+document.getElementById("cash").textContent=
+formatMoney(game.cash);
+
+document.getElementById("luck").textContent=
+getLuck().toFixed(2)+"x";
+
+document.getElementById("rolls").textContent=
+formatNumber(game.rolls);
+
+document.getElementById("rollCost").textContent=
+formatMoney(getRollCost());
+
+document.getElementById("discovered").textContent=
+game.discovered.length+"/1200";
+
+const best=getBestOwned();
+
+if(best){
+
+document.getElementById("income").textContent=
+formatMoney(incomeFrom(best))+"/s";
+
+document.getElementById("bestRng").textContent=
+best.name;
+
+document.getElementById("bestIncome").textContent=
+best.rarity+
+" | "+
+formatMoney(incomeFrom(best))+
+"/s";
+
+}else{
+
+document.getElementById("income").textContent=
+"$0/s";
+
+document.getElementById("bestRng").textContent=
+"None";
+
+document.getElementById("bestIncome").textContent=
+"Roll an RNG to begin.";
+
+}
+
+document.getElementById("luckText").textContent=
+"Level "+
+game.luckLevel+
+" • "+
+getLuck().toFixed(2)+
+"x luck";
+
+document.getElementById("luckBtn").textContent=
+formatMoney(getLuckCost());
+
+document.getElementById("slotText").textContent=
+"Slots: "+
+game.collectionSlots+
+"/200";
+
+document.getElementById("slotBtn").textContent=
+game.collectionSlots>=200
+?"MAX"
+:
+formatMoney(getSlotCost());
+
+document.getElementById("slotBtn").disabled=
+game.collectionSlots>=200;
+
+renderCollection();
+renderMergeList();
 
 }
 
 function resetGame(){
 
-if(
-!confirm(
+if(!confirm(
 "RESET EVERYTHING? This will erase ALL RNG progress."
-)
-){
+)){
 
 return;
 
 }
 
-localStorage.removeItem(
-"rngGameSave"
-);
+localStorage.removeItem("rngGameSave");
 
 game={
 
@@ -1571,60 +1318,50 @@ rolls:0,
 
 luckLevel:0,
 
-storageMax:5,
+collectionSlots:5,
 
-inventory:[],
+discovered:[],
 
-activeId:null,
+owned:[],
 
-discovered:[]
+current:null
 
 };
 
-current=null;
-
 rolling=false;
 
-document.getElementById(
-"rngName"
-).textContent=
+document.getElementById("rngName").textContent=
 "READY?";
 
-document.getElementById(
-"rarity"
-).textContent=
+document.getElementById("rarity").textContent=
 "Roll to generate an RNG";
 
-document.getElementById(
-"details"
-).textContent=
-"The RNG itself generates your money.";
+document.getElementById("details").textContent=
+"Your best RNG automatically generates money.";
 
-document.getElementById(
-"keepBtn"
-).disabled=true;
-
-document.getElementById(
-"sellBtn"
-).disabled=true;
+document.getElementById("sellBtn").disabled=true;
 
 update();
 
 }
 
-setInterval(()=>{
+buildRNGs();
 
-let active=
-getActive();
-
-if(active){
-
-game.cash+=
-active.income;
+loadGame();
 
 update();
 
+setInterval(()=>{
+
+const best=getBestOwned();
+
+if(best){
+
+game.cash+=incomeFrom(best);
+
 saveGame();
+
+update();
 
 }
 
@@ -1634,49 +1371,29 @@ let rCount=0;
 
 let rTimer=null;
 
-document.addEventListener(
-"keydown",
-e=>{
+document.addEventListener("keydown",e=>{
 
-if(
-e.key.toLowerCase()!=="r"
-){
-
+if(e.key.toLowerCase()!=="r"){
 return;
-
 }
 
 rCount++;
 
-clearTimeout(
-rTimer
-);
+clearTimeout(rTimer);
 
-rTimer=
-setTimeout(
-()=>{
+rTimer=setTimeout(()=>{
 rCount=0;
-},
-500
-);
+},500);
 
 if(rCount>=2){
 
-window.location.href=
-"flashcards.html";
+window.location.href="flashcards.html";
 
 }
 
 });
 
-generateRNGs();
-
-loadGame();
-
-update();
-
 </script>
 
 </body>
 </html>
-```
