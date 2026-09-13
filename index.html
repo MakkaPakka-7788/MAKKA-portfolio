@@ -1,19 +1,11 @@
-```html
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Flashcard Creator</title>
-
-<script>
-if (!window.location.search.includes("games=true")) {
-    window.location.replace("flashcards.html");
-}
-</script>
+<title>Flashcard.com</title>
 
 <style>
 
@@ -54,6 +46,10 @@ header {
     font-family: inherit;
     font-weight: bold;
     cursor: pointer;
+}
+
+.flashcardsButton:hover {
+    background: #ccc;
 }
 
 .container {
@@ -108,6 +104,7 @@ header {
 .game:hover {
     background: #191919;
     border-color: #777;
+    transform: translateY(-2px);
 }
 
 .icon {
@@ -147,6 +144,10 @@ header {
     cursor: pointer;
 }
 
+.flashcardBox button:hover {
+    background: #ccc;
+}
+
 .bottomText {
     text-align: center;
     margin-top: 35px;
@@ -166,15 +167,11 @@ header {
 FLASHCARD<span>.COM</span>
 </div>
 
-<button
-class="flashcardsButton"
-onclick="openFlashcards()"
->
+<button class="flashcardsButton" onclick="openFlashcards()">
 FLASHCARDS
 </button>
 
 </header>
-
 
 <div class="container">
 
@@ -186,180 +183,117 @@ FLASHCARDS
 
 </div>
 
-
 <div class="section">
 
 <div class="sectionTitle">
 GAMES
 </div>
 
-
 <div class="games">
 
-
 <a class="game" href="snake.html">
-
-    <div class="icon">🐍</div>
-
-    <div>
-
-        <div class="name">SNAKE</div>
-
-        <div class="description">
-            Eat food, use portals and avoid obstacles.
-        </div>
-
-    </div>
-
+<div class="icon">🐍</div>
+<div>
+<div class="name">SNAKE</div>
+<div class="description">
+Eat food, use portals and avoid obstacles.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="tetris.html">
-
-    <div class="icon">▦</div>
-
-    <div>
-
-        <div class="name">TETRIS</div>
-
-        <div class="description">
-            Classic falling blocks.
-        </div>
-
-    </div>
-
+<div class="icon">▦</div>
+<div>
+<div class="name">TETRIS</div>
+<div class="description">
+Classic falling blocks.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="pong.html">
-
-    <div class="icon">🏓</div>
-
-    <div>
-
-        <div class="name">PONG</div>
-
-        <div class="description">
-            Battle the computer.
-        </div>
-
-    </div>
-
+<div class="icon">🏓</div>
+<div>
+<div class="name">PONG</div>
+<div class="description">
+Battle the computer.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="flappybird.html">
-
-    <div class="icon">🐦</div>
-
-    <div>
-
-        <div class="name">FLAPPY BIRD</div>
-
-        <div class="description">
-            Fly through the pipes.
-        </div>
-
-    </div>
-
+<div class="icon">🐦</div>
+<div>
+<div class="name">FLAPPY BIRD</div>
+<div class="description">
+Fly through the pipes.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="towerdefense.html">
-
-    <div class="icon">🏰</div>
-
-    <div>
-
-        <div class="name">TOWER DEFENCE</div>
-
-        <div class="description">
-            Defend castles and conquer kingdoms.
-        </div>
-
-    </div>
-
+<div class="icon">🏰</div>
+<div>
+<div class="name">TOWER DEFENCE</div>
+<div class="description">
+Defend castles and conquer kingdoms.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="dino.html">
-
-    <div class="icon">🦖</div>
-
-    <div>
-
-        <div class="name">DINO</div>
-
-        <div class="description">
-            Jump over obstacles and survive.
-        </div>
-
-    </div>
-
+<div class="icon">🦖</div>
+<div>
+<div class="name">DINO</div>
+<div class="description">
+Jump over obstacles and survive.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="pacman.html">
-
-    <div class="icon">🟡</div>
-
-    <div>
-
-        <div class="name">PAC-MAN</div>
-
-        <div class="description">
-            Eat pellets and escape the ghosts.
-        </div>
-
-    </div>
-
+<div class="icon">🟡</div>
+<div>
+<div class="name">PAC-MAN</div>
+<div class="description">
+Eat pellets and escape the ghosts.
+</div>
+</div>
 </a>
-
 
 <a class="game" href="danger-spinner.html">
-
-    <div class="icon">🎰</div>
-
-    <div>
-
-        <div class="name">DANGER SPINNER</div>
-
-        <div class="description">
-            Spin the wheel, test your luck and build a streak.
-        </div>
-
-    </div>
-
+<div class="icon">🎰</div>
+<div>
+<div class="name">DANGER SPINNER</div>
+<div class="description">
+Spin the wheel, test your luck and build a streak.
+</div>
+</div>
 </a>
 
-
 <a class="game" href="dune-dash.html">
-
-    <div class="icon">🏜️</div>
-
-    <div>
-
-        <div class="name">DUNE DASH</div>
-
-        <div class="description">
-            Roll across endless dunes, launch into the air and climb higher.
-        </div>
-
-    </div>
-
+<div class="icon">🏜️</div>
+<div>
+<div class="name">DUNE DASH</div>
+<div class="description">
+Roll across endless dunes, launch into the air and climb higher.
+</div>
+</div>
 </a>
 
 <a class="game" href="rng.html">
-    <div class="icon">🎲</div>
-    <div>
-        <div class="name">RNG</div>
-        <div class="description">Roll for insanely rare RNGs.</div>
-    </div>
+<div class="icon">🎲</div>
+<div>
+<div class="name">RNG</div>
+<div class="description">
+Roll for insanely rare RNGs.
+</div>
+</div>
 </a>
-</div>
 
 </div>
 
+</div>
 
 <div class="flashcardBox">
 
@@ -375,27 +309,20 @@ OPEN FLASHCARDS
 
 </div>
 
-
 <div class="bottomText">
-RR = SWITCH BETWEEN HOME AND FLASHCARDS
+RRR = SWITCH BETWEEN HOME AND FLASHCARDS
 </div>
 
-
 </div>
-
 
 <script>
 
 function openFlashcards() {
-
     window.location.href = "flashcards.html";
-
 }
-
 
 let rCount = 0;
 let rTimer = null;
-
 
 document.addEventListener("keydown", function(e) {
 
@@ -408,18 +335,12 @@ document.addEventListener("keydown", function(e) {
     clearTimeout(rTimer);
 
     rTimer = setTimeout(function() {
-
         rCount = 0;
-
     }, 500);
 
-
-    if (rCount === 2) {
-
+    if (rCount === 3) {
         rCount = 0;
-
-        openFlashcards();
-
+        window.location.href = "flashcards.html";
     }
 
 });
@@ -428,4 +349,3 @@ document.addEventListener("keydown", function(e) {
 
 </body>
 </html>
-```
