@@ -1,11 +1,11 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Flashcard Creator</title>
+<title>Flashcard.com</title>
 
 <style>
 
@@ -20,14 +20,10 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* HEADER */
-
 header {
     background: white;
     border-bottom: 1px solid #d9e3f2;
-
     padding: 18px 30px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -42,12 +38,9 @@ header {
 .homeButton {
     background: #e8f1ff;
     color: #246bce;
-
     border: 0;
     border-radius: 8px;
-
     padding: 10px 16px;
-
     font-weight: bold;
     cursor: pointer;
 }
@@ -55,8 +48,6 @@ header {
 .homeButton:hover {
     background: #d8e8ff;
 }
-
-/* MAIN */
 
 .container {
     width: min(1000px, 92%);
@@ -67,7 +58,6 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 15px;
     flex-wrap: wrap;
 }
@@ -80,17 +70,12 @@ h2 {
     margin-top: 0;
 }
 
-/* BUTTONS */
-
 button {
     border: 0;
     border-radius: 8px;
-
     padding: 11px 17px;
-
     font-weight: bold;
     font-size: 14px;
-
     cursor: pointer;
 }
 
@@ -121,24 +106,17 @@ button {
     background: #ffd6d6;
 }
 
-/* SETS */
-
 .sets {
     margin-top: 25px;
-
     display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(230px, 1fr));
-
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: 15px;
 }
 
 .set {
     background: white;
-
     border: 1px solid #dce6f5;
     border-radius: 12px;
-
     padding: 20px;
 }
 
@@ -158,23 +136,15 @@ button {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
-
     margin-top: 15px;
 }
 
-/* EDITOR */
-
 .editor {
     display: none;
-
     background: white;
-
     padding: 25px;
-
     border-radius: 14px;
-
     margin-top: 25px;
-
     border: 1px solid #dce6f5;
 }
 
@@ -185,20 +155,14 @@ label {
 
 input,
 textarea {
-
     width: 100%;
-
     border: 1px solid #cbd7e8;
     border-radius: 8px;
-
     padding: 12px;
-
     margin-top: 7px;
     margin-bottom: 16px;
-
     font-family: Arial, sans-serif;
     font-size: 15px;
-
     outline: none;
 }
 
@@ -213,27 +177,18 @@ textarea {
 }
 
 .cardEditor {
-
     border: 1px solid #dce6f5;
     border-radius: 10px;
-
     padding: 15px;
-
     margin-bottom: 15px;
-
     background: #fbfdff;
 }
 
 .cardNumber {
-
     font-weight: bold;
-
     margin-bottom: 10px;
-
     color: #246bce;
 }
-
-/* STUDY */
 
 .study {
     display: none;
@@ -241,28 +196,20 @@ textarea {
 }
 
 .studyCard {
-
     background: white;
-
     border: 1px solid #dce6f5;
-
     border-radius: 15px;
-
     min-height: 300px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     text-align: center;
-
     padding: 40px;
-
     font-size: 28px;
-
     cursor: pointer;
-
     user-select: none;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .studyCard:hover {
@@ -270,16 +217,11 @@ textarea {
 }
 
 .studyControls {
-
     display: flex;
     justify-content: center;
-
     gap: 10px;
-
     margin-top: 20px;
 }
-
-/* SMALL TEXT */
 
 .small {
     color: #71809b;
@@ -287,23 +229,14 @@ textarea {
 }
 
 .empty {
-
     background: white;
-
     border: 1px dashed #b9c8dd;
-
     border-radius: 12px;
-
     padding: 40px;
-
     text-align: center;
-
     color: #71809b;
-
     margin-top: 25px;
 }
-
-/* MOBILE */
 
 @media (max-width: 600px) {
 
@@ -323,222 +256,144 @@ textarea {
 }
 
 </style>
-</head>
 
+</head>
 
 <body>
 
-
 <header>
 
-    <div class="logo">
-        Flashcard Creator
-    </div>
+<div class="logo">
+Flashcard.com
+</div>
 
-    <button
-        class="homeButton"
-        onclick="goHome()"
-    >
-        Home
-    </button>
+<button class="homeButton" onclick="goHome()">
+Home
+</button>
 
 </header>
 
-
 <div class="container">
-
-
-<!-- =========================
-     SETS PAGE
-========================= -->
 
 <div id="setsPage">
 
-    <div class="top">
+<div class="top">
 
-        <div>
+<div>
 
-            <h1>
-                My Flashcards
-            </h1>
+<h1>
+My Flashcards
+</h1>
 
-            <p class="small">
-                Create sets and study whenever you want.
-            </p>
-
-        </div>
-
-
-        <button
-            class="primary"
-            onclick="createSet()"
-        >
-            + New Set
-        </button>
-
-    </div>
-
-
-    <div
-        id="sets"
-        class="sets"
-    ></div>
+<p class="small">
+Create sets and study whenever you want.
+</p>
 
 </div>
 
+<button class="primary" onclick="createSet()">
++ New Set
+</button>
 
-<!-- =========================
-     EDITOR
-========================= -->
+</div>
 
-<div
-    id="editor"
-    class="editor"
+<div id="sets" class="sets"></div>
+
+</div>
+
+<div id="editor" class="editor">
+
+<div class="top">
+
+<h2 id="editorTitle">
+New Set
+</h2>
+
+<button class="secondary" onclick="showSets()">
+Back
+</button>
+
+</div>
+
+<label>
+Set name
+</label>
+
+<input
+id="setName"
+type="text"
+placeholder="Example: Science"
 >
 
-    <div class="top">
+<div id="cards"></div>
 
-        <h2 id="editorTitle">
-            New Set
-        </h2>
+<button class="secondary" onclick="addCard()">
++ Add Card
+</button>
 
-        <button
-            class="secondary"
-            onclick="showSets()"
-        >
-            Back
-        </button>
+<br>
+<br>
 
-    </div>
-
-
-    <label>
-        Set name
-    </label>
-
-    <input
-        id="setName"
-        type="text"
-        placeholder="Example: Science"
-    >
-
-
-    <div id="cards"></div>
-
-
-    <button
-        class="secondary"
-        onclick="addCard()"
-    >
-        + Add Card
-    </button>
-
-
-    <br>
-    <br>
-
-
-    <button
-        class="primary"
-        onclick="saveSet()"
-    >
-        Save Set
-    </button>
+<button class="primary" onclick="saveSet()">
+Save Set
+</button>
 
 </div>
 
+<div id="study" class="study">
 
-<!-- =========================
-     STUDY
-========================= -->
+<div class="top">
+
+<div>
+
+<h2 id="studyTitle">
+Study
+</h2>
+
+<p id="studyCounter" class="small"></p>
+
+</div>
+
+<button class="secondary" onclick="showSets()">
+Exit
+</button>
+
+</div>
 
 <div
-    id="study"
-    class="study"
+id="studyCard"
+class="studyCard"
+onclick="flipCard()"
 >
+Click to reveal
+</div>
 
-    <div class="top">
+<div class="studyControls">
 
-        <div>
+<button class="secondary" onclick="previousCard()">
+← Previous
+</button>
 
-            <h2 id="studyTitle">
-                Study
-            </h2>
-
-            <p
-                id="studyCounter"
-                class="small"
-            ></p>
-
-        </div>
-
-
-        <button
-            class="secondary"
-            onclick="showSets()"
-        >
-            Exit
-        </button>
-
-    </div>
-
-
-    <div
-        id="studyCard"
-        class="studyCard"
-        onclick="flipCard()"
-    >
-        Click to reveal
-    </div>
-
-
-    <div class="studyControls">
-
-        <button
-            class="secondary"
-            onclick="previousCard()"
-        >
-            ← Previous
-        </button>
-
-
-        <button
-            class="primary"
-            onclick="nextCard()"
-        >
-            Next →
-        </button>
-
-    </div>
+<button class="primary" onclick="nextCard()">
+Next →
+</button>
 
 </div>
 
-
 </div>
 
+</div>
 
 <script>
-
-/* ==========================================
-   FLASHCARD DATA
-========================================== */
 
 let sets = JSON.parse(
     localStorage.getItem("flashcardSets") || "[]"
 );
 
 let editingIndex = null;
-
 let studyIndex = 0;
-
 let studySide = "front";
-
 let currentStudySet = null;
-
-
-/* ==========================================
-   SAVE DATA
-========================================== */
 
 function saveData() {
 
@@ -549,196 +404,110 @@ function saveData() {
 
 }
 
-
-/* ==========================================
-   SHOW SETS
-========================================== */
-
 function showSets() {
 
-    document.getElementById(
-        "setsPage"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "editor"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "study"
-    ).style.display = "none";
-
+    document.getElementById("setsPage").style.display = "block";
+    document.getElementById("editor").style.display = "none";
+    document.getElementById("study").style.display = "none";
 
     renderSets();
 
 }
 
-
-/* ==========================================
-   RENDER SETS
-========================================== */
-
 function renderSets() {
 
-    const container =
-        document.getElementById("sets");
-
+    const container = document.getElementById("sets");
 
     container.innerHTML = "";
-
 
     if (sets.length === 0) {
 
         container.innerHTML = `
-
             <div class="empty">
-
-                <h3>
-                    No flashcard sets yet
-                </h3>
-
-                <p>
-                    Create your first set to get started.
-                </p>
-
+                <h3>No flashcard sets yet</h3>
+                <p>Create your first set to get started.</p>
             </div>
-
         `;
 
         return;
 
     }
 
+    sets.forEach((set, index) => {
 
-    sets.forEach(
-        (set, index) => {
+        const div = document.createElement("div");
 
-            const div =
-                document.createElement("div");
+        div.className = "set";
 
+        div.innerHTML = `
+            <h3>${escapeHTML(set.name)}</h3>
 
-            div.className = "set";
+            <p>
+                ${set.cards.length}
+                card${set.cards.length === 1 ? "" : "s"}
+            </p>
 
+            <div class="actions">
 
-            div.innerHTML = `
+                <button
+                    class="primary"
+                    onclick="studySet(${index})"
+                >
+                    Study
+                </button>
 
-                <h3>
-                    ${escapeHTML(set.name)}
-                </h3>
+                <button
+                    class="secondary"
+                    onclick="editSet(${index})"
+                >
+                    Edit
+                </button>
 
-                <p>
-                    ${set.cards.length}
-                    card${set.cards.length === 1 ? "" : "s"}
-                </p>
+                <button
+                    class="danger"
+                    onclick="deleteSet(${index})"
+                >
+                    Delete
+                </button>
 
-                <div class="actions">
+            </div>
+        `;
 
-                    <button
-                        class="primary"
-                        onclick="studySet(${index})"
-                    >
-                        Study
-                    </button>
+        container.appendChild(div);
 
-                    <button
-                        class="secondary"
-                        onclick="editSet(${index})"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        class="danger"
-                        onclick="deleteSet(${index})"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(div);
-
-        }
-    );
+    });
 
 }
-
-
-/* ==========================================
-   CREATE SET
-========================================== */
 
 function createSet() {
 
     editingIndex = null;
 
+    document.getElementById("setsPage").style.display = "none";
+    document.getElementById("study").style.display = "none";
+    document.getElementById("editor").style.display = "block";
 
-    document.getElementById(
-        "setsPage"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "study"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "editor"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "editorTitle"
-    ).textContent = "New Set";
-
-
-    document.getElementById(
-        "setName"
-    ).value = "";
-
-
-    document.getElementById(
-        "cards"
-    ).innerHTML = "";
-
+    document.getElementById("editorTitle").textContent = "New Set";
+    document.getElementById("setName").value = "";
+    document.getElementById("cards").innerHTML = "";
 
     addCard();
 
 }
 
+function addCard(front = "", back = "") {
 
-/* ==========================================
-   ADD CARD
-========================================== */
+    const container = document.getElementById("cards");
 
-function addCard(
-    front = "",
-    back = ""
-) {
-
-    const container =
-        document.getElementById("cards");
-
-
-    const card =
-        document.createElement("div");
-
+    const card = document.createElement("div");
 
     card.className = "cardEditor";
-
 
     card.innerHTML = `
 
         <div class="cardNumber">
             Card
         </div>
-
 
         <label>
             Front
@@ -749,7 +518,6 @@ function addCard(
             placeholder="Question or term"
         >${escapeHTML(front)}</textarea>
 
-
         <label>
             Back
         </label>
@@ -758,7 +526,6 @@ function addCard(
             class="back"
             placeholder="Answer or definition"
         >${escapeHTML(back)}</textarea>
-
 
         <button
             class="danger"
@@ -772,139 +539,83 @@ function addCard(
 
     `;
 
-
     container.appendChild(card);
-
 
     updateCardNumbers();
 
 }
 
-
-/* ==========================================
-   CARD NUMBERS
-========================================== */
-
 function updateCardNumbers() {
 
-    const cards =
-        document.querySelectorAll(
-            ".cardEditor"
-        );
+    const cards = document.querySelectorAll(".cardEditor");
 
+    cards.forEach((card, index) => {
 
-    cards.forEach(
-        (card, index) => {
+        card.querySelector(".cardNumber").textContent =
+            "Card " + (index + 1);
 
-            card.querySelector(
-                ".cardNumber"
-            ).textContent =
-                "Card " + (index + 1);
-
-        }
-    );
+    });
 
 }
 
-
-/* ==========================================
-   SAVE SET
-========================================== */
-
 function saveSet() {
 
-    const name =
-        document.getElementById(
-            "setName"
-        ).value.trim();
-
+    const name = document.getElementById("setName").value.trim();
 
     if (!name) {
 
-        alert(
-            "Please enter a set name."
-        );
+        alert("Please enter a set name.");
 
         return;
 
     }
 
-
     const cardElements =
-        document.querySelectorAll(
-            ".cardEditor"
-        );
-
+        document.querySelectorAll(".cardEditor");
 
     const cards = [];
 
+    cardElements.forEach(card => {
 
-    cardElements.forEach(
-        card => {
+        const front =
+            card.querySelector(".front").value.trim();
 
-            const front =
-                card.querySelector(
-                    ".front"
-                ).value.trim();
+        const back =
+            card.querySelector(".back").value.trim();
 
+        if (front || back) {
 
-            const back =
-                card.querySelector(
-                    ".back"
-                ).value.trim();
-
-
-            if (
-                front ||
-                back
-            ) {
-
-                cards.push({
-                    front: front,
-                    back: back
-                });
-
-            }
+            cards.push({
+                front: front,
+                back: back
+            });
 
         }
-    );
 
+    });
 
-    if (
-        cards.length === 0
-    ) {
+    if (cards.length === 0) {
 
-        alert(
-            "Add at least one card."
-        );
+        alert("Add at least one card.");
 
         return;
 
     }
 
-
     const newSet = {
-
         name: name,
-
         cards: cards
-
     };
 
-
-    if (
-        editingIndex === null
-    ) {
+    if (editingIndex === null) {
 
         sets.push(newSet);
 
     } else {
 
-        sets[editingIndex] =
-            newSet;
+        sets[editingIndex] = newSet;
 
     }
-
 
     saveData();
 
@@ -912,86 +623,38 @@ function saveSet() {
 
 }
 
-
-/* ==========================================
-   EDIT SET
-========================================== */
-
 function editSet(index) {
 
     editingIndex = index;
 
+    const set = sets[index];
 
-    const set =
-        sets[index];
+    document.getElementById("setsPage").style.display = "none";
+    document.getElementById("study").style.display = "none";
+    document.getElementById("editor").style.display = "block";
 
+    document.getElementById("editorTitle").textContent = "Edit Set";
+    document.getElementById("setName").value = set.name;
+    document.getElementById("cards").innerHTML = "";
 
-    document.getElementById(
-        "setsPage"
-    ).style.display = "none";
+    set.cards.forEach(card => {
 
+        addCard(
+            card.front,
+            card.back
+        );
 
-    document.getElementById(
-        "study"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "editor"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "editorTitle"
-    ).textContent = "Edit Set";
-
-
-    document.getElementById(
-        "setName"
-    ).value = set.name;
-
-
-    document.getElementById(
-        "cards"
-    ).innerHTML = "";
-
-
-    set.cards.forEach(
-        card => {
-
-            addCard(
-                card.front,
-                card.back
-            );
-
-        }
-    );
+    });
 
 }
 
-
-/* ==========================================
-   DELETE SET
-========================================== */
-
 function deleteSet(index) {
 
-    if (
-        !confirm(
-            "Delete this flashcard set?"
-        )
-    ) {
-
+    if (!confirm("Delete this flashcard set?")) {
         return;
-
     }
 
-
-    sets.splice(
-        index,
-        1
-    );
-
+    sets.splice(index, 1);
 
     saveData();
 
@@ -999,68 +662,31 @@ function deleteSet(index) {
 
 }
 
-
-/* ==========================================
-   STUDY SET
-========================================== */
-
 function studySet(index) {
 
-    const set =
-        sets[index];
+    const set = sets[index];
 
+    if (!set.cards.length) {
 
-    if (
-        !set.cards.length
-    ) {
-
-        alert(
-            "This set has no cards."
-        );
+        alert("This set has no cards.");
 
         return;
 
     }
 
-
-    currentStudySet =
-        set;
-
-
+    currentStudySet = set;
     studyIndex = 0;
-
     studySide = "front";
 
+    document.getElementById("setsPage").style.display = "none";
+    document.getElementById("editor").style.display = "none";
+    document.getElementById("study").style.display = "block";
 
-    document.getElementById(
-        "setsPage"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "editor"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "study"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "studyTitle"
-    ).textContent =
-        set.name;
-
+    document.getElementById("studyTitle").textContent = set.name;
 
     updateStudyCard();
 
 }
-
-
-/* ==========================================
-   UPDATE STUDY CARD
-========================================== */
 
 function updateStudyCard() {
 
@@ -1068,37 +694,21 @@ function updateStudyCard() {
         return;
     }
 
-
     const card =
-        currentStudySet.cards[
-            studyIndex
-        ];
+        currentStudySet.cards[studyIndex];
 
-
-    document.getElementById(
-        "studyCounter"
-    ).textContent =
-
+    document.getElementById("studyCounter").textContent =
         "Card " +
         (studyIndex + 1) +
         " of " +
         currentStudySet.cards.length;
 
-
-    document.getElementById(
-        "studyCard"
-    ).textContent =
-
+    document.getElementById("studyCard").textContent =
         studySide === "front"
         ? card.front
         : card.back;
 
 }
-
-
-/* ==========================================
-   FLIP CARD
-========================================== */
 
 function flipCard() {
 
@@ -1107,15 +717,9 @@ function flipCard() {
         ? "back"
         : "front";
 
-
     updateStudyCard();
 
 }
-
-
-/* ==========================================
-   NEXT CARD
-========================================== */
 
 function nextCard() {
 
@@ -1123,9 +727,7 @@ function nextCard() {
         return;
     }
 
-
     studyIndex++;
-
 
     if (
         studyIndex >=
@@ -1136,18 +738,11 @@ function nextCard() {
 
     }
 
-
     studySide = "front";
-
 
     updateStudyCard();
 
 }
-
-
-/* ==========================================
-   PREVIOUS CARD
-========================================== */
 
 function previousCard() {
 
@@ -1155,135 +750,64 @@ function previousCard() {
         return;
     }
 
-
     studyIndex--;
 
-
-    if (
-        studyIndex < 0
-    ) {
+    if (studyIndex < 0) {
 
         studyIndex =
             currentStudySet.cards.length - 1;
 
     }
 
-
     studySide = "front";
-
 
     updateStudyCard();
 
 }
 
-
-/* ==========================================
-   ESCAPE HTML
-========================================== */
-
 function escapeHTML(text) {
 
     return String(text)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
-
-
-/* ==========================================
-   HOME BUTTON
-========================================== */
 
 function goHome() {
 
-    window.location.href =
-        "index.html?games=true";
+    window.location.href = "index.html";
 
 }
 
-
-/* ==========================================
-   RRR SHORTCUT
-========================================== */
-
 let rCount = 0;
-
 let rTimer = null;
 
+document.addEventListener("keydown", function(e) {
 
-document.addEventListener(
-    "keydown",
-    function(e) {
+    if (e.key.toLowerCase() !== "r") {
+        return;
+    }
 
-        if (
-            e.key.toLowerCase() !== "r"
-        ) {
+    rCount++;
 
-            return;
+    clearTimeout(rTimer);
 
-        }
+    rTimer = setTimeout(function() {
+        rCount = 0;
+    }, 700);
 
+    if (rCount === 3) {
 
-        rCount++;
+        rCount = 0;
 
-
-        clearTimeout(
-            rTimer
-        );
-
-
-        rTimer =
-            setTimeout(
-                function() {
-
-                    rCount = 0;
-
-                },
-                700
-            );
-
-
-        if (
-            rCount === 3
-        ) {
-
-            rCount = 0;
-
-            window.location.href =
-                "index.html?games=true";
-
-        }
+        window.location.href = "index.html";
 
     }
-);
 
-
-/* ==========================================
-   START
-========================================== */
+});
 
 showSets();
 
@@ -1291,4 +815,3 @@ showSets();
 
 </body>
 </html>
-```
