@@ -1,817 +1,698 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Flashcard.com</title>
-
 <style>
-
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    background: #f4f8ff;
-    color: #17233d;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #1d2a3a;
 }
 
 header {
-    background: white;
-    border-bottom: 1px solid #d9e3f2;
-    padding: 18px 30px;
+    height: 70px;
+    background: #ffffff;
+    border-bottom: 1px solid #dce5ef;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 35px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .logo {
-    color: #246bce;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.homeButton {
-    background: #e8f1ff;
-    color: #246bce;
-    border: 0;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-weight: bold;
+    font-size: 25px;
+    font-weight: 800;
+    color: #1769e0;
     cursor: pointer;
 }
 
-.homeButton:hover {
-    background: #d8e8ff;
+.logo span {
+    color: #1d2a3a;
 }
 
-.container {
-    width: min(1000px, 92%);
-    margin: 35px auto;
+.home-btn {
+    border: none;
+    background: #1769e0;
+    color: white;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
-.top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    flex-wrap: wrap;
+.home-btn:hover {
+    background: #0e55bd;
+}
+
+main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 45px 25px;
 }
 
 h1 {
-    margin: 0;
-}
-
-h2 {
-    margin-top: 0;
-}
-
-button {
-    border: 0;
-    border-radius: 8px;
-    padding: 11px 17px;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.primary {
-    background: #246bce;
-    color: white;
-}
-
-.primary:hover {
-    background: #1858b2;
-}
-
-.secondary {
-    background: #e8f1ff;
-    color: #246bce;
-}
-
-.secondary:hover {
-    background: #d8e8ff;
-}
-
-.danger {
-    background: #ffe7e7;
-    color: #c62828;
-}
-
-.danger:hover {
-    background: #ffd6d6;
-}
-
-.sets {
-    margin-top: 25px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 15px;
-}
-
-.set {
-    background: white;
-    border: 1px solid #dce6f5;
-    border-radius: 12px;
-    padding: 20px;
-}
-
-.set:hover {
-    border-color: #9bbce8;
-}
-
-.set h3 {
     margin: 0 0 8px;
+    font-size: 34px;
 }
 
-.set p {
-    color: #71809b;
+.subtitle {
+    color: #718096;
+    margin-bottom: 35px;
 }
 
-.actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    margin-top: 15px;
-}
-
-.editor {
-    display: none;
-    background: white;
-    padding: 25px;
+.create-area {
+    background: #f5f8fc;
+    border: 1px solid #dce5ef;
     border-radius: 14px;
-    margin-top: 25px;
-    border: 1px solid #dce6f5;
+    padding: 25px;
+    margin-bottom: 35px;
 }
 
-label {
-    font-weight: bold;
-    font-size: 14px;
+.create-area h2 {
+    margin-top: 0;
 }
 
 input,
 textarea {
     width: 100%;
-    border: 1px solid #cbd7e8;
+    border: 1px solid #ccd7e3;
     border-radius: 8px;
     padding: 12px;
-    margin-top: 7px;
-    margin-bottom: 16px;
-    font-family: Arial, sans-serif;
     font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 12px;
     outline: none;
 }
 
 input:focus,
 textarea:focus {
-    border-color: #246bce;
+    border-color: #1769e0;
 }
 
 textarea {
+    min-height: 80px;
     resize: vertical;
-    min-height: 85px;
 }
 
-.cardEditor {
-    border: 1px solid #dce6f5;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    background: #fbfdff;
+button {
+    font-family: inherit;
 }
 
-.cardNumber {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #246bce;
+.primary-btn {
+    background: #1769e0;
+    color: white;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
-.study {
-    display: none;
-    margin-top: 25px;
+.primary-btn:hover {
+    background: #0e55bd;
 }
 
-.studyCard {
+.sets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.set-card {
     background: white;
-    border: 1px solid #dce6f5;
-    border-radius: 15px;
-    min-height: 300px;
+    border: 1px solid #dce5ef;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 3px 12px rgba(30, 60, 90, 0.06);
+}
+
+.set-card h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.card-count {
+    color: #718096;
+    margin-bottom: 18px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.study-btn,
+.edit-btn,
+.delete-btn {
+    border: none;
+    padding: 9px 13px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.study-btn {
+    background: #1769e0;
+    color: white;
+}
+
+.edit-btn {
+    background: #e8f1ff;
+    color: #1769e0;
+}
+
+.delete-btn {
+    background: #ffe9e9;
+    color: #c53030;
+}
+
+.study-screen {
+    display: none;
+}
+
+.study-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.back-btn {
+    background: #edf3fa;
+    color: #26384d;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.flashcard {
+    width: 100%;
+    max-width: 750px;
+    min-height: 390px;
+    margin: 30px auto;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 390px;
+    position: relative;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.card-side {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border: 1px solid #d7e2ee;
+    border-radius: 18px;
+    background: white;
+    box-shadow: 0 8px 30px rgba(30, 60, 90, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
     padding: 40px;
+    text-align: center;
     font-size: 28px;
-    cursor: pointer;
-    user-select: none;
-    white-space: pre-wrap;
-    word-break: break-word;
+    line-height: 1.4;
 }
 
-.studyCard:hover {
-    border-color: #9bbce8;
+.card-back {
+    transform: rotateY(180deg);
+    background: #f5f9ff;
 }
 
-.studyControls {
+.study-controls {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    align-items: center;
+    gap: 15px;
 }
 
-.small {
-    color: #71809b;
-    font-size: 14px;
+.study-controls button {
+    border: none;
+    background: #1769e0;
+    color: white;
+    padding: 11px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.progress {
+    text-align: center;
+    color: #718096;
+    margin-bottom: 15px;
 }
 
 .empty {
-    background: white;
-    border: 1px dashed #b9c8dd;
-    border-radius: 12px;
-    padding: 40px;
     text-align: center;
-    color: #71809b;
-    margin-top: 25px;
+    padding: 50px 20px;
+    color: #718096;
+    border: 1px dashed #ccd7e3;
+    border-radius: 14px;
+}
+
+.editor {
+    display: none;
+}
+
+.editor-card {
+    background: #f5f8fc;
+    border: 1px solid #dce5ef;
+    border-radius: 14px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.card-row {
+    background: white;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+.card-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.remove-card {
+    border: none;
+    background: #ffe9e9;
+    color: #c53030;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
 }
 
 @media (max-width: 600px) {
-
     header {
-        padding: 15px;
+        padding: 0 18px;
     }
 
-    .container {
-        width: 94%;
+    main {
+        padding: 30px 15px;
     }
 
-    .studyCard {
-        min-height: 250px;
-        font-size: 23px;
+    h1 {
+        font-size: 28px;
     }
 
+    .card-side {
+        font-size: 22px;
+        padding: 25px;
+    }
 }
-
 </style>
-
 </head>
-
 <body>
 
 <header>
-
-<div class="logo">
-Flashcard.com
-</div>
-
-<button class="homeButton" onclick="goHome()">
-Home
-</button>
-
+    <div class="logo" onclick="goHome()">Flashcard<span>.com</span></div>
+    <button class="home-btn" onclick="goHome()">Home</button>
 </header>
 
-<div class="container">
+<main>
 
-<div id="setsPage">
+    <section id="homeScreen">
+        <h1>My Flashcard Sets</h1>
+        <div class="subtitle">Create, study and manage your flashcards.</div>
 
-<div class="top">
+        <div class="create-area">
+            <h2>Create a New Set</h2>
+            <input id="newSetName" type="text" placeholder="Set name">
+            <button class="primary-btn" onclick="createSet()">Create Set</button>
+        </div>
 
-<div>
+        <div id="setsContainer" class="sets"></div>
+    </section>
 
-<h1>
-My Flashcards
-</h1>
+    <section id="editorScreen" class="editor">
+        <div class="study-top">
+            <div>
+                <h1 id="editorTitle">Edit Set</h1>
+                <div class="subtitle">Add your questions and answers.</div>
+            </div>
+            <button class="back-btn" onclick="showHome()">Back</button>
+        </div>
 
-<p class="small">
-Create sets and study whenever you want.
-</p>
+        <div class="editor-card">
+            <input id="editSetName" type="text" placeholder="Set name">
+            <div id="cardsEditor"></div>
 
-</div>
+            <button class="primary-btn" onclick="addCard()">+ Add Card</button>
+            <button class="primary-btn" onclick="saveSet()">Save Set</button>
+        </div>
+    </section>
 
-<button class="primary" onclick="createSet()">
-+ New Set
-</button>
+    <section id="studyScreen" class="study-screen">
+        <div class="study-top">
+            <div>
+                <h1 id="studyTitle">Study</h1>
+                <div class="subtitle">Click the card to flip it.</div>
+            </div>
+            <button class="back-btn" onclick="showHome()">Back to My Sets</button>
+        </div>
 
-</div>
+        <div id="progress" class="progress"></div>
 
-<div id="sets" class="sets"></div>
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="flashcard-inner">
+                <div class="card-side card-front" id="questionSide"></div>
+                <div class="card-side card-back" id="answerSide"></div>
+            </div>
+        </div>
 
-</div>
+        <div class="study-controls">
+            <button onclick="previousCard()">Previous</button>
+            <button onclick="flipCard()">Flip</button>
+            <button onclick="nextCard()">Next</button>
+        </div>
+    </section>
 
-<div id="editor" class="editor">
-
-<div class="top">
-
-<h2 id="editorTitle">
-New Set
-</h2>
-
-<button class="secondary" onclick="showSets()">
-Back
-</button>
-
-</div>
-
-<label>
-Set name
-</label>
-
-<input
-id="setName"
-type="text"
-placeholder="Example: Science"
->
-
-<div id="cards"></div>
-
-<button class="secondary" onclick="addCard()">
-+ Add Card
-</button>
-
-<br>
-<br>
-
-<button class="primary" onclick="saveSet()">
-Save Set
-</button>
-
-</div>
-
-<div id="study" class="study">
-
-<div class="top">
-
-<div>
-
-<h2 id="studyTitle">
-Study
-</h2>
-
-<p id="studyCounter" class="small"></p>
-
-</div>
-
-<button class="secondary" onclick="showSets()">
-Exit
-</button>
-
-</div>
-
-<div
-id="studyCard"
-class="studyCard"
-onclick="flipCard()"
->
-Click to reveal
-</div>
-
-<div class="studyControls">
-
-<button class="secondary" onclick="previousCard()">
-← Previous
-</button>
-
-<button class="primary" onclick="nextCard()">
-Next →
-</button>
-
-</div>
-
-</div>
-
-</div>
+</main>
 
 <script>
-
-let sets = JSON.parse(
-    localStorage.getItem("flashcardSets") || "[]"
-);
-
-let editingIndex = null;
+let sets = JSON.parse(localStorage.getItem("flashcardSets") || "[]");
+let editingSet = null;
+let studyingSet = null;
 let studyIndex = 0;
-let studySide = "front";
-let currentStudySet = null;
 
 function saveData() {
-
-    localStorage.setItem(
-        "flashcardSets",
-        JSON.stringify(sets)
-    );
-
+    localStorage.setItem("flashcardSets", JSON.stringify(sets));
 }
 
-function showSets() {
+function goHome() {
+    window.location.href = "index.html";
+}
 
-    document.getElementById("setsPage").style.display = "block";
-    document.getElementById("editor").style.display = "none";
-    document.getElementById("study").style.display = "none";
-
+function showHome() {
+    document.getElementById("homeScreen").style.display = "block";
+    document.getElementById("editorScreen").style.display = "none";
+    document.getElementById("studyScreen").style.display = "none";
     renderSets();
-
-}
-
-function renderSets() {
-
-    const container = document.getElementById("sets");
-
-    container.innerHTML = "";
-
-    if (sets.length === 0) {
-
-        container.innerHTML = `
-            <div class="empty">
-                <h3>No flashcard sets yet</h3>
-                <p>Create your first set to get started.</p>
-            </div>
-        `;
-
-        return;
-
-    }
-
-    sets.forEach((set, index) => {
-
-        const div = document.createElement("div");
-
-        div.className = "set";
-
-        div.innerHTML = `
-            <h3>${escapeHTML(set.name)}</h3>
-
-            <p>
-                ${set.cards.length}
-                card${set.cards.length === 1 ? "" : "s"}
-            </p>
-
-            <div class="actions">
-
-                <button
-                    class="primary"
-                    onclick="studySet(${index})"
-                >
-                    Study
-                </button>
-
-                <button
-                    class="secondary"
-                    onclick="editSet(${index})"
-                >
-                    Edit
-                </button>
-
-                <button
-                    class="danger"
-                    onclick="deleteSet(${index})"
-                >
-                    Delete
-                </button>
-
-            </div>
-        `;
-
-        container.appendChild(div);
-
-    });
-
 }
 
 function createSet() {
-
-    editingIndex = null;
-
-    document.getElementById("setsPage").style.display = "none";
-    document.getElementById("study").style.display = "none";
-    document.getElementById("editor").style.display = "block";
-
-    document.getElementById("editorTitle").textContent = "New Set";
-    document.getElementById("setName").value = "";
-    document.getElementById("cards").innerHTML = "";
-
-    addCard();
-
-}
-
-function addCard(front = "", back = "") {
-
-    const container = document.getElementById("cards");
-
-    const card = document.createElement("div");
-
-    card.className = "cardEditor";
-
-    card.innerHTML = `
-
-        <div class="cardNumber">
-            Card
-        </div>
-
-        <label>
-            Front
-        </label>
-
-        <textarea
-            class="front"
-            placeholder="Question or term"
-        >${escapeHTML(front)}</textarea>
-
-        <label>
-            Back
-        </label>
-
-        <textarea
-            class="back"
-            placeholder="Answer or definition"
-        >${escapeHTML(back)}</textarea>
-
-        <button
-            class="danger"
-            onclick="
-                this.parentElement.remove();
-                updateCardNumbers();
-            "
-        >
-            Delete Card
-        </button>
-
-    `;
-
-    container.appendChild(card);
-
-    updateCardNumbers();
-
-}
-
-function updateCardNumbers() {
-
-    const cards = document.querySelectorAll(".cardEditor");
-
-    cards.forEach((card, index) => {
-
-        card.querySelector(".cardNumber").textContent =
-            "Card " + (index + 1);
-
-    });
-
-}
-
-function saveSet() {
-
-    const name = document.getElementById("setName").value.trim();
+    const nameInput = document.getElementById("newSetName");
+    const name = nameInput.value.trim();
 
     if (!name) {
-
-        alert("Please enter a set name.");
-
+        alert("Enter a name for the set.");
         return;
-
-    }
-
-    const cardElements =
-        document.querySelectorAll(".cardEditor");
-
-    const cards = [];
-
-    cardElements.forEach(card => {
-
-        const front =
-            card.querySelector(".front").value.trim();
-
-        const back =
-            card.querySelector(".back").value.trim();
-
-        if (front || back) {
-
-            cards.push({
-                front: front,
-                back: back
-            });
-
-        }
-
-    });
-
-    if (cards.length === 0) {
-
-        alert("Add at least one card.");
-
-        return;
-
     }
 
     const newSet = {
+        id: Date.now(),
         name: name,
-        cards: cards
+        cards: []
     };
 
-    if (editingIndex === null) {
-
-        sets.push(newSet);
-
-    } else {
-
-        sets[editingIndex] = newSet;
-
-    }
-
+    sets.push(newSet);
     saveData();
 
-    showSets();
-
+    nameInput.value = "";
+    editSet(newSet.id);
 }
 
-function editSet(index) {
+function renderSets() {
+    const container = document.getElementById("setsContainer");
 
-    editingIndex = index;
+    if (sets.length === 0) {
+        container.innerHTML = '<div class="empty">You do not have any flashcard sets yet.</div>';
+        return;
+    }
 
-    const set = sets[index];
+    container.innerHTML = "";
 
-    document.getElementById("setsPage").style.display = "none";
-    document.getElementById("study").style.display = "none";
-    document.getElementById("editor").style.display = "block";
+    sets.forEach(set => {
+        const card = document.createElement("div");
+        card.className = "set-card";
 
-    document.getElementById("editorTitle").textContent = "Edit Set";
-    document.getElementById("setName").value = set.name;
-    document.getElementById("cards").innerHTML = "";
+        card.innerHTML = `
+            <h3>${escapeHtml(set.name)}</h3>
+            <div class="card-count">${set.cards.length} card${set.cards.length === 1 ? "" : "s"}</div>
+            <div class="card-actions">
+                <button class="study-btn" onclick="studySet(${set.id})">Study</button>
+                <button class="edit-btn" onclick="editSet(${set.id})">Edit</button>
+                <button class="delete-btn" onclick="deleteSet(${set.id})">Delete</button>
+            </div>
+        `;
 
-    set.cards.forEach(card => {
+        container.appendChild(card);
+    });
+}
 
-        addCard(
-            card.front,
-            card.back
-        );
+function editSet(id) {
+    const set = sets.find(s => s.id === id);
 
+    if (!set) return;
+
+    editingSet = id;
+
+    document.getElementById("homeScreen").style.display = "none";
+    document.getElementById("studyScreen").style.display = "none";
+    document.getElementById("editorScreen").style.display = "block";
+
+    document.getElementById("editorTitle").textContent = set.name;
+    document.getElementById("editSetName").value = set.name;
+
+    renderEditorCards();
+}
+
+function renderEditorCards() {
+    const set = sets.find(s => s.id === editingSet);
+    const container = document.getElementById("cardsEditor");
+
+    container.innerHTML = "";
+
+    if (!set || set.cards.length === 0) {
+        container.innerHTML = '<div class="empty">No cards yet. Add your first card.</div>';
+        return;
+    }
+
+    set.cards.forEach((card, index) => {
+        const row = document.createElement("div");
+        row.className = "card-row";
+
+        row.innerHTML = `
+            <div class="card-row-top">
+                <strong>Card ${index + 1}</strong>
+                <button class="remove-card" onclick="removeCard(${index})">Delete</button>
+            </div>
+            <input id="question-${index}" value="${escapeAttribute(card.question)}" placeholder="Question">
+            <textarea id="answer-${index}" placeholder="Answer">${escapeHtml(card.answer)}</textarea>
+        `;
+
+        container.appendChild(row);
+    });
+}
+
+function addCard() {
+    const set = sets.find(s => s.id === editingSet);
+
+    if (!set) return;
+
+    set.cards.push({
+        question: "",
+        answer: ""
     });
 
+    saveData();
+    renderEditorCards();
 }
 
-function deleteSet(index) {
+function removeCard(index) {
+    const set = sets.find(s => s.id === editingSet);
 
-    if (!confirm("Delete this flashcard set?")) {
+    if (!set) return;
+
+    set.cards.splice(index, 1);
+    saveData();
+    renderEditorCards();
+}
+
+function saveSet() {
+    const set = sets.find(s => s.id === editingSet);
+
+    if (!set) return;
+
+    const newName = document.getElementById("editSetName").value.trim();
+
+    if (!newName) {
+        alert("Enter a name for the set.");
         return;
     }
 
-    sets.splice(index, 1);
+    set.name = newName;
+
+    set.cards.forEach((card, index) => {
+        const question = document.getElementById(`question-${index}`);
+        const answer = document.getElementById(`answer-${index}`);
+
+        if (question) {
+            card.question = question.value;
+        }
+
+        if (answer) {
+            card.answer = answer.value;
+        }
+    });
 
     saveData();
-
-    renderSets();
-
+    showHome();
 }
 
-function studySet(index) {
+function deleteSet(id) {
+    const set = sets.find(s => s.id === id);
 
-    const set = sets[index];
+    if (!set) return;
 
-    if (!set.cards.length) {
-
-        alert("This set has no cards.");
-
+    if (!confirm(`Delete "${set.name}"?`)) {
         return;
-
     }
 
-    currentStudySet = set;
-    studyIndex = 0;
-    studySide = "front";
+    sets = sets.filter(s => s.id !== id);
+    saveData();
+    renderSets();
+}
 
-    document.getElementById("setsPage").style.display = "none";
-    document.getElementById("editor").style.display = "none";
-    document.getElementById("study").style.display = "block";
+function studySet(id) {
+    const set = sets.find(s => s.id === id);
+
+    if (!set) return;
+
+    if (set.cards.length === 0) {
+        alert("Add some cards before studying this set.");
+        return;
+    }
+
+    studyingSet = id;
+    studyIndex = 0;
+
+    document.getElementById("homeScreen").style.display = "none";
+    document.getElementById("editorScreen").style.display = "none";
+    document.getElementById("studyScreen").style.display = "block";
 
     document.getElementById("studyTitle").textContent = set.name;
 
     updateStudyCard();
-
 }
 
 function updateStudyCard() {
+    const set = sets.find(s => s.id === studyingSet);
 
-    if (!currentStudySet) {
+    if (!set || set.cards.length === 0) {
+        showHome();
         return;
     }
 
-    const card =
-        currentStudySet.cards[studyIndex];
+    const card = set.cards[studyIndex];
 
-    document.getElementById("studyCounter").textContent =
-        "Card " +
-        (studyIndex + 1) +
-        " of " +
-        currentStudySet.cards.length;
+    document.getElementById("questionSide").textContent = card.question || "No question";
+    document.getElementById("answerSide").textContent = card.answer || "No answer";
 
-    document.getElementById("studyCard").textContent =
-        studySide === "front"
-        ? card.front
-        : card.back;
+    document.getElementById("progress").textContent =
+        `Card ${studyIndex + 1} of ${set.cards.length}`;
 
+    document.getElementById("flashcard").classList.remove("flipped");
 }
 
 function flipCard() {
-
-    studySide =
-        studySide === "front"
-        ? "back"
-        : "front";
-
-    updateStudyCard();
-
+    document.getElementById("flashcard").classList.toggle("flipped");
 }
 
 function nextCard() {
+    const set = sets.find(s => s.id === studyingSet);
 
-    if (!currentStudySet) {
-        return;
-    }
+    if (!set || set.cards.length === 0) return;
 
     studyIndex++;
 
-    if (
-        studyIndex >=
-        currentStudySet.cards.length
-    ) {
-
+    if (studyIndex >= set.cards.length) {
         studyIndex = 0;
-
     }
 
-    studySide = "front";
-
     updateStudyCard();
-
 }
 
 function previousCard() {
+    const set = sets.find(s => s.id === studyingSet);
 
-    if (!currentStudySet) {
-        return;
-    }
+    if (!set || set.cards.length === 0) return;
 
     studyIndex--;
 
     if (studyIndex < 0) {
-
-        studyIndex =
-            currentStudySet.cards.length - 1;
-
+        studyIndex = set.cards.length - 1;
     }
 
-    studySide = "front";
-
     updateStudyCard();
-
 }
 
-function escapeHTML(text) {
-
-    return String(text)
+function escapeHtml(value) {
+    return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
-function goHome() {
-
-    window.location.href = "index.html";
-
+function escapeAttribute(value) {
+    return escapeHtml(value);
 }
 
 let rCount = 0;
 let rTimer = null;
 
-document.addEventListener("keydown", function(e) {
-
-    if (e.key.toLowerCase() !== "r") {
-        return;
-    }
+document.addEventListener("keydown", function(event) {
+    if (event.key.toLowerCase() !== "r") return;
 
     rCount++;
 
     clearTimeout(rTimer);
 
-    rTimer = setTimeout(function() {
+    rTimer = setTimeout(() => {
         rCount = 0;
     }, 700);
 
     if (rCount === 3) {
-
         rCount = 0;
-
         window.location.href = "index.html";
-
     }
-
 });
 
-showSets();
-
+renderSets();
 </script>
 
 </body>
 </html>
+```
