@@ -48,10 +48,6 @@ header {
     cursor: pointer;
 }
 
-.flashcardsButton:hover {
-    background: #ccc;
-}
-
 .container {
     width: min(1100px, 94%);
     margin: auto;
@@ -144,10 +140,6 @@ header {
     cursor: pointer;
 }
 
-.flashcardBox button:hover {
-    background: #ccc;
-}
-
 .bottomText {
     text-align: center;
     margin-top: 35px;
@@ -167,7 +159,10 @@ header {
 FLASHCARD<span>.COM</span>
 </div>
 
-<button class="flashcardsButton" onclick="openFlashcards()">
+<button
+class="flashcardsButton"
+onclick="openFlashcards()"
+>
 FLASHCARDS
 </button>
 
@@ -318,7 +313,7 @@ RRR = SWITCH BETWEEN HOME AND FLASHCARDS
 <script>
 
 function openFlashcards() {
-    window.location.href = "flashcards.html";
+    window.location.href = "flashcard.html";
 }
 
 let rCount = 0;
@@ -336,11 +331,14 @@ document.addEventListener("keydown", function(e) {
 
     rTimer = setTimeout(function() {
         rCount = 0;
-    }, 500);
+    }, 700);
 
     if (rCount === 3) {
+
         rCount = 0;
-        window.location.href = "flashcards.html";
+
+        window.location.href = "flashcard.html";
+
     }
 
 });
