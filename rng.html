@@ -438,113 +438,113 @@ const rarityData=[
 {
 name:"Common",
 chance:500000,
-value:10,
-income:1
+value:2,
+income:0.1
 },
 
 {
 name:"Uncommon",
 chance:250000,
-value:25,
-income:3
+value:5,
+income:0.25
 },
 
 {
 name:"Rare",
 chance:120000,
-value:100,
-income:10
+value:20,
+income:1
 },
 
 {
 name:"Super Rare",
 chance:60000,
-value:250,
-income:25
+value:50,
+income:3
 },
 
 {
 name:"Epic",
 chance:30000,
-value:750,
-income:75
+value:150,
+income:8
 },
 
 {
 name:"Ultra",
 chance:15000,
-value:2000,
-income:200
+value:400,
+income:20
 },
 
 {
 name:"Legendary",
 chance:7000,
-value:6000,
-income:600
+value:1200,
+income:60
 },
 
 {
 name:"Mythic",
 chance:3000,
-value:20000,
-income:2000
+value:4000,
+income:200
 },
 
 {
 name:"Divine",
 chance:1200,
-value:75000,
-income:7500
+value:15000,
+income:750
 },
 
 {
 name:"Celestial",
 chance:500,
-value:250000,
-income:25000
+value:50000,
+income:2500
 },
 
 {
 name:"Eternal",
 chance:200,
-value:1000000,
-income:100000
+value:200000,
+income:10000
 },
 
 {
 name:"Cosmic",
 chance:80,
-value:5000000,
-income:500000
+value:800000,
+income:40000
 },
 
 {
 name:"Astral",
 chance:30,
-value:25000000,
-income:2500000
+value:3000000,
+income:150000
 },
 
 {
 name:"Infinity",
 chance:10,
-value:100000000,
-income:10000000
+value:10000000,
+income:500000
 },
 
 {
 name:"Glitched",
 chance:4,
-value:500000000,
-income:50000000
+value:40000000,
+income:2000000
 },
 
 {
 name:"SECRET",
 chance:1,
-value:5000000000,
-income:500000000
+value:200000000,
+income:10000000
 }
 
 ];
@@ -730,7 +730,9 @@ JSON.stringify(game)
 function loadGame(){
 
 let saved=
-localStorage.getItem("rngGameSave");
+localStorage.getItem(
+"rngGameSave"
+);
 
 if(!saved){
 return;
@@ -738,7 +740,8 @@ return;
 
 try{
 
-let data=JSON.parse(saved);
+let data=
+JSON.parse(saved);
 
 game={
 
@@ -790,16 +793,23 @@ function resetVariables(){
 game={
 
 cash:100,
+
 rolls:0,
+
 luckLevel:0,
+
 storageMax:5,
+
 inventory:[],
+
 activeId:null,
+
 discovered:[]
 
 };
 
 current=null;
+
 rolling=false;
 
 }
@@ -853,7 +863,8 @@ game.rolls
 
 function weightedRoll(){
 
-let weights=rngs.map(r=>{
+let weights=
+rngs.map(r=>{
 
 let weight=
 1/r.chance;
@@ -923,6 +934,13 @@ return "$"+
 (n/1000)
 .toFixed(2)+
 "K";
+
+}
+
+if(n<1){
+
+return "$"+
+n.toFixed(2);
 
 }
 
@@ -1023,7 +1041,9 @@ weightedRoll();
 
 if(
 !game.discovered
-.includes(current.id)
+.includes(
+current.id
+)
 ){
 
 game.discovered.push(
@@ -1275,7 +1295,9 @@ function update(){
 document.getElementById(
 "cash"
 ).textContent=
-formatMoney(game.cash);
+formatMoney(
+game.cash
+);
 
 document.getElementById(
 "luck"
@@ -1425,7 +1447,8 @@ game.inventory.map(
 (r,i)=>{
 
 let isActive=
-game.activeId===r.id;
+game.activeId===
+r.id;
 
 return`
 
@@ -1540,7 +1563,27 @@ localStorage.removeItem(
 "rngGameSave"
 );
 
-resetVariables();
+game={
+
+cash:100,
+
+rolls:0,
+
+luckLevel:0,
+
+storageMax:5,
+
+inventory:[],
+
+activeId:null,
+
+discovered:[]
+
+};
+
+current=null;
+
+rolling=false;
 
 document.getElementById(
 "rngName"
@@ -1624,8 +1667,7 @@ window.location.href=
 
 }
 
-}
-);
+});
 
 generateRNGs();
 
