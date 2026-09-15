@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,7 +88,9 @@ padding:22px
 }
 
 .rollPanel{
-text-align:center
+text-align:center;
+position:relative;
+overflow:hidden
 }
 
 .sectionTitle{
@@ -100,18 +103,26 @@ margin-bottom:15px
 font-size:38px;
 font-weight:bold;
 min-height:50px;
-margin-top:20px
+margin-top:20px;
+transition:opacity .12s ease,transform .12s ease,text-shadow .25s ease
 }
 
 #rarity{
 font-size:22px;
-margin-top:10px
+margin-top:10px;
+transition:opacity .12s ease,transform .12s ease
 }
 
 #details{
 color:#aaa;
 margin:15px 0;
 min-height:25px
+}
+
+.rollButton{
+font-size:24px;
+padding:18px 65px;
+margin-top:15px
 }
 
 button{
@@ -123,22 +134,19 @@ color:#fff;
 padding:12px 18px;
 border-radius:7px;
 cursor:pointer;
-font-size:14px
+font-size:14px;
+transition:.15s
 }
 
 button:hover{
-background:#252525
+background:#252525;
+transform:translateY(-1px)
 }
 
 button:disabled{
 opacity:.35;
-cursor:not-allowed
-}
-
-.rollButton{
-font-size:24px;
-padding:18px 65px;
-margin-top:15px
+cursor:not-allowed;
+transform:none
 }
 
 .actions{
@@ -335,7 +343,7 @@ border-radius:7px;
 padding:12px;
 min-height:88px;
 cursor:default;
-transition:.12s
+transition:.18s
 }
 
 .card.unknown{
@@ -350,7 +358,7 @@ cursor:pointer
 .card.known:hover{
 background:#181818;
 border-color:#777;
-transform:translateY(-1px)
+transform:translateY(-2px)
 }
 
 .card.selected{
@@ -370,7 +378,6 @@ line-height:1.3
 
 .cardRarity{
 font-size:11px;
-color:#888;
 margin-top:6px
 }
 
@@ -393,22 +400,146 @@ line-height:1.5;
 margin-top:15px
 }
 
-.rarity-common{color:#ddd}
-.rarity-uncommon{color:#8bc34a}
-.rarity-rare{color:#42a5f5}
-.rarity-superrare{color:#7e57c2}
-.rarity-epic{color:#ab47bc}
-.rarity-ultra{color:#ef5350}
-.rarity-legendary{color:#ffca28}
-.rarity-mythic{color:#ff7043}
-.rarity-divine{color:#26c6da}
-.rarity-celestial{color:#64b5f6}
-.rarity-eternal{color:#ba68c8}
-.rarity-cosmic{color:#ec407a}
-.rarity-astral{color:#9575cd}
-.rarity-infinity{color:#fff}
-.rarity-glitched{color:#fff}
-.rarity-secret{color:#fff}
+.rarity-common{
+color:#ddd
+}
+
+.rarity-uncommon{
+color:#8bc34a;
+text-shadow:0 0 8px rgba(139,195,74,.45)
+}
+
+.rarity-rare{
+color:#42a5f5;
+text-shadow:0 0 9px rgba(66,165,245,.5)
+}
+
+.rarity-superrare{
+color:#7e57c2;
+text-shadow:0 0 10px rgba(126,87,194,.55)
+}
+
+.rarity-epic{
+color:#d05ce3;
+text-shadow:0 0 11px rgba(208,92,227,.6)
+}
+
+.rarity-ultra{
+color:#ef5350;
+text-shadow:0 0 12px rgba(239,83,80,.65)
+}
+
+.rarity-legendary{
+color:#ffca28;
+text-shadow:0 0 14px rgba(255,202,40,.7)
+}
+
+.rarity-mythic{
+color:#ff7043;
+text-shadow:0 0 15px rgba(255,112,67,.75)
+}
+
+.rarity-divine{
+color:#26c6da;
+text-shadow:0 0 16px rgba(38,198,218,.8)
+}
+
+.rarity-celestial{
+color:#64b5f6;
+text-shadow:0 0 17px rgba(100,181,246,.8)
+}
+
+.rarity-eternal{
+color:#ba68c8;
+text-shadow:0 0 18px rgba(186,104,200,.85)
+}
+
+.rarity-cosmic{
+color:#ec407a;
+text-shadow:0 0 19px rgba(236,64,122,.85)
+}
+
+.rarity-astral{
+color:#9575cd;
+text-shadow:0 0 20px rgba(149,117,205,.9)
+}
+
+.rarity-infinity{
+color:#fff;
+text-shadow:0 0 7px #fff,0 0 18px #fff
+}
+
+.rarity-glitched{
+color:#fff;
+animation:glitchColor .45s infinite alternate
+}
+
+.rarity-secret{
+color:#fff;
+text-shadow:0 0 5px #fff,0 0 15px #fff,0 0 30px #fff;
+animation:secretPulse 1s infinite alternate
+}
+
+@keyframes glitchColor{
+0%{
+color:#fff;
+text-shadow:3px 0 0 #f00,-3px 0 0 #0ff
+}
+50%{
+color:#0ff;
+text-shadow:-3px 0 0 #f0f,3px 0 0 #ff0
+}
+100%{
+color:#f0f;
+text-shadow:2px 0 0 #0ff,-2px 0 0 #f00
+}
+}
+
+@keyframes secretPulse{
+from{
+text-shadow:0 0 5px #fff,0 0 15px #fff
+}
+to{
+text-shadow:0 0 10px #fff,0 0 25px #fff,0 0 45px #fff
+}
+}
+
+.rarityEffect{
+animation:rarityAppear .35s ease-out
+}
+
+@keyframes rarityAppear{
+0%{
+opacity:0;
+transform:scale(.88)
+}
+55%{
+opacity:1;
+transform:scale(1.04)
+}
+100%{
+opacity:1;
+transform:scale(1)
+}
+}
+
+.rollingText{
+opacity:.75;
+transform:scale(.97)
+}
+
+.legendaryEffect{
+animation:legendaryPulse .7s ease-in-out infinite alternate
+}
+
+@keyframes legendaryPulse{
+from{
+transform:scale(1)
+}
+to{
+transform:scale(1.035)
+}
+}
 
 .fixedActions{
 position:fixed;
@@ -737,173 +868,36 @@ SELL
 <script>
 
 const rarityData=[
-{
-name:"Common",
-chance:2,
-value:2
-},
-{
-name:"Uncommon",
-chance:5,
-value:5
-},
-{
-name:"Rare",
-chance:25,
-value:20
-},
-{
-name:"Super Rare",
-chance:100,
-value:50
-},
-{
-name:"Epic",
-chance:500,
-value:150
-},
-{
-name:"Ultra",
-chance:2500,
-value:400
-},
-{
-name:"Legendary",
-chance:10000,
-value:1200
-},
-{
-name:"Mythic",
-chance:50000,
-value:4000
-},
-{
-name:"Divine",
-chance:250000,
-value:15000
-},
-{
-name:"Celestial",
-chance:1000000,
-value:50000
-},
-{
-name:"Eternal",
-chance:5000000,
-value:200000
-},
-{
-name:"Cosmic",
-chance:25000000,
-value:800000
-},
-{
-name:"Astral",
-chance:100000000,
-value:3000000
-},
-{
-name:"Infinity",
-chance:500000000,
-value:10000000
-},
-{
-name:"Glitched",
-chance:2500000000,
-value:40000000
-},
-{
-name:"SECRET",
-chance:10000000000,
-value:200000000
-}
+{name:"Common",chance:2,value:2},
+{name:"Uncommon",chance:5,value:5},
+{name:"Rare",chance:25,value:20},
+{name:"Super Rare",chance:100,value:50},
+{name:"Epic",chance:500,value:150},
+{name:"Ultra",chance:2500,value:400},
+{name:"Legendary",chance:10000,value:1200},
+{name:"Mythic",chance:50000,value:4000},
+{name:"Divine",chance:250000,value:15000},
+{name:"Celestial",chance:1000000,value:50000},
+{name:"Eternal",chance:5000000,value:200000},
+{name:"Cosmic",chance:25000000,value:800000},
+{name:"Astral",chance:100000000,value:3000000},
+{name:"Infinity",chance:500000000,value:10000000},
+{name:"Glitched",chance:2500000000,value:40000000},
+{name:"SECRET",chance:10000000000,value:200000000}
 ];
 
 const themes=[
-"Orchestra",
-"Galaxy",
-"Thunder",
-"Volcano",
-"Dragon",
-"Phantom",
-"Ancient",
-"Royal",
-"Neon",
-"Glitch",
-"Timekeeper",
-"Symphony",
-"Grand Piano",
-"Golden",
-"Frozen",
-"Solar",
-"Lunar",
-"Void",
-"Storm",
-"Crystal",
-"Shadow",
-"Quantum",
-"Cyber",
-"Retro",
-"Cosmic",
-"Ocean",
-"Fire",
-"Nature",
-"Mechanical",
-"Angel",
-"Demon",
-"Universe",
-"Starfall",
-"Infinity",
-"Unknown",
-"Rainbow",
-"Clockwork",
-"Titan",
-"Music",
-"Diamond",
-"Dark Matter",
-"Light",
-"King",
-"Pixel",
-"Arcade",
-"Meteor",
-"Electric",
-"Paper",
-"Crown",
-"Dream",
-"Gravity",
-"Galaxy Core",
-"Moonlight",
-"Sunflare",
-"Nightmare",
-"Ancient Rune",
-"Magic",
-"Portal",
-"Champion",
-"Warrior",
-"Royal Gold",
-"Frozen Heart",
-"Solar Flare",
-"Black Hole",
-"Supernova",
-"Deep Space",
-"Crystal Core",
-"Time Warp",
-"Future",
-"Past",
-"Legend",
-"Unknown Entity",
-"Music Box",
-"Violin",
-"Drum",
-"Trumpet",
-"Piano",
-"Cello",
-"Conductor",
-"Maestro",
-"Symphony Hall",
-"Golden Note",
-"Silent Note",
-"Final Note"
+"Orchestra","Galaxy","Thunder","Volcano","Dragon","Phantom","Ancient","Royal",
+"Neon","Glitch","Timekeeper","Symphony","Grand Piano","Golden","Frozen","Solar",
+"Lunar","Void","Storm","Crystal","Shadow","Quantum","Cyber","Retro","Cosmic",
+"Ocean","Fire","Nature","Mechanical","Angel","Demon","Universe","Starfall",
+"Infinity","Unknown","Rainbow","Clockwork","Titan","Music","Diamond","Dark Matter",
+"Light","King","Pixel","Arcade","Meteor","Electric","Paper","Crown","Dream",
+"Gravity","Galaxy Core","Moonlight","Sunflare","Nightmare","Ancient Rune","Magic",
+"Portal","Champion","Warrior","Royal Gold","Frozen Heart","Solar Flare","Black Hole",
+"Supernova","Deep Space","Crystal Core","Time Warp","Future","Past","Legend",
+"Unknown Entity","Music Box","Violin","Drum","Trumpet","Piano","Cello","Conductor",
+"Maestro","Symphony Hall","Golden Note","Silent Note","Final Note"
 ];
 
 let rngs=[];
@@ -920,7 +914,6 @@ selectedId:null
 
 let currentNewFromRoll=false;
 let rolling=false;
-let rngClickData={};
 
 function formatMoney(value){
 
@@ -1036,11 +1029,7 @@ try{
 
 const key="__rng_storage_test__";
 
-localStorage.setItem(
-key,
-"1"
-);
-
+localStorage.setItem(key,"1");
 localStorage.removeItem(key);
 
 return true;
@@ -1078,8 +1067,7 @@ return;
 
 try{
 
-const saved=
-localStorage.getItem(
+const saved=localStorage.getItem(
 "flashcardComRngSave"
 );
 
@@ -1087,64 +1075,30 @@ if(!saved){
 return;
 }
 
-const data=
-JSON.parse(saved);
+const data=JSON.parse(saved);
 
-if(
-typeof data.cash==="number"&&
-Number.isFinite(data.cash)&&
-data.cash>=0
-){
-
+if(typeof data.cash==="number"&&Number.isFinite(data.cash)&&data.cash>=0){
 game.cash=data.cash;
-
 }
 
-if(
-typeof data.rolls==="number"&&
-Number.isFinite(data.rolls)&&
-data.rolls>=0
-){
-
+if(typeof data.rolls==="number"&&Number.isFinite(data.rolls)&&data.rolls>=0){
 game.rolls=Math.floor(data.rolls);
-
 }
 
-if(
-typeof data.luckLevel==="number"&&
-Number.isFinite(data.luckLevel)&&
-data.luckLevel>=0
-){
-
+if(typeof data.luckLevel==="number"&&Number.isFinite(data.luckLevel)&&data.luckLevel>=0){
 game.luckLevel=Math.floor(data.luckLevel);
-
 }
 
 if(Array.isArray(data.discovered)){
-
-game.discovered=
-data.discovered.filter(
-id=>typeof id==="string"
-);
-
+game.discovered=data.discovered.filter(id=>typeof id==="string");
 }
 
-if(
-data.current&&
-typeof data.current.id==="string"
-){
-
+if(data.current&&typeof data.current.id==="string"){
 game.current=data.current;
-
 }
 
-if(
-typeof data.selectedId==="string"||
-data.selectedId===null
-){
-
+if(typeof data.selectedId==="string"||data.selectedId===null){
 game.selectedId=data.selectedId;
-
 }
 
 }catch(error){}
@@ -1162,57 +1116,39 @@ let rarityIndex;
 
 if(i<450){
 rarityIndex=0;
-}
-else if(i<650){
+}else if(i<650){
 rarityIndex=1;
-}
-else if(i<770){
+}else if(i<770){
 rarityIndex=2;
-}
-else if(i<850){
+}else if(i<850){
 rarityIndex=3;
-}
-else if(i<910){
+}else if(i<910){
 rarityIndex=4;
-}
-else if(i<945){
+}else if(i<945){
 rarityIndex=5;
-}
-else if(i<965){
+}else if(i<965){
 rarityIndex=6;
-}
-else if(i<980){
+}else if(i<980){
 rarityIndex=7;
-}
-else if(i<988){
+}else if(i<988){
 rarityIndex=8;
-}
-else if(i<993){
+}else if(i<993){
 rarityIndex=9;
-}
-else if(i<996){
+}else if(i<996){
 rarityIndex=10;
-}
-else if(i<998){
+}else if(i<998){
 rarityIndex=11;
-}
-else if(i<999){
+}else if(i<999){
 rarityIndex=12;
-}
-else{
+}else{
 rarityIndex=13;
 }
 
 const rarity=rarityData[rarityIndex];
+const theme=themes[i%themes.length];
+const variation=Math.floor(i/themes.length)+1;
 
-const theme=
-themes[i%themes.length];
-
-const variation=
-Math.floor(i/themes.length)+1;
-
-let name=
-theme+" RNG";
+let name=theme+" RNG";
 
 if(variation>1){
 name=theme+" "+variation+" RNG";
@@ -1229,10 +1165,7 @@ value:rarity.value
 
 }
 
-const best400=
-rngs
-.slice()
-.sort((a,b)=>{
+const best400=rngs.slice().sort((a,b)=>{
 
 if(b.rarityIndex!==a.rarityIndex){
 return b.rarityIndex-a.rarityIndex;
@@ -1244,51 +1177,28 @@ return b.value-a.value;
 
 return a.id.localeCompare(b.id);
 
-})
-.slice(0,400);
+}).slice(0,400);
 
 for(let i=0;i<200;i++){
 
-const first=
-best400[(i*2)%400];
+const first=best400[(i*2)%400];
+const second=best400[(i*2+1)%400];
 
-const second=
-best400[(i*2+1)%400];
-
-const resultRarity=
-Math.min(
+const resultRarity=Math.min(
 15,
 Math.floor(i/13)+5
 );
 
-const rarity=
-rarityData[resultRarity];
+const rarity=rarityData[resultRarity];
 
 mergeRngs.push({
-
 id:"m"+i,
-
-name:
-"Merged "+
-themes[(i+17)%themes.length]+
-" RNG",
-
+name:"Merged "+themes[(i+17)%themes.length]+" RNG",
 rarity:rarity.name,
-
 rarityIndex:resultRarity,
-
 chance:0,
-
-value:
-Math.floor(
-(first.value+second.value)*3
-),
-
-requires:[
-first.id,
-second.id
-]
-
+value:Math.floor((first.value+second.value)*3),
+requires:[first.id,second.id]
 });
 
 }
@@ -1301,13 +1211,9 @@ if(!id){
 return null;
 }
 
-return rngs.find(
-rng=>rng.id===id
-)
+return rngs.find(rng=>rng.id===id)
 ||
-mergeRngs.find(
-rng=>rng.id===id
-)
+mergeRngs.find(rng=>rng.id===id)
 ||
 null;
 
@@ -1326,11 +1232,8 @@ return false;
 }
 
 if(!isCollected(id)){
-
 game.discovered.push(id);
-
 return true;
-
 }
 
 return false;
@@ -1349,13 +1252,8 @@ if(!rng){
 continue;
 }
 
-if(
-!best||
-rng.value>best.value
-){
-
+if(!best||rng.value>best.value){
 best=rng;
-
 }
 
 }
@@ -1385,20 +1283,16 @@ const luck=getLuck();
 
 for(let i=0;i<rarityData.length;i++){
 
-let weight=
-1/rarityData[i].chance;
+let weight=1/rarityData[i].chance;
 
 if(i>0){
 
-const luckEffect=
-Math.min(
-1+
-Math.log10(luck)*0.55,
+const luckEffect=Math.min(
+1+Math.log10(luck)*0.55,
 4
 );
 
-weight*=
-Math.pow(
+weight*=Math.pow(
 luckEffect,
 i/15
 );
@@ -1415,8 +1309,7 @@ return weights;
 
 function weightedRarityRoll(){
 
-const weights=
-getRarityWeights();
+const weights=getRarityWeights();
 
 let total=0;
 
@@ -1424,8 +1317,7 @@ for(const weight of weights){
 total+=weight;
 }
 
-let random=
-Math.random()*total;
+let random=Math.random()*total;
 
 for(let i=0;i<weights.length;i++){
 
@@ -1443,43 +1335,18 @@ return 0;
 
 function weightedRoll(){
 
-let rarityIndex=
-weightedRarityRoll();
+const rarityIndex=weightedRarityRoll();
 
-let candidates=
-rngs.filter(
+const candidates=rngs.filter(
 rng=>rng.rarityIndex===rarityIndex
 );
-
-if(!candidates.length){
-
-const availableRarities=
-[...new Set(
-rngs.map(rng=>rng.rarityIndex)
-)];
-
-rarityIndex=
-availableRarities[
-Math.floor(
-Math.random()*availableRarities.length
-)
-];
-
-candidates=
-rngs.filter(
-rng=>rng.rarityIndex===rarityIndex
-);
-
-}
 
 if(!candidates.length){
 return rngs[0];
 }
 
 return candidates[
-Math.floor(
-Math.random()*candidates.length
-)
+Math.floor(Math.random()*candidates.length)
 ];
 
 }
@@ -1491,9 +1358,7 @@ if(
 !Array.isArray(merged.requires)||
 merged.requires.length!==2
 ){
-
 return false;
-
 }
 
 return(
@@ -1503,93 +1368,76 @@ isCollected(merged.requires[1])
 
 }
 
-function selectRNG(id){
+function applyRarityStyle(rng){
 
-const rng=getById(id);
+const name=document.getElementById("rngName");
+const rarity=document.getElementById("rarity");
 
-if(
-!rng||
-!isCollected(id)
-){
-return;
+name.className="";
+rarity.className="";
+
+const className=getRarityClass(rng.rarity);
+
+name.classList.add(className);
+rarity.classList.add(className);
+name.classList.add("rarityEffect");
+rarity.classList.add("rarityEffect");
+
+if(rng.rarityIndex>=6&&rng.rarityIndex<=13){
+name.classList.add("legendaryEffect");
 }
 
-game.selectedId=id;
-game.current=rng;
+}
 
-saveGame();
+function showRollingFrame(rng){
 
-renderSelected();
+const name=document.getElementById("rngName");
+const rarity=document.getElementById("rarity");
 
-const oldCards=
-document.querySelectorAll(".card.selected");
+name.className="rollingText";
+rarity.className="rollingText";
 
-oldCards.forEach(card=>{
-card.classList.remove("selected");
+name.style.opacity="0.55";
+rarity.style.opacity="0.55";
+
+requestAnimationFrame(()=>{
+
+name.textContent=rng.name;
+rarity.textContent=rng.rarity;
+
+name.style.opacity="1";
+rarity.style.opacity="1";
+
 });
 
-const newCard=
-document.querySelector(
-'.card[data-rng-id="'+id+'"]'
-);
-
-if(newCard){
-newCard.classList.add("selected");
 }
 
-document.getElementById(
-"sellBtn"
-).disabled=false;
+function showResult(rng){
 
-document.getElementById(
-"fixedSellBtn"
-).disabled=false;
+const name=document.getElementById("rngName");
+const rarity=document.getElementById("rarity");
 
-}
+name.style.opacity="0";
+rarity.style.opacity="0";
 
-function renderSelected(){
+setTimeout(()=>{
 
-const box=
-document.getElementById(
-"selectedContent"
-);
+name.textContent=rng.name;
+rarity.textContent=rng.rarity;
 
-const rng=getSelected();
+name.style.opacity="1";
+rarity.style.opacity="1";
 
-if(!rng){
+applyRarityStyle(rng);
 
-box.innerHTML=
-'<div class="selectedEmpty">'+
-'Click any discovered RNG in the collection below to select it for selling.'+
-'</div>';
+setTimeout(()=>{
 
-return;
+name.classList.remove("rarityEffect");
+rarity.classList.remove("rarityEffect");
 
-}
+},400);
 
-box.innerHTML=
-'<div class="selectedName">'+
-rng.name+
-'</div>'+
-'<div class="selectedInfo">'+
-"Rarity: "+
-rng.rarity+
-"<br>"+
-"Sell value: "+
-formatMoney(rng.value)+
-"<br>"+
-"Automatic income: "+
-formatMoney(
-incomeFrom(rng)
-)+
-"/s"+
-"</div>"+
-'<div class="actions">'+
-'<button class="selectedSellButton" onclick="sellSelected()">'+
-"SELL SELECTED FOR "+
-formatMoney(rng.value)+
-"</button>"+
-"</div>";
+},100);
 
 }
 
@@ -1614,31 +1462,18 @@ game.current=merged;
 
 currentNewFromRoll=true;
 
-document.getElementById(
-"rngName"
-).textContent=
-merged.name;
+document.getElementById("rngName").textContent=merged.name;
+document.getElementById("rarity").textContent=merged.rarity;
 
-document.getElementById(
-"rarity"
-).textContent=
-merged.rarity;
+applyRarityStyle(merged);
 
-document.getElementById(
-"details"
-).textContent=
+document.getElementById("details").textContent=
 "NEW MERGE RNG COLLECTED!";
 
-document.getElementById(
-"sellBtn"
-).disabled=false;
-
-document.getElementById(
-"fixedSellBtn"
-).disabled=false;
+document.getElementById("sellBtn").disabled=false;
+document.getElementById("fixedSellBtn").disabled=false;
 
 saveGame();
-
 update();
 
 return true;
@@ -1656,7 +1491,6 @@ const cost=getRollCost();
 if(game.cash<cost){
 
 alert("Not enough cash.");
-
 return;
 
 }
@@ -1668,183 +1502,114 @@ game.rolls++;
 game.current=null;
 currentNewFromRoll=false;
 
-document.getElementById(
-"rollBtn"
-).disabled=true;
-
-document.getElementById(
-"keepRollingBtn"
-).disabled=true;
-
-document.getElementById(
-"sellBtn"
-).disabled=true;
-
-document.getElementById(
-"fixedSellBtn"
-).disabled=true;
-
-document.getElementById(
-"rngName"
-).textContent=
-"ROLLING...";
-
-document.getElementById(
-"rarity"
-).textContent=
-"";
-
-document.getElementById(
-"details"
-).textContent=
-"Rolling...";
+document.getElementById("sellBtn").disabled=true;
+document.getElementById("fixedSellBtn").disabled=true;
 
 saveGame();
-
 update();
 
-const fakeNames=[];
-const used=new Set();
+document.getElementById("rollBtn").disabled=true;
+document.getElementById("keepRollingBtn").disabled=true;
 
-while(fakeNames.length<30){
-
-const fake=
-rngs[
-Math.floor(
-Math.random()*rngs.length
-)
-];
-
-if(!used.has(fake.id)){
-
-used.add(fake.id);
-fakeNames.push(fake);
-
-}
-
-}
+const fakeNames=rngs
+.slice()
+.sort(()=>Math.random()-.5)
+.slice(0,32);
 
 let index=0;
 
-const animation=
-setInterval(()=>{
+const startTime=performance.now();
+const duration=2300;
 
-const fake=
-fakeNames[index];
+function animate(now){
 
-document.getElementById(
-"rngName"
-).textContent=
-fake.name;
+const elapsed=now-startTime;
 
-document.getElementById(
-"rarity"
-).textContent=
-fake.rarity;
+if(elapsed>=duration){
 
-document.getElementById(
-"details"
-).textContent=
-"Rolling...";
-
-index++;
-
-if(index>=fakeNames.length){
-
-clearInterval(animation);
-
-setTimeout(()=>{
-
-const result=
-weightedRoll();
-
-const wasNew=
-discover(result.id);
-
-game.current=result;
-
-currentNewFromRoll=wasNew;
-
-if(wasNew){
-
-game.selectedId=
-result.id;
+finishRoll();
+return;
 
 }
 
-document.getElementById(
-"rngName"
-).textContent=
-result.name;
+const progress=elapsed/duration;
 
-document.getElementById(
-"rarity"
-).textContent=
-result.rarity;
+const easeOut=1-Math.pow(1-progress,2);
+
+const speed=55+easeOut*145;
+
+const current=fakeNames[index%fakeNames.length];
+
+showRollingFrame(current);
+
+index++;
+
+setTimeout(()=>{
+requestAnimationFrame(animate);
+},speed);
+
+}
+
+requestAnimationFrame(animate);
+
+function finishRoll(){
+
+const result=weightedRoll();
+const wasNew=discover(result.id);
+
+game.current=result;
+currentNewFromRoll=wasNew;
+
+if(wasNew){
+game.selectedId=result.id;
+}
+
+showResult(result);
 
 let message=
 "Sell: "+
 formatMoney(result.value)+
 " | Income: "+
-formatMoney(
-incomeFrom(result)
-)+
+formatMoney(incomeFrom(result))+
 "/s";
 
 if(wasNew){
 
-message+=
-" | NEW RNG COLLECTED!";
+message+=" | NEW RNG COLLECTED!";
 
 }else{
 
-message+=
-" | Already collected";
+message+=" | Already collected";
 
 }
 
-document.getElementById(
-"details"
-).textContent=
-message;
+document.getElementById("details").textContent=message;
 
-document.getElementById(
-"sellBtn"
-).disabled=false;
-
-document.getElementById(
-"fixedSellBtn"
-).disabled=false;
+document.getElementById("sellBtn").disabled=false;
+document.getElementById("fixedSellBtn").disabled=false;
 
 rolling=false;
 
-document.getElementById(
-"rollBtn"
-).disabled=false;
+document.getElementById("rollBtn").disabled=false;
+
+document.getElementById("keepRollingBtn").disabled=
+game.cash<getRollCost();
 
 saveGame();
-
 update();
 
-},350);
-
 }
-
-},80);
 
 }
 
 function removeFromCollection(id){
 
-game.discovered=
-game.discovered.filter(
+game.discovered=game.discovered.filter(
 item=>item!==id
 );
 
 if(game.selectedId===id){
-
 game.selectedId=null;
-
 }
 
 }
@@ -1855,55 +1620,32 @@ if(!game.current){
 return;
 }
 
-const value=
-game.current.value;
-
-const soldName=
-game.current.name;
-
-const soldId=
-game.current.id;
-
-if(!isCollected(soldId)){
-return;
-}
+const value=game.current.value;
+const soldName=game.current.name;
+const soldId=game.current.id;
 
 game.cash+=value;
 
 removeFromCollection(soldId);
 
 game.current=null;
-
 currentNewFromRoll=false;
 
-document.getElementById(
-"sellBtn"
-).disabled=true;
+document.getElementById("sellBtn").disabled=true;
+document.getElementById("fixedSellBtn").disabled=true;
 
-document.getElementById(
-"fixedSellBtn"
-).disabled=true;
+document.getElementById("rngName").textContent="SOLD";
+document.getElementById("rngName").className="";
+document.getElementById("rarity").textContent="Roll again";
+document.getElementById("rarity").className="";
 
-document.getElementById(
-"rngName"
-).textContent=
-"SOLD";
-
-document.getElementById(
-"rarity"
-).textContent=
-"Roll again";
-
-document.getElementById(
-"details"
-).textContent=
+document.getElementById("details").textContent=
 soldName+
 " sold for "+
 formatMoney(value)+
 " and was removed from your collection.";
 
 saveGame();
-
 update();
 
 }
@@ -1924,45 +1666,27 @@ game.cash+=value;
 
 removeFromCollection(id);
 
-if(
-game.current&&
-game.current.id===id
-){
-
+if(game.current&&game.current.id===id){
 game.current=null;
-
 }
 
 currentNewFromRoll=false;
 
-document.getElementById(
-"sellBtn"
-).disabled=true;
+document.getElementById("sellBtn").disabled=true;
+document.getElementById("fixedSellBtn").disabled=true;
 
-document.getElementById(
-"fixedSellBtn"
-).disabled=true;
+document.getElementById("rngName").textContent="SOLD";
+document.getElementById("rngName").className="";
+document.getElementById("rarity").textContent="Roll again";
+document.getElementById("rarity").className="";
 
-document.getElementById(
-"rngName"
-).textContent=
-"SOLD";
-
-document.getElementById(
-"rarity"
-).textContent=
-"Roll again";
-
-document.getElementById(
-"details"
-).textContent=
+document.getElementById("details").textContent=
 name+
 " sold for "+
 formatMoney(value)+
 " and was removed from your collection.";
 
 saveGame();
-
 update();
 
 }
@@ -1971,10 +1695,7 @@ function sellRNGById(id){
 
 const rng=getById(id);
 
-if(
-!rng||
-!isCollected(id)
-){
+if(!rng||!isCollected(id)){
 return;
 }
 
@@ -1985,36 +1706,20 @@ game.cash+=value;
 
 removeFromCollection(id);
 
-if(
-game.current&&
-game.current.id===id
-){
+if(game.current&&game.current.id===id){
 
 game.current=null;
-
 currentNewFromRoll=false;
 
-document.getElementById(
-"sellBtn"
-).disabled=true;
+document.getElementById("sellBtn").disabled=true;
+document.getElementById("fixedSellBtn").disabled=true;
 
-document.getElementById(
-"fixedSellBtn"
-).disabled=true;
+document.getElementById("rngName").textContent="SOLD";
+document.getElementById("rngName").className="";
+document.getElementById("rarity").textContent="Roll again";
+document.getElementById("rarity").className="";
 
-document.getElementById(
-"rngName"
-).textContent=
-"SOLD";
-
-document.getElementById(
-"rarity"
-).textContent=
-"Roll again";
-
-document.getElementById(
-"details"
-).textContent=
+document.getElementById("details").textContent=
 name+
 " sold for "+
 formatMoney(value)+
@@ -2023,88 +1728,93 @@ formatMoney(value)+
 }
 
 saveGame();
-
 update();
 
 }
 
 function upgradeLuck(){
 
-const cost=
-getLuckCost();
+const cost=getLuckCost();
 
 if(game.cash<cost){
 
 alert("Not enough cash.");
-
 return;
 
 }
 
 game.cash-=cost;
-
 game.luckLevel++;
 
 saveGame();
-
 update();
+
+}
+
+function renderSelected(){
+
+const box=document.getElementById("selectedContent");
+const rng=getSelected();
+
+if(!rng){
+
+box.innerHTML=
+'<div class="selectedEmpty">'+
+'Click any discovered RNG in the collection below to select it for selling.'+
+'</div>';
+
+return;
+
+}
+
+box.innerHTML=
+'<div class="selectedName '+getRarityClass(rng.rarity)+'">'+
+rng.name+
+'</div>'+
+'<div class="selectedInfo">'+
+"Rarity: "+
+rng.rarity+
+"<br>"+
+"Sell value: "+
+formatMoney(rng.value)+
+"<br>"+
+"Automatic income: "+
+formatMoney(incomeFrom(rng))+
+"/s"+
+"</div>"+
+'<div class="actions">'+
+'<button class="selectedSellButton" onclick="sellSelected()">'+
+"SELL SELECTED FOR "+
+formatMoney(rng.value)+
+"</button>"+
+"</div>";
 
 }
 
 function renderMergeList(){
 
-const box=
-document.getElementById(
-"mergeList"
-);
+const box=document.getElementById("mergeList");
 
 box.innerHTML="";
 
 for(const merged of mergeRngs){
 
-const first=
-getById(
-merged.requires[0]
-);
+const first=getById(merged.requires[0]);
+const second=getById(merged.requires[1]);
 
-const second=
-getById(
-merged.requires[1]
-);
+const ready=canMerge(merged);
+const discovered=isCollected(merged.id);
 
-if(!first||!second){
-continue;
-}
-
-const ready=
-canMerge(merged);
-
-const discovered=
-isCollected(merged.id);
-
-const card=
-document.createElement("div");
+const card=document.createElement("div");
 
 card.className=
 "mergeCard"+
-(
-ready
-?" ready"
-:""
-)+
-(
-discovered
-?" discovered"
-:""
-);
+(ready?" ready":"")+
+(discovered?" discovered":"");
 
 card.innerHTML=
-'<div class="mergeName">'+
-(
-discovered
-?merged.name
-:"???"
-)+
+'<div class="mergeName '+getRarityClass(merged.rarity)+'">'+
+(discovered?merged.name:"???")+
 "</div>"+
 '<div class="mergeParts">'+
 first.name+
@@ -2114,9 +1824,7 @@ second.name+
 "Result: "+
 merged.rarity+
 " • "+
-formatMoney(
-merged.value
-)+
+formatMoney(merged.value)+
 "</div>"+
 '<div class="mergeStatus">'+
 (
@@ -2130,22 +1838,13 @@ ready
 )+
 "</div>";
 
-if(
-ready&&
-!discovered
-){
+if(ready&&!discovered){
 
-const button=
-document.createElement("button");
+const button=document.createElement("button");
 
-button.className=
-"mergeButton";
-
-button.textContent=
-"MERGE";
-
-button.style.marginTop=
-"10px";
+button.className="mergeButton";
+button.textContent="MERGE";
+button.style.marginTop="10px";
 
 button.onclick=()=>{
 performMerge(merged);
@@ -2164,73 +1863,50 @@ box.appendChild(card);
 function getRarityClass(name){
 
 return "rarity-"+
-name
-.toLowerCase()
-.replace(/\s/g,"");
+name.toLowerCase().replace(/\s/g,"");
 
 }
 
 function renderCollection(){
 
-const box=
-document.getElementById(
-"collectionSections"
-);
+const box=document.getElementById("collectionSections");
 
 box.innerHTML="";
 
-const best=
-getBestCollected();
+const best=getBestCollected();
 
-for(
-let rarityIndex=0;
-rarityIndex<rarityData.length;
-rarityIndex++
-){
+for(let rarityIndex=0;rarityIndex<rarityData.length;rarityIndex++){
 
-const rarity=
-rarityData[rarityIndex];
+const rarity=rarityData[rarityIndex];
 
-const normal=
-rngs.filter(
+const normal=rngs.filter(
 rng=>rng.rarityIndex===rarityIndex
 );
 
-const merged=
-mergeRngs.filter(
+const merged=mergeRngs.filter(
 rng=>rng.rarityIndex===rarityIndex
 );
 
-const list=[
-...normal,
-...merged
-];
+const list=[...normal,...merged];
 
 if(!list.length){
 continue;
 }
 
-const collected=
-list.filter(
+const collected=list.filter(
 rng=>isCollected(rng.id)
 ).length;
 
-const section=
-document.createElement("div");
+const section=document.createElement("div");
 
-section.className=
-"raritySection";
+section.className="raritySection";
 
-const header=
-document.createElement("div");
+const header=document.createElement("div");
 
-header.className=
-"rarityHeader";
+header.className="rarityHeader";
 
 header.innerHTML=
-'<div class="rarityTitle '+
-getRarityClass(rarity.name)+
-'">'+
+'<div class="rarityTitle '+getRarityClass(rarity.name)+'">'+
 rarity.name+
 "</div>"+
 '<div class="rarityCount">'+
@@ -2242,70 +1918,38 @@ list.length+
 
 section.appendChild(header);
 
-const grid=
-document.createElement("div");
+const grid=document.createElement("div");
 
-grid.className=
-"collectionGrid";
+grid.className="collectionGrid";
 
 for(const rng of list){
 
-const known=
-isCollected(rng.id);
+const known=isCollected(rng.id);
+const selected=game.selectedId===rng.id;
 
-const selected=
-game.selectedId===rng.id;
-
-const card=
-document.createElement("div");
+const card=document.createElement("div");
 
 card.className=
 "card "+
-(
-known
-?"known"
-:"unknown"
-);
+(known?"known":"unknown");
 
-if(
-best&&
-best.id===rng.id
-){
-
+if(best&&best.id===rng.id){
 card.classList.add("best");
-
 }
 
 if(selected){
-
 card.classList.add("selected");
-
 }
 
-card.dataset.rngId=
-rng.id;
-
 card.innerHTML=
-'<div class="cardName">'+
-(
-known
-?rng.name
-:"???"
-)+
+'<div class="cardName '+(known?getRarityClass(rng.rarity):"")+'">'+
+(known?rng.name:"???")+
 "</div>"+
-'<div class="cardRarity">'+
-(
-known
-?rng.rarity
-:"Undiscovered"
-)+
+'<div class="cardRarity '+(known?getRarityClass(rng.rarity):"")+'">'+
+(known?rng.rarity:"Undiscovered")+
 "</div>"+
 '<div class="cardValue">'+
-(
-known
-?formatMoney(rng.value)
-:"???"
-)+
+(known?formatMoney(rng.value):"???")+
 "</div>"+
 (
 known
@@ -2313,149 +1957,152 @@ known
 :""
 );
 
+if(known){
+
+let clickCount=0;
+let clickTimer=null;
+
+card.onclick=()=>{
+
+clickCount++;
+
+clearTimeout(clickTimer);
+
+if(clickCount>=3){
+
+clickCount=0;
+
+sellRNGById(rng.id);
+
+return;
+
+}
+
+clickTimer=setTimeout(()=>{
+
+if(clickCount===1){
+selectRNG(rng.id);
+}
+
+clickCount=0;
+
+},280);
+
+};
+
+}
+
 grid.appendChild(card);
 
 }
 
 section.appendChild(grid);
-
 box.appendChild(section);
 
 }
 
 }
 
+function selectRNG(id){
+
+const rng=getById(id);
+
+if(!rng||!isCollected(id)){
+return;
+}
+
+game.selectedId=id;
+game.current=rng;
+
+saveGame();
+update();
+
+}
+
 function update(){
 
-document.getElementById(
-"cash"
-).textContent=
+document.getElementById("cash").textContent=
 formatMoney(game.cash);
 
-document.getElementById(
-"luck"
-).textContent=
-getLuck().toFixed(2)+
-"x";
+document.getElementById("luck").textContent=
+getLuck().toFixed(2)+"x";
 
-document.getElementById(
-"rolls"
-).textContent=
+document.getElementById("rolls").textContent=
 formatNumber(game.rolls);
 
-document.getElementById(
-"rollCost"
-).textContent=
-formatMoney(
-getRollCost()
-);
+document.getElementById("rollCost").textContent=
+formatMoney(getRollCost());
 
-document.getElementById(
-"discovered"
-).textContent=
-game.discovered.length+
-"/1200";
+document.getElementById("discovered").textContent=
+game.discovered.length+"/1200";
 
-const best=
-getBestCollected();
+const best=getBestCollected();
+const totalIncome=getTotalIncome();
 
-const totalIncome=
-getTotalIncome();
-
-document.getElementById(
-"income"
-).textContent=
-formatMoney(
-totalIncome
-)+
-"/s";
+document.getElementById("income").textContent=
+formatMoney(totalIncome)+"/s";
 
 if(best){
 
-document.getElementById(
-"bestRng"
-).textContent=
+document.getElementById("bestRng").textContent=
 best.name;
 
-document.getElementById(
-"bestInfo"
-).innerHTML=
+document.getElementById("bestRng").className=
+"bestName "+getRarityClass(best.rarity);
+
+document.getElementById("bestInfo").innerHTML=
 best.rarity+
 "<br>"+
 "Sell value: "+
 formatMoney(best.value)+
 "<br>"+
 "Individual income: "+
-formatMoney(
-incomeFrom(best)
-)+
+formatMoney(incomeFrom(best))+
 "/s"+
 "<br>"+
 "Total collection income: "+
-formatMoney(
-totalIncome
-)+
+formatMoney(totalIncome)+
 "/s";
 
 }else{
 
-document.getElementById(
-"bestRng"
-).textContent=
-"None";
+document.getElementById("bestRng").textContent="None";
+document.getElementById("bestRng").className="bestName";
 
-document.getElementById(
-"bestInfo"
-).textContent=
+document.getElementById("bestInfo").textContent=
 "Roll an RNG to begin.";
 
 }
 
-const nextLuck=
-getLuckAtLevel(
+const nextLuck=getLuckAtLevel(
 game.luckLevel+1
 );
 
-document.getElementById(
-"luckText"
-).textContent=
+document.getElementById("luckText").textContent=
 "Level "+
 game.luckLevel+
 " • "+
 getLuck().toFixed(2)+
 "x luck";
 
-document.getElementById(
-"luckPreview"
-).textContent=
+document.getElementById("luckPreview").textContent=
 "Next level: "+
 nextLuck.toFixed(2)+
 "x";
 
-document.getElementById(
-"luckBtn"
-).textContent=
-formatMoney(
-getLuckCost()
-);
+document.getElementById("luckBtn").textContent=
+formatMoney(getLuckCost());
 
-document.getElementById(
-"rollBtn"
-).disabled=
+document.getElementById("keepRollingBtn").disabled=
 rolling||
 game.cash<getRollCost();
 
-document.getElementById(
-"keepRollingBtn"
-).disabled=
+document.getElementById("rollBtn").disabled=
 rolling||
 game.cash<getRollCost();
 
-document.getElementById(
-"fixedSellBtn"
-).disabled=
-!game.current||
-!isCollected(game.current.id);
+document.getElementById("fixedSellBtn").disabled=
+!game.current;
 
 renderSelected();
 renderMergeList();
@@ -2468,17 +2115,11 @@ function resetGame(){
 if(!confirm(
 "RESET EVERYTHING? This will erase ALL RNG progress, cash, rolls, luck and collection."
 )){
-
 return;
-
 }
 
 try{
-
-localStorage.removeItem(
-"flashcardComRngSave"
-);
-
+localStorage.removeItem("flashcardComRngSave");
 }catch(error){}
 
 game={
@@ -2492,37 +2133,22 @@ selectedId:null
 
 currentNewFromRoll=false;
 rolling=false;
-rngClickData={};
 
-document.getElementById(
-"rngName"
-).textContent=
-"READY?";
+document.getElementById("rngName").textContent="READY?";
+document.getElementById("rngName").className="";
 
-document.getElementById(
-"rarity"
-).textContent=
+document.getElementById("rarity").textContent=
 "Roll to generate an RNG";
+document.getElementById("rarity").className="";
 
-document.getElementById(
-"details"
-).textContent=
+document.getElementById("details").textContent=
 "Every collected RNG generates money.";
 
-document.getElementById(
-"sellBtn"
-).disabled=true;
-
-document.getElementById(
-"fixedSellBtn"
-).disabled=true;
-
-document.getElementById(
-"rollBtn"
-).disabled=false;
+document.getElementById("sellBtn").disabled=true;
+document.getElementById("fixedSellBtn").disabled=true;
+document.getElementById("rollBtn").disabled=false;
 
 saveGame();
-
 update();
 
 }
@@ -2539,17 +2165,31 @@ if(
 game.selectedId&&
 !isCollected(game.selectedId)
 ){
-
 game.selectedId=null;
-
 }
 
 if(
 game.current&&
 !getById(game.current.id)
 ){
-
 game.current=null;
+}
+
+if(game.current){
+
+const currentRng=getById(game.current.id);
+
+if(currentRng){
+document.getElementById("rngName").textContent=currentRng.name;
+document.getElementById("rarity").textContent=currentRng.rarity;
+applyRarityStyle(currentRng);
+document.getElementById("details").textContent=
+"Sell: "+
+formatMoney(currentRng.value)+
+" | Income: "+
+formatMoney(incomeFrom(currentRng))+
+"/s";
+}
 
 }
 
@@ -2557,98 +2197,29 @@ update();
 
 setInterval(()=>{
 
-const totalIncome=
-getTotalIncome();
+const totalIncome=getTotalIncome();
 
 if(totalIncome>0){
 
 game.cash+=totalIncome;
 
 saveGame();
-
 update();
 
 }
 
 },1000);
 
-document
-.getElementById("collectionSections")
-.addEventListener(
-"click",
-event=>{
-
-const card=
-event.target.closest(
-".card.known"
-);
-
-if(!card){
-return;
-}
-
-const id=
-card.dataset.rngId;
-
-if(
-!id||
-!isCollected(id)
-){
-return;
-}
-
-if(!rngClickData[id]){
-
-rngClickData[id]={
-count:0,
-timer:null
-};
-
-}
-
-const data=
-rngClickData[id];
-
-data.count++;
-
-clearTimeout(data.timer);
-
-if(data.count===1){
-
-selectRNG(id);
-
-}
-
-if(data.count>=3){
-
-data.count=0;
-
-sellRNGById(id);
-
-return;
-
-}
-
-data.timer=
-setTimeout(()=>{
-
-data.count=0;
-
-},650);
-
-}
-);
-
 let rCount=0;
 let rTimer=null;
 
-document.addEventListener(
-"keydown",
-event=>{
+document.addEventListener("keydown",event=>{
 
-if(
-event.key.toLowerCase()!=="r"
-){
+if(event.key.toLowerCase()!=="r"){
+return;
+}
+
+if(event.repeat){
 return;
 }
 
@@ -2656,17 +2227,16 @@ rCount++;
 
 clearTimeout(rTimer);
 
-rTimer=
-setTimeout(()=>{
+rTimer=setTimeout(()=>{
 rCount=0;
-},500);
+},700);
 
-if(rCount>=2){
+if(rCount>=3){
 
 rCount=0;
+clearTimeout(rTimer);
 
-window.location.href=
-"flashcard.html";
+window.location.href="flashcard.html";
 
 }
 
@@ -2676,3 +2246,4 @@ window.location.href=
 
 </body>
 </html>
+```
