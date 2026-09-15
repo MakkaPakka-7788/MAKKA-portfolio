@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -921,6 +920,7 @@ selectedId:null
 
 let currentNewFromRoll=false;
 let rolling=false;
+let rngClickData={};
 
 function formatMoney(value){
 
@@ -1106,8 +1106,7 @@ Number.isFinite(data.rolls)&&
 data.rolls>=0
 ){
 
-game.rolls=
-Math.floor(data.rolls);
+game.rolls=Math.floor(data.rolls);
 
 }
 
@@ -1117,8 +1116,7 @@ Number.isFinite(data.luckLevel)&&
 data.luckLevel>=0
 ){
 
-game.luckLevel=
-Math.floor(data.luckLevel);
+game.luckLevel=Math.floor(data.luckLevel);
 
 }
 
@@ -1145,8 +1143,7 @@ typeof data.selectedId==="string"||
 data.selectedId===null
 ){
 
-game.selectedId=
-data.selectedId;
+game.selectedId=data.selectedId;
 
 }
 
@@ -1206,8 +1203,7 @@ else{
 rarityIndex=13;
 }
 
-const rarity=
-rarityData[rarityIndex];
+const rarity=rarityData[rarityIndex];
 
 const theme=
 themes[i%themes.length];
@@ -1219,8 +1215,7 @@ let name=
 theme+" RNG";
 
 if(variation>1){
-name=
-theme+" "+variation+" RNG";
+name=theme+" "+variation+" RNG";
 }
 
 rngs.push({
@@ -1348,8 +1343,7 @@ let best=null;
 
 for(const id of game.discovered){
 
-const rng=
-getById(id);
+const rng=getById(id);
 
 if(!rng){
 continue;
@@ -1449,18 +1443,37 @@ return 0;
 
 function weightedRoll(){
 
-const rarityIndex=
+let rarityIndex=
 weightedRarityRoll();
 
-const candidates=
+let candidates=
 rngs.filter(
 rng=>rng.rarityIndex===rarityIndex
 );
 
 if(!candidates.length){
 
-return rngs[0];
+const availableRarities=
+[...new Set(
+rngs.map(rng=>rng.rarityIndex)
+)];
 
+rarityIndex=
+availableRarities[
+Math.floor(
+Math.random()*availableRarities.length
+)
+];
+
+candidates=
+rngs.filter(
+rng=>rng.rarityIndex===rarityIndex
+);
+
+}
+
+if(!candidates.length){
+return rngs[0];
 }
 
 return candidates[
@@ -1473,7 +1486,8 @@ Math.random()*candidates.length
 
 function canMerge(merged){
 
-if(!merged||
+if(
+!merged||
 !Array.isArray(merged.requires)||
 merged.requires.length!==2
 ){
@@ -1491,11 +1505,12 @@ isCollected(merged.requires[1])
 
 function selectRNG(id){
 
-const rng=
-getById(id);
+const rng=getById(id);
 
-if(!rng||
-!isCollected(id)){
+if(
+!rng||
+!isCollected(id)
+){
 return;
 }
 
@@ -1503,7 +1518,32 @@ game.selectedId=id;
 game.current=rng;
 
 saveGame();
-update();
+
+renderSelected();
+
+const oldCards=
+document.querySelectorAll(".card.selected");
+
+oldCards.forEach(card=>{
+card.classList.remove("selected");
+});
+
+const newCard=
+document.querySelector(
+'.card[data-rng-id="'+id+'"]'
+);
+
+if(newCard){
+newCard.classList.add("selected");
+}
+
+document.getElementById(
+"sellBtn"
+).disabled=false;
+
+document.getElementById(
+"fixedSellBtn"
+).disabled=false;
 
 }
 
@@ -1514,8 +1554,7 @@ document.getElementById(
 "selectedContent"
 );
 
-const rng=
-getSelected();
+const rng=getSelected();
 
 if(!rng){
 
@@ -1529,11 +1568,9 @@ return;
 }
 
 box.innerHTML=
-
 '<div class="selectedName">'+
 rng.name+
 '</div>'+
-
 '<div class="selectedInfo">'+
 "Rarity: "+
 rng.rarity+
@@ -1547,15 +1584,12 @@ incomeFrom(rng)
 )+
 "/s"+
 "</div>"+
-
 '<div class="actions">'+
-
 '<button class="selectedSellButton" onclick="sellSelected()">'+
 "SELL SELECTED FOR "+
 formatMoney(rng.value)+
-"</button>'+
-
-'</div>';
+"</button>"+
+"</div>";
 
 }
 
@@ -1575,11 +1609,8 @@ return false;
 
 discover(merged.id);
 
-game.selectedId=
-merged.id;
-
-game.current=
-merged;
+game.selectedId=merged.id;
+game.current=merged;
 
 currentNewFromRoll=true;
 
@@ -1620,8 +1651,7 @@ if(rolling){
 return;
 }
 
-const cost=
-getRollCost();
+const cost=getRollCost();
 
 if(game.cash<cost){
 
@@ -1634,16 +1664,9 @@ return;
 rolling=true;
 
 game.cash-=cost;
-
 game.rolls++;
-
 game.current=null;
-
 currentNewFromRoll=false;
-
-saveGame();
-
-update();
 
 document.getElementById(
 "rollBtn"
@@ -1653,28 +1676,76 @@ document.getElementById(
 "keepRollingBtn"
 ).disabled=true;
 
-const fakeNames=
-rngs
-.slice()
-.sort(
-()=>Math.random()-.5
+document.getElementById(
+"sellBtn"
+).disabled=true;
+
+document.getElementById(
+"fixedSellBtn"
+).disabled=true;
+
+document.getElementById(
+"rngName"
+).textContent=
+"ROLLING...";
+
+document.getElementById(
+"rarity"
+).textContent=
+"";
+
+document.getElementById(
+"details"
+).textContent=
+"Rolling...";
+
+saveGame();
+
+update();
+
+const fakeNames=[];
+const used=new Set();
+
+while(fakeNames.length<30){
+
+const fake=
+rngs[
+Math.floor(
+Math.random()*rngs.length
 )
-.slice(0,25);
+];
+
+if(!used.has(fake.id)){
+
+used.add(fake.id);
+fakeNames.push(fake);
+
+}
+
+}
 
 let index=0;
 
 const animation=
 setInterval(()=>{
 
+const fake=
+fakeNames[index];
+
 document.getElementById(
 "rngName"
 ).textContent=
-fakeNames[index].name;
+fake.name;
 
 document.getElementById(
 "rarity"
 ).textContent=
-fakeNames[index].rarity;
+fake.rarity;
+
+document.getElementById(
+"details"
+).textContent=
+"Rolling...";
 
 index++;
 
@@ -1751,20 +1822,15 @@ document.getElementById(
 "rollBtn"
 ).disabled=false;
 
-document.getElementById(
-"keepRollingBtn"
-).disabled=
-game.cash<getRollCost();
-
 saveGame();
 
 update();
 
-},300);
+},350);
 
 }
 
-},90);
+},80);
 
 }
 
@@ -1797,6 +1863,10 @@ game.current.name;
 
 const soldId=
 game.current.id;
+
+if(!isCollected(soldId)){
+return;
+}
 
 game.cash+=value;
 
@@ -1840,28 +1910,27 @@ update();
 
 function sellSelected(){
 
-const rng=
-getSelected();
+const rng=getSelected();
 
 if(!rng){
 return;
 }
 
-const value=
-rng.value;
-
-const name=
-rng.name;
-
-const id=
-rng.id;
+const value=rng.value;
+const name=rng.name;
+const id=rng.id;
 
 game.cash+=value;
 
 removeFromCollection(id);
 
-if(game.current&&game.current.id===id){
+if(
+game.current&&
+game.current.id===id
+){
+
 game.current=null;
+
 }
 
 currentNewFromRoll=false;
@@ -1900,19 +1969,17 @@ update();
 
 function sellRNGById(id){
 
-const rng=
-getById(id);
+const rng=getById(id);
 
-if(!rng||
-!isCollected(id)){
+if(
+!rng||
+!isCollected(id)
+){
 return;
 }
 
-const value=
-rng.value;
-
-const name=
-rng.name;
+const value=rng.value;
+const name=rng.name;
 
 game.cash+=value;
 
@@ -2005,6 +2072,10 @@ getById(
 merged.requires[1]
 );
 
+if(!first||!second){
+continue;
+}
+
 const ready=
 canMerge(merged);
 
@@ -2028,7 +2099,6 @@ discovered
 );
 
 card.innerHTML=
-
 '<div class="mergeName">'+
 (
 discovered
@@ -2036,7 +2106,6 @@ discovered
 :"???"
 )+
 "</div>"+
-
 '<div class="mergeParts">'+
 first.name+
 " + "+
@@ -2049,7 +2118,6 @@ formatMoney(
 merged.value
 )+
 "</div>"+
-
 '<div class="mergeStatus">'+
 (
 discovered
@@ -2068,9 +2136,7 @@ ready&&
 ){
 
 const button=
-document.createElement(
-"button"
-);
+document.createElement("button");
 
 button.className=
 "mergeButton";
@@ -2082,9 +2148,7 @@ button.style.marginTop=
 "10px";
 
 button.onclick=()=>{
-
 performMerge(merged);
-
 };
 
 card.appendChild(button);
@@ -2164,13 +2228,11 @@ header.className=
 "rarityHeader";
 
 header.innerHTML=
-
 '<div class="rarityTitle '+
 getRarityClass(rarity.name)+
 '">'+
 rarity.name+
 "</div>"+
-
 '<div class="rarityCount">'+
 collected+
 " / "+
@@ -2220,8 +2282,10 @@ card.classList.add("selected");
 
 }
 
-card.innerHTML=
+card.dataset.rngId=
+rng.id;
 
+card.innerHTML=
 '<div class="cardName">'+
 (
 known
@@ -2229,7 +2293,6 @@ known
 :"???"
 )+
 "</div>"+
-
 '<div class="cardRarity">'+
 (
 known
@@ -2237,7 +2300,6 @@ known
 :"Undiscovered"
 )+
 "</div>"+
-
 '<div class="cardValue">'+
 (
 known
@@ -2245,49 +2307,11 @@ known
 :"???"
 )+
 "</div>"+
-
 (
 known
 ?'<div class="selectHint">CLICK TO SELECT • TRIPLE-CLICK TO SELL</div>'
 :""
 );
-
-if(known){
-
-let clickCount=0;
-let clickTimer=null;
-
-card.onclick=()=>{
-
-clickCount++;
-
-if(clickCount===1){
-
-selectRNG(rng.id);
-
-}
-
-clearTimeout(clickTimer);
-
-clickTimer=setTimeout(()=>{
-
-clickCount=0;
-
-},650);
-
-if(clickCount>=3){
-
-clearTimeout(clickTimer);
-
-clickCount=0;
-
-sellRNGById(rng.id);
-
-}
-
-};
-
-}
 
 grid.appendChild(card);
 
@@ -2416,6 +2440,12 @@ getLuckCost()
 );
 
 document.getElementById(
+"rollBtn"
+).disabled=
+rolling||
+game.cash<getRollCost();
+
+document.getElementById(
 "keepRollingBtn"
 ).disabled=
 rolling||
@@ -2424,7 +2454,8 @@ game.cash<getRollCost();
 document.getElementById(
 "fixedSellBtn"
 ).disabled=
-!game.current;
+!game.current||
+!isCollected(game.current.id);
 
 renderSelected();
 renderMergeList();
@@ -2461,6 +2492,7 @@ selectedId:null
 
 currentNewFromRoll=false;
 rolling=false;
+rngClickData={};
 
 document.getElementById(
 "rngName"
@@ -2530,8 +2562,7 @@ getTotalIncome();
 
 if(totalIncome>0){
 
-game.cash+=
-totalIncome;
+game.cash+=totalIncome;
 
 saveGame();
 
@@ -2540,6 +2571,73 @@ update();
 }
 
 },1000);
+
+document
+.getElementById("collectionSections")
+.addEventListener(
+"click",
+event=>{
+
+const card=
+event.target.closest(
+".card.known"
+);
+
+if(!card){
+return;
+}
+
+const id=
+card.dataset.rngId;
+
+if(
+!id||
+!isCollected(id)
+){
+return;
+}
+
+if(!rngClickData[id]){
+
+rngClickData[id]={
+count:0,
+timer:null
+};
+
+}
+
+const data=
+rngClickData[id];
+
+data.count++;
+
+clearTimeout(data.timer);
+
+if(data.count===1){
+
+selectRNG(id);
+
+}
+
+if(data.count>=3){
+
+data.count=0;
+
+sellRNGById(id);
+
+return;
+
+}
+
+data.timer=
+setTimeout(()=>{
+
+data.count=0;
+
+},650);
+
+}
+);
 
 let rCount=0;
 let rTimer=null;
@@ -2565,10 +2663,10 @@ rCount=0;
 
 if(rCount>=2){
 
+rCount=0;
+
 window.location.href=
 "flashcard.html";
-
-rCount=0;
 
 }
 
@@ -2578,4 +2676,3 @@ rCount=0;
 
 </body>
 </html>
-```
