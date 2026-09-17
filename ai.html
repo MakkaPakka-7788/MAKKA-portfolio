@@ -78,6 +78,7 @@ height:8px;
 border-radius:50%;
 background:#f0a000;
 margin-right:9px;
+flex-shrink:0;
 }
 
 #chat{
@@ -253,24 +254,53 @@ opacity:1;
 }
 
 .errorBox{
-max-width:700px;
-margin:30px auto;
+max-width:760px;
+margin:45px auto;
 background:#fff5f5;
 border:1px solid #efcaca;
 border-radius:12px;
-padding:18px;
+padding:20px;
 color:#8b2b2b;
 line-height:1.6;
 }
 
+.errorTitle{
+font-size:18px;
+font-weight:700;
+}
+
+.errorLabel{
+font-weight:700;
+margin-top:16px;
+margin-bottom:6px;
+}
+
+.errorCode{
+white-space:pre-wrap;
+word-break:break-word;
+background:#fff;
+border:1px solid #e5caca;
+border-radius:8px;
+padding:12px;
+font-family:monospace;
+font-size:12px;
+color:#6b2020;
+overflow:auto;
+}
+
 .retryButton{
-margin-top:12px;
+margin-top:16px;
 padding:10px 15px;
 background:#1769e0;
 color:white;
 }
 
+.retryButton:hover{
+background:#125ac2;
+}
+
 @media(max-width:600px){
+
 header{
 padding:0 14px;
 }
@@ -290,6 +320,11 @@ font-size:28px;
 .bubble{
 max-width:88%;
 }
+
+.errorBox{
+margin:25px 10px;
+}
+
 }
 </style>
 </head>
@@ -297,29 +332,51 @@ max-width:88%;
 <body>
 
 <header>
-<div class="logo">Flashcard AI</div>
+
+<div class="logo">
+Flashcard AI
+</div>
 
 <div class="actions">
-<button class="headerButton" onclick="goHome()">HOME</button>
-<button class="headerButton" onclick="newChat()">NEW CHAT</button>
+
+<button class="headerButton" onclick="goHome()">
+HOME
+</button>
+
+<button class="headerButton" onclick="newChat()">
+NEW CHAT
+</button>
+
 </div>
+
 </header>
 
 <div id="statusBar">
+
 <div id="statusDot"></div>
-<div id="status">Starting AI...</div>
+
+<div id="status">
+Starting AI...
+</div>
+
 </div>
 
 <main id="chat">
+
 <div class="chatInner" id="chatInner">
 
 <div class="welcome" id="welcome">
-<h1>What can I help you with?</h1>
+
+<h1>
+What can I help you with?
+</h1>
+
 <p>
 Ask me questions, definitions, school topics, explanations, calculations, or just something you're curious about.
 </p>
 
 <div class="examples">
+
 <div class="example" onclick="useExample('What is photosynthesis?')">
 What is photosynthesis?
 </div>
@@ -335,37 +392,54 @@ What caused World War 1?
 <div class="example" onclick="useExample('What is a prime number?')">
 What is a prime number?
 </div>
-</div>
+
 </div>
 
 </div>
+
+</div>
+
 </main>
 
 <div class="composer">
+
 <div class="composerInner">
-<textarea id="input" placeholder="Ask Flashcard AI..." rows="1"></textarea>
-<button id="send" onclick="sendMessage()" disabled>SEND</button>
+
+<textarea
+id="input"
+placeholder="Ask Flashcard AI..."
+rows="1"
+></textarea>
+
+<button id="send" onclick="sendMessage()" disabled>
+SEND
+</button>
+
 </div>
+
 </div>
 
 <script type="module">
 
-import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+import {
+CreateMLCEngine
+} from "https://esm.run/@mlc-ai/web-llm";
 
-const MODEL = "Qwen3-0.6B-q4f16_1-MLC";
+const MODEL =
+"Qwen3-0.6B-q4f16_1-MLC";
 
 const SYSTEM_PROMPT = `
 You are Flashcard AI.
 
 You are friendly, smart, natural and helpful.
 
-Answer the user's question directly instead of giving unnecessary introductions.
+Answer the user's question directly.
 
 For definitions:
 Give a clear definition first, then a simple explanation or example when useful.
 
 For school questions:
-Explain things at an appropriate student level and make difficult ideas easy to understand.
+Explain difficult ideas in a simple way appropriate for a student.
 
 For calculations:
 Show the important working and then give the answer.
@@ -379,7 +453,7 @@ Do not pretend to have searched the internet.
 
 Do not invent sources, statistics, quotations or facts.
 
-If you are uncertain about something, say that you are uncertain rather than making something up.
+If you are uncertain, say that you are uncertain rather than making something up.
 
 Keep answers reasonably concise unless the user asks for more detail.
 
@@ -392,159 +466,354 @@ let ready = false;
 let loading = false;
 let rSequence = "";
 
-const status = document.getElementById("status");
-const statusDot = document.getElementById("statusDot");
-const sendButton = document.getElementById("send");
-const input = document.getElementById("input");
-const chatInner = document.getElementById("chatInner");
+const status =
+document.getElementById("status");
+
+const statusDot =
+document.getElementById("statusDot");
+
+const sendButton =
+document.getElementById("send");
+
+const input =
+document.getElementById("input");
+
+const chatInner =
+document.getElementById("chatInner");
 
 function setStatus(text, color){
+
 status.textContent = text;
+
 statusDot.style.background = color;
+
 }
 
-function addMessage(role, text){
-const welcome = document.getElementById("welcome");
+function escapeHTML(text){
+
+return String(text)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+function showError(title,error){
+
+const message =
+error?.message ||
+String(error) ||
+"Unknown error";
+
+console.error(
+"FLASHCARD AI ERROR:",
+error
+);
+
+setStatus(
+"AI FAILED TO LOAD",
+"#d14b4b"
+);
+
+chatInner.innerHTML = `
+
+<div class="errorBox">
+
+<div class="errorTitle">
+${escapeHTML(title)}
+</div>
+
+<div class="errorLabel">
+Exact error:
+</div>
+
+<div class="errorCode">
+${escapeHTML(message)}
+</div>
+
+<div class="errorLabel">
+Model:
+</div>
+
+<div class="errorCode">
+${escapeHTML(MODEL)}
+</div>
+
+<div class="errorLabel">
+What happened:
+</div>
+
+<div>
+The AI failed while starting the local WebLLM model.
+The exact error above should tell us what needs fixing.
+</div>
+
+<button
+class="retryButton"
+onclick="location.reload()"
+>
+TRY AGAIN
+</button>
+
+</div>
+
+`;
+
+loading = false;
+
+ready = false;
+
+sendButton.disabled = true;
+
+}
+
+function addMessage(role,text){
+
+const welcome =
+document.getElementById("welcome");
 
 if(welcome){
 welcome.remove();
 }
 
-const message = document.createElement("div");
-message.className = "message " + role;
+const message =
+document.createElement("div");
 
-const bubble = document.createElement("div");
-bubble.className = "bubble";
-bubble.textContent = text;
+message.className =
+"message " + role;
+
+const bubble =
+document.createElement("div");
+
+bubble.className =
+"bubble";
+
+bubble.textContent =
+text;
 
 message.appendChild(bubble);
+
 chatInner.appendChild(message);
 
-document.getElementById("chat").scrollTop =
-document.getElementById("chat").scrollHeight;
+const chat =
+document.getElementById("chat");
+
+chat.scrollTop =
+chat.scrollHeight;
+
 }
 
 function addLoading(){
-const message = document.createElement("div");
-message.className = "message ai";
-message.id = "loadingMessage";
+
+const message =
+document.createElement("div");
+
+message.className =
+"message ai";
+
+message.id =
+"loadingMessage";
 
 message.innerHTML = `
+
 <div class="bubble">
+
 <div class="loading">
+
 <div class="dots">
+
 <div class="dot"></div>
+
 <div class="dot"></div>
+
 <div class="dot"></div>
+
 </div>
+
 Thinking...
+
 </div>
+
 </div>
+
 `;
 
 chatInner.appendChild(message);
 
-document.getElementById("chat").scrollTop =
-document.getElementById("chat").scrollHeight;
+const chat =
+document.getElementById("chat");
+
+chat.scrollTop =
+chat.scrollHeight;
+
 }
 
 function removeLoading(){
-const element = document.getElementById("loadingMessage");
+
+const element =
+document.getElementById("loadingMessage");
 
 if(element){
 element.remove();
 }
+
 }
 
 async function startAI(){
 
 loading = true;
+
+ready = false;
+
 sendButton.disabled = true;
-
-if(!navigator.gpu){
-
-setStatus("WebGPU is not available in this browser", "#d14b4b");
-
-chatInner.innerHTML = `
-<div class="errorBox">
-<strong>AI couldn't start.</strong><br><br>
-This browser does not currently provide WebGPU, which WebLLM needs to run the AI directly on your computer.
-<br><br>
-Try the latest Chrome or Edge on a computer with WebGPU support.
-<br><br>
-<button class="retryButton" onclick="location.reload()">TRY AGAIN</button>
-</div>
-`;
-
-loading = false;
-return;
-}
 
 try{
 
-setStatus("Checking your graphics system...", "#f0a000");
-
-const adapter = await navigator.gpu.requestAdapter();
-
-if(!adapter){
-
-throw new Error("No compatible graphics adapter was found.");
-}
-
-setStatus("Downloading AI model for the first time...", "#f0a000");
-
-engine = await CreateMLCEngine(MODEL, {
-initProgressCallback: (progress) => {
-
-let text = progress.text || "";
-
-if(progress.progress !== undefined){
-
-const percent = Math.round(progress.progress * 100);
-
 setStatus(
-"Loading AI model: " + percent + "%",
+"STEP 1/5 — Checking browser...",
 "#f0a000"
 );
 
-}else if(text){
+await new Promise(
+resolve => setTimeout(resolve,300)
+);
 
-setStatus(text, "#f0a000");
+if(!window.isSecureContext){
+
+throw new Error(
+"WebGPU requires a secure HTTPS connection. Make sure you are opening your GitHub Pages website using https://."
+);
+
+}
+
+setStatus(
+"STEP 2/5 — Checking WebGPU...",
+"#f0a000"
+);
+
+if(!navigator.gpu){
+
+throw new Error(
+"WebGPU is NOT available in this browser. Try the latest version of Google Chrome or Microsoft Edge."
+);
+
+}
+
+setStatus(
+"STEP 3/5 — Checking graphics adapter...",
+"#f0a000"
+);
+
+const adapter =
+await navigator.gpu.requestAdapter();
+
+if(!adapter){
+
+throw new Error(
+"WebGPU exists, but no compatible graphics adapter was found."
+);
+
+}
+
+console.log(
+"WebGPU adapter:",
+adapter
+);
+
+setStatus(
+"STEP 4/5 — Starting WebLLM...",
+"#f0a000"
+);
+
+await new Promise(
+resolve => setTimeout(resolve,300)
+);
+
+console.log(
+"WebLLM model:",
+MODEL
+);
+
+setStatus(
+"STEP 5/5 — Loading AI model...",
+"#f0a000"
+);
+
+engine =
+await CreateMLCEngine(
+MODEL,
+{
+
+initProgressCallback:
+(progress) => {
+
+console.log(
+"AI MODEL PROGRESS:",
+progress
+);
+
+if(
+progress.progress !== undefined
+){
+
+const percent =
+Math.round(
+progress.progress * 100
+);
+
+setStatus(
+"Downloading AI model: " +
+percent +
+"%",
+"#f0a000"
+);
+
+}
+
+else if(progress.text){
+
+setStatus(
+progress.text,
+"#f0a000"
+);
+
 }
 
 }
-});
+
+}
+);
 
 ready = true;
+
 loading = false;
 
-setStatus("AI ready", "#2e9b62");
+setStatus(
+"AI READY ✓",
+"#2e9b62"
+);
+
 sendButton.disabled = false;
+
 input.focus();
 
-}catch(error){
+console.log(
+"FLASHCARD AI READY"
+);
 
-console.error(error);
-
-ready = false;
-loading = false;
-sendButton.disabled = true;
-
-setStatus("AI could not start", "#d14b4b");
-
-chatInner.innerHTML = `
-<div class="errorBox">
-<strong>AI couldn't start.</strong><br><br>
-${escapeHTML(error.message || "Unknown error")}
-<br><br>
-The first startup can take a while because the AI model has to download.
-<br><br>
-Make sure you're using a recent Chrome or Edge browser and have enough free storage.
-<br><br>
-<button class="retryButton" onclick="location.reload()">TRY AGAIN</button>
-</div>
-`;
 }
+
+catch(error){
+
+showError(
+"Flashcard AI could not start.",
+error
+);
+
+}
+
 }
 
 async function sendMessage(){
@@ -553,16 +822,22 @@ if(!ready || loading){
 return;
 }
 
-const text = input.value.trim();
+const text =
+input.value.trim();
 
 if(!text){
 return;
 }
 
 input.value = "";
-input.style.height = "44px";
 
-addMessage("user", text);
+input.style.height =
+"44px";
+
+addMessage(
+"user",
+text
+);
 
 conversation.push({
 role:"user",
@@ -575,7 +850,9 @@ sendButton.disabled = true;
 
 try{
 
-const response = await engine.chat.completions.create({
+const response =
+await engine.chat.completions.create({
+
 messages:[
 {
 role:"system",
@@ -583,27 +860,44 @@ content:SYSTEM_PROMPT
 },
 ...conversation
 ],
+
 temperature:0.7,
+
 top_p:0.9,
+
 max_tokens:600
+
 });
 
 const answer =
-response.choices?.[0]?.message?.content?.trim() ||
+response
+.choices?.[0]
+?.message
+?.content
+?.trim()
+||
 "I couldn't generate an answer.";
 
 removeLoading();
 
-addMessage("ai", answer);
+addMessage(
+"ai",
+answer
+);
 
 conversation.push({
 role:"assistant",
 content:answer
 });
 
-}catch(error){
+}
 
-console.error(error);
+catch(error){
+
+console.error(
+"AI RESPONSE ERROR:",
+error
+);
 
 removeLoading();
 
@@ -612,27 +906,37 @@ addMessage(
 "Sorry, I couldn't generate an answer. Try asking again."
 );
 
-}finally{
-
-sendButton.disabled = false;
-input.focus();
 }
+
+finally{
+
+sendButton.disabled =
+false;
+
+input.focus();
+
+}
+
 }
 
 function newChat(){
 
-conversation = "";
-
 conversation = [];
 
 chatInner.innerHTML = `
+
 <div class="welcome" id="welcome">
-<h1>What can I help you with?</h1>
+
+<h1>
+What can I help you with?
+</h1>
+
 <p>
 Ask me questions, definitions, school topics, explanations, calculations, or just something you're curious about.
 </p>
 
 <div class="examples">
+
 <div class="example" onclick="useExample('What is photosynthesis?')">
 What is photosynthesis?
 </div>
@@ -648,83 +952,133 @@ What caused World War 1?
 <div class="example" onclick="useExample('What is a prime number?')">
 What is a prime number?
 </div>
+
 </div>
+
 </div>
+
 `;
 
 input.value = "";
+
 input.focus();
+
 }
 
 function useExample(text){
 
-input.value = text;
+input.value =
+text;
+
 input.focus();
+
 sendMessage();
+
 }
 
 function goHome(){
 
-window.location.href = "index.html?games=true";
+window.location.href =
+"index.html?games=true";
+
 }
 
-function escapeHTML(text){
+input.addEventListener(
+"input",
+function(){
 
-return String(text)
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
-}
-
-input.addEventListener("input", function(){
-
-this.style.height = "auto";
 this.style.height =
-Math.min(this.scrollHeight,130) + "px";
+"auto";
 
-});
+this.style.height =
+Math.min(
+this.scrollHeight,
+130
+) + "px";
 
-input.addEventListener("keydown", function(event){
+}
+);
 
-if(event.key === "Enter" && !event.shiftKey){
+input.addEventListener(
+"keydown",
+function(event){
+
+if(
+event.key === "Enter" &&
+!event.shiftKey
+){
 
 event.preventDefault();
+
 sendMessage();
 
 }
-});
 
-document.addEventListener("keydown", function(event){
-
-if(event.key.toLowerCase() !== "r"){
-return;
 }
+);
+
+document.addEventListener(
+"keydown",
+function(event){
+
+if(
+event.target.tagName === "TEXTAREA" &&
+event.key.toLowerCase() === "r"
+){
 
 rSequence += "r";
 
-if(rSequence === "rrr"){
+}else if(
+event.key.toLowerCase() === "r"
+){
 
-rSequence = "";
+rSequence += "r";
 
-window.location.href = "index.html?games=true";
+}else{
 
 return;
+
 }
 
-clearTimeout(window.rTimer);
+if(
+rSequence === "rrr"
+){
 
-window.rTimer = setTimeout(() => {
 rSequence = "";
-},700);
 
-});
+window.location.href =
+"index.html?games=true";
 
-window.sendMessage = sendMessage;
-window.newChat = newChat;
-window.useExample = useExample;
-window.goHome = goHome;
+return;
+
+}
+
+clearTimeout(
+window.rTimer
+);
+
+window.rTimer =
+setTimeout(
+() => {
+rSequence = "";
+},
+700
+);
+
+}
+);
+
+window.sendMessage =
+sendMessage;
+
+window.newChat =
+newChat;
+
+window.useExample =
+useExample;
+
+window.goHome =
+goHome;
 
 startAI();
 
