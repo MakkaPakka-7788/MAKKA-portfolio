@@ -1,4 +1,3 @@
-````html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,260 +7,289 @@
 
 <style>
 *{
-    box-sizing:border-box;
+box-sizing:border-box;
 }
 
 body{
-    margin:0;
-    background:#f5f7fb;
-    color:#172033;
-    font-family:Arial,Helvetica,sans-serif;
-    height:100vh;
-    overflow:hidden;
+margin:0;
+background:#f5f8fc;
+color:#172033;
+font-family:Arial,Helvetica,sans-serif;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
 
 header{
-    height:64px;
-    background:white;
-    border-bottom:1px solid #e1e5ec;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 22px;
+height:64px;
+background:white;
+border-bottom:1px solid #dce3ed;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 24px;
+flex-shrink:0;
 }
 
 .logo{
-    font-size:22px;
-    font-weight:700;
-    color:#2563eb;
+font-size:22px;
+font-weight:700;
+color:#1769e0;
 }
 
-.newChat{
-    border:0;
-    background:#2563eb;
-    color:white;
-    padding:10px 16px;
-    border-radius:9px;
-    font-size:14px;
-    cursor:pointer;
+.actions{
+display:flex;
+gap:10px;
 }
 
-.newChat:hover{
-    background:#1d4ed8;
+button{
+border:0;
+border-radius:8px;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
 }
 
-main{
-    height:calc(100vh - 64px);
-    display:flex;
-    flex-direction:column;
+.headerButton{
+padding:10px 15px;
+background:#eef4fc;
+color:#1769e0;
 }
 
-#messages{
-    flex:1;
-    overflow-y:auto;
-    padding:35px 20px 120px;
+.headerButton:hover{
+background:#e1ecfa;
 }
 
-.message{
-    max-width:850px;
-    margin:0 auto 24px;
+#statusBar{
+height:42px;
+background:#eef5ff;
+border-bottom:1px solid #d8e6fa;
+display:flex;
+align-items:center;
+padding:0 24px;
+font-size:13px;
+color:#41607f;
+flex-shrink:0;
 }
 
-.user{
-    display:flex;
-    justify-content:flex-end;
+#statusDot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#f0a000;
+margin-right:9px;
 }
 
-.user .bubble{
-    background:#2563eb;
-    color:white;
-    border-radius:18px 18px 4px 18px;
-    padding:13px 17px;
-    max-width:75%;
-    line-height:1.5;
+#chat{
+flex:1;
+overflow-y:auto;
+padding:30px 20px 140px;
 }
 
-.ai{
-    display:flex;
-    justify-content:flex-start;
-}
-
-.ai .bubble{
-    background:white;
-    border:1px solid #e2e7ef;
-    border-radius:18px 18px 18px 4px;
-    padding:16px 18px;
-    max-width:85%;
-    line-height:1.6;
-    box-shadow:0 2px 8px rgba(0,0,0,.03);
+.chatInner{
+max-width:850px;
+margin:auto;
 }
 
 .welcome{
-    max-width:850px;
-    margin:90px auto 0;
-    text-align:center;
+text-align:center;
+padding:70px 20px 30px;
 }
 
 .welcome h1{
-    font-size:34px;
-    margin-bottom:10px;
+margin:0 0 12px;
+font-size:34px;
+color:#172033;
 }
 
 .welcome p{
-    color:#667085;
-    font-size:16px;
+margin:0 auto 28px;
+max-width:600px;
+color:#66758a;
+line-height:1.6;
 }
 
 .examples{
-    display:flex;
-    gap:10px;
-    justify-content:center;
-    flex-wrap:wrap;
-    margin-top:25px;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
 }
 
 .example{
-    background:white;
-    border:1px solid #dfe4ec;
-    border-radius:10px;
-    padding:11px 14px;
-    cursor:pointer;
-    color:#344054;
+background:white;
+border:1px solid #dce3ed;
+padding:11px 15px;
+border-radius:20px;
+color:#3d4e66;
+cursor:pointer;
+transition:.15s;
 }
 
 .example:hover{
-    border-color:#2563eb;
-    color:#2563eb;
+border-color:#8bb5eb;
+background:#f8fbff;
+}
+
+.message{
+display:flex;
+margin:0 auto 20px;
+max-width:850px;
+}
+
+.message.user{
+justify-content:flex-end;
+}
+
+.bubble{
+max-width:78%;
+padding:13px 16px;
+border-radius:15px;
+line-height:1.55;
+white-space:pre-wrap;
+word-wrap:break-word;
+}
+
+.message.ai .bubble{
+background:white;
+border:1px solid #dce3ed;
+color:#172033;
+}
+
+.message.user .bubble{
+background:#1769e0;
+color:white;
 }
 
 .composer{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    background:linear-gradient(transparent,#f5f7fb 25%);
-    padding:28px 20px 18px;
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:rgba(245,248,252,.96);
+border-top:1px solid #dce3ed;
+padding:15px 20px 18px;
 }
 
-.inputBox{
-    max-width:850px;
-    margin:auto;
-    background:white;
-    border:1px solid #d9dee8;
-    border-radius:15px;
-    display:flex;
-    align-items:flex-end;
-    padding:8px;
-    box-shadow:0 5px 20px rgba(0,0,0,.06);
+.composerInner{
+max-width:850px;
+margin:auto;
+display:flex;
+gap:10px;
+background:white;
+border:1px solid #cfd9e7;
+border-radius:13px;
+padding:8px;
+box-shadow:0 4px 18px rgba(30,60,100,.06);
 }
 
 textarea{
-    flex:1;
-    border:0;
-    outline:0;
-    resize:none;
-    min-height:42px;
-    max-height:150px;
-    padding:11px 12px;
-    font:inherit;
-    color:#172033;
+flex:1;
+border:0;
+outline:0;
+resize:none;
+font-family:Arial,Helvetica,sans-serif;
+font-size:15px;
+line-height:1.5;
+padding:8px;
+min-height:44px;
+max-height:130px;
+color:#172033;
 }
 
-.send{
-    width:42px;
-    height:42px;
-    border:0;
-    border-radius:10px;
-    background:#2563eb;
-    color:white;
-    cursor:pointer;
-    font-size:18px;
+#send{
+width:82px;
+background:#1769e0;
+color:white;
 }
 
-.send:hover{
-    background:#1d4ed8;
+#send:hover{
+background:#125ac2;
 }
 
-.send:disabled{
-    opacity:.5;
-    cursor:not-allowed;
+#send:disabled{
+background:#aebbd0;
+cursor:not-allowed;
 }
 
-.status{
-    max-width:850px;
-    margin:7px auto 0;
-    font-size:12px;
-    color:#667085;
-    text-align:center;
+.loading{
+display:flex;
+align-items:center;
+gap:8px;
+color:#66758a;
+font-size:14px;
 }
 
-.typing{
-    display:flex;
-    gap:5px;
-    padding:4px 0;
+.dots{
+display:flex;
+gap:4px;
 }
 
-.typing span{
-    width:7px;
-    height:7px;
-    background:#98a2b3;
-    border-radius:50%;
-    animation:bounce 1.2s infinite;
+.dot{
+width:6px;
+height:6px;
+border-radius:50%;
+background:#7f91a8;
+animation:bounce 1s infinite;
 }
 
-.typing span:nth-child(2){
-    animation-delay:.15s;
+.dot:nth-child(2){
+animation-delay:.15s;
 }
 
-.typing span:nth-child(3){
-    animation-delay:.3s;
+.dot:nth-child(3){
+animation-delay:.3s;
 }
 
 @keyframes bounce{
-    0%,60%,100%{
-        transform:translateY(0);
-    }
-    30%{
-        transform:translateY(-5px);
-    }
+0%,100%{
+transform:translateY(0);
+opacity:.4;
+}
+50%{
+transform:translateY(-4px);
+opacity:1;
+}
 }
 
-code{
-    background:#eef2f7;
-    padding:2px 5px;
-    border-radius:5px;
+.errorBox{
+max-width:700px;
+margin:30px auto;
+background:#fff5f5;
+border:1px solid #efcaca;
+border-radius:12px;
+padding:18px;
+color:#8b2b2b;
+line-height:1.6;
 }
 
-pre{
-    background:#111827;
-    color:#f9fafb;
-    padding:14px;
-    border-radius:9px;
-    overflow:auto;
+.retryButton{
+margin-top:12px;
+padding:10px 15px;
+background:#1769e0;
+color:white;
 }
 
-@media(max-width:650px){
-    header{
-        padding:0 14px;
-    }
+@media(max-width:600px){
+header{
+padding:0 14px;
+}
 
-    #messages{
-        padding-left:12px;
-        padding-right:12px;
-    }
+.logo{
+font-size:18px;
+}
 
-    .welcome{
-        margin-top:50px;
-    }
+.headerButton{
+padding:8px 10px;
+}
 
-    .welcome h1{
-        font-size:28px;
-    }
+.welcome h1{
+font-size:28px;
+}
 
-    .user .bubble,
-    .ai .bubble{
-        max-width:90%;
-    }
+.bubble{
+max-width:88%;
+}
 }
 </style>
 </head>
@@ -269,352 +297,438 @@ pre{
 <body>
 
 <header>
-    <div class="logo">Flashcard AI</div>
-    <button class="newChat" onclick="newChat()">New chat</button>
+<div class="logo">Flashcard AI</div>
+
+<div class="actions">
+<button class="headerButton" onclick="goHome()">HOME</button>
+<button class="headerButton" onclick="newChat()">NEW CHAT</button>
+</div>
 </header>
 
-<main>
+<div id="statusBar">
+<div id="statusDot"></div>
+<div id="status">Starting AI...</div>
+</div>
 
-<div id="messages">
+<main id="chat">
+<div class="chatInner" id="chatInner">
 
-    <div class="welcome" id="welcome">
-        <h1>What do you want to know?</h1>
-        <p>Ask a question, get a definition, or ask for an explanation.</p>
+<div class="welcome" id="welcome">
+<h1>What can I help you with?</h1>
+<p>
+Ask me questions, definitions, school topics, explanations, calculations, or just something you're curious about.
+</p>
 
-        <div class="examples">
-            <button class="example" onclick="exampleQuestion('What is photosynthesis?')">
-                What is photosynthesis?
-            </button>
+<div class="examples">
+<div class="example" onclick="useExample('What is photosynthesis?')">
+What is photosynthesis?
+</div>
 
-            <button class="example" onclick="exampleQuestion('Define gravity')">
-                Define gravity
-            </button>
+<div class="example" onclick="useExample('Explain gravity simply')">
+Explain gravity simply
+</div>
 
-            <button class="example" onclick="exampleQuestion('Why does the Moon orbit Earth?')">
-                Why does the Moon orbit Earth?
-            </button>
-        </div>
-    </div>
+<div class="example" onclick="useExample('What caused World War 1?')">
+What caused World War 1?
+</div>
+
+<div class="example" onclick="useExample('What is a prime number?')">
+What is a prime number?
+</div>
+</div>
+</div>
 
 </div>
+</main>
 
 <div class="composer">
-    <div class="inputBox">
-        <textarea id="input" placeholder="Ask anything..." rows="1"></textarea>
-        <button class="send" id="send" onclick="sendMessage()">➤</button>
-    </div>
-    <div class="status" id="status">AI runs locally in your browser</div>
+<div class="composerInner">
+<textarea id="input" placeholder="Ask Flashcard AI..." rows="1"></textarea>
+<button id="send" onclick="sendMessage()" disabled>SEND</button>
 </div>
-
-</main>
+</div>
 
 <script type="module">
 
-import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+
+const MODEL = "Qwen3-0.6B-q4f16_1-MLC";
+
+const SYSTEM_PROMPT = `
+You are Flashcard AI.
+
+You are friendly, smart, natural and helpful.
+
+Answer the user's question directly instead of giving unnecessary introductions.
+
+For definitions:
+Give a clear definition first, then a simple explanation or example when useful.
+
+For school questions:
+Explain things at an appropriate student level and make difficult ideas easy to understand.
+
+For calculations:
+Show the important working and then give the answer.
+
+For normal conversation:
+Be natural and conversational.
+
+Do not constantly say "Sure", "Of course", or "Absolutely".
+
+Do not pretend to have searched the internet.
+
+Do not invent sources, statistics, quotations or facts.
+
+If you are uncertain about something, say that you are uncertain rather than making something up.
+
+Keep answers reasonably concise unless the user asks for more detail.
+
+Use headings, bullet points or short paragraphs when they make an answer easier to understand.
+`;
 
 let engine = null;
+let conversation = [];
+let ready = false;
 let loading = false;
+let rSequence = "";
 
-const messages = document.getElementById("messages");
-const input = document.getElementById("input");
-const send = document.getElementById("send");
 const status = document.getElementById("status");
+const statusDot = document.getElementById("statusDot");
+const sendButton = document.getElementById("send");
+const input = document.getElementById("input");
+const chatInner = document.getElementById("chatInner");
 
-const MODEL = "Llama-3.2-3B-Instruct-q4f16_1-MLC";
-
-async function loadAI(){
-
-    if(engine) return engine;
-
-    if(loading) return null;
-
-    loading = true;
-    send.disabled = true;
-    status.textContent = "Loading AI model...";
-
-    try{
-
-        engine = await webllm.CreateMLCEngine(MODEL, {
-            initProgressCallback: (progress) => {
-
-                if(progress && progress.text){
-                    status.textContent = progress.text;
-                }
-            }
-        });
-
-        status.textContent = "AI ready";
-
-        send.disabled = false;
-
-        return engine;
-
-    }catch(error){
-
-        console.error(error);
-
-        status.textContent =
-            "This browser may not support the required AI features.";
-
-        loading = false;
-
-        return null;
-    }
+function setStatus(text, color){
+status.textContent = text;
+statusDot.style.background = color;
 }
 
-async function answer(question){
+function addMessage(role, text){
+const welcome = document.getElementById("welcome");
 
-    const ai = await loadAI();
-
-    if(!ai){
-
-        return "The AI could not start. Try using a recent version of Chrome or Edge with WebGPU enabled.";
-    }
-
-    const response = await ai.chat.completions.create({
-
-        messages:[
-
-            {
-                role:"system",
-                content:
-                `You are a helpful educational AI.
-
-Answer questions accurately and directly.
-
-Rules:
-- Give the answer first.
-- Keep answers concise unless more detail is needed.
-- For definitions, give a clear definition followed by a short explanation or example.
-- For school questions, explain the idea in simple language.
-- Do not make up facts.
-- If you are unsure, clearly say that you are unsure.
-- Do not pretend to have searched the internet.
-- For calculations, show the important steps.
-- Use headings or bullet points when they make the answer clearer.`
-            },
-
-            {
-                role:"user",
-                content:question
-            }
-
-        ],
-
-        temperature:0.2,
-        max_tokens:700
-    });
-
-    return response.choices[0].message.content;
+if(welcome){
+welcome.remove();
 }
 
-function addMessage(text,type){
+const message = document.createElement("div");
+message.className = "message " + role;
 
-    const message = document.createElement("div");
-    message.className = "message " + type;
+const bubble = document.createElement("div");
+bubble.className = "bubble";
+bubble.textContent = text;
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
+message.appendChild(bubble);
+chatInner.appendChild(message);
 
-    bubble.innerHTML = formatText(text);
-
-    message.appendChild(bubble);
-    messages.appendChild(message);
-
-    messages.scrollTop = messages.scrollHeight;
-
-    return message;
+document.getElementById("chat").scrollTop =
+document.getElementById("chat").scrollHeight;
 }
 
-function formatText(text){
+function addLoading(){
+const message = document.createElement("div");
+message.className = "message ai";
+message.id = "loadingMessage";
 
-    text = escapeHTML(text);
+message.innerHTML = `
+<div class="bubble">
+<div class="loading">
+<div class="dots">
+<div class="dot"></div>
+<div class="dot"></div>
+<div class="dot"></div>
+</div>
+Thinking...
+</div>
+</div>
+`;
 
-    text = text.replace(
-        /```([\s\S]*?)```/g,
-        "<pre>$1</pre>"
-    );
+chatInner.appendChild(message);
 
-    text = text.replace(
-        /`([^`]+)`/g,
-        "<code>$1</code>"
-    );
+document.getElementById("chat").scrollTop =
+document.getElementById("chat").scrollHeight;
+}
 
-    text = text.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-    );
+function removeLoading(){
+const element = document.getElementById("loadingMessage");
 
-    text = text.replace(
-        /\n/g,
-        "<br>"
-    );
+if(element){
+element.remove();
+}
+}
 
-    return text;
+async function startAI(){
+
+loading = true;
+sendButton.disabled = true;
+
+if(!navigator.gpu){
+
+setStatus("WebGPU is not available in this browser", "#d14b4b");
+
+chatInner.innerHTML = `
+<div class="errorBox">
+<strong>AI couldn't start.</strong><br><br>
+This browser does not currently provide WebGPU, which WebLLM needs to run the AI directly on your computer.
+<br><br>
+Try the latest Chrome or Edge on a computer with WebGPU support.
+<br><br>
+<button class="retryButton" onclick="location.reload()">TRY AGAIN</button>
+</div>
+`;
+
+loading = false;
+return;
+}
+
+try{
+
+setStatus("Checking your graphics system...", "#f0a000");
+
+const adapter = await navigator.gpu.requestAdapter();
+
+if(!adapter){
+
+throw new Error("No compatible graphics adapter was found.");
+}
+
+setStatus("Downloading AI model for the first time...", "#f0a000");
+
+engine = await CreateMLCEngine(MODEL, {
+initProgressCallback: (progress) => {
+
+let text = progress.text || "";
+
+if(progress.progress !== undefined){
+
+const percent = Math.round(progress.progress * 100);
+
+setStatus(
+"Loading AI model: " + percent + "%",
+"#f0a000"
+);
+
+}else if(text){
+
+setStatus(text, "#f0a000");
+}
+
+}
+});
+
+ready = true;
+loading = false;
+
+setStatus("AI ready", "#2e9b62");
+sendButton.disabled = false;
+input.focus();
+
+}catch(error){
+
+console.error(error);
+
+ready = false;
+loading = false;
+sendButton.disabled = true;
+
+setStatus("AI could not start", "#d14b4b");
+
+chatInner.innerHTML = `
+<div class="errorBox">
+<strong>AI couldn't start.</strong><br><br>
+${escapeHTML(error.message || "Unknown error")}
+<br><br>
+The first startup can take a while because the AI model has to download.
+<br><br>
+Make sure you're using a recent Chrome or Edge browser and have enough free storage.
+<br><br>
+<button class="retryButton" onclick="location.reload()">TRY AGAIN</button>
+</div>
+`;
+}
+}
+
+async function sendMessage(){
+
+if(!ready || loading){
+return;
+}
+
+const text = input.value.trim();
+
+if(!text){
+return;
+}
+
+input.value = "";
+input.style.height = "44px";
+
+addMessage("user", text);
+
+conversation.push({
+role:"user",
+content:text
+});
+
+addLoading();
+
+sendButton.disabled = true;
+
+try{
+
+const response = await engine.chat.completions.create({
+messages:[
+{
+role:"system",
+content:SYSTEM_PROMPT
+},
+...conversation
+],
+temperature:0.7,
+top_p:0.9,
+max_tokens:600
+});
+
+const answer =
+response.choices?.[0]?.message?.content?.trim() ||
+"I couldn't generate an answer.";
+
+removeLoading();
+
+addMessage("ai", answer);
+
+conversation.push({
+role:"assistant",
+content:answer
+});
+
+}catch(error){
+
+console.error(error);
+
+removeLoading();
+
+addMessage(
+"ai",
+"Sorry, I couldn't generate an answer. Try asking again."
+);
+
+}finally{
+
+sendButton.disabled = false;
+input.focus();
+}
+}
+
+function newChat(){
+
+conversation = "";
+
+conversation = [];
+
+chatInner.innerHTML = `
+<div class="welcome" id="welcome">
+<h1>What can I help you with?</h1>
+<p>
+Ask me questions, definitions, school topics, explanations, calculations, or just something you're curious about.
+</p>
+
+<div class="examples">
+<div class="example" onclick="useExample('What is photosynthesis?')">
+What is photosynthesis?
+</div>
+
+<div class="example" onclick="useExample('Explain gravity simply')">
+Explain gravity simply
+</div>
+
+<div class="example" onclick="useExample('What caused World War 1?')">
+What caused World War 1?
+</div>
+
+<div class="example" onclick="useExample('What is a prime number?')">
+What is a prime number?
+</div>
+</div>
+</div>
+`;
+
+input.value = "";
+input.focus();
+}
+
+function useExample(text){
+
+input.value = text;
+input.focus();
+sendMessage();
+}
+
+function goHome(){
+
+window.location.href = "index.html?games=true";
 }
 
 function escapeHTML(text){
 
-    return text
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+return String(text)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 }
 
-function showTyping(){
+input.addEventListener("input", function(){
 
-    const message = document.createElement("div");
-    message.className = "message ai";
-    message.id = "typingMessage";
-
-    message.innerHTML = `
-        <div class="bubble">
-            <div class="typing">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    `;
-
-    messages.appendChild(message);
-
-    messages.scrollTop = messages.scrollHeight;
-}
-
-function removeTyping(){
-
-    const typing = document.getElementById("typingMessage");
-
-    if(typing){
-        typing.remove();
-    }
-}
-
-window.sendMessage = async function(){
-
-    const question = input.value.trim();
-
-    if(!question || loading){
-        return;
-    }
-
-    const welcome = document.getElementById("welcome");
-
-    if(welcome){
-        welcome.remove();
-    }
-
-    addMessage(question,"user");
-
-    input.value = "";
-    input.style.height = "42px";
-
-    send.disabled = true;
-
-    showTyping();
-
-    status.textContent = "Thinking...";
-
-    try{
-
-        const result = await answer(question);
-
-        removeTyping();
-
-        addMessage(result,"ai");
-
-        status.textContent = "AI ready";
-
-    }catch(error){
-
-        console.error(error);
-
-        removeTyping();
-
-        addMessage(
-            "Something went wrong while generating the answer. Try asking again.",
-            "ai"
-        );
-
-        status.textContent = "AI ready";
-    }
-
-    send.disabled = false;
-
-};
-
-window.exampleQuestion = function(question){
-
-    input.value = question;
-
-    sendMessage();
-
-};
-
-window.newChat = function(){
-
-    messages.innerHTML = `
-        <div class="welcome" id="welcome">
-            <h1>What do you want to know?</h1>
-            <p>Ask a question, get a definition, or ask for an explanation.</p>
-
-            <div class="examples">
-                <button class="example" onclick="exampleQuestion('What is photosynthesis?')">
-                    What is photosynthesis?
-                </button>
-
-                <button class="example" onclick="exampleQuestion('Define gravity')">
-                    Define gravity
-                </button>
-
-                <button class="example" onclick="exampleQuestion('Why does the Moon orbit Earth?')">
-                    Why does the Moon orbit Earth?
-                </button>
-            </div>
-        </div>
-    `;
-
-    status.textContent = engine ? "AI ready" : "AI runs locally in your browser";
-
-};
-
-input.addEventListener("keydown",(event)=>{
-
-    if(event.key === "Enter" && !event.shiftKey){
-
-        event.preventDefault();
-        sendMessage();
-
-    }
+this.style.height = "auto";
+this.style.height =
+Math.min(this.scrollHeight,130) + "px";
 
 });
 
-input.addEventListener("input",()=>{
+input.addEventListener("keydown", function(event){
 
-    input.style.height = "42px";
+if(event.key === "Enter" && !event.shiftKey){
 
-    input.style.height =
-        Math.min(input.scrollHeight,150) + "px";
+event.preventDefault();
+sendMessage();
+
+}
+});
+
+document.addEventListener("keydown", function(event){
+
+if(event.key.toLowerCase() !== "r"){
+return;
+}
+
+rSequence += "r";
+
+if(rSequence === "rrr"){
+
+rSequence = "";
+
+window.location.href = "index.html?games=true";
+
+return;
+}
+
+clearTimeout(window.rTimer);
+
+window.rTimer = setTimeout(() => {
+rSequence = "";
+},700);
 
 });
 
-document.addEventListener("keydown",(event)=>{
+window.sendMessage = sendMessage;
+window.newChat = newChat;
+window.useExample = useExample;
+window.goHome = goHome;
 
-    if(
-        event.key.toLowerCase() === "r" &&
-        event.ctrlKey
-    ){
-        window.location.href = "index.html";
-    }
-
-});
+startAI();
 
 </script>
 
 </body>
 </html>
-````
-
