@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>KINGDOM WAR</title>
+<title>Kingdom War</title>
 <style>
 *{box-sizing:border-box}
 body{
@@ -11,216 +11,312 @@ margin:0;
 background:#080808;
 color:#eee;
 font-family:"Courier New",monospace;
-overflow-x:auto
+overflow:hidden;
 }
 #stats{
-width:1150px;
-margin:10px auto 5px;
+height:42px;
 background:#111;
-border:2px solid #333;
-padding:8px;
+border-bottom:2px solid #333;
 display:flex;
+align-items:center;
 gap:18px;
+padding:0 14px;
 font-size:14px;
-font-weight:bold
+white-space:nowrap;
 }
 #gameWrap{
-width:1150px;
-margin:auto;
-background:#0d0d0d;
-border:2px solid #333;
-padding:7px
-}
-#mapBox{
-width:1130px;
-height:630px;
-border:3px solid #444;
-background:#050505;
+width:100vw;
+height:calc(100vh - 42px);
+position:relative;
 overflow:hidden;
-position:relative
-}
-#game{
-display:block;
-width:1124px;
-height:624px;
-cursor:grab;
-user-select:none;
-touch-action:none
-}
-#game.dragging{
-cursor:grabbing
-}
-#towerInfo{
-height:105px;
 background:#111;
-border:2px solid #333;
-margin-top:7px;
-padding:8px;
-font-size:13px;
-line-height:18px;
-overflow:hidden
 }
+canvas{
+display:block;
+background:#151515;
+cursor:grab;
+}
+canvas.dragging{cursor:grabbing}
+#towerInfo{
+position:absolute;
+right:10px;
+top:10px;
+width:225px;
+background:#111;
+border:2px solid #444;
+padding:10px;
+font-size:12px;
+z-index:5;
+}
+#towerInfo h3{
+margin:0 0 8px;
+font-size:15px;
+}
+#towerInfo div{margin:4px 0}
 .toolbar{
-background:#101010;
-border:2px solid #333;
-padding:6px;
-margin-top:7px
-}
-#towerbar,#zonebar,#troopbar{
-display:grid;
-gap:4px
+position:absolute;
+left:10px;
+bottom:10px;
+background:#111;
+border:2px solid #444;
+padding:8px;
+z-index:5;
 }
 #towerbar{
-grid-template-columns:repeat(10,1fr)
-}
-#zonebar{
-grid-template-columns:repeat(8,1fr);
-margin-top:5px
-}
-#troopbar{
-grid-template-columns:repeat(7,1fr);
-margin-top:5px
+display:grid;
+grid-template-columns:repeat(10,74px);
+gap:5px;
 }
 button{
-background:#191919;
-border:2px solid #444;
-color:#eee;
 font-family:"Courier New",monospace;
-font-weight:bold;
+background:#181818;
+color:#eee;
+border:2px solid #444;
+padding:6px;
+cursor:pointer;
 font-size:11px;
-padding:7px 3px;
-cursor:pointer
 }
 button:hover{
 background:#292929;
-border-color:#777
+border-color:#777;
 }
-button.active{
+button.selected{
 background:#333;
-border-color:#fff
+border-color:#fff;
 }
 button.locked{
 opacity:.35;
-cursor:not-allowed
+cursor:not-allowed;
 }
 #controls{
+position:absolute;
+left:10px;
+top:10px;
 display:flex;
 gap:5px;
-margin-top:7px
+flex-wrap:wrap;
+max-width:530px;
+z-index:6;
 }
-#controls button{
-flex:1
+#controls button{font-size:12px}
+#terrainBar{
+position:absolute;
+left:10px;
+bottom:116px;
+background:#111;
+border:2px solid #444;
+padding:7px;
+z-index:5;
+display:flex;
+gap:4px;
+flex-wrap:wrap;
+width:480px;
 }
-.castlebar,.savebar{
+#terrainBar button{font-size:10px}
+#troopBar{
+position:absolute;
+left:10px;
+bottom:67px;
+background:#111;
+border:2px solid #444;
+padding:7px;
+z-index:5;
 display:flex;
 gap:5px;
-margin-top:7px
 }
-.castlebar button,.savebar button{
-flex:1
+.castlebar{
+position:absolute;
+left:50%;
+bottom:8px;
+transform:translateX(-50%);
+width:300px;
+height:18px;
+border:2px solid #555;
+background:#222;
+z-index:4;
 }
-.info{
+#castleFill{
+height:100%;
+width:100%;
+background:#4caf50;
+}
+#castleText{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+text-align:center;
 font-size:11px;
+line-height:14px;
+}
+#savebar{
+position:absolute;
+right:10px;
+bottom:10px;
+display:flex;
+gap:5px;
+z-index:5;
+}
+#info{
+position:absolute;
+right:10px;
+bottom:10px;
+width:225px;
+font-size:10px;
 color:#aaa;
-padding:6px 2px
+z-index:5;
+transform:translateY(-42px);
 }
 #overlay{
 position:absolute;
 inset:0;
-background:rgba(0,0,0,.9);
+background:rgba(0,0,0,.82);
 display:none;
 align-items:center;
 justify-content:center;
-z-index:10
+z-index:20;
+text-align:center;
 }
 #overlayBox{
-width:430px;
+border:3px solid #777;
 background:#111;
-border:3px solid #555;
 padding:30px;
-text-align:center
+min-width:300px;
 }
-#overlayBox h1{
-margin:0 0 20px;
-font-size:30px
+#overlay h1{
+margin:0 0 15px;
+font-size:28px;
 }
-#overlayBox button{
-width:48%;
-margin:1%
+#overlay button{
+font-size:15px;
+padding:10px 18px;
+margin:5px;
+}
+#terrainUpgrade{
+margin-top:8px;
+width:100%;
 }
 </style>
 </head>
 <body>
 
 <div id="stats">
-<div>GOLD: $<span id="gold">0</span></div>
-<div>WAVE: <span id="wave">1</span></div>
-<div>KINGDOM: <span id="kingdom">1</span></div>
-<div>CASTLE HP: <span id="castleHp">1000</span></div>
-<div>ENEMIES: <span id="enemyCount">0</span></div>
+<span id="money">$5000</span>
+<span id="wave">WAVE 1</span>
+<span id="level">LEVEL 1</span>
+<span id="kills">KILLS 0</span>
+<span id="selectedText">SELECT: NONE</span>
 </div>
 
 <div id="gameWrap">
-
-<div id="mapBox">
-<canvas id="game" width="1124" height="624"></canvas>
-
-<div id="overlay">
-<div id="overlayBox">
-<h1>KINGDOM LOST</h1>
-<button onclick="retryGame()">RETRY</button>
-<button onclick="goHome()">HOME</button>
-</div>
-</div>
-</div>
-
-<div id="towerInfo">SELECT A TOWER, TROOP OR TERRAIN TYPE</div>
-
-<div class="toolbar">
-<div id="towerbar"></div>
-<div id="zonebar"></div>
-<div id="troopbar"></div>
-</div>
+<canvas id="game"></canvas>
 
 <div id="controls">
-<button onclick="upgradeSelected()">UPGRADE</button>
-<button onclick="sellSelected()">DELETE / SELL</button>
-<button onclick="buildRoad()">BUILD ROAD</button>
-<button onclick="togglePause()">PAUSE</button>
+<button id="upgradeBtn">UPGRADE</button>
+<button id="sellBtn">DELETE / SELL</button>
+<button id="roadBtn">BUILD ROAD</button>
+<button id="pauseBtn">PAUSE</button>
+</div>
+
+<div id="towerInfo">
+<h3 id="infoTitle">KINGDOM WAR</h3>
+<div id="infoBody">Select a tower to see its information.</div>
+<button id="terrainUpgrade">UPGRADE TERRAIN</button>
+</div>
+
+<div id="terrainBar">
+<button data-terrain="forest">FOREST $150</button>
+<button data-terrain="hills">HILLS $150</button>
+<button data-terrain="crystal">CRYSTAL $150</button>
+<button data-terrain="mountain">MOUNTAIN $150</button>
+<button data-terrain="swamp">SWAMP $150</button>
+<button data-terrain="ice">ICE $150</button>
+<button data-terrain="desert">DESERT $150</button>
+<button data-terrain="plains">PLAINS $150</button>
+</div>
+
+<div id="troopBar">
+<button id="soldierBtn">SOLDIER $120</button>
+<button id="knightBtn">KNIGHT $300</button>
+<button id="archerBtn">ARCHER $180</button>
 </div>
 
 <div class="castlebar">
-<button onclick="selectTroop(0)">SWORDSMAN</button>
-<button onclick="selectTroop(1)">ARCHER</button>
-<button onclick="selectTroop(2)">KNIGHT</button>
-<button onclick="selectTroop(3)">MAGE</button>
-<button onclick="selectTroop(4)">GUARD</button>
-<button onclick="selectTroop(5)">HEALER</button>
-<button onclick="selectTroop(6)">GIANT</button>
+<div id="castleFill"></div>
+<div id="castleText">CASTLE 1000 / 1000</div>
 </div>
 
-<div class="savebar">
-<button onclick="saveGame()">SAVE</button>
-<button onclick="loadGame()">LOAD</button>
-<button onclick="resetGame()">RESET</button>
+<div id="savebar">
+<button id="saveBtn">SAVE</button>
+<button id="loadBtn">LOAD</button>
+<button id="newBtn">NEW CITY</button>
 </div>
 
-<div class="info">
-DRAG THE MAP TO LOOK AROUND • CLICK TO BUILD • SELECT TERRAIN THEN DRAG TO PAINT • RRR = HOME
-</div>
+<div id="info">Click and drag the map to move it. Scroll to zoom. Build roads, towers and terrain.</div>
 
+<div id="overlay">
+<div id="overlayBox">
+<h1 id="overlayTitle">KINGDOM LOST</h1>
+<div id="overlayText">The castle has fallen.</div>
+<br>
+<button id="retryBtn">RETRY</button>
+<button id="homeBtn">HOME</button>
+</div>
+</div>
 </div>
 
 <script>
 const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
-const VIEW_W=1124;
-const VIEW_H=624;
-const WORLD_W=2200;
-const WORLD_H=1200;
-const TILE=50;
-const ZONE_COST=150;
+let W=window.innerWidth;
+let H=window.innerHeight-42;
+canvas.width=W;
+canvas.height=H;
+
+const world={w:2200,h:1200};
+const grid=50;
+
+let camera={x:0,y:0,zoom:.72};
+let dragging=false;
+let dragMoved=false;
+let lastMouse={x:0,y:0};
+
+let money=5000;
+let wave=1;
+let kills=0;
+let castleHP=1000;
+let paused=false;
+let gameOver=false;
+let selectedTower=null;
+let selectedBuild=null;
+let selectedTerrain=null;
+let roadMode=false;
+
+let towers=[];
+let enemies=[];
+let projectiles=[];
+let particles=[];
+let troops=[];
+let terrainTiles=[];
+let roads=[];
+let nextEnemy=0;
+let spawnTimer=0;
+let waveTimer=0;
+let waveActive=false;
+let gameTime=0;
+let lastTime=performance.now();
+
+const terrainTypes={
+forest:{name:"Forest",color:"#315c38",bonus:1.25,buffs:["Rapid","Poison","Flame"]},
+hills:{name:"Hills",color:"#75633c",bonus:1.25,buffs:["Heavy","Sniper","Ballista"]},
+crystal:{name:"Crystal",color:"#704f91",bonus:1.30,buffs:["Crystal","Tesla","Laser"]},
+mountain:{name:"Mountain",color:"#555962",bonus:1.25,buffs:["King","Mortar","Catapult"]},
+swamp:{name:"Swamp",color:"#3d6351",bonus:1.30,buffs:["Poison","Slow","Void"]},
+ice:{name:"Ice",color:"#507b88",bonus:1.30,buffs:["Ice","Freeze","Guardian"]},
+desert:{name:"Desert",color:"#876b3f",bonus:1.25,buffs:["Flame","Meteor","Catapult"]},
+plains:{name:"Plains",color:"#66704a",bonus:1.20,buffs:["Basic","Splash","Guardian"]}
+};
 
 const towerTypes=[
 {name:"Basic",cost:60,damage:22,range:125,rate:700,color:"#4da6ff",unlock:1},
@@ -245,1628 +341,1129 @@ const towerTypes=[
 {name:"King",cost:2000,damage:300,range:350,rate:1800,color:"#ffd700",unlock:9}
 ];
 
-const zoneTypes=[
-{name:"FOREST",color:"#315c38",bonus:1.25,buffs:["Rapid","Poison","Flame"]},
-{name:"HILLS",color:"#75633c",bonus:1.25,buffs:["Heavy","Sniper","Ballista"]},
-{name:"CRYSTAL",color:"#704f91",bonus:1.30,buffs:["Crystal","Tesla","Laser"]},
-{name:"MOUNTAIN",color:"#555962",bonus:1.25,buffs:["King","Mortar","Catapult"]},
-{name:"SWAMP",color:"#3d6351",bonus:1.30,buffs:["Poison","Slow","Void"]},
-{name:"ICE",color:"#507b88",bonus:1.30,buffs:["Ice","Freeze","Guardian"]},
-{name:"DESERT",color:"#876b3f",bonus:1.25,buffs:["Flame","Meteor","Catapult"]},
-{name:"PLAINS",color:"#66704a",bonus:1.20,buffs:["Basic","Splash","Guardian"]}
-];
-
-const troopTypes=[
-{name:"SWORDSMAN",cost:80,damage:22,hp:180,speed:28,color:"#ddd"},
-{name:"ARCHER",cost:100,damage:28,hp:100,speed:25,color:"#d8a05c"},
-{name:"KNIGHT",cost:180,damage:55,hp:400,speed:22,color:"#aaa"},
-{name:"MAGE",cost:250,damage:75,hp:150,speed:20,color:"#a96cff"},
-{name:"GUARD",cost:300,damage:35,hp:650,speed:17,color:"#65d98b"},
-{name:"HEALER",cost:350,damage:8,hp:180,speed:18,color:"#ffff9a"},
-{name:"GIANT",cost:700,damage:140,hp:1500,speed:12,color:"#ff7043"}
-];
-
-let game;
-let selectedTower=null;
-let selectedZone=null;
-let selectedTroop=null;
-let placingType=null;
-
-let cameraX=0;
-let cameraY=0;
-
-let pointerDown=false;
-let isDragging=false;
-let dragMoved=false;
-let startX=0;
-let startY=0;
-let startCameraX=0;
-let startCameraY=0;
-let lastPaintX=0;
-let lastPaintY=0;
-
-let keyBuffer="";
-let lastTime=performance.now();
-
-function newGame(){
-game={
-gold:1500,
-wave:1,
-kingdom:1,
-castleHp:1000,
-towers:[],
-enemies:[],
-troops:[],
-zones:[],
-zoneLevels:Array(zoneTypes.length).fill(1),
-road:[
+const roadPoints=[
 {x:1740,y:475},
-{x:1580,y:475},
-{x:1460,y:560},
-{x:1280,y:560},
-{x:1120,y:440},
-{x:950,y:440},
-{x:790,y:580},
-{x:620,y:580},
-{x:500,y:475},
+{x:1600,y:475},
+{x:1450,y:475},
+{x:1300,y:475},
+{x:1150,y:475},
+{x:1000,y:475},
+{x:850,y:475},
+{x:700,y:475},
+{x:550,y:475},
+{x:400,y:475},
 {x:250,y:475}
-],
-waveTimer:0,
-spawnTimer:0,
-spawned:0,
-waveActive:false,
-paused:false,
-gameOver:false
-};
+];
 
-selectedTower=null;
-selectedZone=null;
-selectedTroop=null;
-placingType=null;
+const enemyTypes=[
+{name:"Goblin",hp:90,speed:26,damage:20,reward:15},
+{name:"Orc",hp:220,speed:20,damage:35,reward:30},
+{name:"Knight",hp:500,speed:16,damage:55,reward:55},
+{name:"Troll",hp:1000,speed:12,damage:90,reward:100},
+{name:"Demon",hp:2200,speed:10,damage:150,reward:200}
+];
 
-cameraX=0;
-cameraY=0;
-
-document.getElementById("overlay").style.display="none";
-updateInfo();
+function resize(){
+W=window.innerWidth;
+H=window.innerHeight-42;
+canvas.width=W;
+canvas.height=H;
 }
+window.addEventListener("resize",resize);
 
-function clamp(v,a,b){
-return Math.max(a,Math.min(b,v));
-}
-
-function getMouse(e){
-const rect=canvas.getBoundingClientRect();
-
+function worldToScreen(x,y){
 return{
-x:(e.clientX-rect.left)*(canvas.width/rect.width),
-y:(e.clientY-rect.top)*(canvas.height/rect.height)
+x:(x-camera.x)*camera.zoom,
+y:(y-camera.y)*camera.zoom
 };
 }
 
-function screenToWorld(e){
-const p=getMouse(e);
-
+function screenToWorld(x,y){
 return{
-x:p.x+cameraX,
-y:p.y+cameraY
+x:x/camera.zoom+camera.x,
+y:y/camera.zoom+camera.y
 };
 }
 
-function clampCamera(){
-cameraX=clamp(cameraX,0,WORLD_W-VIEW_W);
-cameraY=clamp(cameraY,0,WORLD_H-VIEW_H);
+function dist(a,b){
+return Math.hypot(a.x-b.x,a.y-b.y);
 }
 
-function validTerrainTile(tx,ty){
-const x=tx*TILE;
-const y=ty*TILE;
-
-if(x<0||y<0||x>=WORLD_W||y>=WORLD_H)return false;
-
-if(Math.hypot(x+25-250,y+25-475)<120)return false;
-if(Math.hypot(x+25-1740,y+25-475)<120)return false;
-
-for(let i=0;i<game.road.length-1;i++){
-const a=game.road[i];
-const b=game.road[i+1];
-
-const dx=b.x-a.x;
-const dy=b.y-a.y;
-const len=dx*dx+dy*dy;
-
-let t=len?((x+25-a.x)*dx+(y+25-a.y)*dy)/len:0;
-t=clamp(t,0,1);
-
-const px=a.x+t*dx;
-const py=a.y+t*dy;
-
-if(Math.hypot(x+25-px,y+25-py)<38)return false;
+function snap(v){
+return Math.floor(v/grid)*grid+grid/2;
 }
 
-return true;
+function towerAt(x,y){
+return towers.find(t=>dist(t,{x,y})<25);
 }
 
-function tileExists(type,tx,ty){
-return game.zones.some(z=>z.type===type&&z.tx===tx&&z.ty===ty);
+function terrainAt(x,y){
+return terrainTiles.find(t=>t.x===x&&t.y===y);
 }
 
-function addTile(type,tx,ty){
-if(!validTerrainTile(tx,ty))return false;
-if(game.zones.some(z=>z.tx===tx&&z.ty===ty))return false;
-if(game.gold<ZONE_COST)return false;
-
-game.gold-=ZONE_COST;
-game.zones.push({type,tx,ty});
-
-return true;
+function roadAt(x,y){
+return roads.find(r=>r.x===x&&r.y===y);
 }
 
-function paintTileAt(x,y){
-if(selectedZone===null)return;
-
-const tx=Math.floor(x/TILE);
-const ty=Math.floor(y/TILE);
-
-addTile(selectedZone,tx,ty);
+function zoneUpgradeCost(type){
+const tiles=terrainTiles.filter(t=>t.type===type).length;
+if(!tiles)return Infinity;
+const level=(terrainLevels[type]||1);
+return Math.floor((900+tiles*180)*Math.pow(2.15,level-1));
 }
 
-function paintLine(x1,y1,x2,y2){
-if(selectedZone===null)return;
+let terrainLevels={
+forest:1,hills:1,crystal:1,mountain:1,
+swamp:1,ice:1,desert:1,plains:1
+};
 
-const tx1=Math.floor(x1/TILE);
-const ty1=Math.floor(y1/TILE);
-const tx2=Math.floor(x2/TILE);
-const ty2=Math.floor(y2/TILE);
+function terrainBonus(type){
+const base=terrainTypes[type].bonus;
+const level=terrainLevels[type]||1;
+return 1+(base-1)*level;
+}
 
-const dx=tx2-tx1;
-const dy=ty2-ty1;
-const steps=Math.max(Math.abs(dx),Math.abs(dy),1);
+function towerBuff(t){
+const tile=terrainAt(t.x,t.y);
+if(!tile)return 1;
+const terrain=terrainTypes[tile.type];
+if(!terrain.buffs.includes(t.type.name))return 1;
+return terrainBonus(tile.type);
+}
 
-for(let i=0;i<=steps;i++){
-const tx=Math.round(tx1+dx*i/steps);
-const ty=Math.round(ty1+dy*i/steps);
-addTile(selectedZone,tx,ty);
+function upgradeCost(t){
+return Math.floor(t.type.cost*1.8**t.level);
+}
+
+function towerStats(t){
+const mult=1+(t.level-1)*.55;
+const buff=towerBuff(t);
+return{
+damage:t.type.damage*mult*buff,
+range:t.type.range*(1+(t.level-1)*.08),
+rate:Math.max(80,t.type.rate/(1+(t.level-1)*.12)/buff)
+};
+}
+
+function drawGrid(){
+ctx.fillStyle="#161616";
+ctx.fillRect(0,0,W,H);
+
+const startX=Math.floor(camera.x/grid)*grid-grid;
+const endX=camera.x+W/camera.zoom+grid;
+const startY=Math.floor(camera.y/grid)*grid-grid;
+const endY=camera.y+H/camera.zoom+grid;
+
+ctx.strokeStyle="rgba(255,255,255,.045)";
+ctx.lineWidth=1;
+
+for(let x=startX;x<endX;x+=grid){
+const a=worldToScreen(x,0);
+ctx.beginPath();
+ctx.moveTo(a.x,0);
+ctx.lineTo(a.x,H);
+ctx.stroke();
+}
+
+for(let y=startY;y<endY;y+=grid){
+const a=worldToScreen(0,y);
+ctx.beginPath();
+ctx.moveTo(0,a.y);
+ctx.lineTo(W,a.y);
+ctx.stroke();
 }
 }
 
-function zoneTiles(index){
-return game.zones.filter(z=>z.type===index);
+function drawTerrain(){
+for(const tile of terrainTiles){
+const p=worldToScreen(tile.x,tile.y);
+const s=grid*camera.zoom;
+const type=terrainTypes[tile.type];
+
+ctx.fillStyle=type.color;
+ctx.fillRect(p.x-s/2+1,p.y-s/2+1,s-2,s-2);
+
+ctx.strokeStyle="rgba(255,255,255,.15)";
+ctx.strokeRect(p.x-s/2+1,p.y-s/2+1,s-2,s-2);
+
+ctx.fillStyle="rgba(255,255,255,.15)";
+if(tile.type==="forest"){
+for(let i=-15;i<=15;i+=15){
+ctx.beginPath();
+ctx.arc(p.x+i*.6,p.y-5,5*camera.zoom,0,Math.PI*2);
+ctx.fill();
+}
+}else if(tile.type==="hills"){
+ctx.beginPath();
+ctx.moveTo(p.x-s*.35,p.y+s*.25);
+ctx.lineTo(p.x,p.y-s*.25);
+ctx.lineTo(p.x+s*.35,p.y+s*.25);
+ctx.fill();
+}else if(tile.type==="crystal"){
+ctx.beginPath();
+ctx.moveTo(p.x,p.y-s*.3);
+ctx.lineTo(p.x+s*.12,p.y);
+ctx.lineTo(p.x,p.y+s*.3);
+ctx.lineTo(p.x-s*.12,p.y);
+ctx.closePath();
+ctx.fill();
+}else if(tile.type==="mountain"){
+ctx.beginPath();
+ctx.moveTo(p.x-s*.35,p.y+s*.3);
+ctx.lineTo(p.x-s*.05,p.y-s*.3);
+ctx.lineTo(p.x+s*.3,p.y+s*.3);
+ctx.fill();
+}else if(tile.type==="swamp"){
+ctx.beginPath();
+ctx.arc(p.x,p.y,8*camera.zoom,0,Math.PI*2);
+ctx.fill();
+}else if(tile.type==="ice"){
+ctx.beginPath();
+ctx.moveTo(p.x-s*.3,p.y);
+ctx.lineTo(p.x,p.y-s*.3);
+ctx.lineTo(p.x+s*.3,p.y);
+ctx.lineTo(p.x,p.y+s*.3);
+ctx.closePath();
+ctx.fill();
+}else if(tile.type==="desert"){
+ctx.fillRect(p.x-10*camera.zoom,p.y-2*camera.zoom,20*camera.zoom,4*camera.zoom);
+}else{
+ctx.beginPath();
+ctx.arc(p.x,p.y,3*camera.zoom,0,Math.PI*2);
+ctx.fill();
+}
+}
 }
 
-function zoneUpgradeCost(index){
-const tiles=zoneTiles(index).length;
+function drawRoads(){
+for(const r of roads){
+const p=worldToScreen(r.x,r.y);
+const s=grid*camera.zoom;
+ctx.fillStyle="#373737";
+ctx.fillRect(p.x-s/2,p.y-s/2,s,s);
+ctx.strokeStyle="#666";
+ctx.strokeRect(p.x-s/2,p.y-s/2,s,s);
+ctx.fillStyle="#bda94d";
+ctx.fillRect(p.x-s*.08,p.y-s*.5,s*.16,s);
+}
+}
 
-if(!tiles)return 0;
+function drawPath(){
+ctx.strokeStyle="#555";
+ctx.lineWidth=grid*camera.zoom*.72;
+ctx.lineCap="round";
+ctx.beginPath();
+for(let i=0;i<roadPoints.length;i++){
+const p=worldToScreen(roadPoints[i].x,roadPoints[i].y);
+if(i===0)ctx.moveTo(p.x,p.y);
+else ctx.lineTo(p.x,p.y);
+}
+ctx.stroke();
 
-return Math.floor(
-(900+tiles*180)*
-Math.pow(2.15,game.zoneLevels[index]-1)
+ctx.strokeStyle="#aaa";
+ctx.lineWidth=2;
+ctx.setLineDash([12,12]);
+ctx.beginPath();
+for(let i=0;i<roadPoints.length;i++){
+const p=worldToScreen(roadPoints[i].x,roadPoints[i].y);
+if(i===0)ctx.moveTo(p.x,p.y);
+else ctx.lineTo(p.x,p.y);
+}
+ctx.stroke();
+ctx.setLineDash([]);
+}
+
+function drawCastle(){
+const p=worldToScreen(250,475);
+const s=70*camera.zoom;
+
+ctx.fillStyle="#666";
+ctx.fillRect(p.x-s/2,p.y-s/2,s,s);
+
+ctx.fillStyle="#888";
+ctx.fillRect(p.x-s*.42,p.y-s*.65,s*.18,s*.35);
+ctx.fillRect(p.x+s*.24,p.y-s*.65,s*.18,s*.35);
+
+ctx.fillStyle="#222";
+ctx.fillRect(p.x-s*.12,p.y+s*.05,s*.24,s*.45);
+
+ctx.fillStyle="#c33";
+ctx.fillRect(p.x-s*.13,p.y-s*.78,s*.26,s*.13);
+}
+
+function drawEnemyBase(){
+const p=worldToScreen(1740,475);
+const s=70*camera.zoom;
+ctx.fillStyle="#4b2525";
+ctx.fillRect(p.x-s/2,p.y-s/2,s,s);
+ctx.fillStyle="#b33";
+ctx.fillRect(p.x-s*.15,p.y-s*.65,s*.3,s*.3);
+}
+
+function drawTowers(){
+for(const t of towers){
+const p=worldToScreen(t.x,t.y);
+const s=34*camera.zoom;
+const stats=towerStats(t);
+
+ctx.fillStyle=t.type.color;
+ctx.fillRect(p.x-s/2,p.y-s/2,s,s);
+
+ctx.strokeStyle="#111";
+ctx.lineWidth=3;
+ctx.strokeRect(p.x-s/2,p.y-s/2,s,s);
+
+ctx.fillStyle="#111";
+ctx.fillRect(p.x-3*camera.zoom,p.y-18*camera.zoom,6*camera.zoom,12*camera.zoom);
+
+if(selectedTower===t){
+ctx.beginPath();
+ctx.strokeStyle="rgba(255,255,255,.45)";
+ctx.lineWidth=2;
+ctx.arc(p.x,p.y,stats.range*camera.zoom,0,Math.PI*2);
+ctx.stroke();
+}
+
+ctx.fillStyle="#fff";
+ctx.font=`${10*camera.zoom}px Courier New`;
+ctx.textAlign="center";
+ctx.fillText(t.level,p.x,p.y+4*camera.zoom);
+}
+}
+
+function drawTroops(){
+for(const t of troops){
+const p=worldToScreen(t.x,t.y);
+ctx.fillStyle=t.type==="Knight"?"#ddd":t.type==="Archer"?"#7fc":"#aaa";
+ctx.fillRect(p.x-7*camera.zoom,p.y-7*camera.zoom,14*camera.zoom,14*camera.zoom);
+}
+}
+
+function drawEnemies(){
+for(const e of enemies){
+const p=worldToScreen(e.x,e.y);
+const r=10*camera.zoom;
+
+ctx.fillStyle=e.color;
+ctx.beginPath();
+ctx.arc(p.x,p.y,r,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="#222";
+ctx.fillRect(p.x-r,p.y-r-7*camera.zoom,r*2,4*camera.zoom);
+
+ctx.fillStyle="#4caf50";
+ctx.fillRect(p.x-r,p.y-r-7*camera.zoom,r*2*(e.hp/e.maxHp),4*camera.zoom);
+}
+}
+
+function drawProjectiles(){
+for(const p of projectiles){
+const a=worldToScreen(p.x,p.y);
+ctx.fillStyle=p.color||"#fff";
+ctx.beginPath();
+ctx.arc(a.x,a.y,3*camera.zoom,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+function drawParticles(){
+for(const p of particles){
+const a=worldToScreen(p.x,p.y);
+ctx.globalAlpha=p.life;
+ctx.fillStyle=p.color;
+ctx.fillRect(a.x-2,a.y-2,4,4);
+ctx.globalAlpha=1;
+}
+}
+
+function draw(){
+drawGrid();
+drawTerrain();
+drawRoads();
+drawPath();
+drawCastle();
+drawEnemyBase();
+drawTowers();
+drawTroops();
+drawEnemies();
+drawProjectiles();
+drawParticles();
+
+if(selectedBuild){
+const m=mouseWorld;
+if(m){
+const x=snap(m.x);
+const y=snap(m.y);
+const p=worldToScreen(x,y);
+ctx.strokeStyle="#fff";
+ctx.lineWidth=2;
+ctx.strokeRect(
+p.x-grid*camera.zoom/2,
+p.y-grid*camera.zoom/2,
+grid*camera.zoom,
+grid*camera.zoom
 );
 }
-
-function zoneBuff(t){
-const tx=Math.floor(t.x/TILE);
-const ty=Math.floor(t.y/TILE);
-
-const z=game.zones.find(v=>v.tx===tx&&v.ty===ty);
-
-if(!z)return{bonus:1,rate:1,name:""};
-
-const type=zoneTypes[z.type];
-
-if(!type.buffs.includes(towerTypes[t.type].name)){
-return{bonus:1,rate:1,name:type.name};
+}
 }
 
-const level=game.zoneLevels[z.type];
+let mouseWorld=null;
 
-return{
-bonus:1+(type.bonus-1)*level,
-rate:Math.max(.55,1-.15*level),
-name:type.name
-};
-}
-
-function canPlaceTower(x,y){
-if(x<20||y<20||x>WORLD_W-20||y>WORLD_H-20)return false;
-
-if(Math.hypot(x-250,y-475)<100)return false;
-if(Math.hypot(x-1740,y-475)<100)return false;
-
-for(let i=0;i<game.road.length-1;i++){
-const a=game.road[i];
-const b=game.road[i+1];
-
-const dx=b.x-a.x;
-const dy=b.y-a.y;
-const len=dx*dx+dy*dy;
-
-let t=len?((x-a.x)*dx+(y-a.y)*dy)/len:0;
-t=clamp(t,0,1);
-
-const px=a.x+t*dx;
-const py=a.y+t*dy;
-
-if(Math.hypot(x-px,y-py)<38)return false;
-}
-
-return !game.towers.some(t=>Math.hypot(t.x-x,t.y-y)<35);
-}
-
-function placeTower(type,x,y){
-const d=towerTypes[type];
-
-if(game.wave<d.unlock)return;
-if(game.gold<d.cost)return;
-if(!canPlaceTower(x,y))return;
-
-game.gold-=d.cost;
-
-game.towers.push({
-type,
-x,
-y,
-level:1,
-lastShot:0,
-angle:0,
-flash:0,
-target:null
+canvas.addEventListener("pointerdown",e=>{
+dragging=true;
+dragMoved=false;
+lastMouse={x:e.clientX,y:e.clientY};
+canvas.classList.add("dragging");
+canvas.setPointerCapture(e.pointerId);
 });
+
+canvas.addEventListener("pointermove",e=>{
+const dx=e.clientX-lastMouse.x;
+const dy=e.clientY-lastMouse.y;
+
+if(dragging){
+if(Math.abs(dx)+Math.abs(dy)>3)dragMoved=true;
+camera.x-=dx/camera.zoom;
+camera.y-=dy/camera.zoom;
+camera.x=Math.max(0,Math.min(world.w-W/camera.zoom,camera.x));
+camera.y=Math.max(0,Math.min(world.h-H/camera.zoom,camera.y));
+lastMouse={x:e.clientX,y:e.clientY};
 }
 
-function towerUpgradeCost(t){
-return Math.floor(
-towerTypes[t.type].cost*
-(.75+.55*t.level)
-);
-}
-
-function upgradeTower(t){
-if(!t)return;
-
-const cost=towerUpgradeCost(t);
-
-if(game.gold<cost)return;
-
-game.gold-=cost;
-t.level++;
-}
-
-function upgradeZone(){
-if(selectedZone===null)return;
-
-const tiles=zoneTiles(selectedZone);
-
-if(!tiles.length)return;
-
-const cost=zoneUpgradeCost(selectedZone);
-
-if(game.gold<cost)return;
-
-game.gold-=cost;
-game.zoneLevels[selectedZone]++;
-}
-
-function upgradeSelected(){
-if(selectedZone!==null){
-upgradeZone();
-}else if(selectedTower){
-upgradeTower(selectedTower);
-}
-
-updateInfo();
-}
-
-function sellSelected(){
-if(!selectedTower)return;
-
-const d=towerTypes[selectedTower.type];
-
-game.gold+=Math.floor(
-d.cost*(.55+.15*(selectedTower.level-1))
-);
-
-const index=game.towers.indexOf(selectedTower);
-
-if(index>=0){
-game.towers.splice(index,1);
-}
-
-selectedTower=null;
-updateInfo();
-}
-
-function selectTroop(index){
-selectedTroop=index;
-selectedTower=null;
-selectedZone=null;
-placingType=null;
-updateInfo();
-}
-
-function spawnTroop(index){
-const d=troopTypes[index];
-
-if(game.gold<d.cost)return;
-
-game.gold-=d.cost;
-
-game.troops.push({
-type:index,
-x:270,
-y:475,
-hp:d.hp,
-maxHp:d.hp,
-attackTimer:0
+mouseWorld=screenToWorld(e.offsetX,e.offsetY);
 });
-}
 
-function spawnEnemy(){
-let type="normal";
+canvas.addEventListener("pointerup",e=>{
+dragging=false;
+canvas.classList.remove("dragging");
 
-if(game.wave>=20&&Math.random()<.035){
-type="boss";
-}else if(game.wave>=10&&Math.random()<.08){
-type="tank";
-}else if(Math.random()<.22){
-type="fast";
-}
-
-let hp=160*(1+game.wave*.13);
-let damage=20+game.wave*1.2;
-let speed=11+Math.min(game.wave*.08,2);
-
-if(type==="fast"){
-hp=110*(1+game.wave*.12);
-damage=18+game.wave;
-speed*=1.2;
-}
-
-if(type==="tank"){
-hp=650*(1+game.wave*.18);
-damage=50+game.wave*2;
-speed*=.65;
-}
-
-if(type==="boss"){
-hp=2500*(1+game.wave*.22);
-damage=120+game.wave*5;
-speed*=.5;
-}
-
-game.enemies.push({
-type,
-hp,
-maxHp:hp,
-damage,
-speed,
-progress:0,
-slow:0,
-poison:0,
-poisonTimer:0
+if(!dragMoved)handleMapClick(e.offsetX,e.offsetY);
 });
-}
 
-function roadLength(){
-let total=0;
+canvas.addEventListener("pointerleave",()=>{
+mouseWorld=null;
+});
 
-for(let i=0;i<game.road.length-1;i++){
-total+=Math.hypot(
-game.road[i+1].x-game.road[i].x,
-game.road[i+1].y-game.road[i].y
-);
-}
+canvas.addEventListener("wheel",e=>{
+e.preventDefault();
 
-return total;
-}
+const before=screenToWorld(e.offsetX,e.offsetY);
+const factor=e.deltaY<0?1.12:.89;
+camera.zoom=Math.max(.35,Math.min(1.5,camera.zoom*factor));
+const after=screenToWorld(e.offsetX,e.offsetY);
 
-function roadPoint(progress){
-const target=progress*roadLength();
-let distance=0;
+camera.x+=before.x-after.x;
+camera.y+=before.y-after.y;
 
-for(let i=0;i<game.road.length-1;i++){
-const a=game.road[i];
-const b=game.road[i+1];
+camera.x=Math.max(0,Math.min(world.w-W/camera.zoom,camera.x));
+camera.y=Math.max(0,Math.min(world.h-H/camera.zoom,camera.y));
+},{passive:false});
 
-const length=Math.hypot(b.x-a.x,b.y-a.y);
+function handleMapClick(sx,sy){
+const p=screenToWorld(sx,sy);
+const x=snap(p.x);
+const y=snap(p.y);
 
-if(distance+length>=target){
-const t=(target-distance)/length;
+if(x<25||x>world.w-25||y<25||y>world.h-25)return;
 
-return{
-x:a.x+(b.x-a.x)*t,
-y:a.y+(b.y-a.y)*t
-};
-}
-
-distance+=length;
-}
-
-return game.road[game.road.length-1];
-}
-
-function updateWaves(dt){
-if(game.paused||game.gameOver)return;
-
-if(!game.waveActive){
-game.waveTimer+=dt;
-
-if(game.waveTimer>=2500){
-game.waveTimer=0;
-game.waveActive=true;
-game.spawned=0;
-game.spawnTimer=0;
-}
-
+if(roadMode){
+buildRoad(x,y);
 return;
 }
 
-const count=5+game.wave*2+Math.floor(game.wave/5);
-
-game.spawnTimer+=dt;
-
-if(game.spawned<count&&game.spawnTimer>=650){
-game.spawnTimer=0;
-spawnEnemy();
-game.spawned++;
+if(selectedTerrain){
+buildTerrain(x,y,selectedTerrain);
+return;
 }
 
-if(game.spawned>=count&&game.enemies.length===0){
-game.waveActive=false;
-game.wave++;
-game.waveTimer=0;
+if(selectedBuild){
+buildTower(x,y,selectedBuild);
+return;
 }
+
+const t=towerAt(x,y);
+if(t){
+selectedTower=t;
+selectedBuild=null;
+selectedTerrain=null;
+updateInfo();
+return;
+}
+
+selectedTower=null;
+updateInfo();
+}
+
+function buildRoad(x,y){
+if(roadAt(x,y))return;
+if(towerAt(x,y))return;
+if(terrainAt(x,y))return;
+
+if(money<20)return;
+
+money-=20;
+roads.push({x,y});
+updateUI();
+}
+
+function buildTerrain(x,y,type){
+if(terrainAt(x,y)||roadAt(x,y)||towerAt(x,y))return;
+if(money<150)return;
+
+money-=150;
+terrainTiles.push({x,y,type});
+updateUI();
+saveGame();
+}
+
+function buildTower(x,y,index){
+const type=towerTypes[index];
+
+if(type.unlock>wave)return;
+if(towerAt(x,y)||roadAt(x,y)||terrainAt(x,y))return;
+if(x<100&&y>400&&y<550)return;
+if(money<type.cost)return;
+
+money-=type.cost;
+
+towers.push({
+x,
+y,
+type,
+level:1,
+cooldown:0,
+kills:0
+});
+
+selectedTower=towers[towers.length-1];
+selectedBuild=null;
+updateUI();
+updateInfo();
+}
+
+function upgradeTower(){
+if(!selectedTower)return;
+
+const cost=upgradeCost(selectedTower);
+if(money<cost)return;
+
+money-=cost;
+selectedTower.level++;
+updateUI();
+updateInfo();
+saveGame();
+}
+
+function sellTower(){
+if(!selectedTower)return;
+
+const value=Math.floor(selectedTower.type.cost*(.65+.2*(selectedTower.level-1)));
+money+=value;
+
+towers=towers.filter(t=>t!==selectedTower);
+selectedTower=null;
+
+updateUI();
+updateInfo();
+saveGame();
+}
+
+function updateInfo(){
+if(!selectedTower){
+document.getElementById("infoTitle").textContent="KINGDOM WAR";
+document.getElementById("infoBody").innerHTML=
+"Select a tower to see its information.<br><br>Build terrain to create tower buffs.";
+return;
+}
+
+const t=selectedTower;
+const s=towerStats(t);
+const cost=upgradeCost(t);
+const tile=terrainAt(t.x,t.y);
+
+document.getElementById("infoTitle").textContent=
+`${t.type.name} LV ${t.level}`;
+
+document.getElementById("infoBody").innerHTML=
+`Damage: ${Math.floor(s.damage)}<br>
+Range: ${Math.floor(s.range)}<br>
+Attack: ${Math.floor(s.rate)} ms<br>
+Kills: ${t.kills}<br>
+Upgrade: $${cost}<br>
+Terrain: ${tile?terrainTypes[tile.type].name:"None"}<br>
+Buff: ${tile&&terrainTypes[tile.type].buffs.includes(t.type.name)?"ACTIVE":"NONE"}`;
+}
+
+function updateUI(){
+document.getElementById("money").textContent="$"+Math.floor(money);
+document.getElementById("wave").textContent="WAVE "+wave;
+document.getElementById("level").textContent="LEVEL "+Math.min(10,Math.floor(wave/2)+1);
+document.getElementById("kills").textContent="KILLS "+kills;
+document.getElementById("selectedText").textContent=
+"SELECT: "+(selectedTower?selectedTower.type.name:"NONE");
+
+document.getElementById("castleFill").style.width=
+Math.max(0,castleHP/1000*100)+"%";
+
+document.getElementById("castleText").textContent=
+"CASTLE "+Math.max(0,Math.floor(castleHP))+" / 1000";
+
+for(const [i,type] of towerTypes.entries()){
+const b=document.getElementById("tower"+i);
+if(!b)continue;
+if(type.unlock>wave)b.classList.add("locked");
+else b.classList.remove("locked");
+}
+
+updateInfo();
+}
+
+for(let i=0;i<towerTypes.length;i++){
+const b=document.createElement("button");
+b.id="tower"+i;
+b.textContent=towerTypes[i].name+" $"+towerTypes[i].cost;
+b.onclick=()=>{
+if(towerTypes[i].unlock>wave)return;
+selectedBuild=i;
+selectedTerrain=null;
+selectedTower=null;
+roadMode=false;
+updateInfo();
+};
+document.getElementById("towerbar")?.appendChild(b);
+}
+
+const bar=document.getElementById("terrainBar");
+document.getElementById("towerInfo").appendChild(document.createElement("div"));
+const towerBar=document.createElement("div");
+towerBar.id="towerbar";
+towerBar.style.position="absolute";
+towerBar.style.left="10px";
+towerBar.style.bottom="165px";
+towerBar.style.background="#111";
+towerBar.style.border="2px solid #444";
+towerBar.style.padding="7px";
+towerBar.style.zIndex="5";
+towerBar.style.display="grid";
+towerBar.style.gridTemplateColumns="repeat(10,74px)";
+towerBar.style.gap="5px";
+document.getElementById("gameWrap").appendChild(towerBar);
+
+for(let i=0;i<towerTypes.length;i++){
+const b=document.createElement("button");
+b.id="tower"+i;
+b.textContent=towerTypes[i].name+" $"+towerTypes[i].cost;
+b.onclick=()=>{
+if(towerTypes[i].unlock>wave)return;
+selectedBuild=i;
+selectedTerrain=null;
+selectedTower=null;
+roadMode=false;
+updateInfo();
+};
+towerBar.appendChild(b);
+}
+
+document.querySelectorAll("[data-terrain]").forEach(b=>{
+b.onclick=()=>{
+selectedTerrain=b.dataset.terrain;
+selectedBuild=null;
+selectedTower=null;
+roadMode=false;
+updateInfo();
+};
+});
+
+document.getElementById("upgradeBtn").onclick=upgradeTower;
+document.getElementById("sellBtn").onclick=sellTower;
+
+document.getElementById("roadBtn").onclick=()=>{
+roadMode=!roadMode;
+selectedBuild=null;
+selectedTerrain=null;
+selectedTower=null;
+updateInfo();
+};
+
+document.getElementById("pauseBtn").onclick=()=>{
+paused=!paused;
+document.getElementById("pauseBtn").textContent=paused?"RESUME":"PAUSE";
+};
+
+document.getElementById("terrainUpgrade").onclick=()=>{
+if(!selectedTerrain)return;
+
+const cost=zoneUpgradeCost(selectedTerrain);
+if(cost===Infinity||money<cost)return;
+
+money-=cost;
+terrainLevels[selectedTerrain]++;
+updateUI();
+saveGame();
+};
+
+document.getElementById("soldierBtn").onclick=()=>{
+if(money<120)return;
+money-=120;
+troops.push({
+type:"Soldier",
+x:300,
+y:520,
+hp:180,
+maxHp:180,
+damage:18,
+speed:28,
+cooldown:0
+});
+};
+
+document.getElementById("knightBtn").onclick=()=>{
+if(money<300)return;
+money-=300;
+troops.push({
+type:"Knight",
+x:300,
+y:520,
+hp:500,
+maxHp:500,
+damage:45,
+speed:22,
+cooldown:0
+});
+};
+
+document.getElementById("archerBtn").onclick=()=>{
+if(money<180)return;
+money-=180;
+troops.push({
+type:"Archer",
+x:300,
+y:520,
+hp:130,
+maxHp:130,
+damage:30,
+speed:25,
+cooldown:800
+});
+};
+
+function enemyForWave(){
+const r=Math.random();
+let index=0;
+
+if(wave>=3&&r>.62)index=1;
+if(wave>=5&&r>.76)index=2;
+if(wave>=8&&r>.88)index=3;
+if(wave>=12&&r>.95)index=4;
+
+const base=enemyTypes[index];
+
+return{
+type:base.name,
+x:1740,
+y:475,
+path:0,
+hp:base.hp*(1+wave*.22),
+maxHp:base.hp*(1+wave*.22),
+speed:base.speed,
+damage:base.damage*(1+wave*.08),
+reward:Math.floor(base.reward*(1+wave*.06)),
+color:index===0?"#7bc96f":index===1?"#b47b42":index===2?"#aaa":index===3?"#8b6748":"#a33",
+slow:1,
+poison:0
+};
+}
+
+function spawnEnemy(){
+enemies.push(enemyForWave());
 }
 
 function updateEnemies(dt){
-if(game.paused||game.gameOver)return;
-
-for(let i=game.enemies.length-1;i>=0;i--){
-const e=game.enemies[i];
+for(let i=enemies.length-1;i>=0;i--){
+const e=enemies[i];
 
 if(e.poison>0){
-e.poisonTimer+=dt;
-
-if(e.poisonTimer>=500){
-e.poisonTimer=0;
-e.hp-=e.poison;
-}
+e.poison-=dt;
+e.hp-=dt*.02;
 }
 
-if(e.slow>0)e.slow-=dt;
+const target=roadPoints[Math.min(e.path+1,roadPoints.length-1)];
 
-let speed=e.speed;
-
-if(e.slow>0)speed*=.45;
-
-e.progress+=speed*dt/200000;
-
-if(e.progress>=1){
-game.castleHp-=e.damage;
-game.enemies.splice(i,1);
-
-if(game.castleHp<=0){
-game.castleHp=0;
-endGame();
+if(!target){
+castleHP-=e.damage*dt/1000;
+enemies.splice(i,1);
+continue;
 }
+
+const dx=target.x-e.x;
+const dy=target.y-e.y;
+const d=Math.hypot(dx,dy);
+
+if(d<8){
+e.path++;
+
+if(e.path>=roadPoints.length-1){
+castleHP-=e.damage;
+enemies.splice(i,1);
+continue;
+}
+}else{
+const speed=e.speed*e.slow;
+e.x+=dx/d*speed*dt/1000;
+e.y+=dy/d*speed*dt/1000;
+}
+
+if(e.hp<=0){
+money+=e.reward;
+kills++;
+enemies.splice(i,1);
 }
 }
 }
 
 function updateTowers(dt){
-if(game.paused||game.gameOver)return;
+for(const t of towers){
+t.cooldown-=dt;
+if(t.cooldown>0)continue;
 
-for(const t of game.towers){
-const d=towerTypes[t.type];
-const buff=zoneBuff(t);
-
-const rate=d.rate*
-buff.rate/
-Math.pow(1.08,t.level-1);
-
-t.lastShot+=dt;
-t.flash=Math.max(0,t.flash-dt);
-
-let best=null;
-let bestProgress=-1;
-
-for(const e of game.enemies){
-const p=roadPoint(e.progress);
-const distance=Math.hypot(p.x-t.x,p.y-t.y);
-
-if(distance<=d.range&&e.progress>bestProgress){
-best=e;
-bestProgress=e.progress;
-}
-}
-
-t.target=best;
-
-if(!best)continue;
-
-const p=roadPoint(best.progress);
-
-t.angle=Math.atan2(
-p.y-t.y,
-p.x-t.x
-);
-
-if(t.lastShot<rate)continue;
-
-t.lastShot=0;
-t.flash=100;
-
-const damage=
-d.damage*
-Math.pow(1.18,t.level-1)*
-buff.bonus;
-
-if(t.type===3)best.slow=1500;
-if(t.type===6)best.slow=2200;
-if(t.type===7)best.poison=Math.max(best.poison,damage*.25);
-
-if(t.type===4){
-for(const e of game.enemies){
-const q=roadPoint(e.progress);
-
-if(Math.hypot(q.x-p.x,q.y-p.y)<55){
-e.hp-=damage*.65;
-}
-}
-}else if(t.type===10){
-for(const e of game.enemies){
-const q=roadPoint(e.progress);
-
-if(Math.hypot(q.x-t.x,q.y-t.y)<d.range*.7){
-e.hp-=damage*.45;
-}
-}
-}else{
-best.hp-=damage;
-}
-
-if(
-t.type===11||
-t.type===14||
-t.type===15||
-t.type===16||
-t.type===17
-){
-for(const e of game.enemies){
-const q=roadPoint(e.progress);
-
-if(Math.hypot(q.x-p.x,q.y-p.y)<50){
-e.hp-=damage*.35;
-}
-}
-}
-}
-
-for(let i=game.enemies.length-1;i>=0;i--){
-if(game.enemies[i].hp<=0){
-const e=game.enemies[i];
-
-game.gold+=
-e.type==="boss"?500:
-e.type==="tank"?100:35;
-
-game.enemies.splice(i,1);
-}
-}
-}
-
-function updateTroops(dt){
-if(game.paused||game.gameOver)return;
-
-for(let i=game.troops.length-1;i>=0;i--){
-const tr=game.troops[i];
-const d=troopTypes[tr.type];
+const s=towerStats(t);
 
 let target=null;
-let best=Infinity;
+let best=-Infinity;
 
-for(const e of game.enemies){
-const p=roadPoint(e.progress);
-const distance=Math.hypot(p.x-tr.x,p.y-tr.y);
-
-if(distance<best){
-best=distance;
+for(const e of enemies){
+const d=dist(t,e);
+if(d<=s.range&&e.path>best){
+best=e.path;
 target=e;
 }
 }
 
-if(target){
-const p=roadPoint(target.progress);
-const distance=Math.hypot(p.x-tr.x,p.y-tr.y);
-
-if(distance>30){
-const dx=(p.x-tr.x)/distance;
-const dy=(p.y-tr.y)/distance;
-
-tr.x+=dx*d.speed*dt/1000;
-tr.y+=dy*d.speed*dt/1000;
-}else{
-tr.attackTimer+=dt;
-
-if(tr.attackTimer>=700){
-tr.attackTimer=0;
-target.hp-=d.damage;
-}
-}
-}else{
-tr.x+=d.speed*dt/1000;
-}
-
-if(d.name==="HEALER"){
-game.castleHp=Math.min(
-1000,
-game.castleHp+dt*.003
-);
-}
-
-if(tr.hp<=0||tr.x>1780){
-game.troops.splice(i,1);
-}
-}
-}
-
-function togglePause(){
-game.paused=!game.paused;
-}
-
-function buildRoad(){
-game.road=[
-{x:1740,y:475},
-{x:1580,y:475},
-{x:1460,y:560},
-{x:1280,y:560},
-{x:1120,y:440},
-{x:950,y:440},
-{x:790,y:580},
-{x:620,y:580},
-{x:500,y:475},
-{x:250,y:475}
-];
-}
-
-function drawWorld(){
-ctx.fillStyle="#101010";
-ctx.fillRect(0,0,WORLD_W,WORLD_H);
-
-drawGrid();
-drawZones();
-drawRoad();
-drawBase();
-drawCastle();
-drawTowers();
-drawTroops();
-drawEnemies();
-
-if(selectedTower){
-drawTowerRange(selectedTower);
-}
-
-if(selectedZone!==null){
-for(const tile of game.zones){
-if(tile.type!==selectedZone)continue;
-
-ctx.fillStyle="rgba(255,255,255,.08)";
-ctx.fillRect(
-tile.tx*TILE,
-tile.ty*TILE,
-TILE,
-TILE
-);
-}
-}
-
-ctx.strokeStyle="#555";
-ctx.lineWidth=5;
-ctx.strokeRect(
-2,
-2,
-WORLD_W-4,
-WORLD_H-4
-);
-}
-
-function drawGrid(){
-ctx.strokeStyle="#181818";
-ctx.lineWidth=1;
-
-for(let x=0;x<=WORLD_W;x+=TILE){
-ctx.beginPath();
-ctx.moveTo(x,0);
-ctx.lineTo(x,WORLD_H);
-ctx.stroke();
-}
-
-for(let y=0;y<=WORLD_H;y+=TILE){
-ctx.beginPath();
-ctx.moveTo(0,y);
-ctx.lineTo(WORLD_W,y);
-ctx.stroke();
-}
-}
-
-function seeded(x,y){
-const n=Math.sin(x*12.9898+y*78.233)*43758.5453;
-return n-Math.floor(n);
-}
-
-function drawZones(){
-for(const z of game.zones){
-const type=zoneTypes[z.type];
-const x=z.tx*TILE;
-const y=z.ty*TILE;
-const level=game.zoneLevels[z.type];
-
-ctx.fillStyle=type.color;
-ctx.fillRect(x,y,TILE,TILE);
-
-ctx.strokeStyle="rgba(0,0,0,.45)";
-ctx.strokeRect(
-x+.5,
-y+.5,
-TILE-1,
-TILE-1
-);
-
-if(z.type===0){
-for(let i=0;i<4;i++){
-const tx=x+8+seeded(z.tx+i*3,z.ty+i)*34;
-const ty=y+25+seeded(z.tx+i,z.ty+i*2)*17;
-
-ctx.strokeStyle="#24472b";
-ctx.lineWidth=2;
-ctx.beginPath();
-ctx.moveTo(tx,ty+12);
-ctx.lineTo(tx,ty);
-ctx.stroke();
-
-ctx.fillStyle="#1f4328";
-ctx.beginPath();
-ctx.arc(
-tx,
-ty,
-6+level,
-0,
-Math.PI*2
-);
-ctx.fill();
-}
-}
-
-if(z.type===1){
-ctx.fillStyle="#8b7549";
-ctx.beginPath();
-ctx.moveTo(x+4,y+42);
-ctx.lineTo(x+16,y+24);
-ctx.lineTo(x+28,y+33);
-ctx.lineTo(x+45,y+12);
-ctx.lineTo(x+50,y+45);
-ctx.closePath();
-ctx.fill();
-}
-
-if(z.type===2){
-for(let i=0;i<3;i++){
-const cx=x+10+i*16;
-const cy=y+35-(i%2)*9;
-
-ctx.fillStyle="#c69bdd";
-ctx.beginPath();
-ctx.moveTo(cx,cy+10);
-ctx.lineTo(cx+6,cy-12-level*2);
-ctx.lineTo(cx+12,cy+10);
-ctx.closePath();
-ctx.fill();
-}
-}
-
-if(z.type===3){
-ctx.fillStyle="#3e4249";
-ctx.beginPath();
-ctx.moveTo(x+2,y+48);
-ctx.lineTo(x+13,y+22);
-ctx.lineTo(x+22,y+30);
-ctx.lineTo(x+34,y+8);
-ctx.lineTo(x+48,y+48);
-ctx.closePath();
-ctx.fill();
-}
-
-if(z.type===4){
-ctx.fillStyle="#557f63";
-ctx.fillRect(x+5,y+10,14,7);
-ctx.fillRect(x+28,y+30,16,7);
-
-ctx.fillStyle="#284a38";
-
-ctx.beginPath();
-ctx.arc(x+15,y+36,6,0,Math.PI*2);
-ctx.fill();
-
-ctx.beginPath();
-ctx.arc(x+40,y+17,5,0,Math.PI*2);
-ctx.fill();
-}
-
-if(z.type===5){
-ctx.strokeStyle="#8cc8d8";
-ctx.lineWidth=2;
-
-for(let i=0;i<3;i++){
-ctx.beginPath();
-ctx.moveTo(x+5,y+12+i*13);
-ctx.lineTo(x+45,y+17+i*13);
-ctx.stroke();
-}
-}
-
-if(z.type===6){
-ctx.strokeStyle="#b18b51";
-ctx.lineWidth=2;
-
-for(let i=0;i<4;i++){
-ctx.beginPath();
-ctx.arc(
-x+15+i*9,
-y+18+(i%2)*15,
-10,
-0,
-Math.PI
-);
-ctx.stroke();
-}
-
-if(seeded(z.tx,z.ty)>.45){
-ctx.fillStyle="#78935c";
-ctx.fillRect(x+36,y+30,4,13);
-ctx.fillRect(x+33,y+33,10,3);
-}
-}
-
-if(z.type===7){
-ctx.strokeStyle="#879664";
-ctx.lineWidth=1;
-
-for(let i=0;i<8;i++){
-const gx=x+5+seeded(z.tx,i)*40;
-const gy=y+8+seeded(z.ty,i*2)*35;
-
-ctx.beginPath();
-ctx.moveTo(gx,gy);
-ctx.lineTo(gx+2,gy-5);
-ctx.stroke();
-}
-}
-
-if(level>1){
-ctx.fillStyle="rgba(255,255,255,.55)";
-ctx.font="9px Courier New";
-ctx.fillText(
-"L"+level,
-x+3,
-y+11
-);
-}
-}
-}
-
-function drawRoad(){
-ctx.lineCap="round";
-ctx.lineJoin="round";
-
-ctx.strokeStyle="#242424";
-ctx.lineWidth=46;
-
-ctx.beginPath();
-ctx.moveTo(
-game.road[0].x,
-game.road[0].y
-);
-
-for(let i=1;i<game.road.length;i++){
-ctx.lineTo(
-game.road[i].x,
-game.road[i].y
-);
-}
-
-ctx.stroke();
-
-ctx.strokeStyle="#3a3a3a";
-ctx.lineWidth=34;
-
-ctx.beginPath();
-ctx.moveTo(
-game.road[0].x,
-game.road[0].y
-);
-
-for(let i=1;i<game.road.length;i++){
-ctx.lineTo(
-game.road[i].x,
-game.road[i].y
-);
-}
-
-ctx.stroke();
-
-ctx.strokeStyle="#555";
-ctx.lineWidth=2;
-ctx.setLineDash([12,12]);
-
-ctx.beginPath();
-ctx.moveTo(
-game.road[0].x,
-game.road[0].y
-);
-
-for(let i=1;i<game.road.length;i++){
-ctx.lineTo(
-game.road[i].x,
-game.road[i].y
-);
-}
-
-ctx.stroke();
-ctx.setLineDash([]);
-}
-
-function drawBase(){
-ctx.fillStyle="#450d0d";
-ctx.fillRect(1680,405,120,140);
-
-ctx.fillStyle="#9e2020";
-ctx.fillRect(1690,415,100,120);
-
-ctx.fillStyle="#ddd";
-ctx.font="bold 14px Courier New";
-ctx.textAlign="center";
-ctx.fillText("ENEMY BASE",1740,465);
-
-ctx.fillStyle="#111";
-ctx.fillRect(1705,485,70,10);
-
-ctx.fillStyle="#e33";
-ctx.fillRect(1705,485,70,10);
-
-ctx.textAlign="left";
-}
-
-function drawCastle(){
-ctx.fillStyle="#25344a";
-ctx.fillRect(190,405,120,140);
-
-ctx.fillStyle="#4d75a8";
-ctx.fillRect(200,415,100,120);
-
-ctx.fillStyle="#111";
-ctx.fillRect(205,430,90,10);
-
-ctx.fillStyle="#4caf50";
-ctx.fillRect(
-205,
-430,
-90*(game.castleHp/1000),
-10
-);
-
-ctx.fillStyle="#ddd";
-ctx.font="bold 14px Courier New";
-ctx.textAlign="center";
-
-ctx.fillText("KINGDOM",250,465);
-ctx.fillText("CASTLE",250,483);
-
-ctx.textAlign="left";
-}
-
-function drawTowerRange(t){
-ctx.strokeStyle="rgba(255,255,255,.28)";
-ctx.lineWidth=2;
-
-ctx.beginPath();
-ctx.arc(
-t.x,
-t.y,
-towerTypes[t.type].range,
-0,
-Math.PI*2
-);
-ctx.stroke();
-}
-
-function drawTowers(){
-for(const t of game.towers){
-const d=towerTypes[t.type];
-const buff=zoneBuff(t);
-
-ctx.save();
-
-if(buff.bonus>1){
-ctx.strokeStyle="rgba(255,255,255,.5)";
-ctx.lineWidth=2;
-
-ctx.beginPath();
-ctx.arc(t.x,t.y,18,0,Math.PI*2);
-ctx.stroke();
-}
-
-ctx.translate(t.x,t.y);
-ctx.rotate(t.angle);
-
-ctx.fillStyle="#050505";
-ctx.fillRect(5,-3,25,6);
-
-if(
-t.type===2||
-t.type===10||
-t.type===11||
-t.type===14||
-t.type===15
-){
-ctx.fillStyle="#111";
-ctx.fillRect(7,-5,27,10);
-}
-
-ctx.restore();
-
-ctx.fillStyle=d.color;
-
-ctx.beginPath();
-ctx.arc(t.x,t.y,14,0,Math.PI*2);
-ctx.fill();
-
-ctx.strokeStyle="#050505";
-ctx.lineWidth=2;
-ctx.stroke();
-
-ctx.fillStyle="#050505";
-ctx.font="bold 10px Courier New";
-ctx.textAlign="center";
-ctx.textBaseline="middle";
-ctx.fillText(
-t.level,
-t.x,
-t.y
-);
-
-if(t.flash>0){
-ctx.strokeStyle="#fff";
-ctx.lineWidth=3;
-
-ctx.beginPath();
-
-if(t.type===5||t.type===10){
-ctx.arc(t.x,t.y,22,0,Math.PI*2);
-}else if(t.target){
-const p=roadPoint(t.target.progress);
-
-ctx.moveTo(t.x,t.y);
-ctx.lineTo(p.x,p.y);
-}
-
-ctx.stroke();
-}
-
-if(selectedTower===t){
-ctx.strokeStyle="#fff";
-ctx.lineWidth=2;
-
-ctx.beginPath();
-ctx.arc(t.x,t.y,21,0,Math.PI*2);
-ctx.stroke();
-}
-
-ctx.textAlign="left";
-ctx.textBaseline="alphabetic";
-}
-}
-
-function drawTroops(){
-for(const tr of game.troops){
-const d=troopTypes[tr.type];
-
-ctx.fillStyle=d.color;
-
-ctx.beginPath();
-ctx.arc(tr.x,tr.y,9,0,Math.PI*2);
-ctx.fill();
-
-ctx.strokeStyle="#111";
-ctx.lineWidth=2;
-ctx.stroke();
-
-ctx.fillStyle="#111";
-ctx.fillRect(
-tr.x-10,
-tr.y-15,
-20,
-3
-);
-
-ctx.fillStyle="#54d66a";
-
-ctx.fillRect(
-tr.x-10,
-tr.y-15,
-20*Math.max(0,tr.hp/tr.maxHp),
-3
-);
-}
-}
-
-function drawEnemies(){
-for(const e of game.enemies){
-const p=roadPoint(e.progress);
-
-let color="#d33";
-let size=11;
-
-if(e.type==="fast"){
-color="#ff9b32";
-size=9;
-}
-
-if(e.type==="tank"){
-color="#888";
-size=15;
-}
-
-if(e.type==="boss"){
-color="#9b39d4";
-size=22;
-}
-
-ctx.fillStyle=color;
-
-ctx.beginPath();
-ctx.arc(p.x,p.y,size,0,Math.PI*2);
-ctx.fill();
-
-ctx.strokeStyle="#111";
-ctx.lineWidth=2;
-ctx.stroke();
-
-ctx.fillStyle="#111";
-
-ctx.fillRect(
-p.x-size,
-p.y-size-7,
-size*2,
-4
-);
-
-ctx.fillStyle="#5ddd67";
-
-ctx.fillRect(
-p.x-size,
-p.y-size-7,
-size*2*Math.max(0,e.hp/e.maxHp),
-4
-);
-
-if(e.slow>0){
-ctx.strokeStyle="#8eeaff";
-
-ctx.beginPath();
-ctx.arc(
-p.x,
-p.y,
-size+4,
-0,
-Math.PI*2
-);
-ctx.stroke();
-}
-}
-}
-
-function render(){
-ctx.clearRect(0,0,VIEW_W,VIEW_H);
-
-ctx.save();
-ctx.translate(-cameraX,-cameraY);
-drawWorld();
-ctx.restore();
-
-ctx.fillStyle="rgba(0,0,0,.7)";
-ctx.fillRect(8,8,300,30);
-
-ctx.fillStyle="#fff";
-ctx.font="12px Courier New";
-
-ctx.fillText(
-selectedZone!==null
-?"BUILDING "+zoneTypes[selectedZone].name+" | LEVEL "+game.zoneLevels[selectedZone]
-:"DRAG MAP • CLICK TO BUILD",
-18,
-28
-);
-
-if(selectedZone!==null){
-const cost=zoneUpgradeCost(selectedZone);
-
-ctx.fillStyle="rgba(0,0,0,.8)";
-ctx.fillRect(8,575,390,40);
-
-ctx.fillStyle="#fff";
-ctx.font="12px Courier New";
-
-ctx.fillText(
-"UPGRADE ALL "+zoneTiles(selectedZone).length+" TILES: $"+cost,
-18,
-600
-);
-}
-}
-
-function updateInfo(){
-document.getElementById("gold").textContent=Math.floor(game.gold);
-document.getElementById("wave").textContent=game.wave;
-document.getElementById("kingdom").textContent=1;
-document.getElementById("castleHp").textContent=Math.floor(game.castleHp);
-document.getElementById("enemyCount").textContent=game.enemies.length;
-
-const info=document.getElementById("towerInfo");
-
-if(selectedZone!==null){
-const z=zoneTypes[selectedZone];
-const tiles=zoneTiles(selectedZone).length;
-const level=game.zoneLevels[selectedZone];
-
-info.innerHTML=
-"<b>"+z.name+"</b> • LEVEL "+level+
-" • "+tiles+" TILES<br>"+
-"BUILD: $"+ZONE_COST+" PER TILE"+
-" • BUFFS: "+z.buffs.join(", ")+"<br>"+
-"CURRENT DAMAGE BONUS: +"+
-Math.round((z.bonus-1)*level*100)+
-"% • UPGRADE ALL: $"+
-zoneUpgradeCost(selectedZone);
-
-return;
-}
-
-if(selectedTower){
-const d=towerTypes[selectedTower.type];
-const b=zoneBuff(selectedTower);
-
-const damage=
-d.damage*
-Math.pow(1.18,selectedTower.level-1)*
-b.bonus;
-
-info.innerHTML=
-"<b>"+d.name+"</b> • LEVEL "+
-selectedTower.level+
-" • DAMAGE "+Math.floor(damage)+
-" • RANGE "+d.range+
-" • UPGRADE: $"+
-towerUpgradeCost(selectedTower)+
-"<br>BASE COST: $"+d.cost+
-" • TERRAIN: "+(b.name||"NONE")+
-" • TERRAIN BONUS: +"+
-Math.round((b.bonus-1)*100)+"%";
-
-return;
-}
-
-if(selectedTroop!==null){
-const d=troopTypes[selectedTroop];
-
-info.innerHTML=
-"<b>"+d.name+"</b> • COST $"+
-d.cost+
-" • DAMAGE "+d.damage+
-" • HP "+d.hp+
-" • SPEED "+d.speed;
-
-return;
-}
-
-info.textContent="SELECT A TOWER, TROOP OR TERRAIN TYPE";
-}
-
-function createButtons(){
-const towerbar=document.getElementById("towerbar");
-const zonebar=document.getElementById("zonebar");
-
-towerbar.innerHTML="";
-zonebar.innerHTML="";
-
-towerTypes.forEach((t,i)=>{
-const b=document.createElement("button");
-
-b.textContent=(i+1)+". "+t.name;
-
-b.onclick=()=>{
-if(game.wave<t.unlock)return;
-
-selectedTower=null;
-selectedZone=null;
-selectedTroop=null;
-placingType=i;
-
-updateInfo();
+if(!target)continue;
+
+t.cooldown=s.rate;
+
+const p={
+x:t.x,
+y:t.y,
+target,
+damage:s.damage,
+speed:650,
+splash:["Splash","Mortar","Catapult","Meteor"].includes(t.type.name)?45:0,
+slow:["Slow","Freeze","Ice"].includes(t.type.name)?0.55:1,
+poison:t.type.name==="Poison"?1000:0,
+color:t.type.color
 };
 
-if(game.wave<t.unlock){
-b.classList.add("locked");
+projectiles.push(p);
+}
 }
 
-towerbar.appendChild(b);
+function updateProjectiles(dt){
+for(let i=projectiles.length-1;i>=0;i--){
+const p=projectiles[i];
+
+if(!p.target||!enemies.includes(p.target)){
+projectiles.splice(i,1);
+continue;
+}
+
+const dx=p.target.x-p.x;
+const dy=p.target.y-p.y;
+const d=Math.hypot(dx,dy);
+
+if(d<12){
+hitEnemy(p);
+projectiles.splice(i,1);
+continue;
+}
+
+p.x+=dx/d*p.speed*dt/1000;
+p.y+=dy/d*p.speed*dt/1000;
+}
+}
+
+function hitEnemy(p){
+const e=p.target;
+e.hp-=p.damage;
+
+if(p.slow)e.slow=Math.min(e.slow,p.slow);
+if(p.poison)e.poison=p.poison;
+
+const owner=towers.find(t=>Math.abs(t.x-p.x)<2&&Math.abs(t.y-p.y)<2);
+if(owner)owner.kills++;
+
+for(const other of enemies){
+if(p.splash&&other!==e&&dist(e,other)<p.splash){
+other.hp-=p.damage*.35;
+}
+}
+
+for(let i=0;i<5;i++){
+particles.push({
+x:e.x+(Math.random()-.5)*15,
+y:e.y+(Math.random()-.5)*15,
+life:1,
+color:p.color
 });
+}
+}
 
-zoneTypes.forEach((z,i)=>{
-const b=document.createElement("button");
+function updateTroops(dt){
+for(let i=troops.length-1;i>=0;i--){
+const t=troops[i];
 
-b.textContent=z.name;
+if(t.hp<=0){
+troops.splice(i,1);
+continue;
+}
 
-b.onclick=()=>{
-selectedZone=i;
+let target=null;
+let best=Infinity;
+
+for(const e of enemies){
+const d=dist(t,e);
+if(d<best){
+best=d;
+target=e;
+}
+}
+
+if(!target)continue;
+
+if(best>25){
+const dx=target.x-t.x;
+const dy=target.y-t.y;
+const d=Math.hypot(dx,dy);
+t.x+=dx/d*t.speed*dt/1000;
+t.y+=dy/d*t.speed*dt/1000;
+}else{
+t.cooldown-=dt;
+if(t.cooldown<=0){
+target.hp-=t.damage;
+t.cooldown=t.type==="Archer"?900:700;
+}
+}
+}
+}
+
+function updateParticles(dt){
+for(let i=particles.length-1;i>=0;i--){
+particles[i].life-=dt/500;
+if(particles[i].life<=0)particles.splice(i,1);
+}
+}
+
+function updateWave(dt){
+if(waveActive){
+spawnTimer-=dt;
+
+if(spawnTimer<=0){
+const count=5+wave*2;
+
+if(nextEnemy<count){
+spawnEnemy();
+nextEnemy++;
+spawnTimer=Math.max(350,900-wave*25);
+}else if(enemies.length===0){
+waveActive=false;
+wave++;
+waveTimer=3000;
+nextEnemy=0;
+money+=100+wave*20;
+updateUI();
+saveGame();
+}
+}
+}else{
+waveTimer-=dt;
+
+if(waveTimer<=0){
+waveActive=true;
+nextEnemy=0;
+spawnTimer=0;
+}
+}
+}
+
+function gameLoop(now){
+const dt=Math.min(40,now-lastTime);
+lastTime=now;
+
+if(!paused&&!gameOver){
+gameTime+=dt;
+updateWave(dt);
+updateEnemies(dt/1000*1000);
+updateTowers(dt);
+updateProjectiles(dt);
+updateTroops(dt);
+updateParticles(dt);
+
+if(castleHP<=0){
+castleHP=0;
+gameOver=true;
+showGameOver();
+}
+
+updateUI();
+}
+
+draw();
+requestAnimationFrame(gameLoop);
+}
+
+function showGameOver(){
+document.getElementById("overlay").style.display="flex";
+document.getElementById("overlayTitle").textContent="KINGDOM LOST";
+document.getElementById("overlayText").textContent=
+"You reached wave "+wave+" with "+kills+" kills.";
+}
+
+function resetGame(){
+money=5000;
+wave=1;
+kills=0;
+castleHP=1000;
+paused=false;
+gameOver=false;
 selectedTower=null;
-selectedTroop=null;
-placingType=null;
-updateInfo();
+selectedBuild=null;
+selectedTerrain=null;
+roadMode=false;
+towers=[];
+enemies=[];
+projectiles=[];
+particles=[];
+troops=[];
+terrainTiles=[];
+roads=[];
+terrainLevels={
+forest:1,hills:1,crystal:1,mountain:1,
+swamp:1,ice:1,desert:1,plains:1
+};
+waveTimer=0;
+waveActive=false;
+nextEnemy=0;
+
+camera={
+x:0,
+y:0,
+zoom:.72
 };
 
-zonebar.appendChild(b);
-});
+document.getElementById("overlay").style.display="none";
+document.getElementById("pauseBtn").textContent="PAUSE";
+updateUI();
+saveGame();
 }
-
-canvas.addEventListener("pointerdown",e=>{
-if(game.gameOver)return;
-
-pointerDown=true;
-isDragging=false;
-dragMoved=false;
-
-const p=getMouse(e);
-
-startX=p.x;
-startY=p.y;
-
-startCameraX=cameraX;
-startCameraY=cameraY;
-
-if(selectedZone!==null){
-const world=screenToWorld(e);
-lastPaintX=world.x;
-lastPaintY=world.y;
-}
-
-canvas.setPointerCapture(e.pointerId);
-});
-
-canvas.addEventListener("pointermove",e=>{
-if(!pointerDown)return;
-
-const p=getMouse(e);
-
-const dx=p.x-startX;
-const dy=p.y-startY;
-
-if(Math.abs(dx)>5||Math.abs(dy)>5){
-isDragging=true;
-dragMoved=true;
-
-cameraX=startCameraX-dx;
-cameraY=startCameraY-dy;
-
-clampCamera();
-
-canvas.classList.add("dragging");
-
-return;
-}
-
-if(selectedZone!==null&&!isDragging){
-const world=screenToWorld(e);
-
-paintLine(
-lastPaintX,
-lastPaintY,
-world.x,
-world.y
-);
-
-lastPaintX=world.x;
-lastPaintY=world.y;
-}
-});
-
-canvas.addEventListener("pointerup",e=>{
-if(!pointerDown)return;
-
-pointerDown=false;
-
-canvas.classList.remove("dragging");
-
-const world=screenToWorld(e);
-
-if(!dragMoved){
-if(selectedZone!==null){
-paintTileAt(world.x,world.y);
-}else if(placingType!==null){
-placeTower(
-placingType,
-world.x,
-world.y
-);
-placingType=null;
-}else if(selectedTroop!==null){
-spawnTroop(selectedTroop);
-selectedTroop=null;
-}else{
-let found=null;
-
-for(let i=game.towers.length-1;i>=0;i--){
-const t=game.towers[i];
-
-if(Math.hypot(
-t.x-world.x,
-t.y-world.y
-)<22){
-found=t;
-break;
-}
-}
-
-selectedTower=found;
-}
-}
-
-isDragging=false;
-dragMoved=false;
-
-updateInfo();
-});
-
-canvas.addEventListener("pointercancel",e=>{
-pointerDown=false;
-isDragging=false;
-dragMoved=false;
-canvas.classList.remove("dragging");
-});
-
-canvas.addEventListener("contextmenu",e=>{
-e.preventDefault();
-
-selectedTower=null;
-selectedZone=null;
-selectedTroop=null;
-placingType=null;
-
-updateInfo();
-});
-
-document.addEventListener("keydown",e=>{
-if(e.key.toLowerCase()==="r"){
-keyBuffer+="r";
-
-if(keyBuffer.length>3){
-keyBuffer=keyBuffer.slice(-3);
-}
-
-if(keyBuffer==="rrr"){
-window.location.href="index.html";
-}
-}else{
-keyBuffer="";
-}
-
-if(e.key==="Escape"){
-selectedTower=null;
-selectedZone=null;
-selectedTroop=null;
-placingType=null;
-updateInfo();
-}
-});
 
 function saveGame(){
+const data={
+money,
+wave,
+kills,
+castleHP,
+towers:towers.map(t=>({
+x:t.x,
+y:t.y,
+type:t.type.name,
+level:t.level,
+kills:t.kills
+})),
+terrainTiles,
+roads,
+terrainLevels
+};
+
 try{
-localStorage.setItem(
-"kingdomWarSave",
-JSON.stringify(game)
-);
+localStorage.setItem("kingdomWarSave",JSON.stringify(data));
 }catch(e){}
 }
 
 function loadGame(){
 try{
 const raw=localStorage.getItem("kingdomWarSave");
-
 if(!raw)return;
 
-game=JSON.parse(raw);
+const data=JSON.parse(raw);
 
-game.kingdom=1;
+money=data.money??5000;
+wave=data.wave??1;
+kills=data.kills??0;
+castleHP=data.castleHP??1000;
+terrainTiles=data.terrainTiles||[];
+roads=data.roads||[];
+terrainLevels=data.terrainLevels||{
+forest:1,hills:1,crystal:1,mountain:1,
+swamp:1,ice:1,desert:1,plains:1
+};
 
-if(!Array.isArray(game.zones)){
-game.zones=[];
+towers=[];
+
+for(const t of data.towers||[]){
+const type=towerTypes.find(x=>x.name===t.type);
+if(type){
+towers.push({
+x:t.x,
+y:t.y,
+type,
+level:t.level||1,
+cooldown:0,
+kills:t.kills||0
+});
 }
-
-if(!Array.isArray(game.zoneLevels)){
-game.zoneLevels=Array(zoneTypes.length).fill(1);
 }
-
-while(game.zoneLevels.length<zoneTypes.length){
-game.zoneLevels.push(1);
-}
-
-game.road=[
-{x:1740,y:475},
-{x:1580,y:475},
-{x:1460,y:560},
-{x:1280,y:560},
-{x:1120,y:440},
-{x:950,y:440},
-{x:790,y:580},
-{x:620,y:580},
-{x:500,y:475},
-{x:250,y:475}
-];
 
 selectedTower=null;
-selectedZone=null;
-selectedTroop=null;
-placingType=null;
+enemies=[];
+projectiles=[];
+troops=[];
+particles=[];
+waveActive=false;
+waveTimer=2000;
+nextEnemy=0;
 
-document.getElementById("overlay").style.display=
-game.gameOver?"flex":"none";
-
-updateInfo();
+updateUI();
 }catch(e){}
 }
 
-function resetGame(){
-if(confirm("RESET ALL KINGDOM WAR PROGRESS?")){
-localStorage.removeItem("kingdomWarSave");
-newGame();
+document.getElementById("saveBtn").onclick=saveGame;
+document.getElementById("loadBtn").onclick=loadGame;
+
+document.getElementById("newBtn").onclick=()=>{
+if(confirm("Start a completely new kingdom?")){
+resetGame();
 }
+};
+
+document.getElementById("retryBtn").onclick=()=>{
+resetGame();
+};
+
+document.getElementById("homeBtn").onclick=()=>{
+window.location.href="index.html";
+};
+
+document.addEventListener("keydown",e=>{
+if(e.key.toLowerCase()==="r"){
+window.__rDown=(window.__rDown||"")+"r";
+
+if(window.__rDown.length>3){
+window.__rDown=window.__rDown.slice(-3);
 }
 
-function retryGame(){
-newGame();
-}
-
-function endGame(){
-game.gameOver=true;
-document.getElementById("overlay").style.display="flex";
-saveGame();
-}
-
-function goHome(){
+if(window.__rDown==="rrr"){
 window.location.href="index.html";
 }
+}
+});
 
 setInterval(saveGame,5000);
 
-function gameLoop(now){
-const dt=Math.min(50,now-lastTime);
-lastTime=now;
-
-updateWaves(dt);
-updateEnemies(dt);
-updateTowers(dt);
-updateTroops(dt);
-
-updateInfo();
-render();
-
-requestAnimationFrame(gameLoop);
-}
-
-createButtons();
-newGame();
+loadGame();
+updateUI();
 requestAnimationFrame(gameLoop);
 </script>
-
 </body>
 </html>
